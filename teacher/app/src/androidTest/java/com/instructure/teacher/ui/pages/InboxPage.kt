@@ -1,12 +1,13 @@
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.waitForViewWithText
 import com.instructure.soseedy.Conversation
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
+import com.instructure.teacher.ui.utils.WaitForToolbarTitle
 
-class InboxPage: BasePage(), PageAssert by SimplePageAssert() {
+class InboxPage: BasePage() {
 
     private val toolbarTitle by WaitForToolbarTitle(R.string.tab_inbox)
 

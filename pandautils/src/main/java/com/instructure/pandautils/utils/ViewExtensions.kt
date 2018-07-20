@@ -101,7 +101,7 @@ fun Context.PX(px: Int) = (px / resources.displayMetrics.density).toInt()
 /** Converts float Pixel value to DIP value */
 fun Context.PX(px: Float) = (px / resources.displayMetrics.density).toInt()
 
-fun Context.toast(@StringRes resId: Int) = Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
+fun Context.toast(@StringRes resId: Int, toastLength: Int = Toast.LENGTH_SHORT) = Toast.makeText(this, resId, toastLength).show()
 
 fun EditText.onTextChanged(listener: (String) -> Unit) {
     addTextChangedListener(object : TextWatcher {
@@ -545,3 +545,4 @@ fun RecyclerView.removeAllItemDecorations() {
             .toList()
             .forEach { removeItemDecoration(it) }
 }
+

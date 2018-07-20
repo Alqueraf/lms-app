@@ -1,14 +1,13 @@
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.OnViewWithId
+import com.instructure.espresso.assertDisplayed
+import com.instructure.espresso.click
+import com.instructure.espresso.page.BasePage
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.OnViewWithId
-import com.instructure.teacher.ui.utils.assertDisplayed
-import com.instructure.teacher.ui.utils.click
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
 @Suppress("unused")
-class LoginLandingPage : BasePage(), PageAssert by SimplePageAssert() {
+class LoginLandingPage : BasePage() {
 
     private val canvasLogoImageView by OnViewWithId(R.id.canvasLogo)
     private val findMySchoolButton by OnViewWithId(R.id.findMySchool)

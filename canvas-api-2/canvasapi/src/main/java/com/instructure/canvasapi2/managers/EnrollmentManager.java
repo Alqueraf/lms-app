@@ -110,6 +110,27 @@ public class EnrollmentManager extends BaseManager {
         }
     }
 
+    public static void getObserveeEnrollments(boolean forceNetwork, @NonNull StatusCallback<List<Enrollment>> callback) {
+        if (isTesting() || mTesting) {
+
+        } else {
+            final RestBuilder adapter = new RestBuilder(callback);
+            final RestParams params = new RestParams.Builder()
+                    .withPerPageQueryParam(true)
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+            StatusCallback<List<Enrollment>> depaginatedCallback = new ExhaustiveListCallback<Enrollment>(callback) {
+                @Override
+                public void getNextPage(@NonNull StatusCallback<List<Enrollment>> callback, @NonNull String nextUrl, boolean isCached) {
+                    EnrollmentAPI.getObserveeEnrollments(adapter, params, callback);
+                }
+            };
+            adapter.setStatusCallback(depaginatedCallback);
+            EnrollmentAPI.getObserveeEnrollments(adapter, params, callback);
+        }
+    }
+
+
     public static void handleInvite(long courseId, long enrollmentId, boolean acceptInvite, @NonNull StatusCallback<Void> callback) {
         if (isTesting() || mTesting) {
 

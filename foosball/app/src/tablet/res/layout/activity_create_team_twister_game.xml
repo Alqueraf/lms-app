@@ -67,64 +67,86 @@
         android:layout_marginTop="64dp"
         app:pl_maxPlayers="4"/>
 
-    <View
-        android:layout_width="640dp"
-        android:layout_height="0.5dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
-        android:background="#CCC"/>
-
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/pointButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            android:background="@drawable/circle_outline_blue_medium"
-            android:clickable="true"
-            android:fontFamily="sans-serif-condensed"
-            android:gravity="center"
-            android:textColor="#00ACEC"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            tools:text="4"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:fontFamily="sans-serif-thin"
-            android:text="@string/points_to_win"
-            android:textAllCaps="true"
-            android:textSize="28sp"/>
-    </LinearLayout>
-
-    <View
-        android:layout_width="640dp"
-        android:layout_height="0.5dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="16dp"
-        android:background="#CCC"/>
-
-    <TextView
-        android:id="@+id/durationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-black"
         android:gravity="center"
-        android:textAllCaps="true"
-        android:textColor="#333"
-        tools:text="Duration: 10 to 27 goals"/>
+        android:orientation="horizontal">
 
-    <View
-        android:layout_width="640dp"
-        android:layout_height="0.5dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="8dp"
-        android:background="#CCC" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="640dp"
+                android:layout_height="0.5dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:background="#CCC"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/pointButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/circle_outline_blue_medium"
+                    android:clickable="true"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="center"
+                    android:textColor="#00ACEC"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    tools:text="4"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:text="@string/points_to_win"
+                    android:textAllCaps="true"
+                    android:textSize="28sp"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="640dp"
+                android:layout_height="0.5dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:background="#CCC"/>
+
+            <TextView
+                android:id="@+id/durationView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:textColor="#333"
+                tools:text="Duration: 10 to 27 goals"/>
+
+            <View
+                android:layout_width="640dp"
+                android:layout_height="0.5dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="8dp"
+                android:background="#CCC"/>
+
+        </LinearLayout>
+
+        <com.instructure.androidfoosball.utils.QRView
+            android:id="@+id/qrCode"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_marginStart="128dp"/>
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

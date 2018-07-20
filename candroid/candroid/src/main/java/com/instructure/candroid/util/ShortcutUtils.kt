@@ -31,6 +31,7 @@ import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import com.instructure.candroid.R
 import com.instructure.candroid.activity.LoginActivity
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.canvasapi2.models.Bookmark
 import com.instructure.pandautils.utils.ColorKeeper
 import com.instructure.pandautils.utils.ColorUtils
@@ -53,7 +54,7 @@ object ShortcutUtils {
                 launchIntent.putExtra(Const.BOOKMARK, bookmark.name)
                 launchIntent.putExtra(Const.URL, bookmark.url)
 
-                val color = ColorKeeper.getOrGenerateColor(RouterUtils.getContextIdFromURL(bookmark.url))
+                val color = ColorKeeper.getOrGenerateColor(RouteMatcher.getContextIdFromURL(bookmark.url) ?: "")
 
                 val pinShortcutInfo = ShortcutInfo.Builder(context, bookmark.url)
                         .setShortLabel(bookmark.name)

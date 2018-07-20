@@ -21,6 +21,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatDialogFragment
 import android.support.v7.view.ContextThemeWrapper
@@ -29,21 +30,20 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.instructure.candroid.R
-import com.instructure.candroid.fragment.ToDoListFragment
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.candroid.util.Analytics
 import com.instructure.candroid.util.CacheControlFlags
-import com.instructure.candroid.util.RouterUtils
 import com.instructure.canvasapi2.managers.BookmarkManager
 import com.instructure.canvasapi2.models.Bookmark
 import com.instructure.canvasapi2.models.CanvasContext
-import com.instructure.canvasapi2.models.Course
-import com.instructure.canvasapi2.models.Group
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
-import com.instructure.interactions.FragmentInteractions
+import com.instructure.interactions.bookmarks.Bookmarkable
 import com.instructure.pandautils.utils.ViewStyler
 import com.instructure.pandautils.utils.color
+import com.instructure.pandautils.utils.isCourseOrGroup
+import io.paperdb.Book
 import kotlinx.coroutines.experimental.Job
 
 class BookmarkCreationDialog : AppCompatDialogFragment() {
@@ -53,58 +53,6 @@ class BookmarkCreationDialog : AppCompatDialogFragment() {
 
     init {
         retainInstance = true
-    }
-
-    companion object {
-        private val BOOKMARK_CANVAS_CONTEXT = "bookmarkCanvasContext"
-        private val BOOKMARK_URL = "bookmarkUrl"
-        private val BOOKMARK_LABEL = "bookmarkLabel"
-
-        private fun newInstance(canvasContext: CanvasContext, bookmarkUrl: String, label: String? = ""): BookmarkCreationDialog {
-            val dialog = BookmarkCreationDialog()
-            val args = Bundle()
-            args.putParcelable(BOOKMARK_CANVAS_CONTEXT, canvasContext)
-            args.putString(BOOKMARK_URL, bookmarkUrl)
-            args.putString(BOOKMARK_LABEL, label)
-            dialog.arguments = args
-            return dialog
-        }
-
-        @JvmStatic
-        fun <F> newInstance(context: Activity, topFragment: F?, peakingFragment: F?): BookmarkCreationDialog? where F : FragmentInteractions {
-            //A to-do route doesn't actually exist so we will create a single fragment route by making the peeking null
-            val isTodoList = peakingFragment is ToDoListFragment
-            val label: String? = null
-            var bookmarkUrl: String? = null
-
-            val canvasContext = topFragment?.canvasContext
-
-            if (!isTodoList && peakingFragment != null && topFragment != null
-                    && peakingFragment.getFragmentPlacement() == FragmentInteractions.Placement.MASTER
-                    && (topFragment.getFragmentPlacement() == FragmentInteractions.Placement.DETAIL
-                    || topFragment.getFragmentPlacement() == FragmentInteractions.Placement.DIALOG)) {
-
-                //Master & Detail
-                if (canvasContext is Course || canvasContext is Group) {
-                    bookmarkUrl = RouterUtils.createUrl(canvasContext.type, peakingFragment::class.java, topFragment::class.java, topFragment.getParamForBookmark(), topFragment.getQueryParamForBookmark())
-                    Analytics.trackBookmarkSelected(context, peakingFragment::class.java.simpleName + " " + topFragment::class.java.simpleName)
-                }
-            } else if (topFragment != null) {
-                //Master || Detail
-
-                if (canvasContext is Course || canvasContext is Group) {
-                    bookmarkUrl = RouterUtils.createUrl(canvasContext.type, topFragment::class.java, topFragment.getParamForBookmark())
-                    Analytics.trackBookmarkSelected(context, topFragment::class.java.simpleName)
-                }
-            }
-
-            if(canvasContext != null && bookmarkUrl != null) {
-                Analytics.trackButtonPressed(context, "Add bookmark to fragment", null)
-                return newInstance(canvasContext, bookmarkUrl, label)
-            }
-
-            return null
-        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -176,5 +124,65 @@ class BookmarkCreationDialog : AppCompatDialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         bookmarkJob?.cancel()
+    }
+
+
+    companion object {
+        private const val BOOKMARK_CANVAS_CONTEXT = "bookmarkCanvasContext"
+        private const val BOOKMARK_URL = "bookmarkUrl"
+        private const val BOOKMARK_LABEL = "bookmarkLabel"
+
+        private fun newInstance(canvasContext: CanvasContext, bookmarkUrl: String, label: String? = ""): BookmarkCreationDialog {
+            val dialog = BookmarkCreationDialog()
+            val args = Bundle()
+            args.putParcelable(BOOKMARK_CANVAS_CONTEXT, canvasContext)
+            args.putString(BOOKMARK_URL, bookmarkUrl)
+            args.putString(BOOKMARK_LABEL, label)
+            dialog.arguments = args
+            return dialog
+        }
+
+        @JvmStatic
+        fun <F> newInstance(context: Activity, topFragment: F?, peakingFragment: F?): BookmarkCreationDialog? where F : Fragment {
+            if(topFragment is Bookmarkable && peakingFragment is Bookmarkable && topFragment.bookmark.canBookmark && peakingFragment.bookmark.canBookmark) {
+                val bookmark = topFragment.bookmark
+                if(bookmark.canvasContext?.isCourseOrGroup == true) {
+
+                    var bookmarkUrl = RouteMatcher.generateUrl(bookmark.url, bookmark.getQueryParamForBookmark)
+                    if(bookmarkUrl.isNullOrBlank()) {
+                        bookmarkUrl = RouteMatcher.generateUrl(
+                                bookmark.canvasContext!!.type,
+                                peakingFragment::class.java,
+                                topFragment::class.java,
+                                bookmark.getParamForBookmark,
+                                bookmark.getQueryParamForBookmark)
+                    }
+
+                    Analytics.trackBookmarkSelected(context, peakingFragment::class.java.simpleName + " " + topFragment::class.java.simpleName)
+
+                    if(bookmarkUrl != null) {
+                        Analytics.trackButtonPressed(context, "Add bookmark to fragment", null)
+                        return newInstance(bookmark.canvasContext!!, bookmarkUrl, null)
+                    }
+                }
+            } else if(topFragment is Bookmarkable && topFragment.bookmark.canBookmark) {
+                val bookmark = topFragment.bookmark
+                if (bookmark.canvasContext?.isCourseOrGroup == true) {
+                    var bookmarkUrl = RouteMatcher.generateUrl(bookmark.url, bookmark.getQueryParamForBookmark)
+                    if(bookmarkUrl.isNullOrBlank()) {
+                        bookmarkUrl = RouteMatcher.generateUrl(bookmark.canvasContext!!.type, topFragment::class.java, topFragment.bookmark.getParamForBookmark)
+                    }
+
+                    Analytics.trackBookmarkSelected(context, topFragment::class.java.simpleName)
+
+                    if(bookmarkUrl != null) {
+                        Analytics.trackButtonPressed(context, "Add bookmark to fragment", null)
+                        return newInstance(bookmark.canvasContext!!, bookmarkUrl, null)
+                    }
+                }
+            }
+
+            return null
+        }
     }
 }

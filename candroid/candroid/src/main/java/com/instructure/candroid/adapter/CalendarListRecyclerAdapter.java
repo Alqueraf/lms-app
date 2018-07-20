@@ -587,7 +587,7 @@ public class CalendarListRecyclerAdapter extends ExpandableRecyclerAdapter<Date,
         }
 
         DateTime dateTime = DateTime.forInstant(d.getTime(), TimeZone.getDefault());
-        CalendarListViewFragment.CalendarView currentCalendarView = CalendarListViewFragment.CalendarView.fromInteger(mAdapterToCalendarCallback.getCurrentCalendarView());
+        CalendarListViewFragment.CalendarView currentCalendarView = CalendarListViewFragment.CalendarView.Companion.fromInteger(mAdapterToCalendarCallback.getCurrentCalendarView());
         if (currentCalendarView == CalendarListViewFragment.CalendarView.DAY_VIEW  && mSelectedDay != null) {
             if (dateTime.getDay().equals(mSelectedDay.getDay()) && dateTime.getMonth().equals(mSelectedDay.getMonth())) {
                 addOrUpdateItem(DateHelper.getCleanDate(d.getTime()), s);
@@ -726,7 +726,7 @@ public class CalendarListRecyclerAdapter extends ExpandableRecyclerAdapter<Date,
     private void selectDateAfterLoad(){
         if (mSelectedDay != null){
             Date selected = new Date(mSelectedDay.getMilliseconds(TimeZone.getDefault()));
-            CalendarListViewFragment.CalendarView currentCalendarView = CalendarListViewFragment.CalendarView.fromInteger(mAdapterToCalendarCallback.getCurrentCalendarView());
+            CalendarListViewFragment.CalendarView currentCalendarView = CalendarListViewFragment.CalendarView.Companion.fromInteger(mAdapterToCalendarCallback.getCurrentCalendarView());
             if (currentCalendarView == CalendarListViewFragment.CalendarView.DAY_VIEW) {
                 mAdapterToCalendarCallback.setSelectedDates(selected, selected);
             } else if (currentCalendarView == CalendarListViewFragment.CalendarView.WEEK_VIEW) {

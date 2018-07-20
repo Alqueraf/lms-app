@@ -120,7 +120,7 @@
         android:layout_marginStart="@dimen/standard_margin"
         android:layout_marginRight="@dimen/standard_margin"
         android:layout_marginEnd="@dimen/standard_margin"/>
-    <com.instructure.parentapp.view.CanvasWebView
+    <com.instructure.pandautils.views.CanvasWebView
         android:id="@+id/assignmentWebView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -62,6 +62,9 @@ class RCETextEditorView @JvmOverloads constructor(
 
     private val fragmentManager get() = (context as? FragmentActivity)?.supportFragmentManager
 
+    // Let the fragments that use this view handle what to do when it's clicked
+    var actionUploadImageCallback: (() -> Unit)? = null
+
     init {
         View.inflate(getContext(), R.layout.rce_text_editor_view, this)
 
@@ -144,10 +147,8 @@ class RCETextEditorView @JvmOverloads constructor(
         action_insert_bullets.setOnClickListener { postUpdateState { editor.setBullets() } }
         action_insert_numbers.setOnClickListener { postUpdateState { editor.setNumbers() } }
 
-        action_insert_image.setOnClickListener {
-            RCEInsertDialog.newInstance(context.getString(R.string.rce_insertImage), themeColor, buttonColor)
-                .setListener { url, alt -> editor.insertImage(url, alt) }
-                .show(fragmentManager ?: return@setOnClickListener, RCEInsertDialog::class.java.simpleName)
+        actionUploadImage.setOnClickListener {
+            actionUploadImageCallback?.invoke()
         }
 
         action_insert_link.setOnClickListener {
@@ -158,6 +159,7 @@ class RCETextEditorView @JvmOverloads constructor(
 
         editor.setOnDecorationChangeListener { state, _ ->
             if (!isToolbarVisible()) showEditorToolbar()
+            editor.focusEditor()
             actionTypeButtonMap.values.forEach {
                 it?.setColorFilter(Color.BLACK)
                 it?.setBackgroundColor(Color.TRANSPARENT)
@@ -170,6 +172,12 @@ class RCETextEditorView @JvmOverloads constructor(
 
         // Update formatting states when text changes
         editor.setOnTextChangeListener { postUpdateState {} }
+        val heightInPixels = (resources.getDimension(R.dimen.rce_view_min_height)).toInt()
+        editor.setEditorHeight(heightInPixels)
+    }
+
+    fun insertImage(url: String, alt: String) {
+        editor.insertImage(url, alt)
     }
 
     fun setHtml(
@@ -185,13 +193,9 @@ class RCETextEditorView @JvmOverloads constructor(
         this.buttonColor = buttonColor
     }
 
-    fun setHint(hint: String) {
-        editor.setPlaceholder(hint)
-    }
+    fun setHint(hint: String) = editor.setPlaceholder(hint)
 
-    fun setHint(@StringRes hint: Int) {
-        editor.setPlaceholder(context.getString(hint))
-    }
+    fun setHint(@StringRes hint: Int) = editor.setPlaceholder(context.getString(hint))
 
     fun hideEditorToolbar() {
         controller.visibility = View.GONE
@@ -204,9 +208,7 @@ class RCETextEditorView @JvmOverloads constructor(
         bottomDivider.visibility = View.VISIBLE
     }
 
-    fun isToolbarVisible(): Boolean {
-        return controller.visibility == View.VISIBLE
-    }
+    private fun isToolbarVisible(): Boolean = controller.visibility == View.VISIBLE
 
     /**
      * Takes care of making the label darker or lighter depending on when it's focused
@@ -275,9 +277,7 @@ class RCETextEditorView @JvmOverloads constructor(
         alertDialog.show()
     }
 
-    fun requestEditorFocus() {
-        editor.focusEditor()
-    }
+    fun requestEditorFocus() = editor.focusEditor()
 
     //region save and restore state
 
@@ -330,7 +330,7 @@ class RCETextEditorView @JvmOverloads constructor(
         companion object {
 
             // required field that makes Parcelables from a Parcel
-            val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
+            @JvmField val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
                 override fun createFromParcel(`in`: Parcel): SavedState {
                     return SavedState(`in`)
                 }

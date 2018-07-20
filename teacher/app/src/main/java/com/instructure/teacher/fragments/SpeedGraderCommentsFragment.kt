@@ -167,7 +167,7 @@ class SpeedGraderCommentsFragment : BaseListFragment<SubmissionCommentWrapper, S
         }
     }
 
-    @Suppress("unused")
+    @Suppress("UNUSED_PARAMETER")
     @Subscribe
     fun onMediaCommentDialogClosed(event: MediaCommentDialogClosedEvent) {
         addMediaAttachment.isEnabled = true

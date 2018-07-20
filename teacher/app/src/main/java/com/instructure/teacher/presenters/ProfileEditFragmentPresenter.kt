@@ -69,6 +69,7 @@ class ProfileEditFragmentPresenter : FragmentPresenter<ProfileEditFragmentView>(
         publishUserData(name, bio)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun publishUserData(name: String, bio: String) {
         //Note: if the API ever allows us to update the bio we'll need to update the api call below to include it
         val user = ApiPrefs.user

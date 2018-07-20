@@ -38,7 +38,7 @@ public class AssignmentBinder extends BaseBinder {
             final AssignmentViewHolder holder,
             final Assignment assignment,
             final int courseColor,
-            final AdapterToFragmentCallback adapterToFragmentCallback) {
+            final AdapterToFragmentCallback<Assignment> adapterToFragmentCallback) {
 
         holder.title.setText(assignment.getName());
 

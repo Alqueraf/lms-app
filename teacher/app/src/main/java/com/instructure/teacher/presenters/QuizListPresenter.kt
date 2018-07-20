@@ -88,7 +88,12 @@ class QuizListPresenter(private val mCanvasContext: CanvasContext) :
     override fun compare(group: String?, quiz1: Quiz?, quiz2: Quiz?): Int {
         //quizzes sort by due date first, then by title alphabetically
         if(quiz1?.dueAt != null && quiz2?.dueAt != null) {
-            return quiz1.dueAt?.compareTo(quiz2.dueAt) ?: -1
+            val result = quiz1.dueAt?.compareTo(quiz2.dueAt)
+            if (result == 0) {
+                return quiz1.title?.compareTo(quiz2.title ?: "") ?: -1
+            } else {
+                return result!!
+            }
         } else if(quiz1?.dueAt == null && quiz2?.dueAt != null) {
             return 1
         } else if(quiz1?.dueAt != null && quiz2?.dueAt == null) {

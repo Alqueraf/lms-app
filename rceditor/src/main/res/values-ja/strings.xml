@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">アンドゥーする</string>
     <string name="rce_contentDescription_redo">やり直し</string>
     <string name="rce_contentDescription_bold">太字に設定</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">箇条書きリストンの挿入</string>
     <string name="rce_contentDescription_insert_numbers">番号付きリストの挿入</string>
     <string name="rce_contentDescription_insert_photo">写真の挿入</string>
+    <string name="rce_contentDescription_upload_photo">デバイスから画像をアップロード</string>
     <string name="rce_contentDescription_insert_link">リンクの挿入</string>
     <string name="rce_contentDescription_block_quote">ブロック見積もり</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">リンクの挿入</string>
     <string name="rce_insertImage">画像の挿入</string>
 
+    <string name="rce_uploadImage">イメージのアップロード</string>
     <string name="rce_done">完了</string>
     <string name="rce_cancel">キャンセル</string>
     <string name="rce_exit">終了</string>

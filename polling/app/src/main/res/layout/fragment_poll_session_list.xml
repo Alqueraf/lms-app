@@ -18,50 +18,53 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
+
     <TextView
-        style="@style/TextStyle.Primary"
         android:id="@+id/question"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:layout_centerHorizontal="true"/>
+        style="@style/TextStyle.Primary"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/activity_horizontal_margin" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/button_container"
+        android:layout_above="@+id/buttonContainer"
         android:layout_below="@+id/question">
+
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            >
+            android:orientation="vertical">
 
             <ListView
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:groupIndicator="@null"
                 android:cacheColorHint="@android:color/transparent"
-                android:scrollbarStyle="outsideOverlay"
-                />
+                android:groupIndicator="@null"
+                android:scrollbarStyle="outsideOverlay" />
 
         </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>
+
     <LinearLayout
-        android:id="@+id/button_container"
+        android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
+
         <Button
-            style="@style/ButtonBarCanvasPollingTheme"
             android:id="@+id/publishPoll"
+            style="@style/ButtonBarCanvasPollingTheme"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/publishPoll"
-            android:layout_weight="1"
             android:layout_margin="8dp"
-            />
+            android:layout_weight="1"
+            android:text="@string/publishPoll" />
     </LinearLayout>
 </RelativeLayout>

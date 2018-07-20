@@ -37,14 +37,14 @@
         android:text="@string/new_game"
         android:textAllCaps="true"
         android:textColor="#333"
-        android:textSize="32sp" />
+        android:textSize="32sp"/>
 
     <View
         android:layout_width="640dp"
         android:layout_height="0.5dp"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="8dp"
-        android:background="#CCC" />
+        android:background="#CCC"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -71,27 +71,27 @@
                 android:hint="@string/enter_team_name"
                 android:inputType="textCapWords"
                 android:lines="1"
-                android:textSize="28sp" />
+                android:textSize="28sp"/>
 
             <com.instructure.androidfoosball.views.TeamLayout
                 android:id="@+id/teamTwoLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"/>
 
             <TextView
                 android:id="@+id/winRateTeamTwo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                tools:text="Avg. Win Rate: 12.5%" />
+                tools:text="Avg. Win Rate: 12.5%"/>
 
         </LinearLayout>
 
         <View
             android:layout_width="0.5dp"
             android:layout_height="match_parent"
-            android:background="#CCC" />
+            android:background="#CCC"/>
 
         <LinearLayout
             android:id="@+id/teamOneContainer"
@@ -113,126 +113,153 @@
                 android:hint="@string/enter_team_name"
                 android:inputType="textCapWords"
                 android:lines="1"
-                android:textSize="28sp" />
+                android:textSize="28sp"/>
 
             <com.instructure.androidfoosball.views.TeamLayout
                 android:id="@+id/teamOneLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"/>
 
             <TextView
                 android:id="@+id/winRateTeamOne"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                tools:text="Avg. Win Rate: 75.6%" />
+                tools:text="Avg. Win Rate: 75.6%"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <View
-        android:layout_width="640dp"
-        android:layout_height="0.5dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
-        android:background="#CCC" />
-
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-thin"
-            android:text="@string/best_of"
-            android:textAllCaps="true"
-            android:textSize="28sp" />
-
-        <TextView
-            android:id="@+id/bestOfButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="12dp"
-            android:background="@drawable/circle_outline_blue_medium"
-            android:clickable="true"
-            android:fontFamily="sans-serif-condensed"
-            android:gravity="center"
-            android:textColor="#00ACEC"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            tools:text="3" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:fontFamily="sans-serif-thin"
-            android:text="@string/rounds"
-            android:textAllCaps="true"
-            android:textSize="28sp" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="360dp"
-        android:layout_height="0.5dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
-        android:background="#CCC" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/pointButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            android:background="@drawable/circle_outline_blue_medium"
-            android:clickable="true"
-            android:fontFamily="sans-serif-condensed"
-            android:gravity="center"
-            android:textColor="#00ACEC"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            tools:text="5" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:fontFamily="sans-serif-thin"
-            android:text="@string/points_per_round"
-            android:textAllCaps="true"
-            android:textSize="28sp" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="640dp"
-        android:layout_height="0.5dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="16dp"
-        android:background="#CCC" />
-
-    <TextView
-        android:id="@+id/durationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-black"
         android:gravity="center"
-        android:textAllCaps="true"
-        android:textColor="#333"
-        tools:text="Duration: 10 to 27 goals"/>
+        android:orientation="horizontal">
 
-    <View
-        android:layout_width="640dp"
-        android:layout_height="0.5dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="8dp"
-        android:background="#CCC" />
+        <com.instructure.androidfoosball.utils.QRView
+            android:id="@+id/teamTwoQR"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_marginEnd="64dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="640dp"
+                android:layout_height="0.5dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:background="#CCC"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-thin"
+                    android:text="@string/best_of"
+                    android:textAllCaps="true"
+                    android:textSize="28sp"/>
+
+                <TextView
+                    android:id="@+id/bestOfButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/circle_outline_blue_medium"
+                    android:clickable="true"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="center"
+                    android:textColor="#00ACEC"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    tools:text="3"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:text="@string/rounds"
+                    android:textAllCaps="true"
+                    android:textSize="28sp"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="360dp"
+                android:layout_height="0.5dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:background="#CCC"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/pointButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/circle_outline_blue_medium"
+                    android:clickable="true"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="center"
+                    android:textColor="#00ACEC"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    tools:text="5"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:text="@string/points_per_round"
+                    android:textAllCaps="true"
+                    android:textSize="28sp"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="640dp"
+                android:layout_height="0.5dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:background="#CCC"/>
+
+            <TextView
+                android:id="@+id/durationView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:textColor="#333"
+                tools:text="Duration: 10 to 27 goals"/>
+
+            <View
+                android:layout_width="640dp"
+                android:layout_height="0.5dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="8dp"
+                android:background="#CCC"/>
+        </LinearLayout>
+
+        <com.instructure.androidfoosball.utils.QRView
+            android:id="@+id/teamOneQR"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_marginStart="64dp"/>
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -249,7 +276,7 @@
             android:padding="16dp"
             android:text="@string/please_assign_teams"
             android:textAllCaps="true"
-            android:textSize="24sp" />
+            android:textSize="24sp"/>
 
         <Button
             android:id="@+id/startGameButton"
@@ -264,7 +291,7 @@
             android:text="@string/start_game"
             android:textColor="#00ACEC"
             android:textSize="28sp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
     </FrameLayout>
 

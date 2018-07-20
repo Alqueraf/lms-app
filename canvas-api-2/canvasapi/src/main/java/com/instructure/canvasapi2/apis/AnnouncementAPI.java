@@ -37,7 +37,7 @@ import retrofit2.http.Url;
 public class AnnouncementAPI {
 
     interface AnnouncementInterface {
-        @GET("{contextType}/{contextId}/discussion_topics?only_announcements=1")
+        @GET("{contextType}/{contextId}/discussion_topics?only_announcements=1&include[]=sections")
         Call<List<DiscussionTopicHeader>> getFirstPageAnnouncementsList(@Path("contextType") String contextType, @Path("contextId") long contextId);
 
         @GET

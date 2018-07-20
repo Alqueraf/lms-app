@@ -24,4 +24,5 @@ interface StudentContextView : FragmentViewInterface {
     fun addSubmissions(submissions: List<Submission>, course: AsCourse, student: User)
     fun showLoadMoreIndicator(show: Boolean)
     fun onErrorLoading(isDesigner: Boolean)
+    fun clear()
 }

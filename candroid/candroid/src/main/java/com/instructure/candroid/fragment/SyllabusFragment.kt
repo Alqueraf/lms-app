@@ -23,40 +23,39 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import com.instructure.candroid.R
-import com.instructure.candroid.util.RouterUtils
-import com.instructure.canvasapi2.StatusCallback
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.canvasapi2.managers.CourseManager
+import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.Course
 import com.instructure.canvasapi2.models.ScheduleItem
 import com.instructure.canvasapi2.utils.ApiPrefs
-import com.instructure.canvasapi2.utils.ApiType
-import com.instructure.canvasapi2.utils.LinkHeaders
-import com.instructure.canvasapi2.utils.pageview.PageView
 import com.instructure.pandautils.utils.*
-import com.instructure.pandautils.utils.Const
+import com.instructure.canvasapi2.utils.pageview.PageView
+import com.instructure.canvasapi2.utils.weave.WeaveJob
+import com.instructure.canvasapi2.utils.weave.awaitApi
+import com.instructure.canvasapi2.utils.weave.catch
+import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.NullableParcelableArg
 import com.instructure.pandautils.utils.ViewStyler
 import com.instructure.pandautils.utils.setupAsBackButton
-import com.instructure.interactions.FragmentInteractions
 import com.instructure.pandautils.views.CanvasWebView
 import kotlinx.android.synthetic.main.fragment_syllabus.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import retrofit2.Response
 
 @PageView(url = "{canvasContext}/assignments/syllabus")
 class SyllabusFragment : ParentFragment() {
 
+    private var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
+    private var apiJob: WeaveJob? = null
+
     // model variables
     private var syllabus by NullableParcelableArg<ScheduleItem>()
 
-    override fun getFragmentPlacement(): FragmentInteractions.Placement {
-        return FragmentInteractions.Placement.DETAIL
-    }
-
     override fun title(): String {
-        return if(syllabus != null && syllabus!!.title.isNotBlank()) syllabus!!.title
+        return if (syllabus != null && syllabus!!.title.isNotBlank()) syllabus!!.title
         else getString(R.string.syllabus)
     }
 
@@ -69,18 +68,18 @@ class SyllabusFragment : ParentFragment() {
         canvasWebView.addVideoClient(activity)
         canvasWebView.canvasWebViewClientCallback = object : CanvasWebView.CanvasWebViewClientCallback {
             override fun openMediaFromWebView(mime: String, url: String, filename: String) {
-                openMedia(mime, url, filename)
+                openMedia(mime, url, filename, canvasContext)
             }
 
             override fun onPageStartedCallback(webView: WebView, url: String) {}
             override fun onPageFinishedCallback(webView: WebView, url: String) {}
 
             override fun canRouteInternallyDelegate(url: String): Boolean {
-                return RouterUtils.canRouteInternally(activity, url, ApiPrefs.domain, false)
+                return RouteMatcher.canRouteInternally(activity, url, ApiPrefs.domain, false)
             }
 
             override fun routeInternallyCallback(url: String) {
-                RouterUtils.canRouteInternally(activity, url, ApiPrefs.domain, true)
+                RouteMatcher.canRouteInternally(activity, url, ApiPrefs.domain, true)
             }
         }
 
@@ -90,17 +89,36 @@ class SyllabusFragment : ParentFragment() {
             }
 
             override fun launchInternalWebViewFragment(url: String) {
-                InternalWebviewFragment.loadInternalWebView(activity, navigation, InternalWebviewFragment.createBundle(canvasContext, url, false))
+                InternalWebviewFragment.loadInternalWebView(activity, InternalWebviewFragment.makeRoute(canvasContext, url, false))
             }
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if (syllabus == null || syllabus!!.description == null) {
-            CourseManager.getCourseWithSyllabus(canvasContext.id, syllabusCallback, true)
-        } else {
-            populateViews()
+        if (syllabus == null || syllabus!!.description == null) getCourseSyllabus() else populateViews()
+    }
+
+    private fun getCourseSyllabus() {
+        apiJob = tryWeave {
+            val course = awaitApi<Course> { CourseManager.getCourseWithSyllabus(canvasContext.id, it, true) }
+            if (!course.syllabusBody.isNullOrEmpty()) {
+                emptyPandaView.visibility = View.GONE
+                syllabus = ScheduleItem().apply {
+                    itemType = ScheduleItem.Type.TYPE_SYLLABUS
+                    title = course.name
+                    description = course.syllabusBody
+                }
+                populateViews()
+            } else {
+                //No syllabus
+                emptyPandaView.emptyViewText(R.string.syllabusMissing)
+                emptyPandaView.setListEmpty()
+            }
+        } catch {
+            //No syllabus
+            emptyPandaView.emptyViewText(R.string.syllabusMissing)
+            emptyPandaView.setListEmpty()
         }
     }
 
@@ -110,7 +128,6 @@ class SyllabusFragment : ParentFragment() {
         toolbar.setupAsBackButton(this)
         ViewStyler.themeToolbar(activity, toolbar, canvasContext)
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -147,51 +164,45 @@ class SyllabusFragment : ParentFragment() {
         return canvasWebView.handleGoBack()
     }
 
-    internal fun populateViews() {
+    private fun populateViews() {
         if (activity == null || syllabus?.itemType != ScheduleItem.Type.TYPE_SYLLABUS) {
             return
         }
 
         toolbar.title = title()
-        canvasWebView.formatHTML(syllabus!!.description, syllabus!!.title)
+        canvasWebView.loadHtml(syllabus!!.description, syllabus!!.title)
     }
 
-    private val syllabusCallback = object : StatusCallback<Course>() {
-        override fun onResponse(response: Response<Course>, linkHeaders: LinkHeaders, type: ApiType) {
-            if (!apiCheck()) {
-                return
-            }
-            val course = response.body()
-            if (course != null && !course.syllabusBody.isNullOrEmpty()) {
-                emptyPandaView.visibility = View.GONE
-                syllabus = ScheduleItem()
-                syllabus!!.itemType = ScheduleItem.Type.TYPE_SYLLABUS
-                syllabus!!.title = course.name
-                syllabus!!.description = course.syllabusBody
-                populateViews()
-            } else {
-                //No syllabus
-                emptyPandaView.emptyViewText(R.string.syllabusMissing)
-                emptyPandaView.setListEmpty()
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        syllabusCallback.cancel()
-    }
-
-    override fun allowBookmarking(): Boolean {
-        return false
+    override fun onDestroyView() {
+        super.onDestroyView()
+        apiJob?.cancel()
     }
 
     companion object {
-        fun createBundle(course: Course, syllabus: ScheduleItem): Bundle {
-            val bundle = ParentFragment.createBundle(course)
-            bundle.putParcelable(Const.ADD_SYLLABUS, syllabus)
-            bundle.putParcelable(Const.SYLLABUS, syllabus)
-            return bundle
+
+        private const val SYLLABUS = "syllabus"
+
+        @JvmStatic
+        fun newInstance(route: Route) : SyllabusFragment? {
+            return if(validRoute(route)) SyllabusFragment().apply {
+                arguments = route.arguments
+
+                with(arguments) {
+                    if (containsKey(SYLLABUS)) syllabus = getParcelable(SYLLABUS)
+                }
+
+                this.canvasContext = route.canvasContext!!
+            } else null
+        }
+
+        @JvmStatic
+        private fun validRoute(route: Route): Boolean {
+            return route.canvasContext != null && route.arguments.containsKey(SYLLABUS)
+        }
+
+        @JvmStatic
+        fun makeRoute(canvasContext: CanvasContext, syllabus: ScheduleItem): Route {
+            return Route(null, SyllabusFragment::class.java, canvasContext, canvasContext.makeBundle(Bundle().apply { putParcelable(SYLLABUS, syllabus) }))
         }
     }
 }

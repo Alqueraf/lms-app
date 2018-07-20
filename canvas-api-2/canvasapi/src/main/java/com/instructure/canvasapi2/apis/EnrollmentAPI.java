@@ -66,6 +66,9 @@ public class EnrollmentAPI {
                 @Query("type[]") List<String> types,
                 @Query("state[]") List<String> states);
 
+        @GET("users/self/enrollments?include[]=observed_users&include[]=avatar_url")
+        Call<List<Enrollment>> getFirstPageObserveeEnrollments();
+
         @POST("courses/{courseId}/enrollments/{enrollmentId}/{action}")
         Call<Void> handleInvite(@Path("courseId") long courseId, @Path("enrollmentId") long enrollmentId, @Path("action") String action);
 
@@ -128,6 +131,17 @@ public class EnrollmentAPI {
             @NonNull StatusCallback<List<Enrollment>> callback) {
         if (StatusCallback.isFirstPage(callback.getLinkHeaders())) {
             callback.addCall(adapter.build(EnrollmentInterface.class, params).getFirstPageSelfEnrollments(types, states)).enqueue(callback);
+        } else if (callback.getLinkHeaders() != null && StatusCallback.moreCallsExist(callback.getLinkHeaders())) {
+            callback.addCall(adapter.build(EnrollmentInterface.class, params).getNextPage(callback.getLinkHeaders().nextUrl)).enqueue(callback);
+        }
+    }
+
+    public static void getObserveeEnrollments(
+            @NonNull RestBuilder adapter,
+            @NonNull RestParams params,
+            @NonNull StatusCallback<List<Enrollment>> callback) {
+        if (StatusCallback.isFirstPage(callback.getLinkHeaders())) {
+            callback.addCall(adapter.build(EnrollmentInterface.class, params).getFirstPageObserveeEnrollments()).enqueue(callback);
         } else if (callback.getLinkHeaders() != null && StatusCallback.moreCallsExist(callback.getLinkHeaders())) {
             callback.addCall(adapter.build(EnrollmentInterface.class, params).getNextPage(callback.getLinkHeaders().nextUrl)).enqueue(callback);
         }

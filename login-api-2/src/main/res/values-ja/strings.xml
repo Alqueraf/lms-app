@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">Canvas Network にサインインしようとしていますか?</string>
     <string name="remove">削除</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">マスカレード</string>
     <string name="userId">ユーザーID</string>
     <string name="domain">ドメイン</string>
 
-    <string name="masqueradingUserId">マスカレード ユーザーID</string>
-    <string name="masqueradingUserDomain">マスカレード ドメイン</string>
-    <string name="masqueradingBegin">マスカレードを開始</string>
-    <string name="masqueradingStop">マスカレードを停止</string>
-
+    <string name="actAsUser">ユーザーとして行動する</string>
+    <string name="stopActAsUser">ユーザーとして行動することを止める</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">このユーザーを削除しますか？</string>
     <string name="removedForever">そのコンテンツにアクセスするには、再度このユーザーにログインする必要があります。</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">いいえ</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">あなたの近く</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">あなたのすぐ後ろです</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">以前のログイン</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">私の学校を探す</string>
-    <string name="appTypeTeacher">講師</string>
-    <string name="appTypeStudent">受講者</string>
-    <string name="appTypeParent">ペアレント（上位）</string>
     <string name="canvasLowerCase">canvas</string>
     <string name="whatsYourSchoolName">学校の名前は？</string>
     <string name="next">次</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">スクロールしてすべての詳細を表示する</string>
 
     <string name="masqueradeErrorUserId">有効なIDを入力しなければなりません。</string>
-    <string name="masqueradeErrorDomain">ドメインを入力しなければなりません。</string>
+    <string name="masqueradeErrorDomain">有効なドメインを入力しなければなりません</string>
     <string name="masqueradeError">マスカレード試行中にエラーが発生しました。</string>
+    <string name="masqueradeInfo">\"「\"として行動する」には、このユーザーとしてパスワードなしでログインしていることが基本です。あたかもこのユーザーであるかのようにアクションを取ることができ、また、他のユーザーの観点からだと、あたかもこのユーザーがそれを実行したかのように見ることができます。ただし、監査ログには、このユーザーの代わりにアクションを実行したのは、あなた だったと記録されます。</string>
+    <string name="masqueradingAs">あなたは%sとして行動しています</string>
+    <string name="stopActingAsTitle">以下として行動することを止める</string>
+    <string name="stopActingAsMessage">%s行動することを止め、自分のアカウントに戻る</string>
+
+    <string name="weMadeChanges">2、3の変更がありました。</string>
+    <string name="whatsNewText">最新情報を見る</string>
 </resources>

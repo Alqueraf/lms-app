@@ -105,7 +105,7 @@
     <string name="PersonalCalendar">Calendario personal</string>
     <string name="noLocation">Sin ubicación especificada</string>
 
-    <string name="discussion">Debates</string>
+    <string name="discussion">Foros</string>
     <string name="closed_discussion">No admite comentarios</string>
     <string name="discussionUploadDialog">Carga de discusión</string>
     <string name="totalScore">Total:</string>
@@ -145,12 +145,29 @@
     <string name="toDoNoDueDate">No hay fecha límite</string>
 
     <string name="dueAt">Fecha límite el</string>
+    <string name="dueAtTime">Vence a las %s</string>
     <string name="toDoDue">Vence</string>
+    <string name="due">Vence el %1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="one">%d necesita calificación</item>
         <item quantity="other">%d necesitan calificación</item>
     </plurals>
     <string name="myFiles">Archivos</string>
+    <string name="createAFolder">Crear una carpeta</string>
+    <string name="createFolder">Crear carpeta</string>
+    <string name="createAFile">Crear un archivo</string>
+    <string name="createFileFolderFabContentDesc">Mostrar botones Crear archivo y Crear carpeta</string>
+    <string name="folderCreationError">Se produjo un error durante la creación de la carpeta.</string>
+    <string name="rename">Renombrar</string>
+    <string name="renameFile">Renombrar archivo</string>
+    <string name="renameFolder">Renombrar carpeta</string>
+    <string name="blankName">El nombre no puede quedar en blanco</string>
+    <string name="confirmDeleteFile">¿Está seguro de que desea eliminar el archivo \'%s\'? Esta acción no se puede deshacer.</string>
+    <string name="confirmDeleteEmptyFolder">¿Está seguro de que desea eliminar la carpeta \'%s\'? Esta acción no se puede deshacer.</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="one">¿Está seguro de que desea eliminar la carpeta \'%1$s\', incluido el elemento %2$d que contiene? Esta acción no se puede deshacer.</item>
+        <item quantity="other">¿Está seguro de que desea eliminar la carpeta \'%1$s\', incluidos los elementos %2$d que contiene? Esta acción no se puede deshacer.</item>
+    </plurals>
     <string name="settings">Configuraciones</string>
     <string name="name">Nombre</string>
     <string name="email">Correo electrónico</string>
@@ -354,6 +371,8 @@
 	<string name="errorPostingAnnouncement">Se produjo un error al publicar el anuncio.</string>
 	<string name="errorPostingDiscussion">Se produjo un error al publicar la discusión.</string>
 	<string name="allowThreading">Permitir las respuestas hiladas</string>
+    <string name="usersMustPost">Los usuarios deben publicar antes de ver las respuestas</string>
+    <string name="allowUserComments">Permitir que los usuarios comenten</string>
 	<string name="message">Mensaje</string>
 	<string name="title">Título</string>
 
@@ -361,7 +380,7 @@
 	<string name="messageBlank">El mensaje no puede estar vacío</string>
 
 	<string name="notAuthorizedAnnouncement">Lo sentimos. Usted no está autorizado a publicar anuncios en este curso.</string>
-	<string name="notAuthorizedDiscussion">Lo sentimos. Usted no está autorizado a publicar debates en este curso.</string>
+	<string name="notAuthorizedDiscussion">Lo sentimos. Usted no está autorizado a publicar foros en este curso.</string>
 
 	<string name="announcements">Anuncios</string>
 
@@ -384,7 +403,7 @@
     <string name="lockedPageDesc">Esta página es parte del módulo %s y no ha sido desbloqueada todavía.</string>
     <string name="lockedFileDesc">Este archivo es parte del módulo %s y no ha sido desbloqueado todavía.</string>
     <string name="lockedQuizDesc">Esta evaluación es parte del módulo %s y no ha sido desbloqueada todavía.</string>
-    <string name="lockedDiscussionDesc">Este debate es parte del módulo %s y no ha sido desbloqueado todavía.</string>
+    <string name="lockedDiscussionDesc">Este foro es parte del módulo %s y no ha sido desbloqueado todavía.</string>
 	<string name="lockedAssignmentDescLine2">Visite la página de módulos del cursos para obtener información sobre cómo desbloquear este contenido.</string>
     <string name="mustComplete">Primero debe completar:</string>
     <string name="unlockedAt">Será desbloqueado a las:</string>
@@ -443,6 +462,7 @@
     <string name="subTypeOnlineQuiz">Evaluación en línea</string>
 	<string name="subTypeMediaRecording">Grabación de medios</string>
     <string name="sub_type_lti_launch">Iniciar LTI</string>
+    <string name="subTypeDiscussionTopic">Foro</string>
     <string name="turnInByHand">Debe entregar esta tarea personalmente</string>
 	<string name="noSubRequired">No se requieren presentaciones</string>
 	<string name="noTurnInOnMobile">Presentaciones móviles no compatibles</string>
@@ -572,6 +592,7 @@
     <string name="uploadMyFiles">Mis archivos</string>
     <string name="uploadCourseFiles">Archivos del curso</string>
 
+    <string name="uploadToSubmissionComment">Cargar a Comentario de presentación</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">Historial de cambios</string>
 
@@ -610,14 +631,6 @@
 
     <string name="notoriousSubmissionInProgress">Enviando archivos&#8230; Revise la barra de notificación para actualizaciones.</string>
     <string name="notoriousSubmissionSuccessful">Se ha terminado de enviar el archivo</string>
-
-    <string name="pinned_icon">Icono para una discusión marcda</string>
-    <string name="pin_discussion">Marcar discusión</string>
-    <string name="unpin_discussion">Desmarcar discusión</string>
-    <string name="discussion_pinned">Discusión marcada</string>
-    <string name="pinned_discussions">Foros anclados</string>
-    <string name="discussion_unpinned">Discusiones desmarcadas</string>
-    <string name="empty_discussions">No hay foros que mostrar en esta sección.</string>
 
     <string name="bio">Biografía</string>
     <string name="draft">Borrador</string>
@@ -661,7 +674,7 @@
     <string name="notification_channel_description_primary">Se puede realizar una posterior configuración de las notificaciones dentro de la sección de Preferencias de notificaciones de Canvas.</string>
 
     <string name="notification_cat_course_activities">Actividades del curso</string>
-    <string name="notification_cat_discussions">Debates</string>
+    <string name="notification_cat_discussions">Foros</string>
     <string name="notification_cat_conversations">Conversaciones</string>
     <string name="notification_cat_scheduling">Planificación</string>
     <string name="notification_cat_groups">Grupos</string>
@@ -717,8 +730,8 @@
     <string name="notification_desc_all_submissions">Solo para instructores y administradores. Reciba notificaciones cuando se presente o se vuelva a presentar una tarea.</string>
     <string name="notification_desc_late_grading">Solo para instructores y administradores. Reciba notificaciones cuando se presente una tarea atrasada.</string>
     <string name="notification_desc_submission_comment">Reciba notificaciones cuando se realice un comentario en su presentación.</string>
-    <string name="notification_desc_discussion">Reciba notificaciones cuando haya un nuevo tema de debate en su curso.</string>
-    <string name="notification_desc_discussion_post">Reciba notificaciones cuando haya una nueva publicación en un debate en el que tenga una suscripción.</string>
+    <string name="notification_desc_discussion">Reciba notificaciones cuando haya un nuevo tema de foro en su curso.</string>
+    <string name="notification_desc_discussion_post">Reciba notificaciones cuando haya una nueva publicación en un foro en el que tenga una suscripción.</string>
     <string name="notification_desc_add_to_conversation">Reciba notificaciones cuando sea agregado a una conversación.</string>
     <string name="notification_desc_conversation_message">Reciba notificaciones cuando tenga un nuevo mensaje en el buzón de entrada.</string>
     <string name="notification_desc_conversations_created_by_you">Reciba notificaciones al crear una nueva conversación.</string>
@@ -844,6 +857,7 @@
     <string name="locked_mastery_paths">Bloqueado hasta que \"%s\" sea calificado</string>
     <string name="locked_icon">Icono bloqueado</string>
     <string name="choose_assignment_group">Elegir grupo de tarea</string>
+    <string name="chooseAssignmentPath">Elegir ruta de tarea</string>
     <string name="select">Seleccionar</string>
     <string name="choice_position">Elección %d</string>
     <string name="updating_module_info">Actualizando información del módulo&#8230;</string>
@@ -873,13 +887,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">Iniciar el enlace en un navegador externo</string>
-    <string name="gaugeLaunchFailure">No se pudo cargar el medidor en este momento.</string>
-
+    <string name="ltiLaunchFailure">No se pudo cargar la herramienta de LTI.</string>
     <string name="urlSubmission">Presentación de la URL</string>
     <string name="assignmentDeletedError">Esta tarea ya no está disponible.</string>
     <string name="homePageIdForNotifications">Actividad reciente</string>
     <string name="homePageIdForModules">Módulos</string>
     <string name="homePageIdForAssignments">Tareas</string>
+
     <string name="homePageIdForSyllabus">Plan de estudio</string>
 
     <string name="contentDescriptionWidgetRefresh">Actualizar widget</string>
@@ -893,9 +907,44 @@
     <string name="finalGrade">Calificación final</string>
 
     <string name="moreThan99">99 o +</string>
-    <string name="dot_with_spaces">  \u2022  </string>
+    <string name="max_count">99 o +</string>
 
     <string name="opensInWebView">Se abre en WebView</string>
     <string name="unsupportedTabLabel">No compatible con este dispositivo</string>
+
+    <string name="downloadingFile">Descargando</string>
+    <string name="downloadFailed">No se pudo completar la descarga</string>
+    <string name="downloadSuccessful">Se completó la descarga</string>
+
+    <string name="full_due_date_details">Detalles completos de la fecha límite</string>
+    <string name="submissions">Presentaciones</string>
+    <string name="attachment">Archivo adjunto</string>
+    <string name="contentDescription_back">Volver</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="one">%s pto.</item>
+        <item quantity="other">%s ptos.</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="one">%s punto</item>
+        <item quantity="other">%s puntos</item>
+    </plurals>
+    <string name="capitalTo">A</string>
+
+
+    <string name="unableToViewInBrowser">NoNo podemos encontrar una aplicación externa para ver esta herramienta LTI.</string>
+    <string name="commentUpload">Carga de comentario</string>
+    <string name="unableToUploadMediaComment">Para enviar un comentario de medios, envíe o elimine su comentario de texto no enviado.</string>
+
+    <string name="frontPage">Página de inicio</string>
+    <string name="editPage">Editar página</string>
+    <string name="description">Descripción</string>
+    <string name="pageSuccessfullyUpdated">Página actualizada correctamente.</string>
+    <string name="errorSavingPage">Se produjo un error al intentar guardar esta página. Inténtelo de nuevo.</string>
+    <string name="pageTitleMustBeSet">Se debe establecer el título de la página.</string>
+    <string name="pageDetails">Detalles de la página</string>
+    <string name="saving">Guardando</string>
+    <string name="confirmDeleteEvent">¿Está seguro de que desea eliminar este evento?</string>
+    <string name="conferencesNotSupported">Los teléfonos móviles aún no admiten conferencias.</string>
 
 </resources>

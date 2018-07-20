@@ -123,7 +123,6 @@ class FileUploadService @JvmOverloads constructor(name: String = FileUploadServi
                         attachments += FileUploadManager.uploadFileSynchronous(uploadContext, config)!!
                     }
                 }
-                broadcastUploadCompleted(fso)
             }
             // Submit fileIds to the assignment
             val attachmentsIds = attachments.map { it.id }
@@ -159,14 +158,6 @@ class FileUploadService @JvmOverloads constructor(name: String = FileUploadServi
     // endregion Upload
 
     // region Notifications
-    private fun broadcastUploadCompleted(fso: FileSubmitObject) {
-        val bundle = Bundle()
-        bundle.putParcelable(Const.FILENAME, fso)
-        val status = Intent(UPLOAD_COMPLETED)
-        status.putExtras(bundle)
-        FileUploadEvent(FileUploadNotification(status, ArrayList<Attachment>(1).apply { add(fso.toAttachment()) })).postSticky()
-    }
-
     private fun broadcastAllUploadsCompleted(attachments: List<Attachment>) {
         val status = Intent(ALL_UPLOADS_COMPLETED)
         status.putParcelableArrayListExtra(Const.ATTACHMENTS, ArrayList(attachments))

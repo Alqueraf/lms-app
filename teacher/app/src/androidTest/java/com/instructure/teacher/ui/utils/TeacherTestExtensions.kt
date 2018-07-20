@@ -17,6 +17,8 @@
 
 package com.instructure.teacher.ui.utils
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Environment
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso
@@ -24,31 +26,36 @@ import com.google.protobuf.ByteString
 import com.instructure.canvasapi2.models.User
 import com.instructure.dataseeding.InProcessServer
 import com.instructure.dataseeding.model.EnrollmentTypes
+import com.instructure.dataseeding.util.CanvasRestAdapter
 import com.instructure.dataseeding.util.DataSeedingException
 import com.instructure.dataseeding.util.Randomizer
+import com.instructure.interactions.router.Route
 import com.instructure.soseedy.*
 import com.instructure.soseedy.FileUploadType.ASSIGNMENT_SUBMISSION
 import com.instructure.soseedy.FileUploadType.COMMENT_ATTACHMENT
+import com.instructure.teacher.router.RouteMatcher
 import java.io.*
 
 
 fun TeacherTest.enterDomain(enrollmentType: String = EnrollmentTypes.TEACHER_ENROLLMENT): CanvasUser {
-    val user = InProcessServer.userClient.createCanvasUser(CreateCanvasUserRequest.getDefaultInstance())
-    val course = InProcessServer.courseClient.createCourse(CreateCourseRequest.getDefaultInstance())
-    val enrollment = InProcessServer.enrollmentClient.enrollUserInCourse(EnrollUserRequest.newBuilder()
+    val user = mockableSeed { InProcessServer.userClient.createCanvasUser(CreateCanvasUserRequest.getDefaultInstance()) }
+    val course = mockableSeed { InProcessServer.courseClient.createCourse(CreateCourseRequest.getDefaultInstance()) }
+    mockableSeed {
+        InProcessServer.enrollmentClient.enrollUserInCourse(EnrollUserRequest.newBuilder()
             .setCourseId(course.id)
             .setUserId(user.id)
             .setEnrollmentType(enrollmentType)
             .build())
+    }
     loginFindSchoolPage.enterDomain(user.domain)
     return user
 }
 
 fun TeacherTest.enterStudentDomain(): CanvasUser {
-    val user = InProcessServer.userClient.createCanvasUser(CreateCanvasUserRequest.getDefaultInstance())
-    val course = InProcessServer.courseClient.createCourse(CreateCourseRequest.getDefaultInstance())
+    val user = mockableSeed { InProcessServer.userClient.createCanvasUser(CreateCanvasUserRequest.getDefaultInstance()) }
+    val course = mockableSeed { InProcessServer.courseClient.createCourse(CreateCourseRequest.getDefaultInstance()) }
     // TODO: Enroll user as student
-    val enrollment = InProcessServer.enrollmentClient.enrollUserInCourse(EnrollUserRequest.newBuilder().setCourseId(course.id).setUserId(user.id).build())
+    val enrollment = mockableSeed { InProcessServer.enrollmentClient.enrollUserInCourse(EnrollUserRequest.newBuilder().setCourseId(course.id).setUserId(user.id).build()) }
 
     loginFindSchoolPage.enterDomain(user.domain)
     return user
@@ -64,27 +71,37 @@ fun TeacherTest.slowLogIn(enrollmentType: String = EnrollmentTypes.TEACHER_ENROL
 
 fun TeacherTest.slowLogInAsStudent(): CanvasUser = slowLogIn(EnrollmentTypes.STUDENT_ENROLLMENT)
 
-fun TeacherTest.logIn(skipSplash: Boolean = true, enrollmentType: String = EnrollmentTypes.TEACHER_ENROLLMENT): CanvasUser {
-    val teacher = InProcessServer.userClient.createCanvasUser(CreateCanvasUserRequest.getDefaultInstance())
-    val course = InProcessServer.courseClient.createCourse(CreateCourseRequest.getDefaultInstance())
-    val enrollment = InProcessServer.enrollmentClient.enrollUserInCourse(
+fun TeacherTest.logIn(
+    skipSplash: Boolean = true,
+    enrollmentType: String = EnrollmentTypes.TEACHER_ENROLLMENT
+): CanvasUser {
+    val teacher = mockableSeed {
+        InProcessServer.userClient.createCanvasUser(CreateCanvasUserRequest.getDefaultInstance())
+    }
+    val course = mockableSeed {
+        InProcessServer.courseClient.createCourse(CreateCourseRequest.getDefaultInstance())
+    }
+    mockableSeed {
+        InProcessServer.enrollmentClient.enrollUserInCourse(
             EnrollUserRequest.newBuilder()
-                    .setCourseId(course.id)
-                    .setUserId(teacher.id)
-                    .setEnrollmentType(enrollmentType)
-                    .build())
+                .setCourseId(course.id)
+                .setUserId(teacher.id)
+                .setEnrollmentType(enrollmentType)
+                .build()
+        )
+    }
 
     activityRule.runOnUiThread {
         activityRule.activity.loginWithToken(
-                teacher.token,
-                teacher.domain,
-                User().apply {
-                    id = teacher.id
-                    name = teacher.name
-                    shortName = teacher.shortName
-                    avatarUrl = teacher.avatarUrl
-                },
-                skipSplash
+            teacher.token,
+            teacher.domain,
+            User().apply {
+                id = teacher.id
+                name = teacher.name
+                shortName = teacher.shortName
+                avatarUrl = teacher.avatarUrl
+            },
+            skipSplash
         )
     }
 
@@ -110,7 +127,7 @@ fun TeacherTest.seedData(
             .setGradingPeriods(gradingPeriods)
             .build()
 
-    return InProcessServer.generalClient.seedData(request)
+    return mockableSeed { InProcessServer.generalClient.seedData(request) }
 }
 
 fun TeacherTest.seedAssignments(
@@ -134,7 +151,7 @@ fun TeacherTest.seedAssignments(
             .setTeacherToken(teacherToken)
             .build()
 
-    return InProcessServer.assignmentClient.seedAssignments(request)
+    return mockableSeed { InProcessServer.assignmentClient.seedAssignments(request) }
 }
 
 // Must publish quiz after creating a question for that question to appear.
@@ -149,7 +166,7 @@ fun TeacherTest.seedQuizQuestion(
             .setTeacherToken(teacherToken)
             .build()
 
-    InProcessServer.quizClient.createQuizQuestion(createQuizQuestionRequest)
+    mockableSeed { InProcessServer.quizClient.createQuizQuestion(createQuizQuestionRequest) }
 }
 
 fun TeacherTest.publishQuiz(courseId: Long,
@@ -162,7 +179,7 @@ fun TeacherTest.publishQuiz(courseId: Long,
             .setPublished(true)
             .build()
 
-    InProcessServer.quizClient.publishQuiz(publishQuizRequest)
+    mockableSeed { InProcessServer.quizClient.publishQuiz(publishQuizRequest) }
 }
 
 fun TeacherTest.seedQuizzes(
@@ -186,7 +203,7 @@ fun TeacherTest.seedQuizzes(
             .setToken(teacherToken)
             .build()
 
-    return InProcessServer.quizClient.seedQuizzes(quizzesRequest)
+    return mockableSeed { InProcessServer.quizClient.seedQuizzes(quizzesRequest) }
 }
 
 // "you are not allowed to participate in this quiz" = make sure the quiz isn't locked
@@ -203,7 +220,7 @@ fun TeacherTest.seedQuizSubmission(
             .setComplete(complete)
             .build()
 
-    return InProcessServer.quizClient.seedQuizSubmission(request)
+    return mockableSeed { InProcessServer.quizClient.seedQuizSubmission(request) }
 }
 
 fun TeacherTest.seedAssignmentSubmission(
@@ -254,10 +271,10 @@ fun TeacherTest.seedAssignmentSubmission(
             .addAllCommentSeeds(seedsWithComments)
             .build()
 
-    return InProcessServer.assignmentClient.seedAssignmentSubmission(submissionRequest)
+    return mockableSeed { InProcessServer.assignmentClient.seedAssignmentSubmission(submissionRequest) }
 }
 
-fun uploadTextFile(courseId: Long, assignmentId: Long, token: String, fileUploadType: FileUploadType): Attachment {
+fun TeacherTest.uploadTextFile(courseId: Long, assignmentId: Long, token: String, fileUploadType: FileUploadType): Attachment {
 
     // Create the file
     val file = File(
@@ -281,7 +298,7 @@ fun uploadTextFile(courseId: Long, assignmentId: Long, token: String, fileUpload
             .setUploadType(fileUploadType)
             .build()
 
-    return InProcessServer.fileClient.uploadFile(uploadRequest)
+    return mockableSeed { InProcessServer.fileClient.uploadFile(uploadRequest) }
 }
 
 fun TeacherTest.seedConversation(sender: CanvasUser, recipients: List<CanvasUser>): Conversation {
@@ -290,14 +307,14 @@ fun TeacherTest.seedConversation(sender: CanvasUser, recipients: List<CanvasUser
             .addAllRecipients(recipients.map { r -> r.id.toString() })
             .build()
 
-    return InProcessServer.conversationClient.createConversation(request)
+    return mockableSeed { InProcessServer.conversationClient.createConversation(request) }
 }
 
 fun TeacherTest.seedSection(course: Course): Section {
     val request = CreateSectionRequest.newBuilder()
     request.courseId = course.id
 
-    return InProcessServer.sectionClient.createSection(request.build())
+    return mockableSeed { InProcessServer.sectionClient.createSection(request.build()) }
 }
 
 fun TeacherTest.seedSectionStudentEnrollment(section: Section, user: CanvasUser): Enrollment
@@ -315,14 +332,14 @@ fun TeacherTest.seedSectionObserverEnrollment(section: Section, user: CanvasUser
 fun TeacherTest.seedSectionDesignerEnrollment(section: Section, user: CanvasUser): Enrollment
         = seedSectionEnrollment(section, user, EnrollmentTypes.DESIGNER_ENROLLMENT)
 
-private fun seedSectionEnrollment(section: Section, user: CanvasUser, enrollmentType: String): Enrollment {
+private fun TeacherTest.seedSectionEnrollment(section: Section, user: CanvasUser, enrollmentType: String): Enrollment {
     val request = EnrollUserInSectionRequest.newBuilder()
             .setSectionId(section.id)
             .setUserId(user.id)
             .setEnrollmentType(enrollmentType)
             .build()
 
-    return InProcessServer.enrollmentClient.enrollUserInSection(request)
+    return mockableSeed { InProcessServer.enrollmentClient.enrollUserInSection(request) }
 }
 
 fun TeacherTest.seedCoursePage(course: Course, published: Boolean = true, frontPage: Boolean = false, teacher: CanvasUser): Page {
@@ -336,7 +353,7 @@ fun TeacherTest.seedCoursePage(course: Course, published: Boolean = true, frontP
             .setToken(teacher.token)
             .build()
 
-    return InProcessServer.pageClient.createCoursePage(request)
+    return mockableSeed { InProcessServer.pageClient.createCoursePage(request) }
 }
 
 fun TeacherTest.seedCourseGroupCategory(course: Course): GroupCategory {
@@ -344,7 +361,7 @@ fun TeacherTest.seedCourseGroupCategory(course: Course): GroupCategory {
             .setCourseId(course.id)
             .build()
 
-    return InProcessServer.groupClient.createCourseGroupCategory(request)
+    return mockableSeed { InProcessServer.groupClient.createCourseGroupCategory(request) }
 }
 
 fun TeacherTest.seedGroup(groupCategory: GroupCategory): Group {
@@ -352,7 +369,7 @@ fun TeacherTest.seedGroup(groupCategory: GroupCategory): Group {
             .setGroupCategoryId(groupCategory.id)
             .build()
 
-    return InProcessServer.groupClient.createGroup(request)
+    return mockableSeed { InProcessServer.groupClient.createGroup(request) }
 }
 
 fun TeacherTest.seedGroupMembership(group: Group, user: CanvasUser): GroupMembership {
@@ -361,7 +378,7 @@ fun TeacherTest.seedGroupMembership(group: Group, user: CanvasUser): GroupMember
             .setUserId(user.id)
             .build()
 
-    return InProcessServer.groupClient.createGroupMembership(request)
+    return mockableSeed { InProcessServer.groupClient.createGroupMembership(request) }
 }
 
 val SeededData.favoriteCourses: List<Course>
@@ -374,7 +391,7 @@ val SeededData.favoriteCourses: List<Course>
 
 val SeededData.announcements: List<Discussion>
     get() =
-        this.discussionsList.filter {
+        this.announcementsList.filter {
             it.isAnnouncement
         }
 
@@ -393,6 +410,7 @@ fun TeacherTest.tokenLogin(teacher: CanvasUser, skipSplash: Boolean = true) {
                 skipSplash
         )
     }
+    coursesListPage.assertPageObjects()
 }
 
 fun TeacherTest.openOverflowMenu() {
@@ -416,4 +434,14 @@ fun File.toByteArray(): ByteArray {
     dataInputStream.readFully(bytes)
 
     return bytes
+}
+
+fun TeacherTest.routeTo(route: String) {
+    val url = "canvas-teacher://${CanvasRestAdapter.canvasDomain}/$route"
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    InstrumentationRegistry.getInstrumentation().targetContext.startActivity(intent)
+}
+
+fun TeacherTest.routeTo(route: Route) {
+    RouteMatcher.route(InstrumentationRegistry.getInstrumentation().targetContext, route)
 }

@@ -24,7 +24,7 @@ import retrofit2.Call
 import retrofit2.Response
 import kotlin.coroutines.experimental.CoroutineContext
 
-/** Because 'Coroutine' is just too long */
+/** Because 'Coroutine' is just too long® */
 typealias WeaveJob = WeaveCoroutine
 
 /** Type alias for the call to begin an API request */

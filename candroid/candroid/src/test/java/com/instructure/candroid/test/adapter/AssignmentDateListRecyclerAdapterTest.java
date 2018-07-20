@@ -45,7 +45,7 @@ public class AssignmentDateListRecyclerAdapterTest extends InstrumentationTestCa
      */
     public static class AssignmentDateListRecyclerAdapterWrapper extends AssignmentDateListRecyclerAdapter {
         protected AssignmentDateListRecyclerAdapterWrapper(Context context) {
-            super(context);
+            super(context, null, null);
         }
     }
 

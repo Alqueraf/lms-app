@@ -23,12 +23,10 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatDialogFragment
 import android.support.v7.view.ContextThemeWrapper
 import android.view.View
-import android.widget.ImageView
 import com.instructure.canvasapi2.models.Course
-import com.instructure.pandautils.utils.ColorUtils
-import com.instructure.pandautils.utils.Const
+import com.instructure.pandautils.utils.*
+import com.instructure.pandautils.views.ColorPickerIcon
 import com.instructure.teacher.R
-import com.instructure.pandautils.utils.dismissExisting
 import kotlin.properties.Delegates
 
 class ColorPickerDialog: AppCompatDialogFragment() {
@@ -37,7 +35,8 @@ class ColorPickerDialog: AppCompatDialogFragment() {
         retainInstance = true
     }
 
-    private var mCallback: (Int) -> Unit by Delegates.notNull()
+    private var callback: (Int) -> Unit by Delegates.notNull()
+    private var course by ParcelableArg<Course>(key = Const.COURSE)
 
     companion object {
         @JvmStatic
@@ -47,7 +46,7 @@ class ColorPickerDialog: AppCompatDialogFragment() {
             val args = Bundle()
             args.putParcelable(Const.COURSE, course)
             dialog.arguments = args
-            dialog.mCallback = callback
+            dialog.callback = callback
             return dialog
         }
     }
@@ -64,23 +63,23 @@ class ColorPickerDialog: AppCompatDialogFragment() {
 
     fun setupViews(view: View) {
 
-        val comp_colorCottonCandy = view.findViewById<ImageView>(R.id.colorCottonCandy)
-        val comp_colorBarbie = view.findViewById<ImageView>(R.id.colorBarbie)
-        val comp_colorBarneyPurple = view.findViewById<ImageView>(R.id.colorBarneyPurple)
-        val comp_colorEggplant = view.findViewById<ImageView>(R.id.colorEggplant)
-        val comp_colorUltramarine = view.findViewById<ImageView>(R.id.colorUltramarine)
+        val comp_colorCottonCandy = view.findViewById<ColorPickerIcon>(R.id.colorCottonCandy).circle
+        val comp_colorBarbie = view.findViewById<ColorPickerIcon>(R.id.colorBarbie).circle
+        val comp_colorBarneyPurple = view.findViewById<ColorPickerIcon>(R.id.colorBarneyPurple).circle
+        val comp_colorEggplant = view.findViewById<ColorPickerIcon>(R.id.colorEggplant).circle
+        val comp_colorUltramarine = view.findViewById<ColorPickerIcon>(R.id.colorUltramarine).circle
 
-        val comp_colorOcean11 = view.findViewById<ImageView>(R.id.colorOcean11)
-        val comp_colorCyan = view.findViewById<ImageView>(R.id.colorCyan)
-        val comp_colorAquaMarine = view.findViewById<ImageView>(R.id.colorAquaMarine)
-        val comp_colorEmeraldGreen = view.findViewById<ImageView>(R.id.colorEmeraldGreen)
-        val comp_colorFreshCutLawn = view.findViewById<ImageView>(R.id.colorFreshCutLawn)
+        val comp_colorOcean11 = view.findViewById<ColorPickerIcon>(R.id.colorOcean11).circle
+        val comp_colorCyan = view.findViewById<ColorPickerIcon>(R.id.colorCyan).circle
+        val comp_colorAquaMarine = view.findViewById<ColorPickerIcon>(R.id.colorAquaMarine).circle
+        val comp_colorEmeraldGreen = view.findViewById<ColorPickerIcon>(R.id.colorEmeraldGreen).circle
+        val comp_colorFreshCutLawn = view.findViewById<ColorPickerIcon>(R.id.colorFreshCutLawn).circle
 
-        val comp_colorChartreuse = view.findViewById<ImageView>(R.id.colorChartreuse)
-        val comp_colorSunFlower = view.findViewById<ImageView>(R.id.colorSunFlower)
-        val comp_colorTangerine = view.findViewById<ImageView>(R.id.colorTangerine)
-        val comp_colorBloodOrange = view.findViewById<ImageView>(R.id.colorBloodOrange)
-        val comp_colorSriracha = view.findViewById<ImageView>(R.id.colorSriracha)
+        val comp_colorChartreuse = view.findViewById<ColorPickerIcon>(R.id.colorChartreuse).circle
+        val comp_colorSunFlower = view.findViewById<ColorPickerIcon>(R.id.colorSunFlower).circle
+        val comp_colorTangerine = view.findViewById<ColorPickerIcon>(R.id.colorTangerine).circle
+        val comp_colorBloodOrange = view.findViewById<ColorPickerIcon>(R.id.colorBloodOrange).circle
+        val comp_colorSriracha = view.findViewById<ColorPickerIcon>(R.id.colorSriracha).circle
 
         ColorUtils.colorIt(ContextCompat.getColor(context, R.color.colorCottonCandy), comp_colorCottonCandy)
         ColorUtils.colorIt(ContextCompat.getColor(context, R.color.colorBarbie), comp_colorBarbie)
@@ -100,65 +99,87 @@ class ColorPickerDialog: AppCompatDialogFragment() {
         ColorUtils.colorIt(ContextCompat.getColor(context, R.color.colorBloodOrange), comp_colorBloodOrange)
         ColorUtils.colorIt(ContextCompat.getColor(context, R.color.colorSriracha), comp_colorSriracha)
 
+        findSelectedColor(view)
+
         comp_colorCottonCandy.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorCottonCandy))
+            callback(ContextCompat.getColor(context, R.color.colorCottonCandy))
             dismiss()
         }
         comp_colorBarbie.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorBarbie))
+            callback(ContextCompat.getColor(context, R.color.colorBarbie))
             dismiss()
         }
         comp_colorBarneyPurple.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorBarneyPurple))
+            callback(ContextCompat.getColor(context, R.color.colorBarneyPurple))
             dismiss()
         }
         comp_colorEggplant.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorEggplant))
+            callback(ContextCompat.getColor(context, R.color.colorEggplant))
             dismiss()
         }
         comp_colorUltramarine.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorUltramarine))
+            callback(ContextCompat.getColor(context, R.color.colorUltramarine))
             dismiss()
         }
         comp_colorOcean11.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorOcean11))
+            callback(ContextCompat.getColor(context, R.color.colorOcean11))
             dismiss()
         }
         comp_colorCyan.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorCyan))
+            callback(ContextCompat.getColor(context, R.color.colorCyan))
             dismiss()
         }
         comp_colorAquaMarine.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorAquaMarine))
+            callback(ContextCompat.getColor(context, R.color.colorAquaMarine))
             dismiss()
         }
         comp_colorEmeraldGreen.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorEmeraldGreen))
+            callback(ContextCompat.getColor(context, R.color.colorEmeraldGreen))
             dismiss()
         }
         comp_colorFreshCutLawn.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorFreshCutLawn))
+            callback(ContextCompat.getColor(context, R.color.colorFreshCutLawn))
             dismiss()
         }
         comp_colorChartreuse.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorChartreuse))
+            callback(ContextCompat.getColor(context, R.color.colorChartreuse))
             dismiss()
         }
         comp_colorSunFlower.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorSunFlower))
+            callback(ContextCompat.getColor(context, R.color.colorSunFlower))
             dismiss()
         }
         comp_colorTangerine.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorTangerine))
+            callback(ContextCompat.getColor(context, R.color.colorTangerine))
             dismiss()
         }
         comp_colorBloodOrange.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorBloodOrange))
+            callback(ContextCompat.getColor(context, R.color.colorBloodOrange))
             dismiss()
         }
         comp_colorSriracha.setOnClickListener {
-            mCallback(ContextCompat.getColor(context, R.color.colorSriracha))
+            callback(ContextCompat.getColor(context, R.color.colorSriracha))
             dismiss()
+        }
+    }
+
+    fun findSelectedColor(view: View) {
+        when (ColorKeeper.getOrGenerateColor(course)) {
+            ContextCompat.getColor(context, R.color.colorCottonCandy) -> view.findViewById<ColorPickerIcon>(R.id.colorCottonCandy).setSelected()
+            ContextCompat.getColor(context, R.color.colorBarbie) -> view.findViewById<ColorPickerIcon>(R.id.colorBarbie).setSelected()
+            ContextCompat.getColor(context, R.color.colorBarneyPurple) -> view.findViewById<ColorPickerIcon>(R.id.colorBarneyPurple).setSelected()
+            ContextCompat.getColor(context, R.color.colorEggplant) -> view.findViewById<ColorPickerIcon>(R.id.colorEggplant).setSelected()
+            ContextCompat.getColor(context, R.color.colorUltramarine) -> view.findViewById<ColorPickerIcon>(R.id.colorUltramarine).setSelected()
+            ContextCompat.getColor(context, R.color.colorOcean11) -> view.findViewById<ColorPickerIcon>(R.id.colorOcean11).setSelected()
+            ContextCompat.getColor(context, R.color.colorCyan) -> view.findViewById<ColorPickerIcon>(R.id.colorCyan).setSelected()
+            ContextCompat.getColor(context, R.color.colorAquaMarine) -> view.findViewById<ColorPickerIcon>(R.id.colorAquaMarine).setSelected()
+            ContextCompat.getColor(context, R.color.colorEmeraldGreen) -> view.findViewById<ColorPickerIcon>(R.id.colorEmeraldGreen).setSelected()
+            ContextCompat.getColor(context, R.color.colorFreshCutLawn) -> view.findViewById<ColorPickerIcon>(R.id.colorFreshCutLawn).setSelected()
+            ContextCompat.getColor(context, R.color.colorChartreuse) -> view.findViewById<ColorPickerIcon>(R.id.colorChartreuse).setSelected()
+            ContextCompat.getColor(context, R.color.colorSunFlower) -> view.findViewById<ColorPickerIcon>(R.id.colorSunFlower).setSelected()
+            ContextCompat.getColor(context, R.color.colorTangerine) -> view.findViewById<ColorPickerIcon>(R.id.colorTangerine).setSelected()
+            ContextCompat.getColor(context, R.color.colorBloodOrange) -> view.findViewById<ColorPickerIcon>(R.id.colorBloodOrange).setSelected()
+            ContextCompat.getColor(context, R.color.colorSriracha) -> view.findViewById<ColorPickerIcon>(R.id.colorSriracha).setSelected()
         }
     }
 

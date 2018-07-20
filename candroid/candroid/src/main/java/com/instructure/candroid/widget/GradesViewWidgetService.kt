@@ -105,7 +105,7 @@ class GradesViewWidgetService : BaseRemoteViewsService(), Serializable {
 
             row.setInt(R.id.courseIndicator, "setColorFilter", ColorKeeper.getOrGenerateColor(streamItem))
         }
-
+        
         override fun clearViewData(row: RemoteViews) {
             row.setTextViewText(R.id.courseGrade, "")
             row.setTextViewText(R.id.courseTerm, "")

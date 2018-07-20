@@ -23,6 +23,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class LaunchDefinition implements Parcelable {
 
+    public static final String _GAUGE_DOMAIN = "gauge.instructure.com";
+    public static final String _ARC_DOMAIN = "arc.instructure.com";
+
     @SerializedName("definition_type")
     public String definitionType;
 

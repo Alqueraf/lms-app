@@ -17,6 +17,8 @@
 
 package com.instructure.teacher.fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -30,14 +32,18 @@ import com.instructure.canvasapi2.models.Course
 import com.instructure.canvasapi2.models.Page
 import com.instructure.canvasapi2.utils.isValid
 import com.instructure.canvasapi2.utils.parcelCopy
+import com.instructure.interactions.Identity
 import com.instructure.pandautils.dialogs.UnsavedChangesExitDialog
+import com.instructure.pandautils.discussions.DiscussionUtils
 import com.instructure.pandautils.fragments.BasePresenterFragment
 import com.instructure.pandautils.utils.*
+import com.instructure.pandautils.views.CanvasWebView
 import com.instructure.teacher.R
 import com.instructure.teacher.factory.CreateOrEditPagePresenterFactory
-import com.instructure.interactions.Identity
 import com.instructure.teacher.presenters.CreateOrEditPagePresenter
-import com.instructure.teacher.utils.*
+import com.instructure.teacher.utils.setupCloseButton
+import com.instructure.teacher.utils.setupMenu
+import com.instructure.teacher.utils.withRequireNetwork
 import com.instructure.teacher.viewinterface.CreateOrEditPageView
 import instructure.androidblueprint.PresenterFactory
 import kotlinx.android.synthetic.main.fragment_create_or_edit_page.*
@@ -53,11 +59,11 @@ class CreateOrEditPageDetailsFragment :
     /* The page to be edited. This will be null if we're creating a new page */
     private var mPage by NullableParcelableArg<Page>()
 
-    private var mCanEditRoles: String? = null
     /* Menu buttons. We don't cache these because the toolbar is reconstructed on configuration change. */
     private val mSaveMenuButton get() = toolbar.menu.findItem(R.id.menuSavePage)
-    private val mSaveButtonTextView: TextView? get() = view?.findViewById<TextView>(R.id.menuSavePage)
+    private val mSaveButtonTextView: TextView? get() = view?.findViewById(R.id.menuSavePage)
 
+    private var placeHolderList: ArrayList<Placeholder> = ArrayList()
 
     override val identity = 0L
     override val skipCheck = false
@@ -126,6 +132,27 @@ class CreateOrEditPageDetailsFragment :
         setupCanEditSpinner()
         setupPublishSwitch()
         setupDelete()
+
+
+        pageRCEView.hideEditorToolbar()
+        pageRCEView.actionUploadImageCallback = { MediaUploadUtils.showPickImageDialog(this) }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Get the image Uri
+            when (requestCode) {
+                RequestCodes.PICK_IMAGE_GALLERY -> data?.data
+                RequestCodes.CAMERA_PIC_REQUEST -> MediaUploadUtils.handleCameraPicResult(activity, null)
+                else -> null
+            }?.let { imageUri ->
+                presenter.uploadRceImage(imageUri, activity)
+            }
+        }
+    }
+
+    override fun insertImageIntoRCE(text: String, alt: String) {
+        pageRCEView.insertImage(text, alt)
     }
 
     private fun setupTitle() {
@@ -133,15 +160,28 @@ class CreateOrEditPageDetailsFragment :
         pageNameTextInput.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
         pageNameEditText.setText(presenter.page.title)
         pageNameEditText.onTextChanged { presenter.page.title = it }
+        pageNameEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) pageRCEView.hideEditorToolbar()
+        }
     }
 
     private fun setupDescription() {
-        pageRCEView.setHtml(
-                presenter.page.body,
-                getString(R.string.pageDetails),
-                getString(R.string.rce_empty_description),
-                ThemePrefs.brandColor, ThemePrefs.buttonColor
-        )
+        if (CanvasWebView.containsLTI(presenter.page.body.orEmpty(), "UTF-8")) {
+            pageRCEView.setHtml(DiscussionUtils.createLTIPlaceHolders(context, presenter.page.body.orEmpty(), { _, placeholder ->
+                placeHolderList.add(placeholder)
+            }),
+                    getString(R.string.pageDetails),
+                    getString(R.string.rce_empty_description),
+                    ThemePrefs.brandColor, ThemePrefs.buttonColor
+            )
+        } else {
+            pageRCEView.setHtml(
+                    presenter.page.body,
+                    getString(R.string.pageDetails),
+                    getString(R.string.rce_empty_description),
+                    ThemePrefs.brandColor, ThemePrefs.buttonColor
+            )
+        }
         // when the RCE editor has focus we want the label to be darker so it matches the title's functionality
         pageRCEView.setLabel(pageDescLabel, R.color.defaultTextDark, R.color.defaultTextGray)
     }
@@ -166,8 +206,7 @@ class CreateOrEditPageDetailsFragment :
         pageCanEditSpinner.onItemSelectedListener = null
 
 
-        mCanEditRoles = mPage?.editingRoles
-        val roleArray = mCanEditRoles?.split(",")
+        val roleArray = presenter.page.editingRoles?.split(",")
         roleArray?.let {
             if(it.contains(TEACHERS) && it.size == 1) {
                 pageCanEditSpinner.setSelection(spinnerAdapter.getPosition(getString(R.string.onlyTeachers)))
@@ -184,10 +223,10 @@ class CreateOrEditPageDetailsFragment :
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if(view == null) return
                 when((view as TextView).text.toString()) {
-                    getString(R.string.onlyTeachers) -> mCanEditRoles = TEACHERS
-                    getString(R.string.teachersAndStudents) -> mCanEditRoles = listOf(TEACHERS, STUDENTS).joinToString(separator = ",")
-                    getString(R.string.anyone) -> mCanEditRoles = ANYONE
-                    getString(R.string.groupMembers) -> mCanEditRoles = GROUP_MEMBERS
+                    getString(R.string.onlyTeachers) -> presenter.page.editingRoles = TEACHERS
+                    getString(R.string.teachersAndStudents) -> presenter.page.editingRoles = listOf(TEACHERS, STUDENTS).joinToString(separator = ",")
+                    getString(R.string.anyone) -> presenter.page.editingRoles = ANYONE
+                    getString(R.string.groupMembers) -> presenter.page.editingRoles = GROUP_MEMBERS
                 }
             }
 
@@ -225,7 +264,6 @@ class CreateOrEditPageDetailsFragment :
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         presenter?.page?.body= pageRCEView.html
-        presenter?.page?.editingRoles = mCanEditRoles
     }
 
     private fun savePage() {
@@ -242,8 +280,7 @@ class CreateOrEditPageDetailsFragment :
 
         val description = pageRCEView.html
 
-        presenter.page.body = description
-        presenter.page.editingRoles = mCanEditRoles
+        presenter.page.body = handleLTIPlaceHolders(placeHolderList, description)
         presenter.savePage()
     }
 
@@ -253,13 +290,11 @@ class CreateOrEditPageDetailsFragment :
         savingProgressBar.setVisible()
     }
 
-
     override fun onSaveError() {
         mSaveMenuButton.isVisible = true
         savingProgressBar.setGone()
         toast(R.string.errorSavingPage)
     }
-
 
     override fun onSaveSuccess() {
         if (presenter.isEditing) {

@@ -19,10 +19,11 @@ buildscript {
     PrivateData.merge(project, "candroid")
 
     repositories {
-        jcenter()
         google()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
 
     dependencies {
@@ -32,13 +33,14 @@ buildscript {
         classpath Plugins.OSS_LICENSES
         classpath Plugins.KOTLIN
         classpath Plugins.FABRIC
+        classpath Plugins.OKREPLAY
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
         google()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven {
             credentials {
@@ -47,5 +49,6 @@ allprojects {
             }
             url 'https://customers.pspdfkit.com/maven/'
         }
+        jcenter()
     }
 }

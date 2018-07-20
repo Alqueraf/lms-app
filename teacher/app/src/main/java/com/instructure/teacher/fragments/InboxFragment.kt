@@ -55,8 +55,8 @@ import org.greenrobot.eventbus.ThreadMode
 class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, InboxViewHolder, InboxAdapter>(), InboxView {
 
     private val CANVAS_CONTEXT = "canvas_context"
-    private var mCanvasContextSelected: CanvasContext? = null
-    lateinit private var mRecyclerView: RecyclerView
+    private var canvasContextSelected: CanvasContext? = null
+    lateinit private var recyclerView: RecyclerView
 
     override fun layoutResId(): Int = R.layout.fragment_inbox
     override fun getList(): UpdatableSortedList<Conversation> = presenter.data
@@ -67,20 +67,20 @@ class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, 
         if(presenter.isEmpty) {
             addMessage.show()
         }
-        RecyclerViewUtils.checkIfEmpty(emptyPandaView, mRecyclerView, swipeRefreshLayout, adapter, presenter.isEmpty)
+        RecyclerViewUtils.checkIfEmpty(emptyPandaView, recyclerView, swipeRefreshLayout, adapter, presenter.isEmpty)
     }
     override fun getPresenterFactory(): PresenterFactory<InboxPresenter> = InboxPresenterFactory()
     override fun onCreateView(view: View?) {}
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putParcelable(CANVAS_CONTEXT, mCanvasContextSelected)
+        outState?.putParcelable(CANVAS_CONTEXT, canvasContextSelected)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(savedInstanceState != null) {
-            mCanvasContextSelected = savedInstanceState.getParcelable(CANVAS_CONTEXT)
+            canvasContextSelected = savedInstanceState.getParcelable(CANVAS_CONTEXT)
         }
     }
 
@@ -95,12 +95,12 @@ class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, 
     }
 
     override fun onPresenterPrepared(presenter: InboxPresenter) {
-        mRecyclerView = RecyclerViewUtils.buildRecyclerView(mRootView, context, adapter,
+        recyclerView = RecyclerViewUtils.buildRecyclerView(mRootView, context, adapter,
                 presenter, R.id.swipeRefreshLayout, R.id.inboxRecyclerView, R.id.emptyPandaView, getString(R.string.inbox_empty_title))
         emptyPandaView.setEmptyViewImage(ContextCompat.getDrawable(context, R.drawable.vd_mail_empty))
         emptyPandaView.setMessageText(R.string.inbox_empty_message)
 
-        mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0 && addMessage.visibility == View.VISIBLE) {
@@ -124,8 +124,8 @@ class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, 
         if(recyclerView.adapter == null) {
             recyclerView.adapter = adapter
         }
-        
-        presenter.canvasContext = mCanvasContextSelected
+
+        presenter.canvasContext = canvasContextSelected
         setFilterText()
         presenter.loadData(false)
         setupFilter(presenter)
@@ -138,7 +138,7 @@ class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, 
         //phone specific event for updates (archives/read/unread/stars)
         val event = EventBus.getDefault().getStickyEvent(ConversationUpdatedEvent::class.java)
         event?.once(javaClass.simpleName) {
-            if(presenter.scope == event.scope && presenter.scope != InboxApi.Scope.UNREAD)
+            if((presenter.scope == event.scope && presenter.scope != InboxApi.Scope.UNREAD) || presenter.scope == InboxApi.Scope.ALL)
             //for removed stars and archives, we need to update the list completely
                 presenter.refresh(true)
             else
@@ -149,6 +149,7 @@ class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, 
         EventBus.getDefault().getStickyEvent(ConversationDeletedEvent::class.java)?.once(javaClass.simpleName + ".onResume()") {
             presenter.data.removeItemAt(it)
         }
+
     }
 
     private fun setupToolbar() {
@@ -166,7 +167,7 @@ class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, 
 
         clearFilterTextView.setOnClickListener {
             presenter.canvasContext = null
-            mCanvasContextSelected = null
+            canvasContextSelected = null
             courseFilter.setText(R.string.all_courses)
             clearFilterTextView.setGone()
             presenter.refresh(true)
@@ -181,7 +182,7 @@ class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, 
 
     private val mAdapterCallback = AdapterToFragmentCallback<Conversation> { conversation, position ->
         //we send a parcel copy so that we can properly propagate updates through our events
-        if (resources.getBoolean(R.bool.is_device_tablet)) { //but tablets need reference, since the detail view remains in view
+        if (resources.getBoolean(R.bool.isDeviceTablet)) { //but tablets need reference, since the detail view remains in view
             val args = MessageThreadFragment.createBundle(conversation, position, InboxApi.conversationScopeToString(presenter.scope))
             RouteMatcher.route(context, Route(null, MessageThreadFragment::class.java, null, args))
         } else { //phones use the parcel copy
@@ -240,8 +241,8 @@ class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, 
             R.id.inboxFilter -> {
                 //let the user select the course/group they want to see
                 val dialog = CanvasContextListDialog.getInstance(activity.supportFragmentManager) { canvasContext: CanvasContext ->
-                    mCanvasContextSelected = canvasContext
-                    if (presenter.canvasContext?.id != mCanvasContextSelected?.id) {
+                    canvasContextSelected = canvasContext
+                    if (presenter.canvasContext?.id != canvasContextSelected?.id) {
                         //we only want to change this up if they are selecting a new context
                         presenter.canvasContext = canvasContext
                         presenter.refresh(true)
@@ -297,7 +298,7 @@ class InboxFragment : BaseSyncFragment<Conversation, InboxPresenter, InboxView, 
         event.once(javaClass.simpleName + ".onPost()") {
             presenter.data.removeItemAt(it)
             //pop current detail fragment if tablet
-            if (resources.getBoolean(R.bool.is_device_tablet)) {
+            if (resources.getBoolean(R.bool.isDeviceTablet)) {
                 val currentFrag = fragmentManager.findFragmentById(R.id.detail)
                 if(currentFrag != null) {
                     val transaction = fragmentManager.beginTransaction()

@@ -26,8 +26,8 @@ import android.widget.TextView
 import com.instructure.candroid.R
 
 import com.instructure.candroid.interfaces.BookmarkAdapterToFragmentCallback
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.candroid.util.CacheControlFlags
-import com.instructure.candroid.util.RouterUtils
 import com.instructure.canvasapi2.StatusCallback
 import com.instructure.canvasapi2.managers.BookmarkManager
 import com.instructure.canvasapi2.models.Bookmark
@@ -129,12 +129,15 @@ object BookmarkBinder {
         var courseId = bookmark.courseId
 
         if (courseId == 0L) {
-            courseId = RouterUtils.getCourseIdFromURL(bookmark.url)
-            bookmark.courseId = courseId
+            val courseIdValue = RouteMatcher.getCourseIdFromUrl(bookmark.url)
+            if(courseIdValue.isNotBlank()) {
+                courseId = courseIdValue.toLong()
+                bookmark.courseId = courseId
+            }
         }
 
         holder.title.text = bookmark.name
-        val courseColor = ColorKeeper.getOrGenerateColor(RouterUtils.getContextIdFromURL(bookmark.url))
+        val courseColor = ColorKeeper.getOrGenerateColor(RouteMatcher.getContextIdFromURL(bookmark.url) ?: "")
 
         holder.icon.setImageDrawable(ColorUtils.colorIt(courseColor, holder.icon.drawable))
         holder.overflow.visibility = if (isShortcutActivity) View.INVISIBLE else View.VISIBLE

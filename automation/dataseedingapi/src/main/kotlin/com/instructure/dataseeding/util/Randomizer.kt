@@ -1,18 +1,20 @@
-/*
- * Copyright (C) 2017 - present Instructure, Inc.
- *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
- */
+//
+// Copyright (C) 2018-present Instructure, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+
 package com.instructure.dataseeding.util
 
 import com.github.javafaker.Faker
@@ -76,7 +78,9 @@ object Randomizer {
                     SubmissionType.ONLINE_TEXT_ENTRY -> this.body = "<p>${faker.lorem().paragraph()}</p>"
                     SubmissionType.ONLINE_UPLOAD -> this.fileIds = if (fileAttachments.isNotEmpty()) fileAttachments else null
                     SubmissionType.ONLINE_URL -> this.url = "https://canvas.instructure.com"
-                    // TODO: Handle other types
+                    else -> {
+                        // TODO: Handle other types
+                    }
                 }
                 this.submissionType =
                         if (submissionType.name == "NO_TYPE") "none"
@@ -113,6 +117,20 @@ object Randomizer {
 
     /** Creates random Group */
     fun randomGroup() = CreateGroup(name = faker.harryPotter().location(), description = faker.harryPotter().quote())
+
+    /** Creates course module */
+    fun createModule(unlockAt: String? = null) = CreateModule(name = faker.yoda().quote(), unlockAt = unlockAt)
+
+    /** Creates random observer alert threshold for given alert type */
+    fun randomThreshold(alertType: String): String {
+        return when (alertType) {
+            "assignment_grade_low" -> "${faker.number().numberBetween(1, 50)}"
+            "assignment_grade_high" -> "${faker.number().numberBetween(51, 99)}"
+            "course_grade_low" -> "${faker.number().numberBetween(1, 50)}"
+            "course_grade_high" -> "${faker.number().numberBetween(51, 99)}"
+            else -> ""
+        }
+    }
 }
 
 data class Name(val firstName: String, val lastName: String) {

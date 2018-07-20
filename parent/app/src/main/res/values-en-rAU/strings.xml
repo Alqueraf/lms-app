@@ -22,7 +22,6 @@
     <string name="email">Email</string>
     <string name="emailAddress">Email address</string>
     <string name="parent_email">Parent Email</string>
-    <string name="confirmPassword">Confirm password</string>
     <string name="firstName">First name</string>
     <string name="lastName">Last name</string>
     <string name="password">Password</string>
@@ -150,6 +149,9 @@
     <string name="or">or</string>
     <string name="canvas_login_text">Log in with Canvas</string>
 
+    <string name="privacyPolicy">Privacy Policy</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">Terms of Use</string>
     <!-- Feature Request -->
     <string name="featureSubject">Idea for Canvas Parent App [Android]</string>
     <string name="understandRequest">The following information will help us better understand your idea:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Enter student\'s school name</string>
     <string name="findYourStudentsSchoolHint">Find your student\'s school or district</string>
-    <string name="noGradeText">N/A</string>
+    <string name="noGradeText">No Mark</string>
     <string name="locked">Locked</string>
+    <string name="changeUser">Change User</string>
+    <string name="manageChildren">Manage Children</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="version" formatted="false">Version %s</string>
+    <string name="not_a_parent_title">Not a parent?</string>
+    <string name="not_a_parent_subtitle">One of our other apps might be a better fit. Tap one to visit the Play Store.</string>
+    <string name="tryLoginAgain">Try logging in again</string>
+
+    <string name="legalDetails">Privacy policy, terms of use, open source</string>
+    <string name="assignmentGrade">Assignment Mark</string>
+    <string name="courseGrade">Course Mark</string>
+    <string name="courseAnnouncement">Course Announcement</string>
+    <string name="institutionAnnouncement">Institution Announcement</string>
+    <string name="institutionAnnouncementUnavailable">This announcement has expired.</string>
 </resources>

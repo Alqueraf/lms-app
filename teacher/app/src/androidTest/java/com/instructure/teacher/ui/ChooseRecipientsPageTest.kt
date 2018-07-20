@@ -21,22 +21,26 @@ import com.instructure.teacher.ui.utils.TeacherTest
 import com.instructure.teacher.ui.utils.clickInboxTab
 import com.instructure.teacher.ui.utils.seedData
 import com.instructure.teacher.ui.utils.tokenLogin
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class ChooseRecipientsPageTest: TeacherTest() {
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         getToChooseRecipients()
         chooseRecipientsPage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun hasStudentCategory() {
         getToChooseRecipients()
         chooseRecipientsPage.assertHasStudent()
     }
 
     @Test
+    @Ditto(sequential = true)
     fun addRecipient() {
         val student = getToChooseRecipients().studentsList[0]
         chooseRecipientsPage.clickStudentCategory()

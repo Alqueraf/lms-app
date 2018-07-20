@@ -392,6 +392,13 @@ public class NotificationListRecyclerAdapter extends ExpandableRecyclerAdapter<D
         });
     }
 
+    @Override
+    public void cancel() {
+        if (mStreamCallback != null) mStreamCallback.cancel();
+        if (mCoursesCallback != null) mCoursesCallback.cancel();
+        if (mGroupsCallback != null) mGroupsCallback.cancel();
+    }
+
     // endregion
 
     // region Expandable Callbacks

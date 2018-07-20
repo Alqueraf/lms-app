@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">Ångra</string>
     <string name="rce_contentDescription_redo">Göra om</string>
     <string name="rce_contentDescription_bold">Formatera fet</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">Infoga punktlista</string>
     <string name="rce_contentDescription_insert_numbers">Infoga numrerad lista</string>
     <string name="rce_contentDescription_insert_photo">Infoga foto</string>
+    <string name="rce_contentDescription_upload_photo">Ladda upp foto från enhet</string>
     <string name="rce_contentDescription_insert_link">Skriv in länk</string>
     <string name="rce_contentDescription_block_quote">Blockera citat</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">Skriv in länk</string>
     <string name="rce_insertImage">För in bild</string>
 
+    <string name="rce_uploadImage">Ladda upp bild</string>
     <string name="rce_done">Färdig</string>
     <string name="rce_cancel">Avbryt</string>
     <string name="rce_exit">Gå ur</string>

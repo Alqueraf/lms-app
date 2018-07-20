@@ -23,7 +23,7 @@
     android:background="@color/canvasBackgroundWhite">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/calendarListToolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/defaultPrimary"
@@ -43,7 +43,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/calendarListToolbar"
         android:background="@color/canvasBackgroundWhite"
         android:baselineAligned="true"
         android:divider="@drawable/calendar_divider"
@@ -75,7 +75,24 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <include layout="@layout/recycler_swipe_refresh_layout" />
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/calendarSwipeRefreshLayout"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.instructure.pandarecycler.PandaRecyclerView
+                    android:id="@+id/calendarRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cacheColorHint="@android:color/transparent"/>
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <com.instructure.candroid.view.EmptyPandaView
+                android:id="@+id/calendarEmptyView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
         </FrameLayout>
 

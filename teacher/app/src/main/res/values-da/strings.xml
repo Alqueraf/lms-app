@@ -60,6 +60,10 @@
     <string name="share">Del</string>
     <string name="share_with">Del med &#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Åbn navigationsskuffe</string>
+    <string name="navigation_drawer_close">Luk navigationsskuffe</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(intet emne)</string>
     <string name="compose_message">Skriv besked</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Vælg filer eller fotos</string>
     <string name="uploading_files">Uploader filer &#8230;</string>
     <string name="no_attachment">(Ingen vedhæftelse)</string>
-    <string name="remove_attachment">Slet vedhæftet fil</string>
     <string name="creating_announcement">Opretter besked &#8230;</string>
 
     <string name="copy_email">Kopiér e-mail</string>
@@ -164,8 +167,6 @@
     <string name="inbox_empty_starred_title">Ingen beskeder med stjerne</string>
     <string name="inbox_empty_message">Tryk på \"+\" for at oprette en ny diskussion.</string>
     <string name="inbox_empty_starred_message">Giv stjerne til beskeder ved at trykke på stjernen i beskeden.</string>
-
-    <string name="download_attachment">Hent vedhæftet fil</string>
 
     <string name="reply">Svar</string>
     <string name="replyAll">Svar til alle</string>
@@ -285,7 +286,7 @@
     <string name="inbox_starred">Markeret med stjerne</string>
     <string name="inbox_sent">Sendt</string>
     <string name="inbox_archived">Arkiveret</string>
-    <string name="inbox_all_messages">Alle beskeder</string>
+    <string name="inbox_all_messages">Alle</string>
     <string name="uploading_file_num" formatted="false">Uploader %d af %d</string>
     <string name="page_not_found">Siden blev ikke fundet.</string>
     <string name="no_connection">Ingen forbindelse</string>
@@ -434,7 +435,6 @@
     <string name="deleteComment">Slet kommentar</string>
     <string name="deleteAnnotation">Slet anmærkning</string>
     <string name="deleteCommentConfirmation">Er du sikker på, at du ønsker at slette denne kommentar?</string>
-    <string name="deleteHeadCommentConfirmation">Denne kommentarer er en anmærkning. Hvis dette slettes, slettes alle svar og anmærkningen. Er du sikker på, du vil gøre det?</string>
     <string name="rubric_view_long_description">Se lang beskrivelse</string>
     <string name="rubric">Rubrik</string>
     <string name="enter_custom_value">Indtast en brugerdefineret værdi</string>
@@ -501,7 +501,7 @@
         <item quantity="other">%d grupper</item>
     </plurals>
     <string name="cmp_closed">Lukket</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">favorit</string>
     <string name="content_description_not_favorite">ikke favorit</string>
@@ -510,7 +510,8 @@
     <string name="edit_course_nickname">Rediger fagets kaldenavn</string>
 
     <string name="colorPickerDialogTitle">Fagets farve</string>
-    <string name="colorPickerDialogMessage">Indstil dette som fagets standardfarve. Dette tilsidesætter ikke en personlig farveindstilling.</string>
+    <string name="colorPickerDialogMessage">Denne er din personlige farveindstilling. Du er den eneste, der ser denne farve sammen med faget.</string>
+
     <string name="colorPickerError">Fagets farve kunne ikke indstilles på nuværende tidspunkt.</string>
 
     <string name="contentDescriptionColorCottonCandy">Lyserød</string>
@@ -604,12 +605,6 @@
     <string name="quiz_details_from_to">Fra %1$s til %2$s</string>
     <string name="quiz_details_after">Efter %1$s</string>
     <string name="quiz_details_until">Indtil %1$s</string>
-    <string name="continueWithoutSavingTitle">Vil du fortsætte uden at gemme?</string>
-    <string name="continueWithoutSavingMessage">Er du sikker på, du vil fortsætte uden at gemme?</string>
-    <string name="continueUnsaved">Fortsæt</string>
-    <string name="exitWithoutSavingTitle">Vil du afslutte uden at gemme?</string>
-    <string name="exitWithoutSavingMessage">Er du sikker på, du vil afslutte uden at gemme?</string>
-    <string name="exitUnsaved">Afslut</string>
     <string name="filterPointsMustBeSet">Indtast en værdi.</string>
 
     <plurals name="quantityQuestions">
@@ -638,7 +633,6 @@
     <string name="discussions_replies_title">Svar</string>
     <string name="discussions_reply">Svar</string>
     <string name="discussions_edit">Rediger</string>
-    <string name="discussions_deleted" formatted="false">Slettede dette svar %s</string>
     <string name="discussions_forbidden">Svar er kun synlige for dem, der har lagt mindst ét svar ud.</string>
     <string name="discussions_unknown_author">Ukendt forfatter</string>
     <string name="discussions_delete">Slet diskussion</string>
@@ -710,6 +704,8 @@
     <string name="subscribe">Abonner</string>
     <string name="allowThreadedReplies">Tillad trådede svar</string>
     <string name="usersMustPost">Brugere skal lægge opslag ud, inden de ser svar</string>
+    <string name="allowUserComments">Tillad brugere at kommentere</string>
+
     <string name="discussionTitleMustBeSet">Diskussionens titel skal angives.</string>
     <string name="discussionSuccessfullyCreated">Diskussionen er oprettet.</string>
     <string name="errorCreatingDiscussion">Der opstod en fejl ved forsøg på at oprette denne diskussion. Prøv igen.</string>
@@ -758,6 +754,7 @@
     <string name="choosePhotoFromGallery">Vælg foto fra Galleri</string>
     <string name="fileNotFound">Fil ikke fundet.</string>
     <string name="version" formatted="false">Version %s</string>
+    <string name="fullVersion">Version %s (%d)</string>
     <string name="tap_to_view_submissions_list">Tryk for at se listen over afsendelser.</string>
     <string name="assignmentDescriptionContentDescription">Opgavebeskrivelse</string>
     <string name="quizDescriptionContentDescription">Quizbeskrivelse</string>
@@ -882,6 +879,7 @@
 
     <string name="latePenalty">Straf for sen aflevering</string>
     <string name="finalGrade">Endelig karakter</string>
+    <string name="moderatedGradingUnsupported">Samlet karaktergivning understøttes ikke i øjeblikket i mobil SpeedGrader.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s pt</item>
         <item quantity="other">-%s pt</item>
@@ -890,4 +888,20 @@
         <item quantity="one">-%s point</item>
         <item quantity="other">-%s point</item>
     </plurals>
+    <string name="todoUnreadCount">Opgaveliste %d ulæst</string>
+    <string name="profileSettings">Profilindstillinger</string>
+    <string name="downloadingFile">Downloader fil&#8230;</string>
+    <string name="fileDownloadedSuccessfully">Fil blev downloaded!</string>
+    <string name="tapToView">Tryk for at se</string>
+    <string name="errorDownloadingFile">Der opstod en fejl ved download af din fil. Prøv igen.</string>
+
+    <string name="postTo">Post til</string>
+    <string name="allSections">Alle sektioner</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">LTI-værktøjet kunne ikke indlæses på dette tidspunkt.</string>
+
+    <string name="downloading">Downloader ...</string>
+
 </resources>

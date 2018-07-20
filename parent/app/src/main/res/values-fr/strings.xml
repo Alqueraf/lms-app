@@ -22,7 +22,6 @@
     <string name="email">Email</string>
     <string name="emailAddress">Adresse courriel</string>
     <string name="parent_email">Courriel du parent</string>
-    <string name="confirmPassword">Confirmer le mot de passe</string>
     <string name="firstName">Prénom</string>
     <string name="lastName">Nom de famille</string>
     <string name="password">Mot de passe</string>
@@ -150,6 +149,9 @@
     <string name="or">ou</string>
     <string name="canvas_login_text">Connectez-vous avec Canvas</string>
 
+    <string name="privacyPolicy">Politique de confidentialité</string>
+    <string name="EULA">CGU</string>
+    <string name="termsOfUse">Conditions d\'utilisation</string>
     <!-- Feature Request -->
     <string name="featureSubject">Idée pour l\'application Canvas Parent [Android]</string>
     <string name="understandRequest">Les informations suivantes nous aideront à mieux comprendre votre idée :</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Entrez le nom de l’école de l’élève.</string>
     <string name="findYourStudentsSchoolHint">Trouvez l’école ou le district de vos élèves.</string>
-    <string name="noGradeText">S/O</string>
+    <string name="noGradeText">Aucune note</string>
     <string name="locked">Verrouillé</string>
+    <string name="changeUser">Changer d\'utilisateur</string>
+    <string name="manageChildren">Gérer les enfants</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Ouvrir le tiroir de navigation</string>
+    <string name="navigation_drawer_close">Fermer le tiroir de navigation</string>
+    <string name="version" formatted="false">Version %s</string>
+    <string name="not_a_parent_title">Vous n\'êtes pas un parent ?</string>
+    <string name="not_a_parent_subtitle">Une autre de nos applications conviendrait sans doute davantage. Appuyez une fois pour vous rendre sur le Play Store</string>
+    <string name="tryLoginAgain">Veuillez réessayer de vous identifier</string>
+
+    <string name="legalDetails">Vie privée, conditions d’utilisation, open source</string>
+    <string name="assignmentGrade">Note de devoir</string>
+    <string name="courseGrade">Note de cours</string>
+    <string name="courseAnnouncement">Annonce de cours</string>
+    <string name="institutionAnnouncement">Annonce d\'institution</string>
+    <string name="institutionAnnouncementUnavailable">Cette annonce est expriée.</string>
 </resources>

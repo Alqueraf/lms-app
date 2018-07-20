@@ -53,6 +53,9 @@ public class AccountNotificationAPI {
 
         @DELETE("accounts/self/users/self/account_notifications/{accountNotificationId}")
         Call<AccountNotification> deleteAccountNotification(@Path("accountNotificationId") long accountNotificationId);
+
+        @GET("accounts/self/users/self/account_notifications/{accountNotificationId}")
+        Call<AccountNotification> getAccountNotification(@Path("accountNotificationId") long accountNotificationId);
     }
 
     public static void getAccountNotificationForStudentById(
@@ -76,5 +79,9 @@ public class AccountNotificationAPI {
 
     public static void deleteAccountNotification(long notificationId, @NonNull RestBuilder adapter, @NonNull RestParams params, @NonNull StatusCallback<AccountNotification> callback){
         callback.addCall(adapter.build(AccountNotificationInterface.class, params).deleteAccountNotification(notificationId)).enqueue(callback);
+    }
+
+    public static void getAccountNotification(long notificationId, @NonNull RestBuilder adapter, @NonNull RestParams params, @NonNull StatusCallback<AccountNotification> callback){
+        callback.addCall(adapter.build(AccountNotificationInterface.class, params).getAccountNotification(notificationId)).enqueue(callback);
     }
 }

@@ -5,6 +5,7 @@ import com.instructure.canvasapi2.apis.UnreadCountAPI
 import com.instructure.canvasapi2.builders.RestBuilder
 import com.instructure.canvasapi2.builders.RestParams
 import com.instructure.canvasapi2.models.UnreadConversationCount
+import com.instructure.canvasapi2.models.UnreadCount
 import com.instructure.canvasapi2.models.UnreadNotificationCount
 
 
@@ -47,6 +48,19 @@ object UnreadCountManager : BaseManager() {
             val adapter = RestBuilder()
             val params = RestParams.Builder().build()
             return UnreadCountAPI.getUnreadConversationsCountSynchronous(adapter, params)
+        }
+    }
+
+    @JvmStatic
+    fun getUnreadAlertCount(studentId: Long, callback: StatusCallback<UnreadCount>, forceNetwork: Boolean) {
+        if (isTesting() || mTesting) {
+            // TODO
+        } else {
+            val adapter = RestBuilder(callback)
+            val params = RestParams.Builder()
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build()
+            UnreadCountAPI.getUnreadAlertCount(adapter, params, studentId, callback)
         }
     }
 }

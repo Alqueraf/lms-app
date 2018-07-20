@@ -16,18 +16,24 @@
  */
 package com.instructure.teacher.presenters
 
+import android.app.Activity
+import android.net.Uri
 import com.instructure.canvasapi2.StatusCallback
 import com.instructure.canvasapi2.managers.*
 import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.models.post_models.DiscussionTopicPostBody
 import com.instructure.canvasapi2.utils.ApiType
 import com.instructure.canvasapi2.utils.LinkHeaders
+import com.instructure.canvasapi2.utils.weave.WeaveJob
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.weave
 import com.instructure.pandautils.models.FileSubmitObject
+import com.instructure.pandautils.utils.MediaUploadUtils
+import com.instructure.pandautils.utils.ProfileUtils
 import com.instructure.teacher.events.DiscussionTopicHeaderDeletedEvent
 import com.instructure.teacher.events.post
 import com.instructure.teacher.fragments.DiscussionsDetailsFragment
+import com.instructure.teacher.interfaces.RceMediaUploadPresenter
 import com.instructure.teacher.viewinterface.CreateDiscussionView
 import instructure.androidblueprint.FragmentPresenter
 import kotlinx.coroutines.experimental.Job
@@ -37,8 +43,10 @@ import okhttp3.RequestBody
 import retrofit2.Response
 import java.io.File
 
-class CreateDiscussionPresenter(private val mCanvasContext: CanvasContext, private var mAssignment: Assignment?) : FragmentPresenter<CreateDiscussionView>() {
+class CreateDiscussionPresenter(private val canvasContext: CanvasContext, private var mAssignment: Assignment?)
+    : FragmentPresenter<CreateDiscussionView>(), RceMediaUploadPresenter {
 
+    override var rceImageUploadJob: WeaveJob? = null
     private var mCreateDiscussionCall: Job? = null
     private var mGetAssignmentCall: Job? = null
     private var mDueDateApiCalls: Job? = null
@@ -53,9 +61,9 @@ class CreateDiscussionPresenter(private val mCanvasContext: CanvasContext, priva
     /** (Editing mode only) Set to *true* if the existing discussions's attachment should be removed */
     var attachmentRemoved = false
 
-    override fun loadData(forceNetwork: Boolean) { }
+    override fun loadData(forceNetwork: Boolean) {}
 
-    override fun refresh(forceNetwork: Boolean) { }
+    override fun refresh(forceNetwork: Boolean) {}
 
     fun saveDiscussion(discussionTopicHeader: DiscussionTopicHeader) {
         viewCallback?.startSavingDiscussion()
@@ -68,7 +76,7 @@ class CreateDiscussionPresenter(private val mCanvasContext: CanvasContext, priva
                     val requestBody = RequestBody.create(MediaType.parse(it.contentType), file)
                     filePart = MultipartBody.Part.createFormData("attachment", file.name, requestBody)
                 }
-                awaitApi<DiscussionTopicHeader> { DiscussionManager.createDiscussion(mCanvasContext, discussionTopicHeader, filePart, it) }
+                awaitApi<DiscussionTopicHeader> { DiscussionManager.createDiscussion(canvasContext, discussionTopicHeader, filePart, it) }
                 viewCallback?.discussionSavedSuccessfully(null)
 
             } catch (e: Throwable) {
@@ -83,7 +91,7 @@ class CreateDiscussionPresenter(private val mCanvasContext: CanvasContext, priva
         mCreateDiscussionCall = weave {
             try {
                 if (attachmentRemoved) discussionTopicPostBody.removeAttachment = ""
-                val discussionTopic = awaitApi<DiscussionTopicHeader> { DiscussionManager.editDiscussionTopic(mCanvasContext, topicId, discussionTopicPostBody, it) }
+                val discussionTopic = awaitApi<DiscussionTopicHeader> { DiscussionManager.editDiscussionTopic(canvasContext, topicId, discussionTopicPostBody, it) }
                 viewCallback?.discussionSavedSuccessfully(discussionTopic)
 
             } catch (e: Throwable) {
@@ -100,9 +108,9 @@ class CreateDiscussionPresenter(private val mCanvasContext: CanvasContext, priva
             val studentsMapped = hashMapOf<Long, User>()
             try {
                 if (groupsMapped.isEmpty() && sectionsMapped.isEmpty() && studentsMapped.isEmpty()) {
-                    val sections = awaitApi<List<Section>> { SectionManager.getAllSectionsForCourse(mCanvasContext.id, it, false) }
+                    val sections = awaitApi<List<Section>> { SectionManager.getAllSectionsForCourse(canvasContext.id, it, false) }
                     val groups = if (groupCategoryId > 0L) awaitApi<List<Group>> { GroupCategoriesManager.getAllGroupsForCategory(groupCategoryId, it, false) } else emptyList()
-                    val students = awaitApi<List<User>> { UserManager.getAllPeopleList(mCanvasContext, it, false) }
+                    val students = awaitApi<List<User>> { UserManager.getAllPeopleList(canvasContext, it, false) }
                     groupsMapped += groups.associateBy { it.id }
                     sectionsMapped += sections.associateBy { it.id }
                     studentsMapped += students.associateBy { it.id }
@@ -114,13 +122,13 @@ class CreateDiscussionPresenter(private val mCanvasContext: CanvasContext, priva
         }
     }
 
-    fun getAssignment() : Assignment? = mAssignment
+    fun getAssignment(): Assignment? = mAssignment
 
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     fun getFullAssignment(assignmentId: Long) {
         mGetAssignmentCall = weave {
             try {
-                mAssignment = awaitApi<Assignment> { AssignmentManager.getAssignment(assignmentId, mCanvasContext.id, true, it) }
+                mAssignment = awaitApi<Assignment> { AssignmentManager.getAssignment(assignmentId, canvasContext.id, true, it) }
                 viewCallback?.updatedAssignment()
             } catch (e: Throwable) {
             }
@@ -128,13 +136,17 @@ class CreateDiscussionPresenter(private val mCanvasContext: CanvasContext, priva
     }
 
     fun deleteDiscussionTopicHeader(discussionTopicHeaderId: Long) {
-        DiscussionManager.deleteDiscussionTopicHeader(mCanvasContext, discussionTopicHeaderId, object: StatusCallback<Void>(){
+        DiscussionManager.deleteDiscussionTopicHeader(canvasContext, discussionTopicHeaderId, object : StatusCallback<Void>() {
             override fun onResponse(response: Response<Void>, linkHeaders: LinkHeaders, type: ApiType) {
-                if(response.code() in 200..299) {
+                if (response.code() in 200..299) {
                     DiscussionTopicHeaderDeletedEvent(discussionTopicHeaderId, (DiscussionsDetailsFragment::class.java.toString() + ".onResume()")).post()
                     viewCallback?.discussionDeletedSuccessfully(discussionTopicHeaderId)
                 }
             }
         })
+    }
+
+    override fun uploadRceImage(imageUri: Uri, activity: Activity) {
+        rceImageUploadJob = MediaUploadUtils.uploadRceImageJob(imageUri, canvasContext, activity) { text, alt -> viewCallback?.insertImageIntoRCE(text, alt) }
     }
 }

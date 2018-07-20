@@ -16,15 +16,14 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
-class InboxMessagePage: BasePage(), PageAssert by SimplePageAssert() {
+class InboxMessagePage: BasePage() {
 
     private val starImageButton by OnViewWithId(R.id.starred)
-    private val subjectTextView by OnViewWithId(R.id.subject)
+    private val subjectTextView by OnViewWithId(R.id.subjectView)
     private val authorNameTextView by OnViewWithId(R.id.authorName)
     private val messageRecyclerView by WaitForViewWithId(R.id.recyclerView)
     private val replyTextView by OnViewWithId(R.id.reply)

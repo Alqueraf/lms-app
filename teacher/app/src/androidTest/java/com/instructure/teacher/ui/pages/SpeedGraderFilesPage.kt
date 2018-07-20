@@ -18,14 +18,14 @@ package com.instructure.teacher.ui.pages
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions
 import android.support.test.espresso.matcher.ViewMatchers.*
+import com.instructure.espresso.*
+import com.instructure.espresso.matchers.RecyclerViewMatcher
+import com.instructure.espresso.page.BasePage
 import com.instructure.soseedy.Attachment
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 import org.hamcrest.Matchers
 
-class SpeedGraderFilesPage : BasePage(), PageAssert by SimplePageAssert() {
+class SpeedGraderFilesPage : BasePage() {
 
     private val speedGraderFileRecyclerView by OnViewWithId(R.id.speedGraderFilesRecyclerView)
 

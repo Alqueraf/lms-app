@@ -133,12 +133,12 @@ public class QuizListRecyclerAdapter extends ExpandableRecyclerAdapter<String, Q
 
     @Override
     public void loadFirstPage() {
-        QuizManager.getFirstPageQuizList(mCanvasContext, false, mQuizzesCallback);
+        QuizManager.getFirstPageQuizList(mCanvasContext, isRefresh(), mQuizzesCallback);
     }
 
     @Override
     public void loadNextPage(String nextURL) {
-        QuizManager.getNextPageQuizList(nextURL, false, mQuizzesCallback);
+        QuizManager.getNextPageQuizList(nextURL, isRefresh(), mQuizzesCallback);
     }
 
     @Override

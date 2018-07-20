@@ -32,7 +32,7 @@ import kotlinx.android.synthetic.main.adapter_course_browser.view.*
 import kotlinx.android.synthetic.main.adapter_course_browser_home.view.*
 import kotlinx.android.synthetic.main.adapter_course_browser_web_view.view.*
 
-class CourseBrowserAdapter(val items: List<Tab>, val canvasContext: CanvasContext, val callback: (Tab) -> Unit, private val homePageTitle: String? = null) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CourseBrowserAdapter(val items: List<Tab>, val canvasContext: CanvasContext, private val homePageTitle: String? = null, val callback: (Tab) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
         return if(viewType == HOME) {
@@ -82,7 +82,7 @@ class CourseBrowserHomeViewHolder(view: View, val color: Int, val canvasContext:
     fun bind(holder: CourseBrowserHomeViewHolder, tab: Tab, clickedCallback: (Tab) -> Unit) {
         holder.itemView.homeLabel.text = tab.label
         if(TabHelper.isHomeTabAPage(canvasContext)) holder.itemView.homeSubLabel.text = homePageTitle
-        else holder.itemView.homeSubLabel.text = TabHelper.getHomePageDisplayString(canvasContext, tab)
+        else holder.itemView.homeSubLabel.text = TabHelper.getHomePageDisplayString(canvasContext)
         holder.itemView.setOnClickListener {
             clickedCallback(tab)
         }

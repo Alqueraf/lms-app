@@ -29,11 +29,11 @@ import com.instructure.canvasapi2.utils.ApiType
 import com.instructure.canvasapi2.utils.LinkHeaders
 import com.instructure.interactions.FullScreenInteractions
 import com.instructure.pandautils.interfaces.NavigationCallbacks
-import com.instructure.pandautils.utils.Const
 import com.instructure.teacher.R
 import com.instructure.teacher.events.AssignmentDescriptionEvent
 import com.instructure.interactions.router.Route
 import com.instructure.teacher.router.RouteMatcher
+import com.instructure.teacher.router.RouteResolver
 import instructure.rceditor.RCEConst.HTML_RESULT
 import instructure.rceditor.RCEFragment
 import kotlinx.android.synthetic.main.activity_fullscreen.*
@@ -51,31 +51,36 @@ class FullscreenActivity : BaseAppCompatActivity(), RCEFragment.RCEFragmentCallb
         if (savedInstanceState == null) {
 
             mRoute = intent.extras.getParcelable(Route.ROUTE)
+            mRoute?.let { handleRoute(it) }
 
             if (mRoute == null) {
                 finish()
             }
+        }
+    }
 
-            if (mRoute?.canvasContext != null && mRoute?.canvasContext is Course) {
-                setupWithCanvasContext(mRoute?.canvasContext as Course)
+    override fun handleRoute(route: Route) {
+        mRoute = route
+
+        if (mRoute?.canvasContext != null && mRoute?.canvasContext is Course) {
+            setupWithCanvasContext(mRoute?.canvasContext as Course)
+        } else {
+            val contextId = Route.extractCourseId(mRoute)
+            if (contextId == 0L) {
+                //No CanvasContext, No URL
+                setupWithCanvasContext(null)
             } else {
-                val contextId = Route.extractCourseId(mRoute)
-                if (contextId == 0L) {
-                    //No CanvasContext, No URL
-                    setupWithCanvasContext(null)
-                } else {
-                    CourseManager.getCourse(contextId, object : StatusCallback<Course>() {
-                        override fun onResponse(response: Response<Course>, linkHeaders: LinkHeaders, type: ApiType) {
-                            setupWithCanvasContext(response.body() as Course)
-                        }
-                    }, false)
-                }
+                CourseManager.getCourse(contextId, object : StatusCallback<Course>() {
+                    override fun onResponse(response: Response<Course>, linkHeaders: LinkHeaders, type: ApiType) {
+                        setupWithCanvasContext(response.body() as Course)
+                    }
+                }, false)
             }
         }
     }
 
     private fun setupWithCanvasContext(course: Course?) {
-        addFragment(RouteMatcher.getFullscreenFragment(course, mRoute!!))
+        addFragment(RouteResolver.getFullscreenFragment(course, mRoute!!))
     }
 
     private fun addFragment(fragment: Fragment?) {

@@ -19,8 +19,15 @@ import java.util.*
 
 data class PageViewEvent @JvmOverloads constructor(
     var eventName: String,
+    var sessionId: String,
+    var postUrl: String,
+    var signedProperties: String,
+    var domain: String,
     var url: String,
+    val contextType: String?,
+    val contextId: String?,
     var userId: Long,
+    var realUserId: Long?,
     var eventDuration: Double = 0.0,
     var timestamp: Date = Date(),
     var key: String = UUID.randomUUID().toString()

@@ -21,30 +21,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.DialogFragment;
 
 import com.instructure.candroid.R;
 import com.instructure.candroid.fragment.NotificationListFragment;
-import com.instructure.pandautils.utils.Const;
 import com.instructure.canvasapi2.models.StreamItem;
+import com.instructure.pandautils.utils.Const;
 
 public class NotificationWidgetRouter extends ParentActivity {
 
     private StreamItem streamItem;
-    private DialogFragment dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handleIntent();
-
-        if(streamItem != null){
-            dialog =  NotificationListFragment.addFragmentForStreamItem(streamItem, (ParentActivity) getContext(), true);
-        }
-
-        if (dialog == null) {
-            finish();
-        }
+        if (streamItem != null) NotificationListFragment.addFragmentForStreamItem(streamItem, getContext(), true);
+        finish();
     }
 
     protected void handleIntent() {

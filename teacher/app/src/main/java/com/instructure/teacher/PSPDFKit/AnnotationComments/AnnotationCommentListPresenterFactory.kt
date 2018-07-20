@@ -17,13 +17,13 @@
 package com.instructure.teacher.PSPDFKit.AnnotationComments
 
 import com.instructure.canvasapi2.models.CanvaDocs.CanvaDocAnnotation
+import com.instructure.canvasapi2.models.DocSession
 import instructure.androidblueprint.PresenterFactory
 
 class AnnotationCommentListPresenterFactory(
         val annotations: ArrayList<CanvaDocAnnotation>,
-        val canvaDocId: String,
-        val sessionId: String,
-        val canvaDocDomain: String,
-        val assigneeId: Long): PresenterFactory<AnnotationCommentListPresenter> {
-    override fun create() = AnnotationCommentListPresenter(annotations, canvaDocId, sessionId, canvaDocDomain, assigneeId)
+        val docSession: DocSession,
+        val assigneeId: Long,
+        val headAnnotationId: String): PresenterFactory<AnnotationCommentListPresenter> {
+    override fun create() = AnnotationCommentListPresenter(annotations, docSession, assigneeId, headAnnotationId)
 }

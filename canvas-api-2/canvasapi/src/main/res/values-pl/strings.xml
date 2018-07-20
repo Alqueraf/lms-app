@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -67,5 +67,13 @@
     <string name="graded_survey">Oceniona ankieta</string>
     <string name="ungraded_survey">Ankieta bez oceny</string>
     <string name="andMore"> i %d więcej</string>
+
+    <!-- Enrollment Types -->
+    <string name="enrollmentTypeStudent">Uczestnik</string>
+    <string name="enrollmentTypeTeacher">Nauczyciel</string>
+    <string name="enrollmentTypeObserver">Obserwujący</string>
+    <string name="enrollmentTypeTeachingAssistant">TA</string>
+    <string name="enrollmentTypeDesigner">Projektant</string>
+    <string name="enrollmentTypeUnknown">Nieznany</string>
 
 </resources>

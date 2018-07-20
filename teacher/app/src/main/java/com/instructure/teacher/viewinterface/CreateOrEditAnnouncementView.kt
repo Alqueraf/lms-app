@@ -16,12 +16,14 @@
  */
 package com.instructure.teacher.viewinterface
 
+import com.instructure.teacher.interfaces.RceMediaUploadView
 import instructure.androidblueprint.FragmentViewInterface
 
-interface CreateOrEditAnnouncementView : FragmentViewInterface {
+interface CreateOrEditAnnouncementView : FragmentViewInterface, RceMediaUploadView {
     fun onSaveStarted()
     fun onSaveSuccess()
     fun onSaveError()
     fun onDeleteSuccess()
     fun onDeleteError()
+    fun onSectionsLoaded()
 }

@@ -120,7 +120,7 @@ public class Analytics {
 
         Application application = context.getApplication();
         if(application instanceof AnalyticsEventHandling) {
-            ((AnalyticsEventHandling)application).trackUIEvent("Bookmark Created", "Bookmark", 512512L);
+            ((AnalyticsEventHandling)application).trackUIEvent("Bookmarker Created", "Bookmarker", 512512L);
         }
     }
 
@@ -211,7 +211,7 @@ public class Analytics {
 
         Application application = context.getApplication();
         if(application instanceof AnalyticsEventHandling) {
-            ((AnalyticsEventHandling)application).trackUIEvent("Bookmark selected", className, 0);
+            ((AnalyticsEventHandling)application).trackUIEvent("Bookmarker selected", className, 0);
         }
     }
 

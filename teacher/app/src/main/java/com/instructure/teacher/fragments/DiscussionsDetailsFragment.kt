@@ -25,13 +25,15 @@ import android.view.MenuItem
 import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import com.instructure.canvasapi2.managers.OAuthManager
 import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.utils.*
 import com.instructure.canvasapi2.utils.weave.WeaveJob
-import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.interactions.FullScreenInteractions
+import com.instructure.interactions.Identity
+import com.instructure.interactions.MasterDetailInteractions
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.dialogs.AttachmentPickerDialog
 import com.instructure.pandautils.discussions.DiscussionUtils
 import com.instructure.pandautils.fragments.BasePresenterFragment
@@ -42,13 +44,10 @@ import com.instructure.teacher.R
 import com.instructure.teacher.adapters.StudentContextFragment
 import com.instructure.teacher.dialog.NoInternetConnectionDialog
 import com.instructure.teacher.events.*
+import com.instructure.teacher.events.DiscussionEntryEvent
 import com.instructure.teacher.factory.DiscussionsDetailsPresenterFactory
-import com.instructure.interactions.FullScreenInteractions
-import com.instructure.interactions.Identity
-import com.instructure.interactions.MasterDetailInteractions
 import com.instructure.teacher.presenters.AssignmentSubmissionListPresenter
 import com.instructure.teacher.presenters.DiscussionsDetailsPresenter
-import com.instructure.interactions.router.Route
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
 import com.instructure.teacher.viewinterface.DiscussionsDetailsView
@@ -60,8 +59,8 @@ import kotlinx.coroutines.experimental.delay
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.net.URLDecoder
 import java.util.*
-import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 class DiscussionsDetailsFragment : BasePresenterFragment<
@@ -81,9 +80,8 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
     private var mIsAnnouncements: Boolean = false
     private var mIsNestedDetail: Boolean = false
 
-    private var mSessionAuthJob: Job? = null
-    private var mAuthenticatedSessionURL: String? = null
-
+    private var repliesLoadHtmlJob: Job? = null
+    private var headerLoadHtmlJob: Job? = null
     private var loadDiscussionJob: WeaveJob? = null
 
     //endregion
@@ -103,10 +101,11 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
         EventBus.getDefault().unregister(this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mSessionAuthJob?.cancel()
+    override fun onDestroyView() {
+        super.onDestroyView()
         loadDiscussionJob?.cancel()
+        repliesLoadHtmlJob?.cancel()
+        headerLoadHtmlJob?.cancel()
     }
 
     override val identity: Long? get() = if(mDiscussionTopicHeaderId != 0L) mDiscussionTopicHeaderId else mDiscussionTopicHeader.id
@@ -140,7 +139,7 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
                 populateDiscussionTopicHeader(presenter.discussionTopicHeader, false)
             } else if (mDiscussionTopicHeaderId != 0L) {
                 //results of this GET will call populateDiscussionTopicHeader()
-                presenter.getDiscussionTopicHeader(mDiscussionTopicHeaderId, false)
+                presenter.getDiscussionTopicHeader(mDiscussionTopicHeaderId)
             }
         }
 
@@ -152,6 +151,10 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
                     activity.finish()
                 }
             }
+        }
+
+        EventBus.getDefault().getStickyEvent(DiscussionEntryEvent::class.java)?.once(javaClass.simpleName) { discussionEntry ->
+            presenter.addDiscussionEntryToDiscussionTopic(discussionEntry, false)
         }
     }
 
@@ -184,6 +187,14 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
             pointsPublishedDivider.setGone()
             dueLayoutDivider.setGone()
             submissionDivider.setGone()
+
+        }
+
+        // If we're getting here by a deep link (like from an email) we don't know that it is an announcement
+        // because that field is not included in the api (:frowny_face:) The sections field won't show up for a discussion or
+        // an announcement that isn't section specific
+        discussionTopicHeader.sections?.joinToString { it.name }?.validOrNull()?.let {
+            announcementSection.setVisible().text = it
         }
 
         loadDiscussionTopicHeader(discussionTopicHeader)
@@ -231,9 +242,12 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
             }
 
             discussionRepliesWebView.setInvisible()
-            if(CanvasWebView.containsArcLTI(html, "utf-8")) {
-                getAuthenticatedURL(html, { loadHTMLReplies(it) })
-
+            if(CanvasWebView.containsLTI(html, "UTF-8")) {
+                discussionTopicHeaderWebView.addJavascriptInterface(JsExternalToolInterface {
+                    val args = LTIWebViewFragment.makeLTIBundle(URLDecoder.decode(it, "utf-8"), this@DiscussionsDetailsFragment.context.getString(R.string.utils_externalToolTitle), true)
+                    RouteMatcher.route(this@DiscussionsDetailsFragment.context, Route(LTIWebViewFragment::class.java, canvasContext, args))
+                }, "accessor")
+                repliesLoadHtmlJob = discussionRepliesWebView.loadHtmlWithLTIs(this@DiscussionsDetailsFragment.context, isTablet, html, DiscussionsDetailsFragment@::loadHTMLReplies)
             } else {
                 discussionRepliesWebView.loadDataWithBaseURL(CanvasWebView.getReferrer(), html, "text/html", "utf-8", null)
             }
@@ -382,11 +396,13 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
             showReplyView(presenter.discussionTopicHeader.id)
         }
 
-        //if the html has an arc lti url, we want to authenticate so the user doesn't have to login again
-        if (CanvasWebView.containsArcLTI(discussionTopicHeader.message.orEmpty(), "UTF-8")) {
-
-            getAuthenticatedURL(discussionTopicHeader.message.orEmpty(), this::loadHTMLTopic)
-
+        //if the html has an lti url, we want to authenticate so the user doesn't have to login again
+        if (CanvasWebView.containsLTI(discussionTopicHeader.message.orEmpty(), "UTF-8")) {
+            discussionTopicHeaderWebView.addJavascriptInterface(JsExternalToolInterface({
+                val args = LTIWebViewFragment.makeLTIBundle(URLDecoder.decode(it, "utf-8"), this@DiscussionsDetailsFragment.context.getString(R.string.utils_externalToolTitle), true)
+                RouteMatcher.route(this@DiscussionsDetailsFragment.context, Route(LTIWebViewFragment::class.java, canvasContext, args))
+            }), "accessor")
+            headerLoadHtmlJob = discussionTopicHeaderWebView.loadHtmlWithLTIs(context, isTablet, discussionTopicHeader.message.orEmpty(), this::loadHTMLTopic)
         } else {
             discussionTopicHeaderWebView.loadHtml(discussionTopicHeader.message, discussionTopicHeader.title)
         }
@@ -399,44 +415,6 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
 
     private fun loadHTMLReplies(html: String) {
         discussionRepliesWebView.loadDataWithBaseURL(CanvasWebView.getReferrer(true), html, "text/html", "utf-8", null)
-    }
-
-    /**
-     * Method to put an authenticated URL in place of a non-authenticated URL (like when we try to load Arc LTI in a webview)
-     */
-    private fun getAuthenticatedURL(html: String, loadHtml: (newUrl: String) -> Unit) {
-        if(mAuthenticatedSessionURL.isNullOrBlank()) {
-            //get the url
-            mSessionAuthJob = tryWeave {
-                //get the url from html
-                val matcher = Pattern.compile("src=\"([^\"]+)\"").matcher(presenter.discussionTopicHeader.message)
-                matcher.find()
-                val url = matcher.group(1)
-
-                // Get an authenticated session so the user doesn't have to log in
-                mAuthenticatedSessionURL = awaitApi<AuthenticatedSession> { OAuthManager.getAuthenticatedSession(url, it) }.sessionUrl
-                loadHtml(getNewHTML(html))
-            } catch {
-                //couldn't get the authenticated session, try to load it without it
-                loadHtml(html)
-            }
-
-        } else {
-            loadHtml(getNewHTML(html))
-        }
-    }
-
-    private fun getNewHTML(html: String): String {
-        //now we need to swap out part of the old url for this new authenticated url
-        val matcher = Pattern.compile("src=\"([^;]+)").matcher(html)
-        matcher.find()
-        var newHTML: String = html
-        // We only want to change the urls that are part of an external tool, not everything (like avatars)
-        (1..matcher.groupCount())
-            .map { matcher.group(it) }
-            .filter { it.contains("external_tools") }
-            .forEach { newHTML = html.replace(it, mAuthenticatedSessionURL!!) }
-        return newHTML
     }
 
     override fun onPause() {
@@ -534,7 +512,6 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
 
         webView.addVideoClient(activity)
     }
-
 
     @Suppress("unused")
     private inner class JSDiscussionInterface {
@@ -713,14 +690,6 @@ class DiscussionsDetailsFragment : BasePresenterFragment<
         val bottom = top + context.DP(elementHeight)
 
         return scrollBounds.top < top && scrollBounds.bottom > bottom
-    }
-
-    private fun createLoaderBundle(header: DiscussionTopicHeader, topic: DiscussionTopic, discussionEntryId: Long): Bundle {
-        val loaderBundle = Bundle()
-        loaderBundle.putParcelable(DISCUSSION_TOPIC_HEADER, header)
-        loaderBundle.putParcelable(DISCUSSION_TOPIC, topic)
-        loaderBundle.putLong(DISCUSSION_ENTRY_ID, discussionEntryId)
-        return loaderBundle
     }
 
     private fun viewAttachments(remoteFiles: List<RemoteFile>) {

@@ -97,7 +97,73 @@
                 app:rce_controls_margin_start="12dp"
                 app:rce_controls_margin_end="12dp"
                 app:rce_editor_padding="12dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="16dp"/>
+
+            <RelativeLayout
+                android:id="@+id/allowCommentsWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/allowCommentsText"
+                    style="@style/TextFont.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toStartOf="@+id/allowCommentsSwitch"
+                    android:labelFor="@+id/allowCommentsSwitch"
+                    android:text="@string/allowUserComments"
+                    android:textSize="16sp"/>
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/allowCommentsSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:maxWidth="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:backgroundTint="@color/canvas_default_primary"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/usersMustPostWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/usersMustPostText"
+                    style="@style/TextFont.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toStartOf="@+id/usersMustPostSwitch"
+                    android:labelFor="@+id/usersMustPostSwitch"
+                    android:text="@string/usersMustPost"
+                    android:textSize="16sp" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/usersMustPostSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:backgroundTint="@color/canvas_default_primary"
+                    android:maxWidth="48dp"
+                    android:minHeight="48dp" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 

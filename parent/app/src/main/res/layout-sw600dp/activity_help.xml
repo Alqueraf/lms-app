@@ -41,7 +41,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/search_guides"
+                    android:id="@+id/searchGuides"
                     android:layout_width="match_parent"
                     android:layout_height="?android:listPreferredItemHeight"
                     android:background="?android:selectableItemBackground"
@@ -68,7 +68,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/report_problem"
+                    android:id="@+id/reportProblem"
                     android:layout_width="match_parent"
                     android:layout_height="?android:listPreferredItemHeight"
                     android:background="?android:selectableItemBackground"
@@ -95,7 +95,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/request_feature"
+                    android:id="@+id/requestFeature"
                     android:layout_width="match_parent"
                     android:layout_height="?android:listPreferredItemHeight"
                     android:background="?android:selectableItemBackground"
@@ -122,7 +122,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/share_love"
+                    android:id="@+id/shareLove"
                     android:layout_width="match_parent"
                     android:layout_height="?android:listPreferredItemHeight"
                     android:background="?android:selectableItemBackground"
@@ -149,29 +149,29 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/open_source"
-                    android:layout_width="match_parent"
+                    android:id="@+id/legal"
                     android:layout_height="?android:listPreferredItemHeight"
-                    android:background="?android:selectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:gravity="center_vertical"
                     android:orientation="vertical"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp">
+                    android:background="?android:selectableItemBackground">
 
                     <TextView
-                        android:id="@+id/open_source_text"
+                        android:id="@+id/legalText"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         style="@style/TextStyle.Secondary.Dark"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/open_source" />
+                        android:text="@string/legal"/>
 
                     <TextView
-                        android:id="@+id/open_source_licenses_text"
-                        style="@style/TextStyle.Tertiary"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/legalDescription"
                         android:layout_height="wrap_content"
-                        android:text="@string/open_source_details"
-                        android:textStyle="italic" />
+                        android:layout_width="wrap_content"
+                        style="@style/TextStyle.Tertiary"
+                        android:textStyle="italic"
+                        android:text="@string/legalDetails"/>
 
                 </LinearLayout>
 

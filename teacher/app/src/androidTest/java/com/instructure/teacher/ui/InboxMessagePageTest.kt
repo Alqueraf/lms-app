@@ -17,16 +17,19 @@
 package com.instructure.teacher.ui
 
 import com.instructure.teacher.ui.utils.*
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class InboxMessagePageTest: TeacherTest() {
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         getToMessageThread()
         inboxMessagePage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun displaysMessage() {
         getToMessageThread()
         inboxMessagePage.assertHasMessage()

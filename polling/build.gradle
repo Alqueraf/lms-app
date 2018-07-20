@@ -20,10 +20,11 @@ buildscript {
     PrivateData.merge(project, "polling")
 
     repositories {
-        jcenter()
         google()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
     dependencies {
         classpath Plugins.ANDROID_GRADLE_TOOLS
@@ -39,9 +40,10 @@ plugins {
 
 allprojects {
     repositories {
-        jcenter()
         google()
+        mavenCentral()
         maven { url "https://jitpack.io" }
+        jcenter()
     }
 }
 

@@ -49,7 +49,7 @@ import com.instructure.canvasapi2.models.Course;
 import com.instructure.canvasapi2.models.DiscussionTopicHeader;
 import com.instructure.canvasapi2.models.FileFolder;
 import com.instructure.canvasapi2.models.ScheduleItem;
-import com.instructure.canvasapi2.models.Student;
+import com.instructure.canvasapi2.models.User;
 import com.instructure.canvasapi2.utils.ApiPrefs;
 import com.instructure.canvasapi2.utils.ApiType;
 import com.instructure.canvasapi2.utils.LinkHeaders;
@@ -62,8 +62,7 @@ import com.instructure.parentapp.fragments.AssignmentFragment;
 import com.instructure.parentapp.fragments.CourseSyllabusFragment;
 import com.instructure.parentapp.fragments.CourseWeekFragment;
 import com.instructure.parentapp.fragments.EventFragment;
-import com.instructure.parentapp.fragments.InternalWebviewFragment;
-import com.instructure.parentapp.util.ApplicationManager;
+import com.instructure.parentapp.fragments.InternalWebViewFragment;
 import com.instructure.parentapp.util.Param;
 import com.instructure.parentapp.util.RouterUtils;
 import com.instructure.parentapp.util.StringUtilities;
@@ -84,7 +83,7 @@ public abstract class BaseRouterActivity extends BaseParentActivity {
      * Use RouterUtils.canRouteInternally()
      * @param route
      */
-    public void handleRoute(RouterUtils.Route route, @Nullable Student student) {
+    public void handleRoute(RouterUtils.Route route, @Nullable User student) {
         try {
             //currently all of our routes contain the course
             if (route.getParamsHash().containsKey(Param.COURSE_ID)) {
@@ -134,7 +133,7 @@ public abstract class BaseRouterActivity extends BaseParentActivity {
         }
     }
 
-    private void routeToFragment(final CanvasContext canvasContext, final Student student, final RouterUtils.Route route) {
+    private void routeToFragment(final CanvasContext canvasContext, final User student, final RouterUtils.Route route) {
         if(student == null) {
             //Error here, warn user, don't route
             Toast.makeText(this, getString(R.string.errorOccurred), Toast.LENGTH_SHORT).show();
@@ -153,133 +152,105 @@ public abstract class BaseRouterActivity extends BaseParentActivity {
             //the params has should have the assignment id, and we have the course id at this point
             long assignmentId = Long.parseLong(route.getParamsHash().get("assignment_id"));
 
-            AssignmentManager.getAssignmentAirwolf(
-                    ApiPrefs.getAirwolfDomain(),
-                    student.getParentId(),
-                    student.getStudentId(),
-                    Long.toString(canvasContext.getId()),
-                    Long.toString(assignmentId),
-                    new StatusCallback<Assignment>() {
-                        @Override
-                        public void onResponse(@NonNull Response<Assignment> response, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
-                            assignmentHelper(response.body());
-                        }
+            AssignmentManager.getAssignment(assignmentId, canvasContext.getId(), true, new StatusCallback<Assignment>() {
+                @Override
+                public void onResponse(@NonNull Response<Assignment> response, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
+                        assignmentHelper(response.body());
+                }
 
-                        private void assignmentHelper(Assignment assignment) {
-                            if (assignment != null) {
-                                startActivity(DetailViewActivity.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.ASSIGNMENT, assignment, canvasContext.getName(), student));
-                                overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
-                            }
-                        }
-
-                        @Override
-                        public void onFail(@Nullable Call<Assignment> call, @NonNull Throwable error, @Nullable Response response) {
-                            if (response != null && response.code() == 404) {
-                                Toast.makeText(BaseRouterActivity.this, R.string.could_not_route_assignment, Toast.LENGTH_SHORT).show();
-                            }
-                        }
+                private void assignmentHelper(Assignment assignment) {
+                    if (assignment != null) {
+                        startActivity(DetailViewActivity.Companion.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.ASSIGNMENT, assignment, (Course)canvasContext, student));
+                        overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
                     }
-            );
+                }
+                @Override
+                public void onFail(@Nullable Call<Assignment> call, @NonNull Throwable error, @Nullable Response response) {
+                    if (response != null && response.code() == 404) {
+                        Toast.makeText(BaseRouterActivity.this, R.string.could_not_route_assignment, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
         } else if(route.getFragCls().equals(AnnouncementFragment.class)) {
 
             long announcementId = Long.parseLong(route.getParamsHash().get("announcement_id"));
+            DiscussionManager.getDetailedDiscussion(canvasContext, announcementId, new StatusCallback<DiscussionTopicHeader>() {
+                @Override
+                public void onResponse(@NonNull Response<DiscussionTopicHeader> response, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
+                    startActivity(DetailViewActivity.Companion.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.ANNOUNCEMENT, response.body(), canvasContext.getName(), student));
+                        overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
+                }
 
-            DiscussionManager.getDetailedDiscussionAirwolf(
-                    ApiPrefs.getAirwolfDomain(),
-                    student.getParentId(),
-                    student.getStudentId(),
-                    Long.toString(canvasContext.getId()),
-                    Long.toString(announcementId),
-                    new StatusCallback<DiscussionTopicHeader>() {
-                        @Override
-                        public void onResponse(@NonNull Response<DiscussionTopicHeader> response, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
-                            startActivity(DetailViewActivity.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.ANNOUNCEMENT, response.body(), canvasContext.getName(), student));
-                            overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
-                        }
-
-                        @Override
-                        public void onFail(@Nullable Call<DiscussionTopicHeader> call, @NonNull Throwable error, @Nullable Response response) {
-                            Toast.makeText(BaseRouterActivity.this, R.string.errorOccurred, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
+                @Override
+                public void onFail(@Nullable Call<DiscussionTopicHeader> call, @NonNull Throwable error, @Nullable Response response) {
+                    Toast.makeText(BaseRouterActivity.this, R.string.errorOccurred, Toast.LENGTH_SHORT).show();
+                }
+            });
         } else if(route.getFragCls().equals(EventFragment.class)) {
 
             long eventId = Long.parseLong(route.getParamsHash().get("event_id"));
 
-            CalendarEventManager.getCalendarEventAirwolf(
-                    ApiPrefs.getAirwolfDomain(),
-                    student.getParentId(),
-                    student.getStudentId(),
-                    Long.toString(eventId),
-                    new StatusCallback<ScheduleItem>() {
-                        @Override
-                        public void onResponse(@NonNull Response<ScheduleItem> response, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
-                            startActivity(DetailViewActivity.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.EVENT, response.body(), student));
-                            overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
-                        }
+            CalendarEventManager.getCalendarEvent(eventId, new StatusCallback<ScheduleItem>() {
+                @Override
+                public void onResponse(@NonNull Response<ScheduleItem> response, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
+                    startActivity(DetailViewActivity.Companion.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.EVENT, response.body(), student));
+                           overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
+                }
 
-                        @Override
-                        public void onFail(@Nullable Call<ScheduleItem> call, @NonNull Throwable error, @Nullable Response response) {
+                @Override
+                public void onFail(@Nullable Call<ScheduleItem> call, @NonNull Throwable error, @Nullable Response response) {
                             Toast.makeText(BaseRouterActivity.this, R.string.errorOccurred, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
-
+                }
+            }, true);
         } else if(route.getFragCls().equals(CourseWeekFragment.class)) {
-            startActivity(DetailViewActivity.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.WEEK, student, (Course)canvasContext));
+            startActivity(DetailViewActivity.Companion.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.WEEK, student, (Course)canvasContext));
         } else if (route.getFragCls().equals(CourseSyllabusFragment.class)) {
             //we have the course and the student, just go to the syllabus fragment
             if(this instanceof DetailViewActivity) {
-                ((DetailViewActivity)this).addFragment(CourseSyllabusFragment.newInstance((Course)canvasContext,student), false);
+                ((DetailViewActivity)this).addFragment(CourseSyllabusFragment.Companion.newInstance((Course)canvasContext,student), false);
 
             } else {
-                startActivity(DetailViewActivity.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.SYLLABUS, student, (Course)canvasContext));
+                startActivity(DetailViewActivity.Companion.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.SYLLABUS, student, (Course)canvasContext));
                 overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
             }
         }
     }
 
 
-    private void routeToAccountNotification(RouterUtils.Route route, final Student student) {
-        String notificationId = route.getParamsHash().get("notification_id");
+    private void routeToAccountNotification(RouterUtils.Route route, final User student) {
+        long notificationId = Long.parseLong(route.getParamsHash().get("notification_id"));
+        showProgressDialog();
+        AccountNotificationManager.getAccountNotification(notificationId, new StatusCallback<AccountNotification>() {
+            @Override
+            public void onResponse(@NonNull Response<AccountNotification> response, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
+                if (response.body() != null) {
+                    startActivity(DetailViewActivity.Companion.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.ACCOUNT_NOTIFICATION, response.body(), student));
+                    overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
+                }
+                dismissProgressDialog();
+            }
 
-        AccountNotificationManager.getAccountNotificationForStudentAirwolf(
-                ApiPrefs.getAirwolfDomain(),
-                ApplicationManager.getParentId(BaseRouterActivity.this),
-                student.getStudentId(),
-                notificationId,
-                true,
-                new StatusCallback<AccountNotification>() {
-
-                    @Override
-                    public void onResponse(@NonNull Response<AccountNotification> accountNotificationResponse, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
-                        if (accountNotificationResponse.body() != null) {
-                            startActivity(DetailViewActivity.createIntent(BaseRouterActivity.this, DetailViewActivity.DETAIL_FRAGMENT.ACCOUNT_NOTIFICATION, accountNotificationResponse.body(), student));
-                            overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
-                        }
-                    }
-                });
+            @Override
+            public void onFail(@Nullable Call<AccountNotification> call, @NonNull Throwable error, @Nullable Response response) {
+                super.onFail(call, error, response);
+                Toast.makeText(BaseRouterActivity.this, R.string.institutionAnnouncementUnavailable, Toast.LENGTH_SHORT).show();
+                dismissProgressDialog();
+            }
+        }, true);
     }
 
-    private void getCourseForRouting(long id, final RouterUtils.Route route, final Student student) {
-        CourseManager.getCourseWithGradeAirwolf(
-                ApiPrefs.getAirwolfDomain(),
-                ApplicationManager.getParentId(BaseRouterActivity.this),
-                student.getStudentId(),
-                id,
-                new StatusCallback<Course>() {
-                    @Override
-                    public void onResponse(@NonNull Response<Course> response, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
-                        if (response.body() == null) {
-                            Toast.makeText(BaseRouterActivity.this, getString(R.string.could_not_route_course), Toast.LENGTH_SHORT).show();
-                        } else {
-                            routeToFragment(response.body(), student, route);
-                        }
-                    }
+    private void getCourseForRouting(long id, final RouterUtils.Route route, final User student) {
+        CourseManager.getCourseWithGrade(id, new StatusCallback<Course>() {
+            @Override
+            public void onResponse(@NonNull Response<Course> response, @NonNull LinkHeaders linkHeaders, @NonNull ApiType type) {
+                if (response.body() == null) {
+                    Toast.makeText(BaseRouterActivity.this, getString(R.string.could_not_route_course), Toast.LENGTH_SHORT).show();
+                } else {
+                    routeToFragment(response.body(), student, route);
                 }
-        );
+            }
+        }, true);
     }
 
     private LoaderManager.LoaderCallbacks<OpenMediaAsyncTaskLoader.LoadedMedia> getLoaderCallbacks() {
@@ -300,7 +271,7 @@ public abstract class BaseRouterActivity extends BaseParentActivity {
                             Toast.makeText(BaseRouterActivity.this, getString(loadedMedia.getErrorMessage()), Toast.LENGTH_LONG).show();
                         } else if (loadedMedia.isHtmlFile()) {
                             //create and add the InternalWebviewFragment to deal with the link they clicked
-                            InternalWebviewFragment internalWebviewFragment = new InternalWebviewFragment();
+                            InternalWebViewFragment internalWebviewFragment = new InternalWebViewFragment();
                             internalWebviewFragment.setArguments(loadedMedia.getBundle());
 
                             FragmentTransaction ft = BaseRouterActivity.this.getSupportFragmentManager().beginTransaction();

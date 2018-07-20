@@ -34,7 +34,7 @@ import com.instructure.candroid.dialog.UnsavedChangesExitDialog
 import com.instructure.candroid.events.ChooseRecipientsEvent
 import com.instructure.candroid.events.ConversationUpdatedEvent
 import com.instructure.candroid.events.MessageAddedEvent
-import com.instructure.candroid.util.FragUtils
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.candroid.view.AttachmentView
 import com.instructure.canvasapi2.managers.CourseManager
 import com.instructure.canvasapi2.managers.GroupManager
@@ -44,6 +44,7 @@ import com.instructure.canvasapi2.utils.APIHelper
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.isValid
 import com.instructure.canvasapi2.utils.weave.*
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.dialogs.UploadFilesDialog
 import com.instructure.pandautils.services.FileUploadService
 import com.instructure.pandautils.utils.*
@@ -55,13 +56,13 @@ import java.util.*
 
 class InboxComposeMessageFragment : ParentFragment() {
 
-    private val conversation: Conversation? by lazy { arguments.getParcelable<Conversation>(Const.CONVERSATION) }
-    private val participants by lazy { arguments.getParcelableArrayList<BasicUser>(PARTICIPANTS) }
-    private val includedMessageIds by lazy { arguments.getLongArray(Const.MESSAGE) }
-    private val isReply by lazy { arguments.getBoolean(IS_REPLY, false) }
-    private val currentMessage: Message? by lazy { arguments.getParcelable<Message>(Const.MESSAGE_TO_USER) }
+    private val conversation by NullableParcelableArg<Conversation>(key = Const.CONVERSATION)
+    private val participants by ParcelableArrayListArg<BasicUser>(key = PARTICIPANTS)
+    private val includedMessageIds by LongArrayArg(key = Const.MESSAGE)
+    private val isReply by BooleanArg(key = IS_REPLY)
+    private val currentMessage by NullableParcelableArg<Message>(key = Const.MESSAGE_TO_USER)
 
-    private var selectedContext: CanvasContext? = null
+    private var selectedContext by NullableParcelableArg<CanvasContext>(key = Const.CANVAS_CONTEXT)
     private val isNewMessage by lazy { conversation == null }
     private val attachments = mutableListOf<Attachment>()
     private val chipsAdapter: RecipientAdapter by lazy { RecipientAdapter(context) }
@@ -89,8 +90,6 @@ class InboxComposeMessageFragment : ParentFragment() {
     }
 
     override fun title(): String = getString(R.string.composeMessage)
-
-    override fun allowBookmarking() = false
 
     override fun applyTheme() {
         ColorUtils.colorIt(ThemePrefs.buttonColor, contactsImageButton)
@@ -143,19 +142,30 @@ class InboxComposeMessageFragment : ParentFragment() {
             editSubject.setVisible()
             sendIndividualMessageWrapper.setVisible()
             sendIndividualSwitch.setOnCheckedChangeListener { _, isChecked -> sendIndividually = isChecked }
+            if (participants.isNotEmpty()) {
+                globalAddRecipients()
+            }
         } else {
-            recipientsView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    if (isReply) {
-                        addInitialRecipients(currentMessage?.participatingUserIds ?: conversation?.audience ?: emptyList())
-                    }
-                    recipientsView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                }
-            })
+            globalAddRecipients()
         }
-
         setupToolbar()
         setupViews()
+    }
+
+    private fun globalAddRecipients() {
+        recipientsView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (isReply) {
+                    addInitialRecipients(currentMessage?.participatingUserIds
+                            ?: conversation?.audience ?: emptyList())
+                } else if (participants.isNotEmpty()) {
+                    addInitialRecipients(participants.map {
+                        it.id
+                    })
+                }
+                recipientsView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
     }
 
     private fun setupViews() {
@@ -176,10 +186,8 @@ class InboxComposeMessageFragment : ParentFragment() {
             if (selectedContext == null && conversation == null) {
                 toast(R.string.noCourseSelected)
             } else {
-                val canvasContext =
-                    selectedContext ?: CanvasContext.fromContextCode(conversation?.contextCode) ?: return@onClick
-                val args = InboxRecipientsFragment.createBundle(canvasContext, getRecipientsFromEntries())
-                navigation?.addFragment(FragUtils.getFrag(InboxRecipientsFragment::class.java, args))
+                val canvasContext = selectedContext ?: CanvasContext.fromContextCode(conversation?.contextCode) ?: return@onClick
+                RouteMatcher.route(context, InboxRecipientsFragment.makeRoute(canvasContext, getRecipientsFromEntries()))
             }
         }
 
@@ -195,7 +203,7 @@ class InboxComposeMessageFragment : ParentFragment() {
             try {
                 val (courses, groups) = awaitApis<List<Course>, List<Group>>(
                         { CourseManager.getAllFavoriteCourses(true, it) },
-                        { GroupManager.getFavoriteGroups(it, true) }
+                        { GroupManager.getAllGroups(it, true) }
                 )
                 addCoursesAndGroups(courses, groups)
             } catch (ignore: Throwable) {
@@ -406,7 +414,12 @@ class InboxComposeMessageFragment : ParentFragment() {
     fun onRecipientsChosen(event: ChooseRecipientsEvent) {
         event.once(javaClass.simpleName, { recipients ->
             // Need to have the TextView laid out first so that the chips view will have a width
-            recipientsView.post { addRecipients(recipients) }
+            recipientsView.post {
+                // We're going to add all the recipients that the user has selected. They may have removed a user previously selected,
+                // so clear the view so we only add the users selected
+                recipientsView.text.clear()
+                addRecipients(recipients)
+            }
         })
     }
 
@@ -430,37 +443,56 @@ class InboxComposeMessageFragment : ParentFragment() {
         private const val PARTICIPANTS = "participants"
 
         @JvmStatic
-        fun createBundleReplyForward(
+        fun makeRoute(
             isReply: Boolean,
             conversation: Conversation,
             participants: List<BasicUser>,
             includedMessageIds: LongArray,
             currentMessage: Message?
-        ) = Bundle().apply {
-            putBoolean(IS_REPLY, isReply)
-            putParcelable(Const.CONVERSATION, conversation)
-            putParcelableArrayList(PARTICIPANTS, ArrayList(participants))
-            putLongArray(Const.MESSAGE, includedMessageIds)
-            putParcelable(Const.MESSAGE_TO_USER, currentMessage)
+        ): Route {
+            val bundle = Bundle().apply {
+                putBoolean(IS_REPLY, isReply)
+                putParcelable(Const.CONVERSATION, conversation)
+                putParcelableArrayList(PARTICIPANTS, ArrayList(participants))
+                putLongArray(Const.MESSAGE, includedMessageIds)
+                putParcelable(Const.MESSAGE_TO_USER, currentMessage)
+            }
+            return Route(InboxComposeMessageFragment::class.java, null, bundle)
         }
 
         @JvmStatic
-        fun createBundleNewConversation() = Bundle()
+        fun makeRoute() = Route(InboxComposeMessageFragment::class.java, null, Bundle())
 
         @JvmStatic
-        fun createBundleNewConversation(
-            participants: ArrayList<BasicUser>,
-            canvasContext: CanvasContext
-        ) = Bundle().apply {
-            putParcelableArrayList(PARTICIPANTS, participants)
-            putParcelable(Const.CANVAS_CONTEXT, canvasContext)
+        fun makeRoute(
+            canvasContext: CanvasContext,
+            participants: ArrayList<BasicUser>
+        ): Route {
+            val bundle = Bundle().apply {
+                putParcelableArrayList(PARTICIPANTS, participants)
+                putParcelable(Const.CANVAS_CONTEXT, canvasContext)
+            }
+            return Route(InboxComposeMessageFragment::class.java, canvasContext, bundle)
+        }
+
+        private fun validateRoute(route: Route): Boolean {
+            val args = route.arguments
+            return when {
+                args.containsKey(Const.CONVERSATION) -> args.containsKey(IS_REPLY)
+                        && args.containsKey(PARTICIPANTS)
+                        && args.containsKey(Const.MESSAGE)
+                        && args.containsKey(Const.MESSAGE_TO_USER)
+                args.containsKey(PARTICIPANTS) -> route.canvasContext != null
+                else -> true
+            }
         }
 
         @JvmStatic
-        fun newInstance(bundle: Bundle): InboxComposeMessageFragment {
-            val addMessageActivity = InboxComposeMessageFragment()
-            addMessageActivity.arguments = bundle
-            return addMessageActivity
+        fun newInstance(route: Route): InboxComposeMessageFragment? {
+            if (!validateRoute(route)) return null
+            return InboxComposeMessageFragment().apply {
+                arguments = route.arguments
+            }
         }
     }
 }

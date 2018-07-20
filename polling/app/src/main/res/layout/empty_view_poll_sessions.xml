@@ -19,39 +19,38 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/emptyView"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:textSize="20sp"
         android:textColor="@color/canvasTextDark"
+        android:textSize="20sp"
         android:visibility="gone" />
 
     <TextView
-        style="@style/TextStyle.Primary"
         android:id="@+id/noItems"
+        style="@style/TextStyle.Primary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/emptyViewPublishPoll"
+        android:gravity="center"
         android:padding="8dp"
-        android:gravity="center"/>
+        android:text="@string/emptyViewPublishPoll" />
 
     <LinearLayout
         android:id="@+id/loadingView"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:visibility="gone" >
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <android.support.v4.widget.ContentLoadingProgressBar
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/listview_loading"
+            android:id="@+id/listviewLoading"
             style="@android:style/Widget.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,11 +62,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/loading"
-            android:textSize="20sp"
-            android:textColor="@color/canvasTextDark" />
+            android:textColor="@color/canvasTextDark"
+            android:textSize="20sp" />
 
     </LinearLayout>
-
 
 
 </LinearLayout>

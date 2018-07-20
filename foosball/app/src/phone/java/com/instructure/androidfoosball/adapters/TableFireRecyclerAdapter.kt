@@ -21,6 +21,7 @@ package com.instructure.androidfoosball.adapters
 
 import android.content.Context
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.instructure.androidfoosball.R
 import com.instructure.androidfoosball.holders.TableViewHolder
@@ -32,6 +33,10 @@ class TableFireRecyclerAdapter(context: Context, ref: DatabaseReference) : Fireb
 
     var currentPreferredTable: Int = -1
     var mContext: WeakReference<Context> = WeakReference(context)
+
+    override fun parseSnapshot(snapshot: DataSnapshot?): Table {
+        return super.parseSnapshot(snapshot).apply { id = snapshot?.key.orEmpty() }
+    }
 
     override fun populateViewHolder(holder: TableViewHolder, table: Table, position: Int) {
         holder.bind(mContext.get(), table, adapterCallback = { pos ->

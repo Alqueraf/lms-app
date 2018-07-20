@@ -29,7 +29,9 @@ import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.Course
 import com.instructure.canvasapi2.models.Group
 import com.instructure.canvasapi2.utils.*
+import com.instructure.canvasapi2.utils.weave.resumeSafely
 import com.instructure.pandautils.R
+import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import retrofit2.Call
 import retrofit2.Response
 import java.util.*
@@ -219,4 +221,6 @@ object ColorApiHelper {
             override fun onFail(call: Call<CanvasColor>?, error: Throwable, response: Response<*>?) = onSynced(false)
         }, true)
     }
+
+    suspend fun awaitSync(): Boolean = suspendCancellableCoroutine { cr -> performSync { cr.resumeSafely(it) } }
 }

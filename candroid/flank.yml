@@ -1,0 +1,13 @@
+projectId: delta-essence-114723
+appApk: ./candroid/build/outputs/apk/qa/debug/candroid-qa-debug.apk
+testApk: ./candroid/build/outputs/apk/androidTest/qa/debug/candroid-qa-debug-androidTest.apk
+rootGcsBucket: android-student
+useOrchestrator: true
+disablePerformanceMetrics: true
+disableVideoRecording: false
+testTimeoutMinutes: 60
+testShards: 1
+testRuns: 1
+waitForResults: true
+#testMethods:
+# - com.instructure.candroid.ui.DashboardPageTest#displaysAddCourseMessage

@@ -15,31 +15,28 @@
  */
 package com.instructure.teacher.ui
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.espresso.Espresso
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions.click
-import android.support.test.espresso.matcher.ViewMatchers.isRoot
 import com.instructure.dataseeding.util.ago
 import com.instructure.dataseeding.util.days
 import com.instructure.dataseeding.util.iso8601
 import com.instructure.soseedy.SeededData
 import com.instructure.soseedy.SubmissionSeed
-import com.instructure.soseedy.SubmissionType.*
+import com.instructure.soseedy.SubmissionType.ONLINE_TEXT_ENTRY
 import com.instructure.teacher.R
 import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.utils.TeacherPrefs
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class AssignmentSubmissionListPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         goToAssignmentSubmissionListPage()
         assignmentSubmissionListPage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun displaysNoSubmissionsView() {
         goToAssignmentSubmissionListPage(
                 students = 0,
@@ -49,9 +46,11 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun filterLateSubmissions() {
         goToAssignmentSubmissionListPage(
-                dueAt = 7.days.ago.iso8601
+                dueAt = 7.days.ago.iso8601,
+                checkForLateStatus = true
         )
         assignmentSubmissionListPage.clickFilterButton()
         assignmentSubmissionListPage.clickFilterSubmissions()
@@ -63,6 +62,7 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun filterUngradedSubmissions() {
         goToAssignmentSubmissionListPage()
         assignmentSubmissionListPage.clickFilterButton()
@@ -75,12 +75,14 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysAssignmentStatusSubmitted() {
         goToAssignmentSubmissionListPage()
         assignmentSubmissionListPage.assertSubmissionStatusSubmitted()
     }
 
     @Test
+    @Ditto
     fun displaysAssignmentStatusMissing() {
         goToAssignmentSubmissionListPage(
                 students = 1,
@@ -91,6 +93,7 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysAssignmentStatusNotSubmitted() {
         goToAssignmentSubmissionListPage(
                 students = 1,
@@ -100,6 +103,7 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysAssignmentStatusLate() {
         goToAssignmentSubmissionListPage(
                 dueAt = 7.days.ago.iso8601
@@ -108,6 +112,7 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun messageStudentsWho() {
         val data = goToAssignmentSubmissionListPage(
                 students = 1
@@ -119,6 +124,7 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun togglesMute() {
         goToAssignmentSubmissionListPage()
         openOverflowMenu()
@@ -130,6 +136,7 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun toggleAnonymousGrading() {
         goToAssignmentSubmissionListPage()
         openOverflowMenu()
@@ -144,7 +151,8 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
     private fun goToAssignmentSubmissionListPage(
             students: Int = 1,
             submissions: Int = 1,
-            dueAt: String = ""
+            dueAt: String = "",
+            checkForLateStatus: Boolean = false
     ): SeededData {
         val data = seedData(teachers = 1, favoriteCourses = 1, students = students)
         val course = data.coursesList[0]
@@ -161,7 +169,9 @@ class AssignmentSubmissionListPageTest : TeacherTest() {
                     listOf(
                             SubmissionSeed.newBuilder()
                                     .setSubmissionType(ONLINE_TEXT_ENTRY)
-                                    .setAmount(1).build()),
+                                    .setAmount(1)
+                                    .setCheckForLateStatus(checkForLateStatus)
+                                    .build()),
                     assignment.id,
                     course.id,
                     data.studentsList[s].token)

@@ -15,15 +15,17 @@
  */
 package com.instructure.teacher.ui
 
+import com.instructure.espresso.TestRail
 import com.instructure.teacher.ui.utils.TeacherTest
-import com.instructure.teacher.ui.utils.TestRail
 import com.instructure.teacher.ui.utils.seedData
 import com.instructure.teacher.ui.utils.tokenLogin
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class CourseBrowserPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     @TestRail(ID = "C3108909")
     override fun displaysPageObjects() {
         val data = seedData(teachers = 1, favoriteCourses = 3)

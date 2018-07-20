@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">Probeer je je aan te melden bij Canvas Network?</string>
     <string name="remove">Verwijderen</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">Masker toepassen</string>
     <string name="userId">Gebruikers-ID:</string>
     <string name="domain">Domein</string>
 
-    <string name="masqueradingUserId">Gebruikers-ID verbergen</string>
-    <string name="masqueradingUserDomain">Domein verbergen</string>
-    <string name="masqueradingBegin">Met verbergen beginnen</string>
-    <string name="masqueradingStop">Maskeren stoppen</string>
-
+    <string name="actAsUser">Optreden als gebruiker</string>
+    <string name="stopActAsUser">Stop met optreden als gebruiker</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Deze gebruiker verwijderen?</string>
     <string name="removedForever">Je moet je bij deze gebruiker opnieuw aanmelden om toegang tot zijn content te verkrijgen.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Nee</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">Bij jou in de buurt</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Vlak achter je</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Eerdere aanmeldingen</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Zoek mijn school</string>
-    <string name="appTypeTeacher">Docent</string>
-    <string name="appTypeStudent">Cursist</string>
-    <string name="appTypeParent">Ouder</string>
     <string name="canvasLowerCase">canvas</string>
     <string name="whatsYourSchoolName">Wat is de naam van je school?</string>
     <string name="next">Volgende</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">Scrol om alle details te zien</string>
 
     <string name="masqueradeErrorUserId">Je moet een gebruikers-ID invoeren.</string>
-    <string name="masqueradeErrorDomain">Je moet een domein invoeren</string>
+    <string name="masqueradeErrorDomain">Je moet een geldig domein invoeren.</string>
     <string name="masqueradeError">Fout tijdens maskeren.</string>
+    <string name="masqueradeInfo">\"Optreden als\" is in essentie hetzelfde als aanmelden als deze gebruiker zonder wachtwoord. Je kunt alle acties uitvoeren alsof je die gebruiker bent. Gezien vanuit andere gebruikers lijkt het dan ook alsof die acties door die gebruiker zijn uitgevoerd. De controleogboeken laten echter zien dat jij degene was die namens deze gebruiker die acties verricht hebt.</string>
+    <string name="masqueradingAs">Je treedt op als %s</string>
+    <string name="stopActingAsTitle">Stop met optreden als...</string>
+    <string name="stopActingAsMessage">Je stopt met optreden als %s en keert terug naar je account.</string>
+
+    <string name="weMadeChanges">We hebben enkele wijzigingen aangebracht.</string>
+    <string name="whatsNewText">Wat is er nieuw</string>
 </resources>

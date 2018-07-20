@@ -26,7 +26,9 @@ import com.instructure.canvasapi2.apis.AvatarAPI;
 import com.instructure.canvasapi2.apis.UserAPI;
 import com.instructure.canvasapi2.builders.RestBuilder;
 import com.instructure.canvasapi2.builders.RestParams;
+import com.instructure.canvasapi2.models.Account;
 import com.instructure.canvasapi2.models.AccountRole;
+import com.instructure.canvasapi2.models.BecomeUserPermission;
 import com.instructure.canvasapi2.models.CanvasColor;
 import com.instructure.canvasapi2.models.CanvasContext;
 import com.instructure.canvasapi2.models.Enrollment;
@@ -611,6 +613,54 @@ public class UserManager extends BaseManager {
                     .withForceReadFromNetwork(forceNetwork)
                     .build();
             UserAPI.getSelfAccountRoles(adapter, params, callback);
+        }
+    }
+
+    public static void removeObservee(long observeeId, StatusCallback<User> callback) {
+        if (isTesting()) {
+
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .build();
+            UserAPI.removeObservee(observeeId, adapter, params, callback);
+        }
+    }
+
+    public static void getSelfAccount(boolean forceNetwork, StatusCallback<Account> callback) {
+
+        if (isTesting()) {
+
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+            UserAPI.getSelfAccount(adapter, params, callback);
+        }
+    }
+
+    public static void getBecomeUserPermission(boolean forceNetwork, long accountId, StatusCallback<BecomeUserPermission> callback) {
+        if (isTesting()) {
+
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+            UserAPI.getBecomeUserPermission(adapter, params, accountId, callback);
+        }
+    }
+
+    public static void getObservees(StatusCallback<List<User>> callback, boolean forceNetwork) {
+        if (isTesting()) {
+
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+            UserAPI.getObserveesList(adapter, params, callback);
         }
     }
 }

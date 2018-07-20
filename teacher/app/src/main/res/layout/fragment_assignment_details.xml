@@ -38,6 +38,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fillViewport="true"
             android:contentDescription="@string/scrollInstructions">
 
             <LinearLayout
@@ -446,9 +447,9 @@
                             android:id="@+id/descriptionWebView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="24dp"
                             android:layout_marginTop="8dp"
-                            android:scrollbars="none"
-                            tools:visibility="gone"/>
+                            android:scrollbars="none"/>
 
                     </FrameLayout>
 

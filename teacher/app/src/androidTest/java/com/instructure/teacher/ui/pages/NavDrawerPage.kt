@@ -2,14 +2,12 @@ package com.instructure.teacher.ui.pages
 
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.withText
+import com.instructure.espresso.OnViewWithId
+import com.instructure.espresso.page.BasePage
 import com.instructure.soseedy.CanvasUser
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.OnViewWithId
-import com.instructure.teacher.ui.utils.WaitForToolbarTitle
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
-class NavDrawerPage: BasePage(), PageAssert by SimplePageAssert() {
+class NavDrawerPage: BasePage() {
 
     private val logo by OnViewWithId(R.id.navigationDrawerInstitutionImage)
     private val settings by OnViewWithId(R.id.navigationDrawerSettings)

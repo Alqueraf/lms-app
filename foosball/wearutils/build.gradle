@@ -21,12 +21,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion GLOBAL_COMPILE_SDK
-    buildToolsVersion GLOBAL_BUILD_TOOLS_VERSION
+    compileSdkVersion Versions.COMPILE_SDK
+    buildToolsVersion Versions.BUILD_TOOLS
 
     defaultConfig {
-        minSdkVersion GLOBAL_MIN_SDK
-        targetSdkVersion GLOBAL_TARGET_SDK
+        minSdkVersion Versions.MIN_SDK
+        targetSdkVersion Versions.TARGET_SDK
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
 
@@ -49,11 +49,11 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation ("com.android.support:appcompat-v7:$GLOBAL_SUPPORT_LIBRARY_VERSION")
+    implementation Libs.SUPPORT_APPCOMPAT
     testImplementation 'junit:junit:4.12'
     api 'com.google.code.gson:gson:2.4'
     api 'com.google.android.support:wearable:2.0.0-alpha3'
     api 'com.google.android.wearable:wearable:2.0.0-alpha3'
-    api "com.google.android.gms:play-services-wearable:$GLOBAL_PLAY_SERVICES_VERSION"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$GLOBAL_KOTLIN_VERSION"
+    api Libs.PLAY_SERVICES_WEARABLE
+    implementation Libs.KOTLIN_STD_LIB
 }

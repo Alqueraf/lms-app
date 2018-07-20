@@ -15,6 +15,7 @@
  */
 package com.instructure.teacher.ui
 
+import com.instructure.espresso.ditto.Ditto
 import com.instructure.soseedy.CanvasUser
 import com.instructure.soseedy.SeededCourseAssignmentSubmissions
 import com.instructure.soseedy.SubmissionSeed
@@ -27,18 +28,21 @@ import org.junit.Test
 class SpeedGraderPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         goToSpeedGraderPage()
         speedGraderPage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun displaysSubmissionDropDown() {
         goToSpeedGraderPage(submissionType = ONLINE_TEXT_ENTRY, students = 1, submissions = listOf(2))
         speedGraderPage.assertHasSubmissionDropDown()
     }
 
     @Test
+    @Ditto
     fun displaySubmissionPickerDialog() {
         goToSpeedGraderPage(submissionType = ONLINE_TEXT_ENTRY, students = 1, submissions = listOf(2))
         speedGraderPage.openSubmissionsDialog()
@@ -46,6 +50,7 @@ class SpeedGraderPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun opensToCorrectSubmission() {
         val data = goToSpeedGraderPage(students = 4, submissionType = ONLINE_TEXT_ENTRY)
         val students = data.students
@@ -59,6 +64,7 @@ class SpeedGraderPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun hasCorrectPageCount() {
         goToSpeedGraderPage(students = 4)
         speedGraderPage.assertPageCount(4)
@@ -77,35 +83,41 @@ class SpeedGraderPageTest : TeacherTest() {
     */
 
     @Test
+    @Ditto
     fun displaysTextSubmission() {
         goToSpeedGraderPage(submissionType = ONLINE_TEXT_ENTRY, submissions = listOf(1))
         speedGraderPage.assertDisplaysTextSubmissionView()
     }
 
     @Test
+    @Ditto
     fun displaysUnsubmittedEmptyState() {
         goToSpeedGraderPage(submissionType = ONLINE_TEXT_ENTRY)
         speedGraderPage.assertDisplaysEmptyState(R.string.speedgrader_student_no_submissions)
     }
 
     @Test
+    @Ditto
     fun displaysNoSubmissionsAllowedEmptyState() {
         goToSpeedGraderPage(submissionType = NO_TYPE)
         speedGraderPage.assertDisplaysEmptyState(R.string.speedGraderNoneMessage)
     }
 
     @Test
+    @Ditto
     fun displaysOnPaperEmptyState() {
         goToSpeedGraderPage(submissionType = ON_PAPER)
         speedGraderPage.assertDisplaysEmptyState(R.string.speedGraderOnPaperMessage)
     }
 
     @Test
+    @Ditto
     fun displaysExternalToolEmptyState() {
         goToSpeedGraderPage(submissionType = EXTERNAL_TOOL)
         speedGraderPage.assertDisplaysEmptyState(R.string.speedgrader_student_no_submissions)
     }
 
+    // Ditto doesn't support WebViews
     @Test
     fun displaysUrlSubmission() {
         val submissions = goToSpeedGraderPage(submissionType = ONLINE_URL, submissions = listOf(1)).submissions[0]

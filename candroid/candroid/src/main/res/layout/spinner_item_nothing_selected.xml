@@ -25,4 +25,5 @@
     android:ellipsize="marquee"
     android:textSize="18sp"
     android:textColor="#808080"
-    android:text="@string/selectCourse" />
+    android:text="@string/selectCourse"
+    android:paddingStart="18dp"/>

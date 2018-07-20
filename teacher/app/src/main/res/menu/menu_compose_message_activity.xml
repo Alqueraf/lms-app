@@ -22,6 +22,7 @@
         android:icon="@drawable/vd_utils_attachment"
         android:title="@string/attachment"
         android:visible="false"
+        android:tint="#8B969E"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_send"

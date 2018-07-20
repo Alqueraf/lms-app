@@ -1,3 +1,19 @@
+//
+// Copyright (C) 2018-present Instructure, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
 package com.instructure.dataseeding
 
 import com.instructure.dataseeding.seedyimpls.*
@@ -7,6 +23,7 @@ import com.instructure.soseedy.SeedyConversationsGrpc.SeedyConversationsBlocking
 import com.instructure.soseedy.SeedyCoursesGrpc.SeedyCoursesBlockingStub
 import com.instructure.soseedy.SeedyDiscussionsGrpc.SeedyDiscussionsBlockingStub
 import com.instructure.soseedy.SeedyEnrollmentsGrpc.SeedyEnrollmentsBlockingStub
+import com.instructure.soseedy.SeedyFeatureFlagsGrpc.SeedyFeatureFlagsBlockingStub
 import com.instructure.soseedy.SeedyFilesGrpc.SeedyFilesBlockingStub
 import com.instructure.soseedy.SeedyGeneralGrpc.SeedyGeneralBlockingStub
 import com.instructure.soseedy.SeedyGradingPeriodsGrpc.SeedyGradingPeriodsBlockingStub
@@ -15,7 +32,6 @@ import com.instructure.soseedy.SeedyPagesGrpc.SeedyPagesBlockingStub
 import com.instructure.soseedy.SeedyQuizzesGrpc.SeedyQuizzesBlockingStub
 import com.instructure.soseedy.SeedySectionsGrpc.SeedySectionsBlockingStub
 import com.instructure.soseedy.SeedyUsersGrpc.SeedyUsersBlockingStub
-import com.instructure.soseedy.SeedyFeatureFlagsGrpc.SeedyFeatureFlagsBlockingStub
 import io.grpc.inprocess.InProcessChannelBuilder
 import io.grpc.inprocess.InProcessServerBuilder
 import java.util.concurrent.TimeUnit
@@ -38,6 +54,8 @@ object InProcessServer {
             .addService(SeedySectionsImpl())
             .addService(SeedyUsersImpl())
             .addService(SeedyFeatureFlagsImpl())
+            .addService(SeedyModulesImpl())
+            .addService(SeedyObserverImpl())
             .build()
 
     private val channel = InProcessChannelBuilder.forName(UNIQUE_SERVER_NAME).directExecutor().build()
@@ -56,6 +74,8 @@ object InProcessServer {
     val sectionClient: SeedySectionsBlockingStub = SeedySectionsGrpc.newBlockingStub(channel)
     val userClient: SeedyUsersBlockingStub = SeedyUsersGrpc.newBlockingStub(channel)
     val featureFlagClient: SeedyFeatureFlagsBlockingStub = SeedyFeatureFlagsGrpc.newBlockingStub(channel)
+    val moduleClient: SeedyModulesGrpc.SeedyModulesBlockingStub = SeedyModulesGrpc.newBlockingStub(channel)
+    val observerClient: SeedyObserversGrpc.SeedyObserversBlockingStub = SeedyObserversGrpc.newBlockingStub(channel)
 
     init {
         server.start()

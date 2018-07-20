@@ -14,12 +14,16 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import com.instructure.android.buildtools.transform.ProjectTransformer
+import com.instructure.android.buildtools.transform.MasqueradeUITransformer
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.oss.licenses.plugin'
+apply plugin: 'okreplay'
 
 def coverageEnabled = project.hasProperty('coverage')
 
@@ -39,11 +43,11 @@ android {
     defaultConfig {
         minSdkVersion Versions.MIN_SDK
         targetSdkVersion Versions.TARGET_SDK
-        versionCode = 13
-        versionName = '1.4.0'
+        versionCode = 16
+        versionName = '1.6.0'
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
-        testInstrumentationRunner 'com.instructure.teacher.ui.utils.TeacherInstructureRunner'
+        testInstrumentationRunner 'com.instructure.espresso.InstructureRunner'
         testInstrumentationRunnerArguments disableAnalytics: 'true'
 
         /* BuildConfig fields */
@@ -89,14 +93,6 @@ android {
             dimension "icecream"
             buildConfigField "boolean", "IS_TESTING", "true"
         }
-
-        robo {
-            dimension "icecream"
-            buildConfigField "boolean", "IS_ROBO_TESTING", "true"
-            buildConfigField "String", "ROBO_USER_TOKEN", "\"$roboTestUserToken\""
-            buildConfigField "String", "ROBO_USER_DOMAIN", "\"$roboTestDomain\""
-            buildConfigField "String", "ROBO_USER_JSON", "\"$roboUser\""
-        }
     }
 
     buildTypes {
@@ -107,6 +103,7 @@ android {
             shrinkResources false
             // Disable fabric build ID generation for debug builds
             ext.enableCrashlytics = false
+            pseudoLocalesEnabled true
         }
         release {
             minifyEnabled true
@@ -164,8 +161,12 @@ android {
         execution 'ANDROID_TEST_ORCHESTRATOR'
     }
 
-    def transform = new MasqueradeUIInjector(android, 'com.instructure.teacher.activities.InitLoginActivity.class')
-    registerTransform(transform)
+    registerTransform(
+            new ProjectTransformer(
+                    android,
+                    new MasqueradeUITransformer('com.instructure.teacher.activities.InitLoginActivity.class')
+            )
+    )
 }
 
 repositories {
@@ -185,10 +186,6 @@ dependencies {
 
     /* Kotlin */
     implementation Libs.KOTLIN_STD_LIB
-
-    /* Butter Knife */
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
     /* Crashlytics */
     implementation(Libs.CRASHLYTICS) {
@@ -221,11 +218,8 @@ dependencies {
     implementation 'com.sothree.slidinguppanel:library:3.3.1'
 
     /* Media handling */
-    implementation 'com.github.bumptech.glide:glide:4.1.1'
-    implementation "com.github.bumptech.glide:okhttp3-integration:4.1.1"
-    kapt 'com.github.bumptech.glide:compiler:4.1.1'
     implementation 'com.caverock:androidsvg:1.2.1'
-    implementation 'com.google.android.exoplayer:exoplayer:r2.4.4'
+    implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
 
     /* Flexbox Layout */
@@ -252,7 +246,7 @@ dependencies {
     implementation Libs.PLAY_SERVICES
 
     /* Job Scheduler */
-    compile 'com.firebase:firebase-jobdispatcher:0.8.5'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
 }
 
 apply plugin: 'com.google.gms.google-services'

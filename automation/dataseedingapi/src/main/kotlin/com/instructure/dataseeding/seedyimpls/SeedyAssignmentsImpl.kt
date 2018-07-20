@@ -1,18 +1,20 @@
-/*
- * Copyright (C) 2017 - present Instructure, Inc.
- *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
- */
+//
+// Copyright (C) 2018-present Instructure, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+
 package com.instructure.dataseeding.seedyimpls
 
 import com.instructure.dataseeding.InProcessServer
@@ -20,6 +22,7 @@ import com.instructure.dataseeding.Reaper
 import com.instructure.dataseeding.SeedyReaper
 import com.instructure.dataseeding.api.AssignmentsApi
 import com.instructure.dataseeding.api.SubmissionsApi
+import com.instructure.dataseeding.util.RetryBackoff
 import com.instructure.soseedy.*
 import com.instructure.soseedy.SeedyAssignmentsGrpc.SeedyAssignmentsImplBase
 import io.grpc.stub.StreamObserver
@@ -38,6 +41,9 @@ class SeedyAssignmentsImpl : SeedyAssignmentsImplBase(), Reaper by SeedyReaper {
 
     private fun createCourseSubmission(submissionType: SubmissionType, courseId: Long, assignmentId: Long, fileIds: MutableList<Long>, studentToken: String) =
             SubmissionsApi.submitCourseAssignment(submissionType, courseId, assignmentId, fileIds, studentToken)
+
+    private fun getSubmission(studentToken: String, courseId: Long, assignmentId: Long, studentId: Long) =
+            SubmissionsApi.getSubmission(studentToken, courseId, assignmentId, studentId)
 
     //endregion
 
@@ -58,6 +64,28 @@ class SeedyAssignmentsImpl : SeedyAssignmentsImplBase(), Reaper by SeedyReaper {
                     .setId(assignment.id)
                     .setName(assignment.name)
                     .setPublished(assignment.published)
+                    .build()
+
+            onSuccess(responseObserver, reply)
+        } catch (e: Exception) {
+            onError(responseObserver, e)
+        }
+    }
+
+    override fun getSubmission(request: GetSubmissionRequest, responseObserver: StreamObserver<CourseAssignmentSubmission>?) {
+        try {
+            val submission = getSubmission(
+                    request.token,
+                    request.courseId,
+                    request.assignmentId,
+                    request.studentId
+            )
+
+            val reply = CourseAssignmentSubmission.newBuilder()
+                    .setId(submission.id)
+                    .setBody(submission.body)
+                    .setUserId(submission.userId)
+                    .setLate(submission.late)
                     .build()
 
             onSuccess(responseObserver, reply)
@@ -110,6 +138,7 @@ class SeedyAssignmentsImpl : SeedyAssignmentsImplBase(), Reaper by SeedyReaper {
 
             val builder = CourseAssignmentSubmission.newBuilder()
                     .setId(submission.id)
+                    .setUserId(submission.userId)
                     .addAllSubmissionComments(submission.submissionComments.map {
                         Comment.newBuilder()
                                 .setAuthorName(it.authorName)
@@ -213,6 +242,23 @@ class SeedyAssignmentsImpl : SeedyAssignmentsImplBase(), Reaper by SeedyReaper {
                         sleep(1000)
                         var submission = InProcessServer.assignmentClient.submitCourseAssignment(submissionRequest)
 
+                        if(seed.checkForLateStatus) {
+                            val getSubmissionRequest = GetSubmissionRequest.newBuilder()
+                                    .setToken(studentToken)
+                                    .setCourseId(courseId)
+                                    .setAssignmentId(assignmentId)
+                                    .setStudentId(submission.userId)
+                                    .build()
+
+                            val maxAttempts = 6
+                            var attempts = 1
+                            while(attempts < maxAttempts) {
+                                val submissionResponse = InProcessServer.assignmentClient.getSubmission(getSubmissionRequest)
+                                if(submissionResponse.late) break
+                                RetryBackoff.wait(attempts)
+                                attempts++
+                            }
+                        }
                         // Create comments on the submitted assignment
                         submission = commentSeedsList
                                 .map {

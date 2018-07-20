@@ -41,6 +41,7 @@ import com.instructure.teacher.fragments.EmptyFragment
 import com.instructure.interactions.Identity
 import com.instructure.interactions.router.Route
 import com.instructure.teacher.router.RouteMatcher
+import com.instructure.teacher.router.RouteResolver
 import kotlinx.android.synthetic.main.activity_master_detail.*
 import retrofit2.Response
 
@@ -48,11 +49,11 @@ class MasterDetailActivity : BaseAppCompatActivity(), MasterDetailInteractions {
 
     private var mRoute: Route? = null
 
-    val collapseAnimation: ValueAnimator by lazy {
+    private val collapseAnimation: ValueAnimator by lazy {
         ValueAnimator.ofFloat(collapsePercent).setDuration(500)
     }
 
-    val expandAnimation: ValueAnimator by lazy {
+    private val expandAnimation: ValueAnimator by lazy {
         ValueAnimator.ofFloat(expandPercent).setDuration(500)
     }
 
@@ -91,7 +92,7 @@ class MasterDetailActivity : BaseAppCompatActivity(), MasterDetailInteractions {
                 } else {
                     CourseManager.getCourse(contextId, object : StatusCallback<Course>() {
                         override fun onResponse(response: Response<Course>, linkHeaders: LinkHeaders, type: ApiType) {
-                            setupWithCanvasContext(response?.body() as Course)
+                            setupWithCanvasContext(response.body() as Course)
                         }
                     }, false)
                 }
@@ -113,8 +114,8 @@ class MasterDetailActivity : BaseAppCompatActivity(), MasterDetailInteractions {
     private fun setupWithCanvasContext(course: Course?) {
         if(course != null) {
             //we have a route, get the fragment
-            val masterFragment = RouteMatcher.getMasterFragment(course, mRoute!!)
-            val detailFragment = RouteMatcher.getDetailFragment(course, mRoute!!)
+            val masterFragment = RouteResolver.getMasterFragment(course, mRoute!!)
+            val detailFragment = RouteResolver.getDetailFragment(course, mRoute!!)
             addMasterFragment(masterFragment)
             if (detailFragment != null) {
                 //If we have a detail fragment add it, otherwise we need data from the master when it's finished loading
@@ -128,8 +129,8 @@ class MasterDetailActivity : BaseAppCompatActivity(), MasterDetailInteractions {
             }
         } else {
             //we have a route, get the fragment
-            val masterFragment = RouteMatcher.getMasterFragment(course, mRoute!!)
-            val detailFragment = RouteMatcher.getDetailFragment(course, mRoute!!)
+            val masterFragment = RouteResolver.getMasterFragment(course, mRoute!!)
+            val detailFragment = RouteResolver.getDetailFragment(course, mRoute!!)
             addMasterFragment(masterFragment)
             if (detailFragment != null) {
                 //If we have a detail fragment add it, otherwise we need data from the master when it's finished loading
@@ -168,7 +169,7 @@ class MasterDetailActivity : BaseAppCompatActivity(), MasterDetailInteractions {
     }
 
     override fun addFragment(route: Route) {
-        addDetailFragment(RouteMatcher.getDetailFragment(route.canvasContext, route))
+        addDetailFragment(RouteResolver.getDetailFragment(route.canvasContext, route))
     }
 
     override fun popFragment(canvasContext: CanvasContext) {

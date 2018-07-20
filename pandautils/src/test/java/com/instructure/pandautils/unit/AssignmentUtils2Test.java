@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.Assert.*;
-
 public class AssignmentUtils2Test {
 
     @Test

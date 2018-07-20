@@ -54,7 +54,7 @@
     <string name="bullet">•</string>
     <string name="score">Score:</string>
     <string name="to">to</string>
-    <string name="notify_when_done">Notify When Done</string>
+    <string name="notify_when_done">Request Table</string>
 
     <string name="push_text">The table %1$s is now available.</string>
 

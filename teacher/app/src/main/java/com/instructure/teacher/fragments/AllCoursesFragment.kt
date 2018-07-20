@@ -51,6 +51,7 @@ class AllCoursesFragment : BaseSyncFragment<Course, AllCoursesPresenter, AllCour
 
     private lateinit var mRecyclerView: RecyclerView
 
+
     override fun getList() = presenter.data
     override fun getRecyclerView() = mRecyclerView
     override fun perPageCount() = ApiPrefs.perPageCount

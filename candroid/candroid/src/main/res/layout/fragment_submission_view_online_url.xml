@@ -15,15 +15,14 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ~
   -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/canvasBackgroundWhite">
+    android:background="@color/canvasBackgroundWhite"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -33,7 +32,7 @@
         android:elevation="6dp"
         app:popupTheme="@style/ToolBarPopupStyle"
         app:theme="@style/ToolBarStyle"
-        tools:targetApi="lollipop" />
+        tools:targetApi="lollipop"/>
 
     <LinearLayout
         android:id="@+id/submittedWebsiteLayout"
@@ -47,17 +46,17 @@
             android:id="@+id/urlButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
+            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"/>
-        
+            android:singleLine="true"/>
+
     </LinearLayout>
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/dividerColor" />
+        android:background="@color/dividerColor"/>
 
     <LinearLayout
         android:id="@+id/previewImageLayout"
@@ -65,16 +64,16 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeight"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/submittedImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/clickToViewSubmission"
-            android:textSize="14sp"
             android:paddingEnd="16dp"
-            android:paddingStart="16dp"/>
+            android:paddingStart="16dp"
+            android:text="@string/clickToViewSubmission"
+            android:textSize="14sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -83,7 +82,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:minHeight="?android:attr/listPreferredItemHeight"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -92,12 +91,12 @@
 
         <TextView
             android:id="@+id/loadingText"
+            style="@style/TextStyle.Primary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/loading"
-            android:gravity="center"
             android:layout_marginStart="8dp"
-            style="@style/TextStyle.Primary"/>
+            android:gravity="center"
+            android:text="@string/loading"/>
 
     </LinearLayout>
 

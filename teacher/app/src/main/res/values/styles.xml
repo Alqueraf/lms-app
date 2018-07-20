@@ -30,15 +30,17 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="pspdf__contextualToolbarBackground">@color/annotationToolbarBackground</item>
+        <item name="pspdf__contextualToolbarSubmenuBackground">@color/submenuAnnotationToolbarBackground</item>
         <item name="pspdf__annotationCreationToolbarIconsStyle">@style/AnnotationCreationToolbarIconsStyle</item>
         <item name="pspdf__annotationEditingToolbarIconsStyle">@style/AnnotationEditingToolbarIconsStyle</item>
+        <item name="pspdf__stampPickerStyle">@style/StampPickerStyle</item>
     </style>
 
     <style name="AnnotationCreationToolbarIconsStyle">
         <item name="pspdf__iconsColor">@color/white</item>
         <item name="pspdf__highlightIcon">@drawable/vd_highlighter_icon</item>
         <item name="pspdf__strikeoutIcon">@drawable/vd_strike_through_icon</item>
-        <item name="pspdf__noteIcon">@drawable/vd_note_icon</item>
+        <item name="pspdf__stampIcon">@drawable/vd_stamp_icon</item>
         <item name="pspdf__inkIcon">@drawable/vd_ink_icon</item>
         <item name="pspdf__freeTextIcon">@drawable/vd_text_box_icon</item>
         <item name="pspdf__squareIcon">@drawable/vd_square_icon</item>
@@ -50,6 +52,11 @@
         <item name="pspdf__editIcon">@drawable/vd_edit</item>
     </style>
 
+    <style name="StampPickerStyle">
+        <item name="pspdf__maxHeight">320dp</item>
+        <item name="pspdf__maxWidth">100dp</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -57,6 +64,7 @@
 
     <style name="Widget.ActionButton.Overflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:contentDescription">@string/accessibility_overflow</item>
+        <item name="android:src">@drawable/vd_overflow</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -336,22 +344,6 @@
     </style>
 
     <!--Button Styles-->
-    <style name="ButtonStyle">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/canvas_default_button_text</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:background">@drawable/bg_button_rounded</item>
-        <item name="android:layout_marginBottom">12dp</item>
-        <item name="android:paddingStart">32dp</item>
-        <item name="android:paddingEnd">32dp</item>
-        <item name="android:textAllCaps">false</item>
-    </style>
-
-    <style name="ExoMediaButton.Fullscreen">
-        <item name="android:src">@drawable/vd_fullscreen_white_24dp</item>
-        <item name="android:contentDescription">@string/fullscreen</item>
-    </style>
 
     <style name="FloatingRecorderToolbarButtonStyle">
         <item name="android:layout_width">20dp</item>

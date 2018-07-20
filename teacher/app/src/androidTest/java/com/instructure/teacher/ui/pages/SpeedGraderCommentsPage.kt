@@ -18,17 +18,19 @@ package com.instructure.teacher.ui.pages
 import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.matcher.ViewMatchers
-import android.support.test.espresso.matcher.ViewMatchers.*
-import com.instructure.espresso.ViewCallOnClick.Companion.callOnClick
-import com.instructure.espresso.WaitForViewMatcher
+import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.espresso.matcher.ViewMatchers.withText
+import com.instructure.espresso.*
+import com.instructure.espresso.matchers.WaitForViewMatcher
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.callOnClick
+import com.instructure.espresso.page.onViewWithId
+import com.instructure.espresso.page.onViewWithText
 import com.instructure.soseedy.Attachment
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 import org.hamcrest.Matchers
 
-class SpeedGraderCommentsPage : BasePage(), PageAssert by SimplePageAssert() {
+class SpeedGraderCommentsPage : BasePage() {
 
     private val commentEditText by OnViewWithId(R.id.commentEditText)
     private val sendCommentButton by WaitForViewWithId(R.id.sendCommentButton)

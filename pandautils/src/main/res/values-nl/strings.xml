@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,10 +17,15 @@
   -->
 
 <resources>
+
     <string name="chooseMedia">Media kiezen</string>
     <string name="takeVideo">Video maken</string>
     <string name="noCameraOnDevice">Geen camera</string>
 
+    <string name="takePhoto">Foto maken</string>
+    <string name="choosePhotoFromGallery">Foto uit galerij kiezen</string>
+
+    <string name="utils_edit">Bewerken</string>
     <!-- NotoriousPicker/uploadService -->
     <string name="notificationTitle">Uploaden naar Canvas</string>
     <string name="preparingUpload">Upload aan het voorbereiden</string>
@@ -189,5 +194,173 @@
     <string name="loading">Bezig met laden&#8230;</string>
     <string name="save">Opslaan</string>
     <string name="cropInstructions">Knijp en sleep om de afbeelding aan te passen.</string>
+
+    <!--Discussions-->
+    <plurals name="utils_discussionsReplies">
+        <item quantity="one">%s antwoord</item>
+        <item quantity="other">%s antwoorden</item>
+    </plurals>
+
+    <string name="utils_discussionsDeleted" formatted="false">Heeft dit antwoord verwijderd %s</string>
+    <string name="utils_discussionsUnknownAuthor">Onbekende auteur</string>
+    <string name="utils_discussionsReply">Antwoord</string>
+    <string name="utils_discussionsEdit">Bewerken</string>
+    <string name="utils_discussionsDeleteWarning">Weet je zeker dat je dit antwoord wilt verwijderen?</string>
+    <string name="utils_availableToLabel">Beschikbaar voor:</string>
+    <string name="utils_availableFromLabel">Beschikbaar vanaf:</string>
+    <string name="utils_dueDateHeaderLabel">Inleverdatum</string>
+    <string name="utils_dueLabel">Inleverdatum:</string>
+    <string name="utils_delete">Verwijderen</string>
+    <string name="utils_dueDateAtTime" formatted="false">In te leveren op %1s om %2s</string>
+    <string name="utils_noDateFiller">--</string>
+    <string name="utils_availabilityLabel">Beschikbaarheid:</string>
+    <string name="utils_pinnedIcon">Icoon voor gepinde discussie</string>
+    <string name="utils_pinDiscussion">Discussie pinnen</string>
+    <string name="utils_unpinDiscussion">Discussie ontpinnen</string>
+    <string name="utils_discussionPinned">Discussie ontpint</string>
+    <string name="utils_pinnedDiscussions">Vastgezet</string>
+    <string name="utils_discussionUnpinned">Discussies</string>
+    <string name="utils_emptyDiscussions">Er zijn geen discussies in deze sectie om te tonen.</string>
+    <string name="utils_description">Beschrijving</string>
+    <string name="utils_allowThreadedReplies">Antwoorden op antwoorden toestaan</string>
+    <string name="utils_usersMustPost">Cursisten moeten een bericht plaatsen voordat ze antwoorden kunnen zien</string>
+    <string name="utils_discussionsClosed">Gesloten voor opmerkingen</string>
+    <string name="utils_discussionsOpen">Open voor opmerkingen</string>
+    <string name="utils_discussionsPin">Vastmaken</string>
+    <string name="utils_discussionsUnpin">Losmaken</string>
+    <string name="utils_discussionsOptions">Opties</string>
+    <string name="utils_discussionsDeleteTitle">Discussie verwijderen?</string>
+    <string name="utils_discussionsDelete">Discussie verwijderen</string>
+    <string name="utils_discussionsDeleteMessage">Hierdoor wordt de gehele discussie en thread verwijderd.</string>
+    <string name="utils_discussionSentSuccess">Het discussieantwoord is gelukt.</string>
+    <string name="utils_discussionUpdateSuccess">De discussiebewerking is gelukt.</string>
+    <string name="utils_discussionSentEmpty">Het discussieantwoord kan niet leeg zijn.</string>
+    <string name="utils_discussionSentFailure">Het discussieantwoord kan op dit moment niet worden verzonden.</string>
+    <string name="utils_createDiscussion">Nieuwe discussie</string>
+    <string name="utils_editDiscussion">Discussie bewerken</string>
+    <string name="utils_discussionDetails">Details over discussie</string>
+    <string name="utils_discussionSuccessfullyUpdated">Discussie is bijgewerkt.</string>
+    <string name="utils_saving">Opslaan</string>
+    <string name="utils_discussionSuccessfullyCreated">Discussie is gemaakt.</string>
+    <string name="utils_discussionSuccessfulAttachmentNot">De bijlage kan niet aan deze discussie worden toegevoegd. Controleer je bestandsquotum en probeer het opnieuw.</string>
+    <string name="utils_noTitle">Geen titel</string>
+    <string name="utils_discussionsReplies_Title">Antwoorden</string>
+    <string name="utils_contentDescriptionDiscussionsOverflow">Meer opties</string>
+    <string name="utils_discussionsUnreadRepliesBlank" formatted="false">%s %s %s</string>
+    <string name="utils_lastPost" formatted="false">Laatste bericht %s</string>
+    <string name="utils_postedOnDate">Geplaatst op %s</string>
+    <string name="utils_discussionPostBeforeRepliesEmptyText">Antwoorden zijn alleen zichtbaar voor degenen die minimaal één antwoord hebben geplaatst.</string>
+    <string name="utils_createAnnouncementDelayPosting">Posten uitstellen</string>
+    <string name="utils_postAt">Plaatsen op</string>
+    <string name="utils_postDate">Datum van post</string>
+    <string name="utils_postTime">Tijd van posten</string>
+    <string name="utils_editAnnouncementTitle">Aankondiging bewerken</string>
+    <string name="utils_createAnnouncementTitle">Nieuwe aankondiging</string>
+    <string name="utils_announcementDetails">Details over aankondiging</string>
+    <string name="utils_createAnnouncementNoDescription">Er is een beschrijving vereist</string>
+    <string name="utils_errorSavingAnnouncement">Er is een fout opgetreden bij het opslaan van deze aankondiging. Probeer het nog eens.</string>
+    <string name="utils_announcementSuccessfullyUpdated">Aankondiging is bijgewerkt.</string>
+    <string name="utils_announcementSuccessfullyCreated">Aankondiging is gemaakt.</string>
+
+    <plurals name="utils_discussionsUnread">
+        <item quantity="one">%s ongelezen</item>
+        <item quantity="other">%s ongelezen</item>
+    </plurals>
+
+    <plurals name="utils_addAttachment">
+        <item quantity="zero">Bijlage toevoegen</item>
+        <item quantity="one">Bijlage toevoegen</item>
+        <item quantity="other">Bijlagen toevoegen</item>
+    </plurals>
+
+
+    <!-- Assignment Override !-->
+    <string name="utils_unlockAfterDueDateError">Vergrendeldatum kan niet na inleverdatum vallen</string>
+    <string name="utils_lockBeforeDueDateError">Vergrendeldatum kan niet voor vervaldatum vallen</string>
+    <string name="utils_lockAfterUnlockError">Vergrendeldatum kan niet voor ontgrendeldatum vallen</string>
+    <string name="utils_assigneeBlankError">Ontvanger kan niet leeg zijn</string>
+    <string name="utils_assignTo">Toewijzen aan</string>
+    <string name="utils_availableFrom">Beschikbaar vanaf</string>
+    <string name="utils_availableTo">Beschikbaar voor</string>
+    <string name="utils_availableFromDate">Beschikbaar vanaf datum</string>
+    <string name="utils_availableFromTime">Beschikbaar vanaf tijd</string>
+    <string name="utils_availableToDate">Beschikbaar tot datum</string>
+    <string name="utils_availableToTime">Beschikbaar tot tijd</string>
+    <string name="utils_dueDate">Inleverdatum</string>
+    <string name="utils_dueTime">Inlevertijd</string>
+    <string name="utils_addNew">Nieuwe toevoegen</string>
+
+    <!--Attachment Layout-->
+    <string name="utils_downloadAttachment">Bijlage downloaden</string>
+    <string name="utils_removeAttachment">Bijlage verwijderen</string>
+
+    <!--Unsaved Changes-->
+    <string name="utils_continueWithoutSavingTitle">Doorgaan zonder op te slaan?</string>
+    <string name="utils_continueWithoutSavingMessage">Weet je zeker dat je wilt doorgaan zonder op te slaan?</string>
+    <string name="utils_continueUnsaved">Doorgaan</string>
+    <string name="utils_exitWithoutSavingTitle">Afsluiten zonder op te slaan?</string>
+    <string name="utils_exitWithoutSavingMessage">Weet je zeker dat je wilt afsluiten zonder op te slaan?</string>
+    <string name="utils_exitUnsaved">Afsluiten</string>
+    <string name="utils_cancel">Annuleren</string>
+
+    <string name="utils_contentDescriptionFiles">Bestand icoon</string>
+    <string name="utils_turn_in">Inleveren</string>
+    <string name="utils_upload">Uploaden</string>
+    <string name="utils_okay">OK</string>
+    <string name="utils_loadingFilesIndeterminate">Bestanden aan het laden&#8230;</string>
+    <string name="utils_allowedExtensions">Toegestane extensies:&#160;</string>
+    <string name="utils_extensionNotAllowed">Het geselecteerde bestandstype is niet toegestaan.</string>
+    <string name="utils_errorUploadingFile">Er is een fout opgetreden bij het uploaden van je bestand. Probeer het opnieuw.</string>
+    <string name="utils_filesUploadedSuccessfully">Bestanden zijn geüpload.</string>
+    <string name="utils_uploadingFiles">Bestanden aan het uploaden&#8230;</string>
+    <string name="utils_uploadingFile">Bestand aan het uploaden&#8230;</string>
+    <string name="utils_noApps">Er zijn op je apparaat geen applicaties geïnstalleerd die dit bestand kunnen verwerken.</string>
+    <string name="utils_errorGettingPhoto">Er is een fout opgetreden bij het ophalen van de foto. Probeer het opnieuw.</string>
+    <string name="utils_oneOrMoreExtensionNotAllowed">Een of meer bestanden hebben een bestandsextensie die niet is toegestaan.</string>
+    <string name="utils_fileUploadNotSupported">Je kunt geen bestanden uploaden naar de geselecteerde opdracht.</string>
+    <string name="utils_noFilesUploaded">Je hebt geen bestanden geselecteerd.</string>
+    <string name="utils_attachments">Bijlagen</string>
+    <string name="utils_uploadTo">Uploaden naar </string>
+    <string name="utils_uploadToCanvas">Uploaden naar Canvas</string>
+    <string name="utils_uploadMyFiles">Al mijn bestanden</string>
+    <string name="utils_uploadCourseFiles">Cursusbestanden</string>
+    <string name="utils_uploadToSubmissionComment">Uploaden naar Opmerking bij inlevering</string>
+    <string name="utils_attachFile">Bestand bijvoegen</string>
+    <string name="utils_with">met</string>
+    <string name="utils_dotWithSpaces">  \u2022  </string>
+
+    <string name="notificationPrimaryInboxTitle">Canvas-melding</string>
+    <string name="notificationChannelNamePrimary">Algemene Canvas-meldingen</string>
+    <string name="notificationChannelDescriptionPrimary">Verdere configuratie van meldingen kan worden uitgevoerd in de sectie Voorkeuren Canvas-meldingen.</string>
+
+    <string name="copyLinkAddress">Linkadres kopiëren</string>
+    <string name="copyLink">Link kopieren</string>
+    <string name="linkCopied">Link gekopieerd</string>
+    <string name="link">Link</string>
+    <string name="fileExists">Bestand bestaat</string>
+    <string name="replace">Vervangen</string>
+    <string name="shareLink">Link delen</string>
+    <string name="utils_launchExternalTool">Extern hulpmiddel lanceren</string>
+    <string name="utils_externalToolTitle">Externe tool</string>
+    <string name="utils_placeholderTitle">Externe tool</string>
+    <string name="utils_placeholderDescription">Ga naar je Canvas-webaccount om deze externe tool te bewerken.</string>
+
+    <string name="utils_unableToViewInBrowser">We kunnen geen externe app vinden om deze LTI-tool weer te geven.</string>
+
+    <string name="utils_unsupportedFileMessage">Dit bestand kan niet worden weergegeven. Gebruik de knop hieronder om het bestand met een andere app op je apparaat te openen.</string>
+    <string name="utils_openWithAnotherApp">Openen met&#8230;</string>
+    <string name="utils_couldNotPlayFormat">Deze media-indeling wordt niet ondersteund</string>
+    <string name="utils_fullscreen">volledig scherm</string>
+
+    <string name="utils_dataUsageWarningTitle">Waarschuwing gegevensgebruik</string>
+    <string name="utils_dataUsageWarningMessage">Deze actie kan een grote hoeveelheid gegevens verbruiken, waardoor mogelijk extra kosten worden berekend. Wil je doorgaan?</string>
+    <string name="utils_doNotShowMessageAgain">Dit bericht niet meer weergeven</string>
+
+    <string name="utils_no_data_connection">Controleer je dataverbinding en probeer het nogmaals.</string>
+    <string name="utils_playMedia">Media afspelen</string>
+    <string name="utils_tryAgain">Opnieuw proberen</string>
+    <string name="image_uploading">Afbeelding wordt geüpload...</string>
+    <string name="image_upload_error">Fout tijdens afbeelding uploaden</string>
+    <string name="retry">Opnieuw proberen</string>
 
 </resources>

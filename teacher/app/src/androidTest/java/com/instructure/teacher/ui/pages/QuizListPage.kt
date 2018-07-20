@@ -16,13 +16,16 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.OnViewWithId
+import com.instructure.espresso.WaitForViewWithId
+import com.instructure.espresso.assertDisplayed
+import com.instructure.espresso.click
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.waitForViewWithText
 import com.instructure.soseedy.Quiz
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
-class QuizListPage : BasePage(), PageAssert by SimplePageAssert() {
+class QuizListPage : BasePage() {
     private val quizListToolbar by OnViewWithId(R.id.quizListToolbar)
 
     private val quizRecyclerView by OnViewWithId(R.id.quizRecyclerView)

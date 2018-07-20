@@ -17,30 +17,30 @@
     android:id="@+id/courseBrowserHeader"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:alpha="0"
-    android:elevation="6dp">
+    android:elevation="6dp"
+    android:orientation="vertical">
 
     <!-- Title -->
     <TextView
         android:id="@+id/courseBrowserHeaderTitle"
+        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:maxLines="1"
         android:lines="1"
-        android:textColor="@android:color/white"
-        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />
+        android:maxLines="1"
+        android:textColor="@android:color/white" />
 
     <!-- Subtitle -->
     <TextView
         android:id="@+id/courseBrowserHeaderSubtitle"
+        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:maxLines="1"
         android:lines="1"
-        android:textColor="@android:color/white"
-        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"/>
+        android:maxLines="1"
+        android:textColor="@android:color/white" />
 
 </com.instructure.candroid.view.CourseBrowserHeaderView>

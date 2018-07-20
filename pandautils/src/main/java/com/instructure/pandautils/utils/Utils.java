@@ -18,7 +18,10 @@
 package com.instructure.pandautils.utils;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,11 +30,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.Toast;
 
 import com.instructure.canvasapi2.utils.ApiPrefs;
+import com.instructure.pandautils.R;
 
 import java.io.File;
 import java.util.HashMap;
@@ -197,4 +203,16 @@ public class Utils {
             }
         }
     }
+
+    public static void copyToClipboard(Context context, String stringToCopy) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard != null) {
+            ClipData clip = ClipData.newPlainText(context.getString(R.string.link), stringToCopy);
+            clipboard.setPrimaryClip(clip);
+
+            // Let the user know
+            Toast.makeText(context, context.getString(R.string.linkCopied), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

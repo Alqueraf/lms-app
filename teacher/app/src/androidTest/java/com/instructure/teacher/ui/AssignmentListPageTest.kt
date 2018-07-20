@@ -15,13 +15,20 @@
  */
 package com.instructure.teacher.ui
 
+import com.instructure.espresso.TestRail
+import com.instructure.espresso.ditto.Ditto
+import com.instructure.espresso.ditto.DittoMode
 import com.instructure.soseedy.Assignment
-import com.instructure.teacher.ui.utils.*
+import com.instructure.teacher.ui.utils.TeacherTest
+import com.instructure.teacher.ui.utils.seedAssignments
+import com.instructure.teacher.ui.utils.seedData
+import com.instructure.teacher.ui.utils.tokenLogin
 import org.junit.Test
 
 class AssignmentListPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109578")
     override fun displaysPageObjects() {
         getToAssignmentsPage()
@@ -29,6 +36,7 @@ class AssignmentListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto(mode = DittoMode.RECORD)
     @TestRail(ID = "C3134487")
     fun displaysNoAssignmentsView() {
         getToAssignmentsPage(0)
@@ -36,6 +44,7 @@ class AssignmentListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109578")
     fun displaysAssignment() {
         val assignment = getToAssignmentsPage()[0]
@@ -43,6 +52,7 @@ class AssignmentListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134488")
     fun displaysGradingPeriods() {
         getToAssignmentsPage(gradingPeriods = true)

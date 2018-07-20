@@ -23,13 +23,13 @@ import com.instructure.canvasapi2.builders.RestBuilder;
 import com.instructure.canvasapi2.builders.RestParams;
 import com.instructure.canvasapi2.models.CanvaDocs.CanvaDocAnnotation;
 import com.instructure.canvasapi2.models.CanvaDocs.CanvaDocAnnotationResponse;
+import com.instructure.canvasapi2.models.DocSession;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Url;
@@ -38,9 +38,9 @@ public class CanvaDocsAPI {
 
     interface CanvaDocsInterFace {
         @GET
-        Call<ResponseBody> getCanvaDoc(@Url String url);
+        Call<DocSession> getCanvaDoc(@Url String url);
 
-        @GET("/2018-03-07/sessions/{sessionId}/annotations")
+        @GET("/2018-04-06/sessions/{sessionId}/annotations")
         Call<CanvaDocAnnotationResponse> getAnnotations(@Path("sessionId") String sessionId);
 
         @PUT("/2018-03-07/sessions/{sessionId}/annotations/{annotationId}")
@@ -54,7 +54,7 @@ public class CanvaDocsAPI {
             @NonNull String previewUrl,
             @NonNull RestBuilder adapter,
             @NonNull RestParams params,
-            @NonNull StatusCallback<ResponseBody> callback) {
+            @NonNull StatusCallback<DocSession> callback) {
         callback.addCall(adapter.build(CanvaDocsInterFace.class, params).getCanvaDoc(previewUrl)).enqueue(callback);
     }
 

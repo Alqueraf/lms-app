@@ -18,6 +18,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 static String isTesting() {
     if ( System.getenv("IS_TESTING") == "true" ) {
@@ -27,6 +28,9 @@ static String isTesting() {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
 
 android {
     compileSdkVersion Versions.COMPILE_SDK
@@ -87,9 +91,4 @@ dependencies {
     /* Support Libs */
     implementation Libs.SUPPORT_APPCOMPAT
     implementation Libs.SUPPORT_ANNOTATION
-
-    /* PaperParcel */
-    implementation 'nz.bradcampbell:paperparcel:2.0.2'
-    implementation 'nz.bradcampbell:paperparcel-kotlin:2.0.2'
-    kapt 'nz.bradcampbell:paperparcel-compiler:2.0.2'
 }

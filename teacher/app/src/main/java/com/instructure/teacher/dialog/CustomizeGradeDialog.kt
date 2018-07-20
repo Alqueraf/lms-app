@@ -122,7 +122,7 @@ class CustomizeGradeDialog : AppCompatDialogFragment() {
         }
 
         // Close and update the grade when the user hits the 'Done' button on the keyboard
-        gradeEditText.setOnEditorActionListener { textView, actionId, event ->
+        gradeEditText.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 gradeDialog.getButton(AlertDialog.BUTTON_POSITIVE).callOnClick()
@@ -141,7 +141,7 @@ class CustomizeGradeDialog : AppCompatDialogFragment() {
             if(gradeText.isNotEmpty() && gradeText.last().toString() == "%") {
                 mCustomizeGradeCallback(gradeText, isChecked)
             } else {
-                mCustomizeGradeCallback(gradeText + "%", isChecked)
+                mCustomizeGradeCallback("$gradeText%", isChecked)
             }
         } else {
             //Otherwise we handle the grade like normal

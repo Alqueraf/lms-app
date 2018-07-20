@@ -20,14 +20,16 @@ package com.instructure.parentapp.viewinterface;
 import android.support.annotation.NonNull;
 
 import com.instructure.canvasapi2.models.Student;
+import com.instructure.canvasapi2.models.User;
 
 import instructure.androidblueprint.SyncManager;
 
 /**
  * Copyright (c) 2016 Instructure. All rights reserved.
  */
-public interface SettingsView extends SyncManager<Student> {
+public interface SettingsView extends SyncManager<User> {
     @NonNull String airwolfDomain();
     @NonNull String parentId();
     void hasStudent(boolean hasStudent);
+    void needToCheckToken();
 }

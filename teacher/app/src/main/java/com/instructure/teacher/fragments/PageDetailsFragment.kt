@@ -42,16 +42,17 @@ import com.instructure.interactions.MasterDetailInteractions
 import com.instructure.teacher.presenters.PageDetailsPresenter
 import com.instructure.interactions.router.Route
 import com.instructure.teacher.router.RouteMatcher
-import com.instructure.teacher.utils.isTablet
 import com.instructure.teacher.utils.setupBackButtonWithExpandCollapseAndBack
 import com.instructure.teacher.utils.setupMenu
 import com.instructure.teacher.utils.updateToolbarExpandCollapseIcon
 import com.instructure.teacher.viewinterface.PageDetailsView
 import instructure.androidblueprint.PresenterFactory
 import kotlinx.android.synthetic.main.fragment_page_details.*
+import kotlinx.coroutines.experimental.Job
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.net.URLDecoder
 
 class PageDetailsFragment : BasePresenterFragment<
         PageDetailsPresenter,
@@ -62,9 +63,16 @@ class PageDetailsFragment : BasePresenterFragment<
     private var mPage: Page by ParcelableArg(default = Page())
     private var mPageId: String by StringArg()
 
+    private var loadHtmlJob: Job? = null
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        loadHtmlJob?.cancel()
     }
 
     override fun onStop() {
@@ -121,7 +129,7 @@ class PageDetailsFragment : BasePresenterFragment<
         })
 
         canvasWebView.canvasEmbeddedWebViewCallback = object : CanvasWebView.CanvasEmbeddedWebViewCallback {
-            override fun launchInternalWebViewFragment(url: String) = activity.startActivity(InternalWebViewActivity.createIntent(activity, url, "", true))
+            override fun launchInternalWebViewFragment(url: String) = activity.startActivity(InternalWebViewActivity.createIntent(activity, url, context.getString(R.string.utils_externalToolTitle), true))
             override fun shouldLaunchInternalWebViewFragment(url: String): Boolean = !RouteMatcher.canRouteInternally(activity, url, ApiPrefs.domain, false)
 
         }
@@ -147,8 +155,20 @@ class PageDetailsFragment : BasePresenterFragment<
 
     override fun populatePageDetails(page: Page) {
         mPage = page
-        canvasWebView.loadHtml(page.body, page.title)
+        if(CanvasWebView.containsLTI(page.body.orEmpty(), "UTF-8")) {
+            canvasWebView.addJavascriptInterface(JsExternalToolInterface({
+                val args = LTIWebViewFragment.makeLTIBundle(URLDecoder.decode(it, "utf-8"), "LTI Launch", true)
+                RouteMatcher.route(context, Route(LTIWebViewFragment::class.java, canvasContext, args))
+            }), "accessor")
+            loadHtmlJob = canvasWebView.loadHtmlWithLTIs(context, isTablet, page.body.orEmpty(), PageDetailsFragment@::loadPageHtml)
+        } else {
+            loadPageHtml(page.body.orEmpty())
+        }
         setupToolbar()
+    }
+
+    private fun loadPageHtml(html: String) {
+        canvasWebView.loadHtml(html, mPage.title)
     }
 
     override fun onError(stringId: Int) {

@@ -43,7 +43,7 @@ public class DiscussionListRecyclerAdapterTest extends InstrumentationTestCase {
 
 
     public static class DiscussionListRecyclerAdapterWrapper extends DiscussionListRecyclerAdapter {
-        protected DiscussionListRecyclerAdapterWrapper(Context context) { super(context); }
+        protected DiscussionListRecyclerAdapterWrapper(Context context) { super(context, null, true, null); }
     }
 
     @Before

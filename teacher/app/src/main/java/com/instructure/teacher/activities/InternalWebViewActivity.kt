@@ -111,11 +111,11 @@ class InternalWebViewActivity : BasePresenterActivity<InternalWebViewPresenter, 
 
         @JvmStatic
         fun createIntent(context: Context, route: Route, title: String, authenticate: Boolean)
-                = createIntent(context, route.url ?: "", title, authenticate)
+                = createIntent(context, route.uri?.toString() ?: "", title, authenticate)
 
         fun createBundle(canvasContext: CanvasContext?, route: Route, title: String, authenticate: Boolean): Bundle {
             val extras = BasePresenterActivity.createBundle(canvasContext).apply {
-                putString(Const.INTERNAL_URL, route.url)
+                putString(Const.INTERNAL_URL, route.uri?.toString() ?: "")
                 putBoolean(Const.AUTHENTICATE, authenticate)
                 putString(Const.ACTION_BAR_TITLE, title)
             }

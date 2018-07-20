@@ -17,11 +17,7 @@
 
 package com.instructure.candroid.util;
 
-import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -36,12 +32,14 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.instructure.candroid.BuildConfig;
 import com.instructure.candroid.R;
+import com.instructure.candroid.service.StudentPageViewService;
 import com.instructure.candroid.tasks.LogoutAsyncTask;
 import com.instructure.canvasapi2.StatusCallback;
 import com.instructure.canvasapi2.managers.UserManager;
 import com.instructure.canvasapi2.models.CanvasErrorCode;
 import com.instructure.canvasapi2.models.User;
 import com.instructure.canvasapi2.utils.Logger;
+import com.instructure.canvasapi2.utils.pageview.PageViewUploadService;
 import com.instructure.pandautils.utils.ColorKeeper;
 import com.pspdfkit.PSPDFKit;
 import com.pspdfkit.exceptions.InvalidPSPDFKitLicenseException;
@@ -50,7 +48,6 @@ import com.pspdfkit.exceptions.PSPDFKitInitializationFailedException;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.List;
 import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
@@ -87,6 +84,7 @@ public class AppManager extends com.instructure.canvasapi2.AppManager implements
         }
 
         loadLanguage(getApplicationContext());
+        PageViewUploadService.schedule(this, StudentPageViewService.class);
     }
 
     @Override
@@ -98,23 +96,6 @@ public class AppManager extends com.instructure.canvasapi2.AppManager implements
     @Deprecated
     public String getGlobalUserId(String domain, User user) {
         return domain + "-" + user.getId();
-    }
-
-    /**
-     * @param context used to check the device version and DownloadManager information
-     * @return true if the download manager is available
-     */
-    public static boolean isDownloadManagerAvailable(Context context) {
-        try {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            intent.setClassName("com.android.providers.downloads.ui", "com.android.providers.downloads.ui.DownloadList");
-            List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent,
-                    PackageManager.MATCH_DEFAULT_ONLY);
-            return list.size() > 0;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     //region Analytics Event Handling

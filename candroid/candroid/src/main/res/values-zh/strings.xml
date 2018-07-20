@@ -145,11 +145,27 @@
     <string name="toDoNoDueDate">无截止日期</string>
 
     <string name="dueAt">截止于</string>
+    <string name="dueAtTime">截止日期 %s</string>
     <string name="toDoDue">截止</string>
+    <string name="due">截止日期为%1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="other">%d需要评分</item>
     </plurals>
     <string name="myFiles">文件</string>
+    <string name="createAFolder">创建文件夹</string>
+    <string name="createFolder">创建文件夹</string>
+    <string name="createAFile">选择文件</string>
+    <string name="createFileFolderFabContentDesc">显示“创建文件”和“创建文件夹”按钮</string>
+    <string name="folderCreationError">在文件夹创建过程中出错。</string>
+    <string name="rename">重命名</string>
+    <string name="renameFile">对文件重命名</string>
+    <string name="renameFolder">对文件夹重命名</string>
+    <string name="blankName">名称不能为空</string>
+    <string name="confirmDeleteFile">是否确定要删除文件\'%s\'？此操作无法撤消。</string>
+    <string name="confirmDeleteEmptyFolder">是否确定要删除文件夹\'%s\'？此操作无法撤消。</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="other">是否确定要删除文件夹\'%1$s\'，包括其中包含的%2$d项目？此操作无法撤消。</item>
+    </plurals>
     <string name="settings">设置</string>
     <string name="name">姓名</string>
     <string name="email">电子邮件</string>
@@ -350,6 +366,8 @@
 	<string name="errorPostingAnnouncement">发布通告时出现错误。</string>
 	<string name="errorPostingDiscussion">发布讨论时出现错误。</string>
 	<string name="allowThreading">允许线程答复</string>
+    <string name="usersMustPost">用户必须先发布本人信息才能阅读他人回复</string>
+    <string name="allowUserComments">允许用户评论</string>
 	<string name="message">消息</string>
 	<string name="title">标题</string>
 
@@ -438,6 +456,7 @@
     <string name="subTypeOnlineQuiz">在线测验</string>
 	<string name="subTypeMediaRecording">媒体录制</string>
     <string name="sub_type_lti_launch">LTI 启动</string>
+    <string name="subTypeDiscussionTopic">讨论</string>
     <string name="turnInByHand">您必须手动打开此作业</string>
 	<string name="noSubRequired">无需提交</string>
 	<string name="noTurnInOnMobile">手机提交不受支持</string>
@@ -567,6 +586,7 @@
     <string name="uploadMyFiles">我的文件</string>
     <string name="uploadCourseFiles">课程文件</string>
 
+    <string name="uploadToSubmissionComment">上传到提交项评论</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">更新日志</string>
 
@@ -605,14 +625,6 @@
 
     <string name="notoriousSubmissionInProgress">提交文件&#8230;检查通知栏更新。</string>
     <string name="notoriousSubmissionSuccessful">完成提交文件</string>
-
-    <string name="pinned_icon">固定讨论的图标</string>
-    <string name="pin_discussion">固定讨论</string>
-    <string name="unpin_discussion">不固定讨论</string>
-    <string name="discussion_pinned">讨论已固定</string>
-    <string name="pinned_discussions">已固定的讨论</string>
-    <string name="discussion_unpinned">讨论不固定</string>
-    <string name="empty_discussions">此班级中没有可显示的讨论。</string>
 
     <string name="bio">个人简介</string>
     <string name="draft">草稿</string>
@@ -837,6 +849,7 @@
     <string name="locked_mastery_paths">在 \"%s\" 评分前锁定</string>
     <string name="locked_icon">锁定的图标</string>
     <string name="choose_assignment_group">选择作业小组</string>
+    <string name="chooseAssignmentPath">选择作业路径</string>
     <string name="select">选择</string>
     <string name="choice_position">选项 %d</string>
     <string name="updating_module_info">正在更新模块信息&#8230;</string>
@@ -866,13 +879,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">在外部浏览器中打开链接</string>
-    <string name="gaugeLaunchFailure">此时无法加载仪表。</string>
-
+    <string name="ltiLaunchFailure">此时不能加载此 LTI 工具。</string>
     <string name="urlSubmission">URL 提交</string>
     <string name="assignmentDeletedError">此作业不再可用。</string>
     <string name="homePageIdForNotifications">最近活动</string>
     <string name="homePageIdForModules">单元</string>
     <string name="homePageIdForAssignments">作业</string>
+
     <string name="homePageIdForSyllabus">教学大纲</string>
 
     <string name="contentDescriptionWidgetRefresh">刷新小组件</string>
@@ -886,9 +899,42 @@
     <string name="finalGrade">最终评分</string>
 
     <string name="moreThan99">99+</string>
-    <string name="dot_with_spaces">\u2022</string>
+    <string name="max_count">99+</string>
 
     <string name="opensInWebView">在网页视图中打开</string>
     <string name="unsupportedTabLabel">在本设备上不受支持</string>
+
+    <string name="downloadingFile">正在下载</string>
+    <string name="downloadFailed">下载失败</string>
+    <string name="downloadSuccessful">下载成功</string>
+
+    <string name="full_due_date_details">完整的截止日期详细信息</string>
+    <string name="submissions">提交项</string>
+    <string name="attachment">附件</string>
+    <string name="contentDescription_back">返回</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="other">%s 分</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="other">%s 分</item>
+    </plurals>
+    <string name="capitalTo">接收人</string>
+
+
+    <string name="unableToViewInBrowser">我们找不到查看此 LTI 工具的外部应用。</string>
+    <string name="commentUpload">评论上传</string>
+    <string name="unableToUploadMediaComment">要发送媒体评论，请发送或删除未发送的文字评论。</string>
+
+    <string name="frontPage">首页</string>
+    <string name="editPage">编辑页面</string>
+    <string name="description">说明</string>
+    <string name="pageSuccessfullyUpdated">已成功更新页面。</string>
+    <string name="errorSavingPage">尝试保存此页面时出错。请重试。</string>
+    <string name="pageTitleMustBeSet">必须设置页面标题。</string>
+    <string name="pageDetails">页面详细信息</string>
+    <string name="saving">正在保存</string>
+    <string name="confirmDeleteEvent">是否确定要删除此活动？</string>
+    <string name="conferencesNotSupported">会议目前不支持移动设备。</string>
 
 </resources>

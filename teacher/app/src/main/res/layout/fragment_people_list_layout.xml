@@ -16,11 +16,13 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/peopleListPage"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/peopleListToolbar"
         android:layout_width="match_parent"
@@ -28,53 +30,54 @@
         android:elevation="6dp"
         app:popupTheme="@style/ToolBarPopupStyle"
         app:theme="@style/ToolBarStyle"
-        tools:ignore="UnusedAttribute"/>
+        tools:ignore="UnusedAttribute" />
 
     <RelativeLayout
         android:id="@+id/filterTitleWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
+        android:clipToPadding="false"
         android:paddingEnd="16dp"
-        android:clipToPadding="false">
+        android:paddingStart="16dp">
 
         <TextView
-            style="@style/TextFont.Medium"
             android:id="@+id/peopleFilter"
+            style="@style/TextFont.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:layout_toStartOf="@+id/clearFilterTextView"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
             android:text="@string/allPeople"
             android:textColor="@color/defaultTextDark"
             android:textSize="20sp"
-            tools:text="All Courses"/>
+            tools:text="All Courses" />
 
         <TextView
-            style="@style/TextFont.Medium"
             android:id="@+id/clearFilterTextView"
+            style="@style/TextFont.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:layout_alignParentEnd="true"
             android:layout_alignBaseline="@+id/peopleFilter"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:background="?android:selectableItemBackground"
             android:clickable="true"
+            android:minHeight="48dp"
             android:paddingStart="12dp"
             android:paddingTop="16dp"
-            android:layout_centerVertical="true"
             android:text="@string/clear_filter"
             android:textColor="@color/defaultActionColor"
             android:visibility="gone"
-            tools:visibility="visible"
-            tools:text="Clear filter"/>
+            tools:text="Clear filter"
+            tools:visibility="visible" />
 
     </RelativeLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

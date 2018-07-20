@@ -19,13 +19,19 @@ import com.instructure.dataseeding.util.ago
 import com.instructure.dataseeding.util.days
 import com.instructure.dataseeding.util.fromNow
 import com.instructure.dataseeding.util.iso8601
+import com.instructure.espresso.TestRail
+import com.instructure.espresso.ditto.Ditto
 import com.instructure.soseedy.Quiz
 import com.instructure.teacher.ui.utils.*
+import okreplay.DittoResponseMod
+import okreplay.JsonObjectResponseMod
+import okreplay.JsonObjectValueMod
 import org.junit.Test
 
 class QuizDetailsPageTest: TeacherTest() {
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109579")
     override fun displaysPageObjects() {
         getToQuizDetailsPage()
@@ -33,6 +39,7 @@ class QuizDetailsPageTest: TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109579")
     fun displaysCorrectDetails() {
         val quiz = getToQuizDetailsPage()
@@ -40,6 +47,7 @@ class QuizDetailsPageTest: TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109579")
     fun displaysInstructions() {
         getToQuizDetailsPage(withDescription = true)
@@ -47,6 +55,7 @@ class QuizDetailsPageTest: TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134480")
     fun displaysNoInstructionsMessage() {
         getToQuizDetailsPage()
@@ -54,6 +63,7 @@ class QuizDetailsPageTest: TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134481")
     fun displaysClosedAvailability() {
         getToQuizDetailsPage(lockAt = 1.days.ago.iso8601)
@@ -61,13 +71,18 @@ class QuizDetailsPageTest: TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134482")
     fun displaysNoFromDate() {
-        getToQuizDetailsPage(lockAt = 2.days.fromNow.iso8601)
+        val lockAt = 2.days.fromNow.iso8601
+        addDittoMod(getQuizLockDateMod(lockAt))
+        addDittoMod(getAssignmentLockDateMod(lockAt))
+        getToQuizDetailsPage(lockAt = lockAt)
         quizDetailsPage.assertToFilledAndFromEmpty()
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134483")
     fun displaysNoToDate() {
         getToQuizDetailsPage(unlockAt = 2.days.ago.iso8601)
@@ -75,12 +90,14 @@ class QuizDetailsPageTest: TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysSubmittedDonut() {
         getToQuizDetailsPage(students = 1, submissions = 1)
         quizDetailsPage.assertHasSubmitted()
     }
 
     @Test
+    @Ditto
     fun displaysNotSubmittedDonut() {
         getToQuizDetailsPage(students = 1, submissions = 0)
         quizDetailsPage.assertNotSubmitted()
@@ -108,10 +125,24 @@ class QuizDetailsPageTest: TeacherTest() {
         }
 
         tokenLogin(teacher)
-        coursesListPage.openCourse(course)
-        courseBrowserPage.openQuizzesTab()
-        quizListPage.clickQuiz(quiz)
-
+        routeTo("courses/${course.id}/quizzes/${quiz.id}")
         return quiz
     }
+
+    private fun getQuizLockDateMod(dateString: String): DittoResponseMod {
+        return JsonObjectResponseMod(
+            Regex("""(.*)/api/v1/courses/\d+/quizzes/\d+"""),
+            JsonObjectValueMod("lock_at", dateString),
+            JsonObjectValueMod("all_dates[0]:lock_at", dateString)
+        )
+    }
+
+    private fun getAssignmentLockDateMod(dateString: String): DittoResponseMod {
+        return JsonObjectResponseMod(
+            Regex("""(.*)/api/v1/courses/\d+/assignments/\d+\?(.*)"""),
+            JsonObjectValueMod("lock_at", dateString),
+            JsonObjectValueMod("all_dates[0]:lock_at", dateString)
+        )
+    }
+
 }

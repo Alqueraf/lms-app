@@ -95,7 +95,7 @@ public class FileUploadAdapter extends BaseAdapter {
 
         FileSubmitObject fso = mFileSubmitObjects.get(position);
 
-        AttachmentView.setColorAndIcon(mContext, fso.getContentType(), fso.getName(), null, holder.fileIcon);
+        AttachmentView.Companion.setColorAndIcon(mContext, fso.getContentType(), fso.getName(), null, holder.fileIcon);
 
         ColorUtils.colorIt(ThemePrefs.getBrandColor(), holder.fileIcon);
 
@@ -112,7 +112,7 @@ public class FileUploadAdapter extends BaseAdapter {
             holder.fileIcon.setVisibility(View.VISIBLE);
         } else if (fso.getCurrentState() == FileSubmitObject.STATE.NORMAL) {
             holder.remove.setImageResource(R.drawable.vd_utils_close);
-            holder.remove.setContentDescription(mContext.getString(R.string.remove_attachment));
+            holder.remove.setContentDescription(mContext.getString(R.string.utils_removeAttachment));
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -72,11 +72,12 @@ class NotificationPreferencesRecyclerAdapter(context: Context) : ExpandableRecyc
             mUpdateCalls[category.name]?.cancel()
             mUpdateCalls[category.name] = tryWeave {
                 awaitApi<NotificationPreferenceResponse> {
-                    NotificationPreferencesManager.updatePreferenceCategory(category.name, mCurrentChannel.id, isChecked.frequency, it)
+                    NotificationPreferencesManager.updatePreferenceCategory(category.notification ?: category.name, mCurrentChannel.id, isChecked.frequency, it)
                 }
                 category.frequency = isChecked.frequency
             } catch {
                 category.frequency = isChecked.not().frequency
+                notifyDataSetChanged()
             }
         }
     }
@@ -133,18 +134,13 @@ class NotificationPreferencesRecyclerAdapter(context: Context) : ExpandableRecyc
             val categoryHelper = categoryHelperMap[categoryName] ?: continue
             val header = groupHeaderMap[categoryHelper.categoryGroup] ?: continue
 
-            val frequency = if (prefs.all { it.frequency == NotificationPreferencesManager.NEVER }) {
-                NotificationPreferencesManager.NEVER
-            } else {
-                NotificationPreferencesManager.IMMEDIATELY
-            }
-
             val category = NotificationCategory(
                     categoryName,
                     titleMap[categoryName],
                     descriptionMap[categoryName],
-                    frequency,
-                    categoryHelper.position
+                    prefs[0].frequency,
+                    categoryHelper.position,
+                    prefs[0].notification
             )
 
             addOrUpdateItem(header, category)

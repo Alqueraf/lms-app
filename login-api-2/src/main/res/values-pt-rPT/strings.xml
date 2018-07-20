@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">Esta a tentar registar-se na Canvas Network?</string>
     <string name="remove">Remover</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">Mascarar</string>
     <string name="userId">ID do utilizador</string>
     <string name="domain">Domínio</string>
 
-    <string name="masqueradingUserId">ID de Utilizador Dissimulado</string>
-    <string name="masqueradingUserDomain">Marcarar domínio</string>
-    <string name="masqueradingBegin">Iniciar mascarar</string>
-    <string name="masqueradingStop">Parar de se mascarar</string>
-
+    <string name="actAsUser">Atuar como utilizador</string>
+    <string name="stopActAsUser">Parar de atuar como utilizador</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Remover este utilizador?</string>
     <string name="removedForever">Você terá de se inscrever novamente neste utilizador para aceder seu conteúdo.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Não</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">Perto de si</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Atrás de si</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Logins anteriores</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Encontrar minha escola</string>
-    <string name="appTypeTeacher">Professor</string>
-    <string name="appTypeStudent">Aluno</string>
-    <string name="appTypeParent">Pai</string>
     <string name="canvasLowerCase">canvas</string>
     <string name="whatsYourSchoolName">Qual é o nome da sua escola?</string>
     <string name="next">Próximo</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">Deslize para ver todos os detalhes</string>
 
     <string name="masqueradeErrorUserId">Você deve inserir um ID de utilizador.</string>
-    <string name="masqueradeErrorDomain">Você deve inserir um domínio.</string>
+    <string name="masqueradeErrorDomain">Você deve inserir um domínio válido.</string>
     <string name="masqueradeError">Erro ao tentar disfarçar.</string>
+    <string name="masqueradeInfo">\"Atue como\" sendo essencialmente ao iniciar sessão como este usuário sem uma senha. Você poderá tomar qualquer ação como se você fosse esse usuário, e dos pontos de vista de outros usuários, será como se esse usuário as executasse. No entanto, registos de auditoria registam que você foi o único que realizou as ações em nome desse utilizador.</string>
+    <string name="masqueradingAs">Você está a agir como %s</string>
+    <string name="stopActingAsTitle">Pare de atuar como...</string>
+    <string name="stopActingAsMessage">Você vai parar de agir como %s e retornar à sua conta.</string>
+
+    <string name="weMadeChanges">Nós fizemos algumas alterações.</string>
+    <string name="whatsNewText">Veja o que há de novo</string>
 </resources>

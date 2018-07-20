@@ -67,22 +67,22 @@ class PeopleListRecyclerAdapter(
 
             // Get Teachers
             awaitPaginated<List<User>> {
-                onRequestFirst { UserManager.getFirstPagePeopleList(canvasContext, UserAPI.ENROLLMENT_TYPE.TEACHER, true, it) }
-                onRequestNext { nextUrl, callback -> UserManager.getNextPagePeopleList(true, nextUrl, callback) }
+                onRequestFirst { UserManager.getFirstPagePeopleList(canvasContext, UserAPI.ENROLLMENT_TYPE.TEACHER, isRefresh, it) }
+                onRequestNext { nextUrl, callback -> UserManager.getNextPagePeopleList(isRefresh, nextUrl, callback) }
                 onResponse { setNextUrl(""); populateAdapter(it) }
             }
 
             // Get TAs
             awaitPaginated<List<User>> {
-                onRequestFirst { UserManager.getFirstPagePeopleList(canvasContext, UserAPI.ENROLLMENT_TYPE.TA, true, it) }
-                onRequestNext { nextUrl, callback -> UserManager.getNextPagePeopleList(true, nextUrl, callback) }
+                onRequestFirst { UserManager.getFirstPagePeopleList(canvasContext, UserAPI.ENROLLMENT_TYPE.TA, isRefresh, it) }
+                onRequestNext { nextUrl, callback -> UserManager.getNextPagePeopleList(isRefresh, nextUrl, callback) }
                 onResponse { setNextUrl(""); populateAdapter(it) }
             }
 
             // Get others
             awaitPaginated<List<User>> {
-                onRequestFirst { UserManager.getFirstPagePeopleList(mCanvasContext, true, it) }
-                onRequestNext { nextUrl, callback -> UserManager.getNextPagePeopleList(true, nextUrl, callback) }
+                onRequestFirst { UserManager.getFirstPagePeopleList(mCanvasContext, isRefresh, it) }
+                onRequestNext { nextUrl, callback -> UserManager.getNextPagePeopleList(isRefresh, nextUrl, callback) }
                 onResponse { setNextUrl(""); populateAdapter(it) }
             }
 

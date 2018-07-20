@@ -17,12 +17,15 @@
 
 package com.instructure.canvasapi2.managers;
 
+import android.support.annotation.Nullable;
+
 import com.instructure.canvasapi2.StatusCallback;
 import com.instructure.canvasapi2.apis.OAuthAPI;
 import com.instructure.canvasapi2.builders.RestBuilder;
 import com.instructure.canvasapi2.builders.RestParams;
 import com.instructure.canvasapi2.models.AuthenticatedSession;
 import com.instructure.canvasapi2.models.OAuthToken;
+import com.instructure.canvasapi2.utils.Logger;
 
 
 public class OAuthManager {
@@ -57,6 +60,19 @@ public class OAuthManager {
                 .withForceReadFromCache(false)
                 .withForceReadFromNetwork(true)
                 .build();
+
+        Logger.d("targetURL to be authed: " + targetUrl);
         OAuthAPI.getAuthenticatedSession(targetUrl, params, adapter, callback);
+    }
+
+    public static @Nullable String getAuthenticatedSessionSynchronous(String targetUrl) {
+        RestBuilder adapter = new RestBuilder();
+        RestParams params = new RestParams.Builder()
+                .withForceReadFromCache(false)
+                .withForceReadFromNetwork(true)
+                .build();
+
+        Logger.d("targetURL to be authed: " + targetUrl);
+        return OAuthAPI.getAuthenticatedSessionSynchronous(targetUrl, params, adapter);
     }
 }

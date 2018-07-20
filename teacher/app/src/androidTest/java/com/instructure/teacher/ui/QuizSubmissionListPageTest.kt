@@ -22,17 +22,20 @@ import com.instructure.dataseeding.util.iso8601
 import com.instructure.soseedy.SeededData
 import com.instructure.teacher.R
 import com.instructure.teacher.ui.utils.*
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class QuizSubmissionListPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         goToQuizSubmissionListPage()
         quizSubmissionListPage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun displaysNoSubmissionsView() {
         goToQuizSubmissionListPage(
                 students = 0,
@@ -42,6 +45,7 @@ class QuizSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun filterLateSubmissions() {
         goToQuizSubmissionListPage(
                 dueAt = 7.days.ago.iso8601
@@ -56,6 +60,7 @@ class QuizSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun filterPendingReviewSubmissions() {
         goToQuizSubmissionListPage(addQuestion = true)
         quizSubmissionListPage.clickFilterButton()
@@ -68,12 +73,14 @@ class QuizSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysQuizStatusComplete() {
         goToQuizSubmissionListPage(complete = true)
         quizSubmissionListPage.assertSubmissionStatusSubmitted()
     }
 
     @Test
+    @Ditto
     fun displaysQuizStatusMissing() {
         goToQuizSubmissionListPage(
                 students = 1,
@@ -84,6 +91,7 @@ class QuizSubmissionListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun messageStudentsWho() {
         val data = goToQuizSubmissionListPage()
         val student = data.studentsList[0]

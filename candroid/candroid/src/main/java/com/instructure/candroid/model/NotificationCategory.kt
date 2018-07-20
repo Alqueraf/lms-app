@@ -21,5 +21,6 @@ data class NotificationCategory(
         var title: String?,
         var description: String?,
         var frequency: String,
-        var position: Int
+        var position: Int,
+        var notification: String?
 )

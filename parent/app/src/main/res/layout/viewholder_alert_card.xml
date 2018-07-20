@@ -18,6 +18,7 @@
 
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/med_padding"
@@ -37,23 +38,23 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/unreadMark"
+            android:layout_width="@dimen/unreadAlertMarkerSize"
+            android:layout_height="@dimen/unreadAlertMarkerSize"
+            android:layout_gravity="top|start"
+            android:src="@drawable/ic_circle" />
 
-        <FrameLayout
-            android:id="@+id/iconWrapper"
-            android:layout_width="@dimen/calendar_week_background_size"
-            android:layout_height="@dimen/calendar_week_background_size"
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="@dimen/alertIconSize"
+            android:layout_height="@dimen/alertIconSize"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/circle_background">
-
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="@dimen/calendar_week_icon_size"
-                android:layout_height="@dimen/calendar_week_icon_size"
-                android:layout_gravity="center"
-                android:contentDescription="@string/icon"
-                android:scaleType="fitCenter" />
-        </FrameLayout>
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:contentDescription="@string/icon"
+            android:scaleType="fitCenter"
+            tools:src="@drawable/vd_info_alert_icon"/>
 
         <ImageView
             android:id="@+id/closeButton"
@@ -69,28 +70,34 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_marginStart="12dp"
-            android:layout_toEndOf="@id/iconWrapper"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@id/icon"
             android:layout_toStartOf="@+id/closeButton">
+
+            <TextView
+                android:id="@+id/date"
+                style="@style/TextStyle.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                tools:text="Jan 2, 2018"/>
 
             <TextView
                 android:id="@+id/title"
                 style="@style/TextStyle.Primary.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="viewStart"/>
+                android:textAlignment="viewStart"
+                tools:text="Title of alert, maybe even a really long title that goes for two lines"/>
 
             <TextView
-                android:id="@+id/date"
+                android:id="@+id/alertType"
                 style="@style/TextStyle.Secondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/description"
-                style="@style/TextStyle.Secondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:textStyle="bold"
+                tools:text="Jan 2, 2018"/>
         </LinearLayout>
 
     </RelativeLayout>

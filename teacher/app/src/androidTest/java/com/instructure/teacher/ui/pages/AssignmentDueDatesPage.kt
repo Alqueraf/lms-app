@@ -15,13 +15,16 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
+
+
+import com.instructure.espresso.page.onViewWithId
+import com.instructure.espresso.page.onViewWithText
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.PageWithIdAssert
 
 @Suppress("unused")
-class AssignmentDueDatesPage : BasePage(), PageAssert by PageWithIdAssert(R.id.dueDatesPage) {
+class AssignmentDueDatesPage : BasePage(pageResId = R.id.dueDatesPage) {
 
     private val backButton by OnViewWithContentDescription(android.support.v7.appcompat.R.string.abc_action_bar_up_description)
     private val titleView by OnViewWithText(R.string.page_title_due_dates)

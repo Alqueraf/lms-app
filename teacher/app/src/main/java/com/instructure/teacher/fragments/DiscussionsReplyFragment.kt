@@ -16,6 +16,8 @@
  */
 package com.instructure.teacher.fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
@@ -38,7 +40,8 @@ import com.instructure.teacher.presenters.DiscussionsReplyPresenter
 import com.instructure.teacher.presenters.DiscussionsReplyPresenter.Companion.REASON_MESSAGE_EMPTY
 import com.instructure.teacher.presenters.DiscussionsReplyPresenter.Companion.REASON_MESSAGE_FAILED_TO_SEND
 import com.instructure.teacher.presenters.DiscussionsReplyPresenter.Companion.REASON_MESSAGE_IN_PROGRESS
-import com.instructure.teacher.utils.*
+import com.instructure.teacher.utils.setupCloseButton
+import com.instructure.teacher.utils.setupMenu
 import com.instructure.teacher.viewinterface.DiscussionsReplyView
 import instructure.androidblueprint.PresenterFactory
 import kotlinx.android.synthetic.main.fragment_discussions_reply.*
@@ -46,8 +49,8 @@ import kotlinx.android.synthetic.main.fragment_discussions_reply.*
 class DiscussionsReplyFragment : BasePresenterFragment<DiscussionsReplyPresenter, DiscussionsReplyView>(), DiscussionsReplyView {
 
     private var mCanvasContext: CanvasContext by ParcelableArg(default = CanvasContext.getGenericContext(CanvasContext.Type.COURSE, -1L, ""))
-    private var mDiscussionTopicHeaderId: Long by LongArg(default = 0L) //The topic the discussion belongs too
-    private var mDiscussionEntryId: Long by LongArg(default = 0L) //The future parent of the discussion entry we are creating
+    private var mDiscussionTopicHeaderId: Long by LongArg(default = 0L) // The topic the discussion belongs too
+    private var mDiscussionEntryId: Long by LongArg(default = 0L) // The future parent of the discussion entry we are creating
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,9 +61,7 @@ class DiscussionsReplyFragment : BasePresenterFragment<DiscussionsReplyPresenter
     override fun onRefreshFinished() {}
     override fun onRefreshStarted() {}
 
-    override fun layoutResId(): Int {
-        return R.layout.fragment_discussions_reply
-    }
+    override fun layoutResId(): Int = R.layout.fragment_discussions_reply
 
     override fun getPresenterFactory(): PresenterFactory<DiscussionsReplyPresenter> =
             DiscussionsReplyFactory(mCanvasContext, mDiscussionTopicHeaderId, mDiscussionEntryId)
@@ -70,6 +71,21 @@ class DiscussionsReplyFragment : BasePresenterFragment<DiscussionsReplyPresenter
     override fun onReadySetGo(presenter: DiscussionsReplyPresenter?) {
         rceTextEditor.setHint(R.string.rce_empty_message)
         rceTextEditor.requestEditorFocus()
+        rceTextEditor.showEditorToolbar()
+        rceTextEditor.actionUploadImageCallback = { MediaUploadUtils.showPickImageDialog(this) }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Get the image Uri
+            when (requestCode) {
+                RequestCodes.PICK_IMAGE_GALLERY -> data?.data
+                RequestCodes.CAMERA_PIC_REQUEST -> MediaUploadUtils.handleCameraPicResult(activity, null)
+                else -> null
+            }?.let { imageUri ->
+                presenter.uploadRceImage(imageUri, activity)
+            }
+        }
     }
 
     override fun messageSuccess(entry: DiscussionEntry) {
@@ -80,7 +96,9 @@ class DiscussionsReplyFragment : BasePresenterFragment<DiscussionsReplyPresenter
 
     override fun messageFailure(reason: Int) {
         when (reason) {
-            REASON_MESSAGE_IN_PROGRESS -> { Logger.e("User tried to send message multiple times in a row.") }
+            REASON_MESSAGE_IN_PROGRESS -> {
+                Logger.e("User tried to send message multiple times in a row.")
+            }
             REASON_MESSAGE_EMPTY -> {
                 Logger.e("User tried to send message an empty message.")
                 toast(R.string.discussion_sent_empty)
@@ -101,6 +119,7 @@ class DiscussionsReplyFragment : BasePresenterFragment<DiscussionsReplyPresenter
         toolbar.title = getString(R.string.reply)
         toolbar.setupCloseButton(this)
         toolbar.setupMenu(R.menu.menu_discussion_reply, menuItemCallback)
+
         ViewStyler.themeToolbarBottomSheet(activity, isTablet, toolbar, Color.BLACK, false)
         ViewStyler.setToolbarElevationSmall(context, toolbar)
     }
@@ -108,24 +127,25 @@ class DiscussionsReplyFragment : BasePresenterFragment<DiscussionsReplyPresenter
     val menuItemCallback: (MenuItem) -> Unit = { item ->
         when (item.itemId) {
             R.id.menu_send -> {
-                if(APIHelper.hasNetworkConnection()) {
+                if (APIHelper.hasNetworkConnection()) {
                     presenter.sendMessage(rceTextEditor.html)
                 } else {
                     NoInternetConnectionDialog.show(fragmentManager)
                 }
             }
             R.id.menu_attachment -> {
-                if(APIHelper.hasNetworkConnection()) {
+                if (APIHelper.hasNetworkConnection()) {
                     val attachments = ArrayList<FileSubmitObject>()
                     if (presenter.getAttachment() != null) {
                         attachments.add(presenter.getAttachment()!!)
                     }
+
                     val bundle = UploadFilesDialog.createDiscussionsBundle(attachments)
-                    UploadFilesDialog.show(fragmentManager, bundle, { event, attachment ->
+                    UploadFilesDialog.show(fragmentManager, bundle) { event, attachment ->
                         if(event == UploadFilesDialog.EVENT_ON_FILE_SELECTED) {
                             applyAttachment(attachment)
                         }
-                    })
+                    }
                 } else {
                     NoInternetConnectionDialog.show(fragmentManager)
                 }
@@ -141,11 +161,10 @@ class DiscussionsReplyFragment : BasePresenterFragment<DiscussionsReplyPresenter
                     presenter?.setAttachment(null)
                 }
             }
-        } else {
-            presenter?.setAttachment(null)
-            attachments.clearAttachmentViews()
         }
     }
+
+    override fun insertImageIntoRCE(text: String, alt: String) = rceTextEditor.insertImage(text, alt)
 
     companion object {
         private const val DISCUSSION_TOPIC_HEADER_ID = "DISCUSSION_TOPIC_HEADER_ID"
@@ -153,21 +172,19 @@ class DiscussionsReplyFragment : BasePresenterFragment<DiscussionsReplyPresenter
         private const val IS_ANNOUNCEMENT = "IS_ANNOUNCEMENT"
 
         @JvmStatic
-        fun makeBundle(
-                discussionTopicHeaderId: Long,
-                discussionEntryId: Long,
-                isAnnouncement: Boolean): Bundle = Bundle().apply {
-
-            putLong(DISCUSSION_TOPIC_HEADER_ID, discussionTopicHeaderId)
-            putLong(DISCUSSION_ENTRY_ID, discussionEntryId)
-            putBoolean(IS_ANNOUNCEMENT, isAnnouncement)
-        }
+        fun makeBundle(discussionTopicHeaderId: Long, discussionEntryId: Long, isAnnouncement: Boolean): Bundle =
+                Bundle().apply {
+                    putLong(DISCUSSION_TOPIC_HEADER_ID, discussionTopicHeaderId)
+                    putLong(DISCUSSION_ENTRY_ID, discussionEntryId)
+                    putBoolean(IS_ANNOUNCEMENT, isAnnouncement)
+                }
 
         @JvmStatic
-        fun newInstance(canvasContext: CanvasContext, args: Bundle) = DiscussionsReplyFragment().apply {
-            mDiscussionTopicHeaderId = args.getLong(DISCUSSION_TOPIC_HEADER_ID)
-            mDiscussionEntryId = args.getLong(DISCUSSION_ENTRY_ID)
-            mCanvasContext = canvasContext
-        }
+        fun newInstance(canvasContext: CanvasContext, args: Bundle) =
+                DiscussionsReplyFragment().apply {
+                    mDiscussionTopicHeaderId = args.getLong(DISCUSSION_TOPIC_HEADER_ID)
+                    mDiscussionEntryId = args.getLong(DISCUSSION_ENTRY_ID)
+                    mCanvasContext = canvasContext
+                }
     }
 }

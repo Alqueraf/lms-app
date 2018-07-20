@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,10 +17,15 @@
   -->
 
 <resources>
+
     <string name="chooseMedia">Velg media</string>
     <string name="takeVideo">Ta video</string>
     <string name="noCameraOnDevice">Ingen kamera</string>
 
+    <string name="takePhoto">Ta bilde</string>
+    <string name="choosePhotoFromGallery">Velg bilde fra galleri</string>
+
+    <string name="utils_edit">Rediger</string>
     <!-- NotoriousPicker/uploadService -->
     <string name="notificationTitle">Laster opp til Canvas</string>
     <string name="preparingUpload">Forbereder opplasting</string>
@@ -189,5 +194,173 @@
     <string name="loading">Laster</string>
     <string name="save">Lagre</string>
     <string name="cropInstructions">Klyp og dra for å justere bildet.</string>
+
+    <!--Discussions-->
+    <plurals name="utils_discussionsReplies">
+        <item quantity="one">%s Svar</item>
+        <item quantity="other">%s Svar</item>
+    </plurals>
+
+    <string name="utils_discussionsDeleted" formatted="false">Slett dette svaret %s</string>
+    <string name="utils_discussionsUnknownAuthor">Ukjent forfatter</string>
+    <string name="utils_discussionsReply">Svar</string>
+    <string name="utils_discussionsEdit">Rediger</string>
+    <string name="utils_discussionsDeleteWarning">Er du sikker på at du vil slette dette svaret?</string>
+    <string name="utils_availableToLabel">Tilgjengelig til:</string>
+    <string name="utils_availableFromLabel">Tilgjengelig fra:</string>
+    <string name="utils_dueDateHeaderLabel">Forfall</string>
+    <string name="utils_dueLabel">Frist:</string>
+    <string name="utils_delete">Slett</string>
+    <string name="utils_dueDateAtTime" formatted="false">Skal leveres %1s til %2s</string>
+    <string name="utils_noDateFiller">--</string>
+    <string name="utils_availabilityLabel">Tilgjengelighet:</string>
+    <string name="utils_pinnedIcon">Ikon for festet diskusjon</string>
+    <string name="utils_pinDiscussion">Festet diskusjon</string>
+    <string name="utils_unpinDiscussion">Løsne diskusjon</string>
+    <string name="utils_discussionPinned">Diskusjonen festet</string>
+    <string name="utils_pinnedDiscussions">Festet</string>
+    <string name="utils_discussionUnpinned">Diskusjoner</string>
+    <string name="utils_emptyDiscussions">Det er ingen diskusjoner å vise i denne seksjonen.</string>
+    <string name="utils_description">Beskrivelse</string>
+    <string name="utils_allowThreadedReplies">Tillat svartråder</string>
+    <string name="utils_usersMustPost">Studenter må poste før de kan se svar</string>
+    <string name="utils_discussionsClosed">Stengt for kommentarer</string>
+    <string name="utils_discussionsOpen">Åpen for kommentarer</string>
+    <string name="utils_discussionsPin">Fest</string>
+    <string name="utils_discussionsUnpin">Fjern festing</string>
+    <string name="utils_discussionsOptions">Valg</string>
+    <string name="utils_discussionsDeleteTitle">Slette diskusjon?</string>
+    <string name="utils_discussionsDelete">Slett diskusjon</string>
+    <string name="utils_discussionsDeleteMessage">Dette vil slette hele diskusjonen og tråden.</string>
+    <string name="utils_discussionSentSuccess">Diskusjon svaret var vellykket.</string>
+    <string name="utils_discussionUpdateSuccess">Diskusjon redigering var vellykket.</string>
+    <string name="utils_discussionSentEmpty">Diskusjon svaret kan ikke være tomt.</string>
+    <string name="utils_discussionSentFailure">Diskusjon svaret kunne ikke sendes nå.</string>
+    <string name="utils_createDiscussion">Ny diskusjon</string>
+    <string name="utils_editDiscussion">Rediger diskusjon</string>
+    <string name="utils_discussionDetails">Diskusjonsdetaljer</string>
+    <string name="utils_discussionSuccessfullyUpdated">Diskusjon oppdatert.</string>
+    <string name="utils_saving">Lagrer</string>
+    <string name="utils_discussionSuccessfullyCreated">Diskusjon opprettet.</string>
+    <string name="utils_discussionSuccessfulAttachmentNot">Vedlegget kan ikke legges til denne samtalen. Sjekk filkvota og prøv igjen.</string>
+    <string name="utils_noTitle">Ingen tittel</string>
+    <string name="utils_discussionsReplies_Title">Svar</string>
+    <string name="utils_contentDescriptionDiscussionsOverflow">Flere alternativer</string>
+    <string name="utils_discussionsUnreadRepliesBlank" formatted="false">%s %s %s</string>
+    <string name="utils_lastPost" formatted="false">Siste innlegg %s</string>
+    <string name="utils_postedOnDate">Postet i %s</string>
+    <string name="utils_discussionPostBeforeRepliesEmptyText">Svarene er kun synlige for dem som har postet minst ett svar.</string>
+    <string name="utils_createAnnouncementDelayPosting">Utsett publisering</string>
+    <string name="utils_postAt">Post i</string>
+    <string name="utils_postDate">Innlegg dato</string>
+    <string name="utils_postTime">Tid for posting</string>
+    <string name="utils_editAnnouncementTitle">Rediger kunngjøring</string>
+    <string name="utils_createAnnouncementTitle">Ny kunngjøring</string>
+    <string name="utils_announcementDetails">Kunngjøringsdetaljer</string>
+    <string name="utils_createAnnouncementNoDescription">En beskrivelse er nødvendig</string>
+    <string name="utils_errorSavingAnnouncement">Feil ved forsøk på å lagre kunngjøringen. Prøv igjen.</string>
+    <string name="utils_announcementSuccessfullyUpdated">Kunngjøring oppdatert.</string>
+    <string name="utils_announcementSuccessfullyCreated">Kunngjøring opprettet.</string>
+
+    <plurals name="utils_discussionsUnread">
+        <item quantity="one">%s Ulest</item>
+        <item quantity="other">%s Ulest</item>
+    </plurals>
+
+    <plurals name="utils_addAttachment">
+        <item quantity="zero">Legg til vedlegg</item>
+        <item quantity="one">Legg til vedlegg</item>
+        <item quantity="other">Legg til vedlegg</item>
+    </plurals>
+
+
+    <!-- Assignment Override !-->
+    <string name="utils_unlockAfterDueDateError">Opplåsingsdatoen kan ikke være etter forfallsdato</string>
+    <string name="utils_lockBeforeDueDateError">Låsedato kan ikke være før forfallsdato</string>
+    <string name="utils_lockAfterUnlockError">Låsedato kan ikke være før opplåsingsdato</string>
+    <string name="utils_assigneeBlankError">Stedfortreder kan ikke være tom</string>
+    <string name="utils_assignTo">Tildele til</string>
+    <string name="utils_availableFrom">Tilgjengelig fra</string>
+    <string name="utils_availableTo">Tilgjengelig til</string>
+    <string name="utils_availableFromDate">Tilgjengelig Fra Dato</string>
+    <string name="utils_availableFromTime">Tilgjengelig fra klokkeslett</string>
+    <string name="utils_availableToDate">Tilgjengelig til dato</string>
+    <string name="utils_availableToTime">Tilgjengelig til klokkeslett</string>
+    <string name="utils_dueDate">Forfallsdato</string>
+    <string name="utils_dueTime">Klokkeslett for forfall</string>
+    <string name="utils_addNew">Legg til ny</string>
+
+    <!--Attachment Layout-->
+    <string name="utils_downloadAttachment">Laste ned vedlegg</string>
+    <string name="utils_removeAttachment">Fjern vedlegg</string>
+
+    <!--Unsaved Changes-->
+    <string name="utils_continueWithoutSavingTitle">Fortsette uten å lagre?</string>
+    <string name="utils_continueWithoutSavingMessage">Er du sikker på at du vil fortsette uten å lagre?</string>
+    <string name="utils_continueUnsaved">Fortsett</string>
+    <string name="utils_exitWithoutSavingTitle">Avslutt uten å lagre?</string>
+    <string name="utils_exitWithoutSavingMessage">Er du sikker på at du vil avslutte uten å lagre?</string>
+    <string name="utils_exitUnsaved">Avslutt</string>
+    <string name="utils_cancel">Avbryt</string>
+
+    <string name="utils_contentDescriptionFiles">Fil-ikon</string>
+    <string name="utils_turn_in">Innlevere</string>
+    <string name="utils_upload">Last opp</string>
+    <string name="utils_okay">OK</string>
+    <string name="utils_loadingFilesIndeterminate">Laster filer&#8230;</string>
+    <string name="utils_allowedExtensions">Tillate utvidelser:&#160;</string>
+    <string name="utils_extensionNotAllowed">Den valgte filtypen er ikke tillatt.</string>
+    <string name="utils_errorUploadingFile">Avvik ved opplasting av filen. Vennligst prøv igjen.</string>
+    <string name="utils_filesUploadedSuccessfully">Vellykket opplasting av filene.</string>
+    <string name="utils_uploadingFiles">Laster opp filer&#8230;</string>
+    <string name="utils_uploadingFile">Laster opp fil&#8230;</string>
+    <string name="utils_noApps">Enheten din har ikke noen installerte applikasjoner som kan håndtere denne filen.</string>
+    <string name="utils_errorGettingPhoto">Det oppstod et avvik ved henting av bildet. Vennligst prøv igjen.</string>
+    <string name="utils_oneOrMoreExtensionNotAllowed">Én eller flere filer har en ulovlig filtype</string>
+    <string name="utils_fileUploadNotSupported">Du kan ikke laste opp filer til den valgte oppgaven.</string>
+    <string name="utils_noFilesUploaded">Du har ikke valgt noen filer.</string>
+    <string name="utils_attachments">Vedlegg</string>
+    <string name="utils_uploadTo">Last opp til </string>
+    <string name="utils_uploadToCanvas">Last opp til Canvas</string>
+    <string name="utils_uploadMyFiles">Mine filer</string>
+    <string name="utils_uploadCourseFiles">Filer for emne</string>
+    <string name="utils_uploadToSubmissionComment">Last opp til sendt inn kommentar</string>
+    <string name="utils_attachFile">Legg ved en fil</string>
+    <string name="utils_with">med</string>
+    <string name="utils_dotWithSpaces">  \u2022  </string>
+
+    <string name="notificationPrimaryInboxTitle">Canvas-varsel</string>
+    <string name="notificationChannelNamePrimary">Generelle canvas-varsler</string>
+    <string name="notificationChannelDescriptionPrimary">Ytterligere konfigurering av varsler kan gjøres inne i seksjonen for Canvas varselinnstillinger.</string>
+
+    <string name="copyLinkAddress">Kopier lenkeadresse</string>
+    <string name="copyLink">Kopiert lenke</string>
+    <string name="linkCopied">Lenke kopiert</string>
+    <string name="link">Lenke</string>
+    <string name="fileExists">Filen finnes</string>
+    <string name="replace">Erstatt</string>
+    <string name="shareLink">Del lenke</string>
+    <string name="utils_launchExternalTool">Åpne eksternt verktøy</string>
+    <string name="utils_externalToolTitle">Eksternt verktøy</string>
+    <string name="utils_placeholderTitle">Eksternt verktøy</string>
+    <string name="utils_placeholderDescription">Besøk Canvas-nettkontoen din for å redigere dette eksterne verktøyet.</string>
+
+    <string name="utils_unableToViewInBrowser">Vi finner ikke et eksternt program for å vise dette LTI-verktøyet.</string>
+
+    <string name="utils_unsupportedFileMessage">Denne filen kunne ikke vises. Bruk knappen nedenfor til å åpne filen med en annen app på enheten.</string>
+    <string name="utils_openWithAnotherApp">Åpne med...</string>
+    <string name="utils_couldNotPlayFormat">Medieformatet støttes ikke</string>
+    <string name="utils_fullscreen">fullskjerm</string>
+
+    <string name="utils_dataUsageWarningTitle">Data bruk advarsel</string>
+    <string name="utils_dataUsageWarningMessage">Denne handlingen kan medføre en stor mengde data, potensielt pådra store kostnader. Vil du fortsette?</string>
+    <string name="utils_doNotShowMessageAgain">Ikke vis denne meldingen igjen</string>
+
+    <string name="utils_no_data_connection">Kontroller dataforbindelsen din og prøv igjen.</string>
+    <string name="utils_playMedia">Spill av media</string>
+    <string name="utils_tryAgain">Prøv igjen</string>
+    <string name="image_uploading">Bilde lastes opp...</string>
+    <string name="image_upload_error">Avvik i opplasting av bilde</string>
+    <string name="retry">Forsøk igjen</string>
 
 </resources>

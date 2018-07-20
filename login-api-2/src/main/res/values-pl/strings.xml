@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">Czy próbujesz się zarejestrować w sieci Canvas Network?</string>
     <string name="remove">Usuń</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">Maskowanie</string>
     <string name="userId">ID użytkownika</string>
     <string name="domain">Domena</string>
 
-    <string name="masqueradingUserId">Identyfikator użytkownika maskowanego</string>
-    <string name="masqueradingUserDomain">Domena maskująca</string>
-    <string name="masqueradingBegin">Rozpocznij maskowanie</string>
-    <string name="masqueradingStop">Zatrzymaj maskowanie</string>
-
+    <string name="actAsUser">Działaj jako użytkownik</string>
+    <string name="stopActAsUser">Przestań działać jako Użytkownik</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Usunąć tego użytkownika?</string>
     <string name="removedForever">Aby uzyskać dostęp do tej zawartości, musisz zalogować się na to konto ponownie.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Nie</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">Blisko ciebie</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Bezpośrednio za tobą</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Poprzednie logowania</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Znajdź moją szkołę</string>
-    <string name="appTypeTeacher">Nauczyciel</string>
-    <string name="appTypeStudent">Uczestnik</string>
-    <string name="appTypeParent">Rodzic</string>
     <string name="canvasLowerCase">canvas</string>
     <string name="whatsYourSchoolName">Jak się nazywa Twoja szkoła?</string>
     <string name="next">Następny</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">Przewiń, aby wyświetlić wszystkie szczegóły</string>
 
     <string name="masqueradeErrorUserId">Musisz wpisać ID użytkownika.</string>
-    <string name="masqueradeErrorDomain">Musisz wpisać domenę.</string>
+    <string name="masqueradeErrorDomain">Musisz wpisać prawidłową domenę.</string>
     <string name="masqueradeError">Błąd podczas próby maskowania.</string>
+    <string name="masqueradeInfo">\"Podszywanie\" polega na logowaniu się jako inny użytkownik bez użycia hasła. Będzie można podejmować wszelkie działania z punktu widzenia tego użytkownika. W dzienniku audytu zostanie jednak zapisana informacja, że to Ty wykonywałeś(aś) działania w imieniu tego użytkownika.</string>
+    <string name="masqueradingAs">Podszywasz się jako %s</string>
+    <string name="stopActingAsTitle">Zatrzymaj podszywanie się jako...</string>
+    <string name="stopActingAsMessage">Zatrzymasz podszywanie się jako %s i powrócisz do swojego konta.</string>
+
+    <string name="weMadeChanges">Wprowadziliśmy kilka zmian.</string>
+    <string name="whatsNewText">Zobacz nowości</string>
 </resources>

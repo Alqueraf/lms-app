@@ -26,6 +26,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.instructure.canvasapi2.models.AccountDomain
 import com.instructure.loginapi.login.activities.BaseLoginFindSchoolActivity
+import com.instructure.loginapi.login.util.Const
 import com.instructure.pandautils.utils.ColorUtils
 import com.instructure.pandautils.utils.ViewStyler
 import com.instructure.parentapp.R
@@ -89,13 +90,5 @@ class FindSchoolActivity : BaseLoginFindSchoolActivity() {
 
     private fun findStudent(): Boolean {
         return intent.getBooleanExtra(FIND_STUDENT, true)
-    }
-
-    override fun logout() {
-        (application as ApplicationManager).logoutUser()
-        val intent = SplashActivity.createIntent(this)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
     }
 }

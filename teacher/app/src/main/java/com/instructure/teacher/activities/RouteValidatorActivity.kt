@@ -77,11 +77,9 @@ class RouteValidatorActivity : FragmentActivity() {
                     bundle.putString(Const.URL, url)
                     intent.putExtras(bundle)
                     this@RouteValidatorActivity.startService(intent)
-                } else {
-                    RouteMatcher.routeUrl(this@RouteValidatorActivity, url ?: "", domain, RouteContext.EXTERNAL)
                 }
+                RouteMatcher.routeUrl(this@RouteValidatorActivity, url ?: "", domain)
 
-                RouteMatcher.routeUrl(this@RouteValidatorActivity, url!!, domain, RouteContext.EXTERNAL)
                 finish()
             }, 1000)
         }

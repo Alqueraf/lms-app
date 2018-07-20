@@ -21,20 +21,19 @@ import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions
 import android.support.test.espresso.matcher.ViewMatchers
-import android.support.test.espresso.matcher.ViewMatchers.*
-import com.instructure.espresso.ClickUntilMethod
+import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.espresso.matcher.ViewMatchers.withText
+import com.instructure.espresso.*
+import com.instructure.espresso.page.*
 import com.instructure.soseedy.CanvasUser
 import com.instructure.soseedy.CourseAssignmentSubmission
 import com.instructure.teacher.R
 import com.instructure.teacher.ui.models.Submission
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 import com.instructure.teacher.utils.getSubmissionFormattedDate
 import org.hamcrest.Matchers
 
 @Suppress("unused")
-class SpeedGraderPage : BasePage(), PageAssert by SimplePageAssert() {
+class SpeedGraderPage : BasePage() {
 
     private val speedGraderActivityToolbar by OnViewWithId(R.id.speedGraderToolbar)
     private val slidingUpPanelLayout by OnViewWithId(R.id.slidingUpPanelLayout)

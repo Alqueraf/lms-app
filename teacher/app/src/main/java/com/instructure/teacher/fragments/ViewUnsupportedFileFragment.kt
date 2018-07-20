@@ -25,18 +25,27 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.instructure.annotations.FileCaching.FileCache
+import com.instructure.annotations.awaitFileDownload
+import com.instructure.canvasapi2.utils.weave.catch
+import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.canvasapi2.utils.weave.weave
 import com.instructure.pandautils.utils.*
 import com.instructure.teacher.R
 import com.instructure.teacher.events.FileFolderDeletedEvent
 import com.instructure.teacher.events.FileFolderUpdatedEvent
-import com.instructure.teacher.models.EditableFile
 import com.instructure.interactions.router.Route
+import com.instructure.pandautils.models.EditableFile
+import com.instructure.pandautils.utils.Utils.copyToClipboard
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
 import kotlinx.android.synthetic.main.fragment_unsupported_file_type.*
+import kotlinx.coroutines.experimental.Job
 import org.greenrobot.eventbus.EventBus
 
 class ViewUnsupportedFileFragment : Fragment() {
+
+    private var downloadFileJob: Job? = null
 
     private var mUri by ParcelableArg(Uri.EMPTY)
     private var mDisplayName by StringArg()
@@ -59,6 +68,7 @@ class ViewUnsupportedFileFragment : Fragment() {
 
         mEditableFile?.let { setupToolbar() } ?: toolbar.setGone()
     }
+
     private fun setupToolbar() {
 
         mEditableFile?.let {
@@ -70,15 +80,24 @@ class ViewUnsupportedFileFragment : Fragment() {
 
             toolbar.title = it.file.displayName
 
-            //update the name that is displayed above the open button
+            // Update the name that is displayed above the open button
             fileNameView.text = it.file.displayName
-            toolbar.setupMenu(R.menu.menu_edit_generic) { _ ->
-                val args = EditFileFolderFragment.makeBundle(it.file, it.usageRights, it.licenses, it.canvasContext!!.id)
-                RouteMatcher.route(context, Route(EditFileFolderFragment::class.java, it.canvasContext, args))
+            toolbar.setupMenu(R.menu.menu_file_details) { menu ->
+                when (menu.itemId) {
+                    R.id.edit -> {
+                        val args = EditFileFolderFragment.makeBundle(it.file, it.usageRights, it.licenses, it.canvasContext!!.id)
+                        RouteMatcher.route(context, Route(EditFileFolderFragment::class.java, it.canvasContext, args))
+                    }
+                    R.id.copyLink -> {
+                        if(it.file.url != null) {
+                            copyToClipboard(context, it.file.url!!)
+                        }
+                    }
+                }
             }
         }
 
-        if(isTablet && mToolbarColor != 0) {
+        if (isTablet && mToolbarColor != 0) {
             ViewStyler.themeToolbar(activity, toolbar, mToolbarColor, Color.WHITE)
         } else {
             toolbar.setupBackButton {
@@ -97,7 +116,32 @@ class ViewUnsupportedFileFragment : Fragment() {
                 .into(previewImageView.setVisible())
         fileNameView.text = mDisplayName
         ViewStyler.themeButton(openExternallyButton)
-        openExternallyButton.onClick { mUri.viewExternally(context, mContentType) }
+
+        openExternallyButton.onClick {
+            openExternallyButton.isEnabled = false
+            openExternallyButton.text = getString(R.string.downloading)
+
+            downloadFileJob = tryWeave {
+                // Download the file first
+                val tempFile = FileCache.awaitFileDownload(mUri.toString())
+
+                openExternallyButton.text = getText(R.string.openWithAnotherApp)
+                openExternallyButton.isEnabled = true
+
+                if (tempFile != null)
+                    Uri.fromFile(tempFile).viewExternally(getContext(), mContentType)
+                else {
+                    throw RuntimeException("File download error")
+                }
+            } catch {
+                toast(R.string.errorLoadingFiles)
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        downloadFileJob?.cancel()
     }
 
     companion object {

@@ -22,4 +22,6 @@
     <item type="id" name="appBarLayout"/>
     <item type="id" name="nestedIcon" />
     <item type="id" name="primaryIcon" />
+    <item type="id" name="circle" />
+    <item type="id" name="checkMark" />
 </resources>

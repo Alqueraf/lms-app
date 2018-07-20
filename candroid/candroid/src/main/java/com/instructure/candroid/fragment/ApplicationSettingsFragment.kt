@@ -34,7 +34,6 @@ import com.instructure.candroid.dialog.LegalDialogStyled
 import com.instructure.candroid.util.Analytics
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.pageview.PageView
-import com.instructure.interactions.FragmentInteractions
 import com.instructure.pandautils.utils.ViewStyler
 import com.instructure.pandautils.utils.onClick
 import com.instructure.pandautils.utils.setGone
@@ -44,10 +43,6 @@ import kotlinx.android.synthetic.main.dialog_about.*
 
 @PageView(url = "profile/settings")
 class ApplicationSettingsFragment : ParentFragment() {
-
-    override fun allowBookmarking() = false
-
-    override fun getFragmentPlacement() = FragmentInteractions.Placement.DETAIL
 
     override fun title(): String = getString(R.string.settings)
 
@@ -68,8 +63,8 @@ class ApplicationSettingsFragment : ParentFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setupViews() {
-        profileSettings.onClick { addFragment(ProfileSettingsFragment()) }
-        accountPreferences.onClick { addFragment(AccountPreferencesFragment()) }
+        profileSettings.onClick { addFragment(ProfileSettingsFragment.newInstance()) }
+        accountPreferences.onClick { addFragment(AccountPreferencesFragment.newInstance()) }
         legal.onClick { LegalDialogStyled().show(fragmentManager, LegalDialogStyled.TAG) }
         help.onClick { HelpDialogStyled.show(activity, true) }
         pinAndFingerprint.setGone() // TODO: Wire up once implemented

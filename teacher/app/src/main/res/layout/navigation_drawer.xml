@@ -133,6 +133,46 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/navigationDrawerItem_arc"
+                style="@style/NavigationDrawerItem"
+                android:visibility="gone"
+                tools:ignore="UseCompoundDrawables"
+                tools:visibility="visible">
+
+                <android.support.v7.widget.AppCompatImageView
+                    style="@style/NavigationDrawerIcon"
+                    app:srcCompat="@drawable/vd_navigation_arc"/>
+
+                <TextView
+                    style="@style/TextFont.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/arc"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/navigationDrawerItem_gauge"
+                style="@style/NavigationDrawerItem"
+                android:visibility="gone"
+                tools:ignore="UseCompoundDrawables"
+                tools:visibility="visible">
+
+                <android.support.v7.widget.AppCompatImageView
+                    style="@style/NavigationDrawerIcon"
+                    app:srcCompat="@drawable/vd_navigation_gauge"/>
+
+                <TextView
+                    style="@style/TextFont.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gauge"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/navigationDrawerItem_changeUser"
                 style="@style/NavigationDrawerItem"
                 tools:ignore="UseCompoundDrawables">

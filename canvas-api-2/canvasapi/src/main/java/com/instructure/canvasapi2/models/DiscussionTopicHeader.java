@@ -87,6 +87,10 @@ public class DiscussionTopicHeader extends CanvasModel<DiscussionTopicHeader> {
     @SerializedName("topic_children")
     private List<Long> topicChildren = new ArrayList<>();
 
+    // Used primarily to determine whether a discussion is a group discussion
+    @SerializedName("group_topic_children")
+    private List<GroupTopicChild> groupTopicChildren = new ArrayList<>();
+
     //List of file attachments
     private List<RemoteFile> attachments = new ArrayList<>();
 
@@ -114,6 +118,11 @@ public class DiscussionTopicHeader extends CanvasModel<DiscussionTopicHeader> {
 
     @SerializedName("user_can_see_posts")
     private boolean userCanSeePosts = true;
+
+    @SerializedName("specific_sections")
+    private String specificSections; // For when we're submitting the sections
+
+    private List<Section> sections; // Comes back from the server
 
     @Override
     public long getId() {
@@ -272,6 +281,10 @@ public class DiscussionTopicHeader extends CanvasModel<DiscussionTopicHeader> {
 
     public List<Long> getTopicChildren() {
         return topicChildren;
+    }
+
+    public List<GroupTopicChild> getGroupTopicChildren() {
+        return groupTopicChildren;
     }
 
     public List<RemoteFile> getAttachments() {
@@ -457,6 +470,10 @@ public class DiscussionTopicHeader extends CanvasModel<DiscussionTopicHeader> {
         this.topicChildren = topicChildren;
     }
 
+    public void setGroupTopicChildren(List<GroupTopicChild> groupTopicChildren) {
+        this.groupTopicChildren = groupTopicChildren;
+    }
+
     public void setAttachments(List<RemoteFile> attachments) {
         this.attachments = attachments;
     }
@@ -520,6 +537,18 @@ public class DiscussionTopicHeader extends CanvasModel<DiscussionTopicHeader> {
         return userCanSeePosts;
     }
 
+    public String getSpecificSections() { return specificSections; }
+
+    public void setSpecificSections(String specificSections) { this.specificSections = specificSections; }
+
+    public List<Section> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<Section> sections) {
+        this.sections = sections;
+    }
+
     //endregion
 
     //region Parcelable
@@ -571,6 +600,9 @@ public class DiscussionTopicHeader extends CanvasModel<DiscussionTopicHeader> {
         dest.writeByte(this.subscribed ? (byte) 1 : (byte) 0);
         dest.writeLong(this.lockAt != null ? this.lockAt.getTime() : -1);
         dest.writeByte(this.userCanSeePosts ? (byte) 1 : (byte) 0);
+        dest.writeString(this.specificSections);
+        dest.writeTypedList(this.sections);
+        dest.writeTypedList(this.groupTopicChildren);
     }
 
     protected DiscussionTopicHeader(Parcel in) {
@@ -600,7 +632,7 @@ public class DiscussionTopicHeader extends CanvasModel<DiscussionTopicHeader> {
         this.groupCategoryId = in.readString();
         this.announcement = in.readByte() != 0;
         this.rootTopicId = in.readLong();
-        this.topicChildren = new ArrayList<Long>();
+        this.topicChildren = new ArrayList<>();
         in.readList(this.topicChildren, Long.class.getClassLoader());
         this.attachments = in.createTypedArrayList(RemoteFile.CREATOR);
         this.unauthorized = in.readByte() != 0;
@@ -616,6 +648,9 @@ public class DiscussionTopicHeader extends CanvasModel<DiscussionTopicHeader> {
         long tmpLockAt = in.readLong();
         this.lockAt = tmpLockAt == -1 ? null : new Date(tmpLockAt);
         this.userCanSeePosts = in.readByte() != 0;
+        this.specificSections = in.readString();
+        this.sections = in.createTypedArrayList(Section.CREATOR);
+        this.groupTopicChildren = in.createTypedArrayList(GroupTopicChild.CREATOR);
     }
 
     public static final Creator<DiscussionTopicHeader> CREATOR = new Creator<DiscussionTopicHeader>() {

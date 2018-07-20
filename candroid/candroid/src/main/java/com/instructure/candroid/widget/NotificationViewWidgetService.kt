@@ -21,6 +21,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.text.Html
 import android.view.View
@@ -68,6 +69,7 @@ class NotificationViewWidgetService : BaseRemoteViewsService(), Serializable {
             return R.layout.listview_widget_notifications_item_row
         }
 
+        @Suppress("DEPRECATION")
         override fun setViewData(streamItem: StreamItem, row: RemoteViews) {
 
             val appWidgetId = BaseRemoteViewsService.getAppWidgetId(intent)
@@ -92,7 +94,11 @@ class NotificationViewWidgetService : BaseRemoteViewsService(), Serializable {
 
             if (!BaseRemoteViewsService.shouldHideDetails(appWidgetId)) {
                 if (streamItem.getMessage(ContextKeeper.appContext) != null) {
-                    row.setTextViewText(R.id.message, StringUtilities.simplifyHTML(Html.fromHtml(streamItem.getMessage(ContextKeeper.appContext))))
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        row.setTextViewText(R.id.message, StringUtilities.simplifyHTML(Html.fromHtml(streamItem.getMessage(ContextKeeper.appContext), Html.FROM_HTML_MODE_LEGACY)))
+                    } else {
+                        row.setTextViewText(R.id.message, StringUtilities.simplifyHTML(Html.fromHtml(streamItem.getMessage(ContextKeeper.appContext))))
+                    }
                 } else {
                     row.setTextViewText(R.id.message, "")
                     row.setViewVisibility(R.id.message, View.GONE)

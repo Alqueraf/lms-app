@@ -37,7 +37,7 @@ import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
@@ -70,8 +70,7 @@ public class VideoViewActivity extends AppCompatActivity {
         mediaDataSourceFactory = buildDataSourceFactory(true);
         mainHandler = new Handler();
 
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveVideoTrackSelection.Factory(BANDWIDTH_METER);
+        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
         player = ExoPlayerFactory.newSimpleInstance(this, trackSelector, new DefaultLoadControl());

@@ -36,6 +36,7 @@ import com.instructure.pandautils.utils.*
 import com.instructure.pandautils.views.CanvasWebView
 import java.io.*
 import java.net.URLEncoder
+import java.util.*
 import java.util.regex.Pattern
 
 object DiscussionUtils {
@@ -190,6 +191,12 @@ object DiscussionUtils {
         return CanvasWebView.applyWorkAroundForDoubleSlashesAsUrlSource(result)
     }
 
+    fun createLTIPlaceHolders(context: Context, contentHtml: String, callback: (id: String, placeholder: Placeholder) -> Unit): String {
+        val document = getAssetsFile(context, "lti_placeholder_template.html")
+        val html = addLTIPlaceHolder(context, contentHtml, callback)
+        return CanvasWebView.applyWorkAroundForDoubleSlashesAsUrlSource(document.replace("__HEADER_CONTENT__", html))
+    }
+
     /**
      * Adds a Launch External Tools button below an iframe if we know the iframe is an External Tool
      * At the time of writing we made a decision not to add the launch to browser button for discussion details.
@@ -199,16 +206,43 @@ object DiscussionUtils {
         var html = contentHtml
         //append a open in browser button for the LTI tool
         val iframeMatcher = Pattern.compile("<iframe(.|\\n)*?iframe>").matcher(html)
-        iframeMatcher.find()
         try {
-            for (index in 0..iframeMatcher.groupCount()) {
-                val iframe = iframeMatcher.group(index)
-                if (iframe.contains("external_tools")) {
+            while (iframeMatcher.find()) {
+                val iframe = iframeMatcher.group(0)
+                if (iframe.contains("external_tools") && iframe.contains(ltiToolUrl)) {
                     //Append the html button for viewing externally
                     val ltiUrl = URLEncoder.encode(ltiToolUrl, "UTF-8")
                     val button = "</br><p><div class=\"lti_button\" onClick=\"onLtiToolButtonPressed('%s')\">%s</div></p>"
                     val htmlButton = String.format(button, ltiUrl, context.resources.getString(R.string.utils_launchExternalTool))
                     html = html.replace(iframe, iframe + htmlButton)
+                }
+            }
+        } catch (e: Throwable) {
+            //Pattern match not found.
+        }
+        return html
+    }
+
+    /**
+     * Adds an LTI Tool placeholder in place of the iframe if we know the iframe is an External Tool
+     */
+    private fun addLTIPlaceHolder(context: Context, contentHtml: String, callback: (id: String, placeholder: Placeholder) -> Unit): String {
+        var html = contentHtml
+        //append a open in browser button for the LTI tool
+        val iframeMatcher = Pattern.compile("<iframe(.|\\n)*?iframe>").matcher(contentHtml)
+        try {
+            while (iframeMatcher.find()) {
+                val iframe = iframeMatcher.group(0)
+                if (iframe.contains("external_tools")) {
+                    val buttonName = context.getString(R.string.utils_canvas) + UUID.randomUUID().toString() // Used to identify the button later on
+                    val titleText =  context.getString(R.string.utils_placeholderTitle)
+                    val description = context.getString(R.string.utils_placeholderDescription)
+                    val button = "</br><p><div name=\"$buttonName\" class=\"lti_placeholder\" contenteditable=\"false\">" +
+                            "<div class=\"titleText\">$titleText</div>" +
+                            "<div class=\"description\">$description</div>" +
+                            "</div></p>"
+                    callback(buttonName, Placeholder(iframe, button))
+                    html = html.replace(iframe, button)
                 }
             }
         } catch (e: Throwable) {
@@ -257,41 +291,41 @@ object DiscussionUtils {
                     makeAvatarForWebView(context, discussionEntry), 0, false,
                     brandColor, likeColor, likeImage, replyButtonWidth))
 
-            discussionEntry.replies.forEach { discussionEntry ->
-                builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, discussionEntry, converter, template,
-                        makeAvatarForWebView(context, discussionEntry), 1, false,
+            discussionEntry.replies.forEach { replyEntry1 ->
+                builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, replyEntry1, converter, template,
+                        makeAvatarForWebView(context, replyEntry1), 1, false,
                         brandColor, likeColor, likeImage, replyButtonWidth))
 
                 if (isTablet) {
-                    discussionEntry.replies.forEach { discussionEntry ->
-                        builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, discussionEntry, converter, template,
-                                makeAvatarForWebView(context, discussionEntry), 2, false,
+                    discussionEntry.replies.forEach { replyEntry2 ->
+                        builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, replyEntry2, converter, template,
+                                makeAvatarForWebView(context, replyEntry2), 2, false,
                                 brandColor, likeColor, likeImage, replyButtonWidth))
 
-                        discussionEntry.replies.forEach { discussionEntry ->
-                            builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, discussionEntry, converter, template,
-                                    makeAvatarForWebView(context, discussionEntry), 3, false,
+                        replyEntry2.replies.forEach { replyEntry3 ->
+                            builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, replyEntry3, converter, template,
+                                    makeAvatarForWebView(context, replyEntry3), 3, false,
                                     brandColor, likeColor, likeImage, replyButtonWidth))
 
-                            discussionEntry.replies.forEach { discussionEntry ->
-                                builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, discussionEntry, converter, template,
-                                        makeAvatarForWebView(context, discussionEntry), 4, false,
+                            replyEntry3.replies.forEach { replyEntry4 ->
+                                builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, replyEntry4, converter, template,
+                                        makeAvatarForWebView(context, replyEntry4), 4, false,
                                         brandColor, likeColor, likeImage, replyButtonWidth))
 
-                                discussionEntry.replies.forEach { discussionEntry ->
-                                    val reachedViewableEnd = (discussionEntry.totalChildren > 0)
-                                    builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, discussionEntry, converter, template,
-                                            makeAvatarForWebView(context, discussionEntry), 5, reachedViewableEnd,
+                                replyEntry4.replies.forEach { replyEntry5 ->
+                                    val reachedViewableEnd = (replyEntry5.totalChildren > 0)
+                                    builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, replyEntry5, converter, template,
+                                            makeAvatarForWebView(context, replyEntry5), 5, reachedViewableEnd,
                                             brandColor, likeColor, likeImage, replyButtonWidth))
                                 }
                             }
                         }
                     }
                 } else {
-                    discussionEntry.replies.forEach { discussionEntry ->
+                    discussionEntry.replies.forEach { replyEntry ->
                         val reachedViewableEnd = (discussionEntry.totalChildren > 0)
-                        builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, discussionEntry, converter, template,
-                                makeAvatarForWebView(context, discussionEntry), 2, reachedViewableEnd,
+                        builder.append(build(context, isTablet, canvasContext, discussionTopicHeader, replyEntry, converter, template,
+                                makeAvatarForWebView(context, replyEntry), 2, reachedViewableEnd,
                                 brandColor, likeColor, likeImage, replyButtonWidth))
                     }
                 }
@@ -328,9 +362,9 @@ object DiscussionUtils {
                 template,
                 avatarImage,
                 allowReplies(canvasContext, discussionTopicHeader),
-                allowEditing(canvasContext, discussionTopicHeader),
+                allowEditing(canvasContext),
                 allowLiking(canvasContext, discussionTopicHeader),
-                allowDeleting(canvasContext, discussionTopicHeader),
+                allowDeleting(canvasContext),
                 reachedViewableEnd,
                 indent,
                 likeImage,
@@ -406,7 +440,7 @@ object DiscussionUtils {
         return !isLocked && lockInfoEmpty && hasPermission && (isCourse || canvasContext?.isGroup == true) && !isObserver
     }
 
-    private fun allowEditing(canvasContext: CanvasContext?, header: DiscussionTopicHeader): Boolean {
+    private fun allowEditing(canvasContext: CanvasContext?): Boolean {
         // TODO - Update this when COMMS-868 is completed
         return if (canvasContext?.type == CanvasContext.Type.COURSE) {
             (canvasContext as Course).isTeacher
@@ -428,7 +462,7 @@ object DiscussionUtils {
         return false
     }
 
-    private fun allowDeleting(canvasContext: CanvasContext?, header: DiscussionTopicHeader): Boolean {
+    private fun allowDeleting(canvasContext: CanvasContext?): Boolean {
         // TODO - Update this when COMMS-868 is completed
         return if (canvasContext?.type == CanvasContext.Type.COURSE) {
             (canvasContext as Course).isTeacher
@@ -457,7 +491,7 @@ object DiscussionUtils {
     fun getBitmapFromAssets(context: Context, filePath: String): Bitmap? {
         val assetManager = context.assets
         val inputStream: InputStream
-        var bitmap: Bitmap? = null
+        val bitmap: Bitmap?
         try {
             inputStream = assetManager.open(filePath)
             bitmap = BitmapFactory.decodeStream(inputStream)

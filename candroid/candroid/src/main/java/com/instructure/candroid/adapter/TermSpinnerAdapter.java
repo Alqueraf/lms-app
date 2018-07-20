@@ -29,15 +29,15 @@ import android.widget.TextView;
 import com.instructure.candroid.R;
 import com.instructure.canvasapi2.models.GradingPeriod;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class TermSpinnerAdapter extends ArrayAdapter<GradingPeriod> {
 
-    private ArrayList<GradingPeriod> mGradingPeriods = new ArrayList<>();
+    private List<GradingPeriod> mGradingPeriods;
     private LayoutInflater mInflater;
     private boolean mIsLoading;
 
-    public TermSpinnerAdapter(Context context, int resource, ArrayList<GradingPeriod> objects) {
+    public TermSpinnerAdapter(Context context, int resource, List<GradingPeriod> objects) {
         super(context, resource, objects);
         mGradingPeriods = objects;
         mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

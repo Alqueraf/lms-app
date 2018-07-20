@@ -19,6 +19,7 @@ package instructure.androidblueprint;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -32,7 +33,7 @@ import com.instructure.pandarecycler.util.UpdatableSortedList;
 
 
 public abstract class SyncFragment<
-        MODEL extends CanvasComparable,
+        MODEL extends CanvasComparable<?>,
         PRESENTER extends SyncPresenter<MODEL, VIEW>,
         VIEW extends SyncManager<MODEL>,
         HOLDER extends RecyclerView.ViewHolder,
@@ -42,12 +43,12 @@ public abstract class SyncFragment<
     protected abstract PresenterFactory<PRESENTER> getPresenterFactory();
     protected abstract void onPresenterPrepared(PRESENTER presenter);
     protected abstract ADAPTER getAdapter();
-    protected abstract @NonNull RecyclerView getRecyclerView();
+    protected abstract @Nullable RecyclerView getRecyclerView();
     protected void hitRockBottom(){}
 
     private static final int LOADER_ID = 1002;
 
-    // boolean flag to avoid delivering the result twice. Calling initLoader in onActivityCreated makes
+    // Boolean flag to avoid delivering the result twice. Calling initLoader in onActivityCreated makes
     // onLoadFinished will be called twice during configuration change.
     private boolean mDelivered = false;
     private Presenter<VIEW> mPresenter;
@@ -138,7 +139,7 @@ public abstract class SyncFragment<
         });
     }
 
-    public UpdatableSortedList getList() {
+    public UpdatableSortedList<MODEL> getList() {
         return getPresenter().getData();
     }
 

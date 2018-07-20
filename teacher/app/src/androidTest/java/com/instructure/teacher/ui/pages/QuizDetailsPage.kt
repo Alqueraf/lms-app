@@ -16,13 +16,13 @@
 package com.instructure.teacher.ui.pages
 
 import android.support.test.InstrumentationRegistry
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.scrollTo
 import com.instructure.soseedy.Quiz
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.PageWithIdAssert
 
-class QuizDetailsPage : BasePage(), PageAssert by PageWithIdAssert(R.id.quizDetailsPage) {
+class QuizDetailsPage : BasePage(pageResId = R.id.quizDetailsPage) {
 
     private val backButton by OnViewWithContentDescription(R.string.abc_action_bar_up_description)
     private val toolbarTitle by OnViewWithText(R.string.quiz_details)
@@ -47,7 +47,7 @@ class QuizDetailsPage : BasePage(), PageAssert by PageWithIdAssert(R.id.quizDeta
     private val notSubmittedDonut by OnViewWithId(R.id.notSubmittedWrapper)
 
     fun assertDisplaysInstructions() {
-        instructionsWebView.scrollTo()
+        scrollTo(R.id.instructionsWebView)
         instructionsWebView.assertVisible()
     }
 
@@ -64,7 +64,7 @@ class QuizDetailsPage : BasePage(), PageAssert by PageWithIdAssert(R.id.quizDeta
     }
 
     fun openSubmissionsPage() {
-        viewAllSubmissions.scrollTo()
+        scrollTo(R.id.viewAllSubmissions)
         viewAllSubmissions.click()
     }
 

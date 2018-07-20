@@ -16,23 +16,16 @@
  */
 package com.instructure.teacher.fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.FileProvider
 import android.text.InputType
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
@@ -49,12 +42,13 @@ import com.instructure.canvasapi2.utils.LinkHeaders
 import com.instructure.canvasapi2.utils.validOrNull
 import com.instructure.pandautils.fragments.BasePresenterFragment
 import com.instructure.pandautils.utils.*
-import com.instructure.pandautils.utils.Const
-import com.instructure.pandautils.utils.ProfileUtils
+import com.instructure.pandautils.utils.MediaUploadUtils.chooseFromGalleryBecausePermissionsAlreadyGranted
+import com.instructure.pandautils.utils.MediaUploadUtils.takeNewPhotoBecausePermissionsAlreadyGranted
 import com.instructure.teacher.R
 import com.instructure.teacher.factory.ProfileEditFragmentPresenterFactory
 import com.instructure.teacher.presenters.ProfileEditFragmentPresenter
-import com.instructure.teacher.utils.*
+import com.instructure.teacher.utils.setupCloseButton
+import com.instructure.teacher.utils.setupMenu
 import com.instructure.teacher.viewinterface.ProfileEditFragmentView
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
 import retrofit2.Response
@@ -139,7 +133,7 @@ class ProfileEditFragment : BasePresenterFragment<
     override fun readyToLoadUI(user: User?) {
         profileCameraIconWrapper.setVisible(user?.canUpdateAvatar())
         profileCameraIconWrapper.onClickWithRequireNetwork {
-            pickAvatar()
+            MediaUploadUtils.showPickImageDialog(this)
         }
         if(profileCameraLoadingIndicator.isShown) { profileCameraLoadingIndicator.announceForAccessibility(getString(R.string.loading))}
 
@@ -154,94 +148,27 @@ class ProfileEditFragment : BasePresenterFragment<
         presenter.saveChanges(name, user?.bio ?: "")
     }
 
-    @SuppressLint("InflateParams")
-    private fun pickAvatar() {
-        val root = LayoutInflater.from(context).inflate(R.layout.profile_choose_photo, null)
-        val dialog = AlertDialog.Builder(context)
-                .setView(root)
-                .create()
-        root.findViewById<View>(R.id.takePhotoItem).onClick {
-            newPhoto()
-            dialog.dismiss()
-        }
-        root.findViewById<View>(R.id.chooseFromGalleryItem).onClick {
-            chooseFromGallery()
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
-
     private fun updateAvatarImage(url: String?) {
         usersAvatar.borderColor = Color.WHITE
         usersAvatar.borderWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6F, context.resources.displayMetrics).toInt()
         Glide.with(context).load(url).into(usersAvatar)
     }
 
-    private fun chooseFromGallery() {
-        if (PermissionUtils.hasPermissions(activity, PermissionUtils.WRITE_EXTERNAL_STORAGE)) {
-            chooseFromGalleryBecausePermsissionsAlreadyGranted()
-        } else {
-            requestPermissions(PermissionUtils.makeArray(PermissionUtils.WRITE_EXTERNAL_STORAGE), PermissionUtils.WRITE_FILE_PERMISSION_REQUEST_CODE)
-        }
-    }
-
-    private fun newPhoto() {
-        //check to see if the device has a camera
-        if (!Utils.hasCameraAvailable(activity)) {
-            //this device doesn't have a camera, show a crouton that lets the user know
-            showToast(R.string.noCameraOnDevice)
-            return
-        }
-
-        if (PermissionUtils.hasPermissions(activity, PermissionUtils.WRITE_EXTERNAL_STORAGE, PermissionUtils.CAMERA)) {
-            takeNewPhotoBecausePermissionsAlreadyGranted()
-        } else {
-            requestPermissions(PermissionUtils.makeArray(PermissionUtils.WRITE_EXTERNAL_STORAGE, PermissionUtils.CAMERA), PermissionUtils.PERMISSION_REQUEST_CODE)
-        }
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PermissionUtils.PERMISSION_REQUEST_CODE) {
             if (PermissionUtils.allPermissionsGrantedResultSummary(grantResults)) {
-                takeNewPhotoBecausePermissionsAlreadyGranted()
+                takeNewPhotoBecausePermissionsAlreadyGranted(this)
             } else {
                 Toast.makeText(activity, R.string.permissionDenied, Toast.LENGTH_LONG).show()
             }
         } else if(requestCode == PermissionUtils.WRITE_FILE_PERMISSION_REQUEST_CODE) {
             if (PermissionUtils.allPermissionsGrantedResultSummary(grantResults)) {
-                chooseFromGalleryBecausePermsissionsAlreadyGranted()
+                chooseFromGalleryBecausePermissionsAlreadyGranted(activity)
             } else {
                 Toast.makeText(activity, R.string.permissionDenied, Toast.LENGTH_LONG).show()
             }
         }
-    }
-
-    private fun takeNewPhotoBecausePermissionsAlreadyGranted() {
-        //let the user take a picture
-        //get the location of the saved picture
-        val fileName = "profilePic_" + System.currentTimeMillis().toString() + ".jpg"
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, fileName)
-
-        presenter?.capturedImageUri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-
-        if (presenter?.capturedImageUri != null) {
-            //save the intent information in case we get booted from memory.
-            FilePrefs.tempCaptureUri = presenter?.capturedImageUri.toString()
-        }
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, presenter?.capturedImageUri)
-        cameraIntent.putExtra(Const.IS_OVERRIDDEN, true)
-        cameraIntent.putExtra("android.intent.extras.CAMERA_FACING", 1) //Requests front camera on some apps
-        startActivityForResult(cameraIntent, RequestCodes.CAMERA_PIC_REQUEST)
-    }
-
-    private fun chooseFromGalleryBecausePermsissionsAlreadyGranted() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        val file = File(context.filesDir, "/image/*")
-        intent.setDataAndType(FileProvider.getUriForFile(context, context.applicationContext.packageName + Const.FILE_PROVIDER_AUTHORITY, file), "image/*")
-        startActivityForResult(intent, RequestCodes.PICK_IMAGE_GALLERY)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -269,7 +196,8 @@ class ProfileEditFragment : BasePresenterFragment<
                 startActivityForResult(AvatarCropActivity.createIntent(context, cropConfig), RequestCodes.CROP_IMAGE)
             }
 
-        } else if (requestCode == RequestCodes.PICK_IMAGE_GALLERY && resultCode == Activity.RESULT_OK && data != null) {
+        }
+        else if (requestCode == RequestCodes.PICK_IMAGE_GALLERY && resultCode == Activity.RESULT_OK && data != null) {
             val u = data.data
             var urlPath = u.path
 

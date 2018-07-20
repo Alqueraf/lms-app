@@ -23,6 +23,7 @@ app/src/tablet/res/raw/illuminati_confirmed.mp3
 app/src/tablet/res/raw/mlg_horn.mp3
 app/src/tablet/res/raw/legitness.mp3
 app/src/tablet/res/raw/profamity.mp3
+app/src/tablet/res/raw/police_siren.mp3
 
 # built application files #
 *.apk

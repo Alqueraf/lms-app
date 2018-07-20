@@ -59,7 +59,7 @@ class TutorialSwipeView @JvmOverloads constructor(
 
         canvas.save()
 
-        canvas.clipPath(circlePath, Region.Op.DIFFERENCE)
+        canvas.clipPath(circlePath)
 
         with(Paint(Paint.ANTI_ALIAS_FLAG)) {
             color = mColor

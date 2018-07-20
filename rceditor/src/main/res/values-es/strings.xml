@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">Deshacer</string>
     <string name="rce_contentDescription_redo">Rehacer</string>
     <string name="rce_contentDescription_bold">Dar formato en negrita</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">Insertar lista con viñetas</string>
     <string name="rce_contentDescription_insert_numbers">Insertar lista numerada</string>
     <string name="rce_contentDescription_insert_photo">Insertar imagen</string>
+    <string name="rce_contentDescription_upload_photo">Cargar foto desde el dispositivo</string>
     <string name="rce_contentDescription_insert_link">Insertar enlace</string>
     <string name="rce_contentDescription_block_quote">Cita en bloque</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">Insertar enlace</string>
     <string name="rce_insertImage">Insertar imagen</string>
 
+    <string name="rce_uploadImage">Cargar imagen</string>
     <string name="rce_done">Listo</string>
     <string name="rce_cancel">Cancelar</string>
     <string name="rce_exit">Salir</string>

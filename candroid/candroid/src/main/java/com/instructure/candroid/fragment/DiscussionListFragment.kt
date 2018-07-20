@@ -25,14 +25,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.instructure.candroid.R
+import com.instructure.candroid.activity.NavigationActivity
 import com.instructure.candroid.adapter.DiscussionListRecyclerAdapter
 import com.instructure.candroid.events.DiscussionCreatedEvent
 import com.instructure.candroid.events.DiscussionTopicHeaderDeletedEvent
 import com.instructure.candroid.events.DiscussionTopicHeaderEvent
 import com.instructure.candroid.events.DiscussionUpdatedEvent
-import com.instructure.candroid.util.Param
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.canvasapi2.managers.CourseManager
 import com.instructure.canvasapi2.managers.GroupManager
+import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.Course
 import com.instructure.canvasapi2.models.DiscussionTopicHeader
 import com.instructure.canvasapi2.models.Group
@@ -41,7 +43,10 @@ import com.instructure.canvasapi2.utils.pageview.PageView
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
-import com.instructure.interactions.FragmentInteractions
+import com.instructure.interactions.bookmarks.Bookmarkable
+import com.instructure.interactions.bookmarks.Bookmarker
+import com.instructure.interactions.router.Route
+import com.instructure.interactions.router.RouterParams
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.course_discussion_topic.*
 import kotlinx.coroutines.experimental.Job
@@ -50,9 +55,12 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 @PageView(url = "{canvasContext}/discussion_topics")
-open class DiscussionListFragment : ParentFragment() {
+open class DiscussionListFragment : ParentFragment(), Bookmarkable {
 
-    private var recyclerAdapter: DiscussionListRecyclerAdapter? = null
+    protected var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
+
+    private lateinit var recyclerAdapter: DiscussionListRecyclerAdapter
+
     private var linearLayoutManager = LinearLayoutManager(context)
     private lateinit var discussionRecyclerView: RecyclerView
     private lateinit var rootView: View
@@ -62,42 +70,11 @@ open class DiscussionListFragment : ParentFragment() {
     protected open val isAnnouncement: Boolean
         get() = false
 
-    override fun getFragmentPlacement(): FragmentInteractions.Placement = FragmentInteractions.Placement.MASTER
-
-    override fun title(): String {
-        return getString(R.string.discussion)
-    }
-
-    override fun getSelectedParamName(): String {
-        return Param.MESSAGE_ID
-    }
-
+    //region Fragment Lifecycle Overrides
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkForPermission()
-        setRetainInstance(this, true)
-    }
-
-    override fun applyTheme() {
-        setupToolbarMenu(discussionListToolbar)
-        discussionListToolbar.title = title()
-        discussionListToolbar.setupAsBackButton(this)
-        ViewStyler.themeToolbar(activity, discussionListToolbar, canvasContext)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        permissionJob?.cancel()
+        retainInstance = true
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -105,9 +82,8 @@ open class DiscussionListFragment : ParentFragment() {
         rootView = layoutInflater.inflate(R.layout.course_discussion_topic, container, false)
         recyclerAdapter = DiscussionListRecyclerAdapter(context, canvasContext, !isAnnouncement, object: DiscussionListRecyclerAdapter.AdapterToDiscussionsCallback{
             override fun onRowClicked(model: DiscussionTopicHeader, position: Int, isOpenDetail: Boolean) {
-                //if the discussion/announcement hasn't been published take them back to the publish screen
-                val args = DiscussionDetailsFragment.makeBundle(canvasContext, model, isAnnouncement)
-                navigation?.addFragment(DiscussionDetailsFragment.newInstance(canvasContext, args))
+                // If the discussion/announcement hasn't been published take them back to the publish screen
+                RouteMatcher.route(activity, DiscussionDetailsFragment.makeRoute(canvasContext, model))
             }
 
             override fun onRefreshFinished() {
@@ -130,20 +106,20 @@ open class DiscussionListFragment : ParentFragment() {
                 if(group != null) {
                     // TODO - Blocked by COMMS-868
 //                    DiscussionsMoveToDialog.show(fragmentManager, group, discussionTopicHeader, { newGroup ->
-//                        recyclerAdapter?.requestMoveDiscussionTopicToGroup(newGroup, group, discussionTopicHeader)
+//                        recyclerAdapter.requestMoveDiscussionTopicToGroup(newGroup, group, discussionTopicHeader)
 //                    })
                 }
             }
 
             override fun askToDeleteDiscussion(discussionTopicHeader: DiscussionTopicHeader) {
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle(R.string.utils_discussionsDeleteTitle)
-                builder.setMessage(R.string.utils_discussionsDeleteMessage)
-                builder.setPositiveButton(R.string.delete, { _, _ ->
-                    recyclerAdapter?.deleteDiscussionTopicHeader(discussionTopicHeader)
-                })
-                builder.setNegativeButton(R.string.cancel, { _, _ -> })
-                builder.showThemed()
+                AlertDialog.Builder(context)
+                        .setTitle(R.string.utils_discussionsDeleteTitle)
+                        .setMessage(R.string.utils_discussionsDeleteMessage)
+                        .setPositiveButton(R.string.delete, { _, _ ->
+                            recyclerAdapter.deleteDiscussionTopicHeader(discussionTopicHeader)
+                        })
+                        .setNegativeButton(R.string.cancel, { _, _ -> })
+                        .showThemed()
             }
         })
 
@@ -174,18 +150,50 @@ open class DiscussionListFragment : ParentFragment() {
         createNewDiscussion.setImageDrawable(ColorUtils.colorIt(ThemePrefs.buttonTextColor, createNewDiscussion.drawable))
         createNewDiscussion.onClickWithRequireNetwork {
             if(isAnnouncement) {
-                val args = ParentFragment.createBundle(canvasContext)
-                navigation?.addFragment(CreateAnnouncementFragment.newInstance(args))
+                val route = CreateAnnouncementFragment.makeRoute(canvasContext, null)
+                RouteMatcher.route(activity, route)
             } else {
-                val args = ParentFragment.createBundle(canvasContext)
-                navigation?.addFragment(CreateDiscussionFragment.newInstance(args))
+                val route = CreateDiscussionFragment.makeRoute(canvasContext)
+                RouteMatcher.route(activity, route)
             }
         }
     }
 
-    override fun allowBookmarking(): Boolean {
-        return true
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
     }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        permissionJob?.cancel()
+    }
+    //endregion
+
+    override val bookmark: Bookmarker
+        get() = Bookmarker(true, canvasContext)
+
+    //region Fragment Interaction Overrides
+
+    override fun applyTheme() {
+        setupToolbarMenu(discussionListToolbar)
+        discussionListToolbar.title = title()
+        discussionListToolbar.setupAsBackButton(this)
+        ViewStyler.themeToolbar(activity, discussionListToolbar, canvasContext)
+    }
+
+    override fun title(): String = getString(R.string.discussion)
+    //endregion
+
+    //region Parent Fragment Overrides
+    override fun getSelectedParamName(): String = RouterParams.MESSAGE_ID
+
+    //endregion
 
     private fun checkForPermission() {
         permissionJob = tryWeave {
@@ -218,11 +226,12 @@ open class DiscussionListFragment : ParentFragment() {
         }
     }
 
+    //region Bus Events
     @Suppress("unused")
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onDiscussionUpdated(event: DiscussionUpdatedEvent) {
         event.once(javaClass.simpleName) {
-            recyclerAdapter?.refresh()
+            recyclerAdapter.refresh()
         }
     }
 
@@ -238,16 +247,16 @@ open class DiscussionListFragment : ParentFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onDiscussionTopicCountChange(event: DiscussionTopicHeaderEvent) {
         event.get {
-            //Gets written over on phones - added also to {@link #onRefreshFinished()}
+            // Gets written over on phones - added also to {@link #onRefreshFinished()}
             when {
                 it.isPinned -> {
-                    recyclerAdapter?.addOrUpdateItem(DiscussionListRecyclerAdapter.PINNED, it)
+                    recyclerAdapter.addOrUpdateItem(DiscussionListRecyclerAdapter.PINNED, it)
                 }
                 it.isLocked -> {
-                    recyclerAdapter?.addOrUpdateItem(DiscussionListRecyclerAdapter.CLOSED_FOR_COMMENTS, it)
+                    recyclerAdapter.addOrUpdateItem(DiscussionListRecyclerAdapter.CLOSED_FOR_COMMENTS, it)
                 }
                 else -> {
-                    recyclerAdapter?.addOrUpdateItem(DiscussionListRecyclerAdapter.UNPINNED, it)
+                    recyclerAdapter.addOrUpdateItem(DiscussionListRecyclerAdapter.UNPINNED, it)
                 }
             }
         }
@@ -257,7 +266,22 @@ open class DiscussionListFragment : ParentFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onDiscussionCreated(event: DiscussionCreatedEvent) {
         event.once(javaClass.simpleName) {
-            recyclerAdapter?.refresh()
+            recyclerAdapter.refresh()
         }
+    }
+    //endregion
+
+    companion object {
+        fun newInstance(route: Route) =
+                if (validateRoute(route)) {
+                    DiscussionListFragment().apply {
+                        arguments = route.canvasContext!!.makeBundle(route.arguments)
+                    }
+                } else null
+
+        fun makeRoute(canvasContext: CanvasContext?) =
+                Route(DiscussionListFragment::class.java, canvasContext)
+
+        private fun validateRoute(route: Route) = route.canvasContext != null
     }
 }

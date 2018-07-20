@@ -1,6 +1,25 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+dependencies {
+    compile project(':dataseedingapi')
+
+    // https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.grpc%22%20a%3A%22grpc-netty%22
+    compile 'io.grpc:grpc-netty:1.12.0'
+    compile Libs.KOTLIN_STD_LIB
+
+    // https://mvnrepository.com/artifact/io.netty/netty-tcnative-boringssl-static
+    compile 'io.netty:netty-tcnative-boringssl-static:2.0.8.Final'
+
+    testCompile Libs.JUNIT
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
 buildscript {
     /* Merge Private Data */
     PrivateData.merge(project, "dataseeding")
+    PrivateData.merge(project, "soseedygrpc")
 
     repositories {
         mavenCentral()
@@ -10,27 +29,6 @@ buildscript {
         classpath Plugins.KOTLIN
     }
 }
-
-plugins {
-    // https://plugins.gradle.org/plugin/com.google.cloud.tools.jib
-    id 'com.google.cloud.tools.jib' version '0.9.6'
-}
-
-apply plugin: 'java'
-apply plugin: 'kotlin'
-
-dependencies {
-    compile project(':dataseedingapi')
-
-    // https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.grpc%22%20a%3A%22grpc-netty%22
-    compile 'io.grpc:grpc-netty:1.6.1'
-    compile Libs.KOTLIN_STD_LIB
-}
-
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
-
-jib.to.image = 'gcr.io/delta-essence-114723/soseedy'
 
 repositories {
     mavenCentral()

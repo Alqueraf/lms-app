@@ -83,7 +83,7 @@ public class RubricRecyclerAdapter extends ExpandableRecyclerAdapter<RubricCrite
     public RubricRecyclerAdapter(Context context, CanvasContext canvasContext, AdapterToFragmentCallback adapterToFragmentCallback) {
         super(context, RubricCriterion.class, RubricItem.class);
         mTopViewHeader = new RubricCriterion();
-        mTopViewHeader.setId("TopViewHeader"); // needs an id for expandableRecyclerAdapter to work
+        mTopViewHeader.setId("TopViewHeader"); // Needs an id for expandableRecyclerAdapter to work
         mCanvasContext = canvasContext;
         mAdapterToFragment = adapterToFragmentCallback;
         setExpandedByDefault(true);

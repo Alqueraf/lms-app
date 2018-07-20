@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">Rückgängig machen</string>
     <string name="rce_contentDescription_redo">Wiederholen</string>
     <string name="rce_contentDescription_bold">Als „Fett“ formatieren</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">Aufzählungsliste einfügen</string>
     <string name="rce_contentDescription_insert_numbers">Nummerierte Liste einfügen</string>
     <string name="rce_contentDescription_insert_photo">Foto einfügen</string>
+    <string name="rce_contentDescription_upload_photo">Foto von Gerät hochladen</string>
     <string name="rce_contentDescription_insert_link">Link einfügen</string>
     <string name="rce_contentDescription_block_quote">Blockzitat</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">Link einfügen</string>
     <string name="rce_insertImage">Bild einfügen</string>
 
+    <string name="rce_uploadImage">Bild hochladen</string>
     <string name="rce_done">Fertig</string>
     <string name="rce_cancel">Abbrechen</string>
     <string name="rce_exit">Beenden</string>

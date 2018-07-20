@@ -21,23 +21,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white">
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/utils_editTextColor" />
+
     <ImageView
-        android:id="@+id/message_options"
+        android:id="@+id/messageOptions"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp"
         android:layout_marginTop="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/message_options"
         android:padding="8dp"
-        android:layout_marginEnd="5dp"
-        app:srcCompat="@drawable/vd_overflow"
-        android:tint="@color/darkGray" />
+        android:tint="@color/darkGray"
+        app:srcCompat="@drawable/vd_overflow" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/authorAvatar"
@@ -45,26 +47,26 @@
         android:layout_height="@dimen/message_avatar_dimen"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:importantForAccessibility="no"
         tools:background="#3300ACEC"
-        tools:src="@mipmap/ic_launcher"
-        android:importantForAccessibility="no"/>
+        tools:src="@mipmap/ic_launcher" />
 
     <TextView
-        style="@style/TextFont.Medium"
         android:id="@+id/authorName"
+        style="@style/TextFont.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/authorAvatar"
         android:layout_marginStart="12dp"
         android:layout_toEndOf="@+id/authorAvatar"
-        android:layout_toStartOf="@+id/message_options"
+        android:layout_toStartOf="@+id/messageOptions"
         android:textColor="@color/defaultTextDark"
         android:textSize="14sp"
         tools:text="Emily Skinner" />
 
     <TextView
-        style="@style/TextFont.Medium"
         android:id="@+id/dateTime"
+        style="@style/TextFont.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/authorName"
@@ -73,18 +75,20 @@
         android:textColor="@color/defaultTextGray"
         android:textSize="12sp"
         tools:text="Mar 18, 2015, 9:03 AM" />
+
     <View
         android:id="@+id/headerDivider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_below="@+id/authorAvatar"
-        android:layout_marginTop="16dp"
-        android:background="@color/utils_editTextColor"
+        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginTop="16dp"
+        android:background="@color/utils_editTextColor" />
+
     <TextView
-        style="@style/TextFont.Regular"
         android:id="@+id/messageBody"
+        style="@style/TextFont.Regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/headerDivider"
@@ -110,23 +114,24 @@
         style="@style/TextFont.Regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="48dp"
         android:layout_below="@id/attachmentContainer"
-        android:layout_marginTop="-8dp"
         android:layout_marginBottom="4dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="4dp"
+        android:layout_marginTop="-8dp"
         android:background="?android:selectableItemBackground"
         android:gravity="center"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
+        android:minHeight="48dp"
         android:paddingBottom="8dp"
+        android:paddingEnd="12dp"
+        android:paddingStart="12dp"
         android:text="@string/reply"
         android:textSize="16sp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/utils_editTextColor"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:background="@color/utils_editTextColor" />
 
 </RelativeLayout>

@@ -20,23 +20,23 @@ import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.action.ViewActions.click
-import android.support.test.espresso.contrib.RecyclerViewActions.*
+import android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+import android.support.test.espresso.contrib.RecyclerViewActions.scrollToPosition
 import android.support.test.espresso.matcher.BoundedMatcher
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.support.v7.widget.RecyclerView
+import com.instructure.espresso.OnViewWithId
+import com.instructure.espresso.WaitForViewWithId
+import com.instructure.espresso.click
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.waitForViewWithText
 import com.instructure.teacher.R
-import com.instructure.teacher.holders.AssigneeItemViewHolder
 import com.instructure.teacher.holders.CourseBrowserViewHolder
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
-import com.instructure.teacher.viewinterface.CourseBrowserView
-import com.pspdfkit.framework.it
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 
-class CourseBrowserPage : BasePage(), PageAssert by SimplePageAssert() {
+class CourseBrowserPage : BasePage() {
 
     // TODO: Add recycler view scrolling to support small screen size devices.
     private val courseBrowserRecyclerView by WaitForViewWithId(R.id.courseBrowserRecyclerView)
@@ -64,6 +64,10 @@ class CourseBrowserPage : BasePage(), PageAssert by SimplePageAssert() {
 
     fun openAnnouncementsTab() {
         waitForViewWithText("Announcements").click()
+    }
+
+    fun openPeopleTab() {
+        waitForViewWithText("People").click()
     }
 
     fun clickSettingsButton() {

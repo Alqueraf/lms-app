@@ -16,14 +16,20 @@
  */
 package com.instructure.canvasapi2.apis
 
+import android.util.Log
+import android.widget.Toast
 import com.instructure.canvasapi2.builders.RestBuilder
 import com.instructure.canvasapi2.builders.RestParams
 import com.instructure.canvasapi2.models.Attachment
+import com.instructure.canvasapi2.models.CanvasErrorCode
 import com.instructure.canvasapi2.models.FileUploadParams
+import com.instructure.canvasapi2.utils.Logger
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.greenrobot.eventbus.EventBus
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 import java.io.File
 
@@ -63,9 +69,10 @@ internal object FileUploadAPI {
             params: RestParams,
             renameOnDuplicate: Boolean
     ): FileUploadParams? {
+        val response: Response<FileUploadParams>?
         try {
             val renameStrategy = if (renameOnDuplicate) "rename" else "overwrite"
-            val uploadParams = adapter
+            response = adapter
                     .build(FileUploadInterface::class.java, params)
                     .getUploadParams(
                             uploadContext,
@@ -75,7 +82,12 @@ internal object FileUploadAPI {
                             parentId,
                             parentPath,
                             renameStrategy
-                    ).execute().body()
+                    ).execute()
+            // check to see if we've hit the file quota limit
+            if(response?.code() == 400) {
+                EventBus.getDefault().post(CanvasErrorCode(400, ""))
+            }
+            val uploadParams = response.body()
             /* At least one API endpoint (quizzes) returns a list instead of a single object, so we
             attempt to return the first item in the list or else fall back to the object itself */
             return uploadParams?.list?.firstOrNull() ?: uploadParams

@@ -60,8 +60,8 @@ fun android.app.DialogFragment.showMasqueradeNotification(startingClass: Class<A
 
 private fun Window.showMasqueradeNotification(startingClass: Class<Activity>? = null) {
     if (!ApiPrefs.isMasquerading) return
-    this.context
     decorView.rootView?.let { rootView ->
+        if (findViewById<View>(R.id.masqueradeUINotificationContainer) != null) return
         // Add border
         val borderDrawable = ContextCompat.getDrawable(context, R.drawable.masquerade_outline)
         @Suppress("CascadeIf")

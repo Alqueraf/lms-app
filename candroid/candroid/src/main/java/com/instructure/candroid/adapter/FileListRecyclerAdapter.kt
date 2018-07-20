@@ -18,6 +18,7 @@ package com.instructure.candroid.adapter
 
 import android.content.Context
 import android.view.View
+import com.instructure.candroid.fragment.FileListFragment
 import com.instructure.candroid.holders.FileViewHolder
 import com.instructure.candroid.util.StudentPrefs
 import com.instructure.canvasapi2.managers.FileFolderManager
@@ -30,11 +31,11 @@ import com.instructure.canvasapi2.utils.weave.tryWeave
 import com.instructure.pandautils.utils.ColorKeeper
 
 open class FileListRecyclerAdapter(
-    context: Context,
-    canvasContext: CanvasContext,
-    private val allowOptionMenu: Boolean,
-    private val folder: FileFolder,
-    private val fileFolderCallback: FileFolderCallback
+        context: Context,
+        val canvasContext: CanvasContext,
+        private val possibleMenuOptions: List<FileListFragment.FileMenuType>,
+        private val folder: FileFolder,
+        private val fileFolderCallback: FileFolderCallback
 ) : BaseListRecyclerAdapter<FileFolder, FileViewHolder>(context, FileFolder::class.java) {
 
     private var isTesting = false
@@ -46,11 +47,11 @@ open class FileListRecyclerAdapter(
     protected constructor(
         context: Context,
         canvasContext: CanvasContext,
-        allowOptionMenu: Boolean,
+        possibleMenuOptions: List<FileListFragment.FileMenuType>,
         folder: FileFolder,
         itemCallback: FileFolderCallback,
         isTesting: Boolean
-    ) : this(context, canvasContext, allowOptionMenu, folder, itemCallback) {
+    ) : this(context, canvasContext, possibleMenuOptions, folder, itemCallback) {
         this.isTesting = isTesting
     }
 
@@ -65,9 +66,7 @@ open class FileListRecyclerAdapter(
     }
 
     override fun bindHolder(item: FileFolder, holder: FileViewHolder, position: Int) {
-        // Student cannot edit or delete submission folders/files so don't show the option menu for these
-        val isForSubmissions = item.forSubmissions || folder.forSubmissions
-        holder.bind( item, contextColor, context, allowOptionMenu && !isForSubmissions, fileFolderCallback)
+        holder.bind(item, contextColor, context, FileListFragment.getFileMenuOptions(item, canvasContext ), fileFolderCallback)
     }
 
     override fun createViewHolder(v: View, viewType: Int) = FileViewHolder(v)
@@ -81,7 +80,7 @@ open class FileListRecyclerAdapter(
         apiCall = tryWeave {
 
             // Check if the folder is marked as stale (i.e. items were added/changed/removed)
-            val isStale = StudentPrefs.staleFolderIds?.contains(folder.id) == true
+            val isStale = StudentPrefs.staleFolderIds.contains(folder.id) == true
 
             // Force network for pull-to-refresh and stale folders
             val forceNetwork = isRefresh || isStale
@@ -102,7 +101,10 @@ open class FileListRecyclerAdapter(
                 onRequestNext { url, callback -> FileFolderManager.getNextPageFilesFolder(url, forceNetwork, callback) }
                 onResponse {
                     setNextUrl("")
-                    addAll(it)
+                    // Files don't tell us if they're for submissions; set it on each file here
+                    // based on the folder's state to make it easier for us later on when we need
+                    // to determine how the user can interact with the file
+                    addAll(it.apply { it.forEach { it.forSubmissions = folder.forSubmissions }})
                 }
             }
 

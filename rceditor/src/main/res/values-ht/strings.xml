@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">Defèt</string>
     <string name="rce_contentDescription_redo">Refè</string>
     <string name="rce_contentDescription_bold">Fòma Gra</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">Ensere Lis Pwen</string>
     <string name="rce_contentDescription_insert_numbers">Ensere Lis Nimewote</string>
     <string name="rce_contentDescription_insert_photo">Ensere Foto</string>
+    <string name="rce_contentDescription_upload_photo">Transfere Foto Apati de Aparèy</string>
     <string name="rce_contentDescription_insert_link">Ensere Lyen</string>
     <string name="rce_contentDescription_block_quote">Sitasyon an Blòk</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">Ensere Lyen</string>
     <string name="rce_insertImage">Ensere Imaj</string>
 
+    <string name="rce_uploadImage">Transfere Imaj</string>
     <string name="rce_done">Fini</string>
     <string name="rce_cancel">Anile</string>
     <string name="rce_exit">Soti</string>

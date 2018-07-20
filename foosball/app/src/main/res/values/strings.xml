@@ -134,4 +134,10 @@
     <string name="totalRoundsFormatted">%d rounds total</string>
     <string name="durationRange">Duration: %1$d to %2$d goals</string>
     <string name="durationRangeNoMax">Duration: %s goals minimum</string>
+    <string name="tableRequestAnnouncement">Warning! The table has been requested by another group.</string>
+    <string name="tableRequestUserInfo">Table requested by %1$s on %2$s</string>
+    <string name="tableRequestedTitle">Table requested</string>
+    <string name="tableRequestedMessageOne">Another group wants to use the foosball table when you\'re done.\nPlease be mindful by quickening your pace and accepting the final score.</string>
+    <string name="tableRequestedMessageTwo">Alternatively, if you are an unfriendly group of people, please consider taking some of the following actions to demonstrate your special qualities:</string>
+    <string name="tableRequestedPoints">• Play slower. There\'s no rush. Your time is the only time that matters.\n• Keep adding rounds; never accept defeat. It\'s a matter of pride, after all!\n• Generate lots of heat. Breath through your mouth so the next group doesn\'t have to play in the cold.\n• Don\'t wear deodorant. Intimidate your opponents with chemical warfare.\n• Eat a large meal right before playing. Ensure everyone enjoys the smell of company lunch a second time.\n• Eliminate any ventilation. Who knows when a stray draft might shift the ball and cost you the game?\n• Be as loud as possible. Surely you can level up your game through sheer volume.\n• Use brute strength instead of skill. Break some equipment and tell nobody.</string>
 </resources>

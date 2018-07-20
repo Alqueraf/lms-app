@@ -24,6 +24,7 @@ import com.instructure.candroid.R
 import com.instructure.candroid.adapter.DiscussionListRecyclerAdapter
 import com.instructure.canvasapi2.models.DiscussionTopicHeader
 import com.instructure.canvasapi2.utils.DateHelper
+import com.instructure.pandautils.utils.*
 import com.instructure.pandautils.utils.onClick
 import com.instructure.pandautils.utils.setGone
 import com.instructure.pandautils.utils.setInvisible
@@ -33,7 +34,7 @@ import java.util.*
 
 class DiscussionListHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    fun bind(context: Context, discussionTopicHeader: DiscussionTopicHeader, group: String?, courseColor: Int, isDiscussion: Boolean,
+    fun bind(context: Context, discussionTopicHeader: DiscussionTopicHeader, courseColor: Int, isDiscussion: Boolean,
              callback: DiscussionListRecyclerAdapter.AdapterToDiscussionsCallback) = with(itemView) {
 
         discussionLayout.onClick { callback.onRowClicked(discussionTopicHeader, adapterPosition, true) }

@@ -28,13 +28,15 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
 import com.instructure.candroid.R
-import com.instructure.interactions.Navigation
-import com.instructure.candroid.util.FragUtils
-import com.instructure.candroid.util.RouterUtils
+import com.instructure.candroid.activity.NavigationActivity
+import com.instructure.candroid.router.RouteMatcher
+import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.Logger
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.Const
 import com.instructure.pandautils.utils.PermissionUtils
+import com.instructure.pandautils.utils.makeBundle
 import com.instructure.pandautils.views.CanvasWebView
 import org.apache.commons.text.StringEscapeUtils
 
@@ -42,7 +44,7 @@ class ArcWebviewFragment : InternalWebviewFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setShouldRouteInternally(false)
+        shouldRouteInternally = false
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -51,7 +53,7 @@ class ArcWebviewFragment : InternalWebviewFragment() {
 
         getCanvasWebView()?.canvasWebViewClientCallback = object : CanvasWebView.CanvasWebViewClientCallback {
             override fun openMediaFromWebView(mime: String, url: String, filename: String) {
-                openMedia(mime, url, filename)
+                openMedia(mime, url, filename, canvasContext)
             }
 
             override fun onPageFinishedCallback(webView: WebView, url: String) {
@@ -69,11 +71,11 @@ class ArcWebviewFragment : InternalWebviewFragment() {
             }
 
             override fun canRouteInternallyDelegate(url: String): Boolean {
-                return getShouldRouteInternally() && !getIsUnsupportedFeature() && RouterUtils.canRouteInternally(activity, url, ApiPrefs.domain, false)
+                return shouldRouteInternally && !getIsUnsupportedFeature() && RouteMatcher.canRouteInternally(activity, url, ApiPrefs.domain, false)
             }
 
             override fun routeInternallyCallback(url: String) {
-                RouterUtils.canRouteInternally(activity, url, ApiPrefs.domain, true)
+                RouteMatcher.canRouteInternally(activity, url, ApiPrefs.domain, true)
             }
         }
 
@@ -153,14 +155,24 @@ class ArcWebviewFragment : InternalWebviewFragment() {
 
     companion object {
 
-        @JvmStatic
-        fun loadInternalWebView(activity: FragmentActivity?, navigation: Navigation?, bundle: Bundle) {
-            if (activity == null || navigation == null) {
-                Logger.e("loadInternalWebView could not complete, activity or navigation null")
-                return
+        fun newInstance(route: Route) = if (validRoute(route)) {
+            ArcWebviewFragment().apply {
+                arguments = route.arguments
             }
+        } else null
 
-            navigation.addFragment(FragUtils.getFrag(ArcWebviewFragment::class.java, bundle))
+        fun makeRoute(canvasContext: CanvasContext, url: String, title: String, authenticate: Boolean): Route =
+                Route(ArcWebviewFragment::class.java, canvasContext,
+                        canvasContext.makeBundle().apply {
+                            putString(Const.INTERNAL_URL, url)
+                            putBoolean(Const.AUTHENTICATE, authenticate)
+                            putString(Const.ACTION_BAR_TITLE, title)
+                        })
+
+        fun validRoute(route: Route) : Boolean {
+            return route.canvasContext != null &&
+                    route.arguments.containsKey(Const.INTERNAL_URL) &&
+                    route.arguments.containsKey(Const.ACTION_BAR_TITLE)
         }
     }
 }

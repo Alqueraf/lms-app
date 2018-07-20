@@ -22,7 +22,6 @@
     <string name="email">E-mail</string>
     <string name="emailAddress">E-mailadresse</string>
     <string name="parent_email">Parent e-mail</string>
-    <string name="confirmPassword">Bekræft adgangskode</string>
     <string name="firstName">Fornavn</string>
     <string name="lastName">Efternavn</string>
     <string name="password">Adgangskode</string>
@@ -150,6 +149,9 @@
     <string name="or">eller</string>
     <string name="canvas_login_text">Log ind med Canvas</string>
 
+    <string name="privacyPolicy">Datapolitik</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">Betingelser for brug</string>
     <!-- Feature Request -->
     <string name="featureSubject">Ide for Canvas Parent App [Android]</string>
     <string name="understandRequest">Følgende oplysninger hjælper os med bedre at forstå din idé:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Indtast den studerendes skoles navn</string>
     <string name="findYourStudentsSchoolHint">Find din studerendes skole eller distrikt</string>
-    <string name="noGradeText">N/A</string>
+    <string name="noGradeText">Ingen karakter</string>
     <string name="locked">Låst</string>
+    <string name="changeUser">Skift bruger</string>
+    <string name="manageChildren">Administrer børn</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Åbn navigationsskuffe</string>
+    <string name="navigation_drawer_close">Luk navigationsskuffe</string>
+    <string name="version" formatted="false">Version %s</string>
+    <string name="not_a_parent_title">Ikke forælder?</string>
+    <string name="not_a_parent_subtitle">En af vores andre apps kan være bedre egnet. Tryk på et for at besøge Play Store.</string>
+    <string name="tryLoginAgain">Prøv at logge ind igen</string>
+
+    <string name="legalDetails">Fortrolighedspolitik, betingelser for brug, open source</string>
+    <string name="assignmentGrade">Opgavens karakter</string>
+    <string name="courseGrade">Fagets karakter</string>
+    <string name="courseAnnouncement">Besked til faget</string>
+    <string name="institutionAnnouncement">Besked til institutionen</string>
+    <string name="institutionAnnouncementUnavailable">Denne besked er udløbet.</string>
 </resources>

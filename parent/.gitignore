@@ -60,3 +60,6 @@ infer-out/
 # OSS License data
 app/src/main/res/raw/third_party_license_metadata
 app/src/main/res/raw/third_party_licenses
+
+# Flank
+results/

@@ -145,12 +145,29 @@
     <string name="toDoNoDueDate">Ingen afleveringsdato</string>
 
     <string name="dueAt">Afleveres den</string>
+    <string name="dueAtTime">Forfalder %s</string>
     <string name="toDoDue">Forfalder</string>
+    <string name="due">Forfalder %1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="one">%d mangler karakter</item>
         <item quantity="other">%d mangler karakter</item>
     </plurals>
     <string name="myFiles">Filer</string>
+    <string name="createAFolder">Opret en mappe</string>
+    <string name="createFolder">Opret mappe</string>
+    <string name="createAFile">Opret en fil</string>
+    <string name="createFileFolderFabContentDesc">Vis knapperne Opret fil og Opret mappe</string>
+    <string name="folderCreationError">Der opstod en fejl under oprettelse af mapper.</string>
+    <string name="rename">Omdøb</string>
+    <string name="renameFile">Omdøb fil</string>
+    <string name="renameFolder">Omdøb mappe</string>
+    <string name="blankName">Navn kan ikke være blank</string>
+    <string name="confirmDeleteFile">Er du sikker på, du vil slette filen \'%s\'? Denne handling kan ikke fortrydes.</string>
+    <string name="confirmDeleteEmptyFolder">Er du sikker på, du vil slette mappen \'%s\'? Denne handling kan ikke fortrydes.</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="one">Er du sikker på, at du vil slette mappen \'%1$s\', herunder %2$d elementet, den indeholder? Denne handling kan ikke fortrydes.</item>
+        <item quantity="other">Er du sikker på, at du vil slette mappen \'%1$s\', herunder %2$d elementerne, den indeholder? Denne handling kan ikke fortrydes.</item>
+    </plurals>
     <string name="settings">Indstillinger</string>
     <string name="name">Navn</string>
     <string name="email">E-mail</string>
@@ -354,6 +371,8 @@
 	<string name="errorPostingAnnouncement">Der opstod en fejl under postering af bekendtgørelsen.</string>
 	<string name="errorPostingDiscussion">Der opstod en fejl under postering af diskussion.</string>
 	<string name="allowThreading">Tillad threaded svar</string>
+    <string name="usersMustPost">Brugere skal lægge opslag ud, inden de ser svar</string>
+    <string name="allowUserComments">Tillad brugere at kommentere</string>
 	<string name="message">Besked</string>
 	<string name="title">Titel</string>
 
@@ -443,6 +462,7 @@
     <string name="subTypeOnlineQuiz">Online Quiz</string>
 	<string name="subTypeMediaRecording">Medieoptagelse</string>
     <string name="sub_type_lti_launch">LTI-lancering</string>
+    <string name="subTypeDiscussionTopic">Diskussion</string>
     <string name="turnInByHand">Du skal personligt aflevere denne opgave</string>
 	<string name="noSubRequired">Ingen indsendelse nødvendig</string>
 	<string name="noTurnInOnMobile">Mobil indsendelse er ikke understøttet</string>
@@ -572,6 +592,7 @@
     <string name="uploadMyFiles">Mine filer</string>
     <string name="uploadCourseFiles">Fagets filer</string>
 
+    <string name="uploadToSubmissionComment">Upload til afleveringskommentar</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">Ændrings-log</string>
 
@@ -610,14 +631,6 @@
 
     <string name="notoriousSubmissionInProgress">Indsend filer&#8230; Tjek notifikationsbjælken for opdateringer.</string>
     <string name="notoriousSubmissionSuccessful">Afsluttede indsendte fil</string>
-
-    <string name="pinned_icon">Ikon for fastsatte diskussion</string>
-    <string name="pin_discussion">Fastgør diskussion</string>
-    <string name="unpin_discussion">Frigiv diskussion</string>
-    <string name="discussion_pinned">Diskussion fastsat</string>
-    <string name="pinned_discussions">Fastgjorte diskussioner</string>
-    <string name="discussion_unpinned">Diskussioner frigivet</string>
-    <string name="empty_discussions">Der kan ikke vises nogen diskussioner i denne sektion.</string>
 
     <string name="bio">Bio</string>
     <string name="draft">Kladde</string>
@@ -844,6 +857,7 @@
     <string name="locked_mastery_paths">Låst indtil \"%s\" vurderes</string>
     <string name="locked_icon">Låst ikon</string>
     <string name="choose_assignment_group">Vælg opgavegruppe</string>
+    <string name="chooseAssignmentPath">Vælg opgavesti</string>
     <string name="select">Vælg</string>
     <string name="choice_position">Valg %d</string>
     <string name="updating_module_info">Opdaterer modulinformation &#8230;</string>
@@ -873,13 +887,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">Åbn link i ekstern browser</string>
-    <string name="gaugeLaunchFailure">Gauge kunne ikke indlæses på dette tidspunkt.</string>
-
+    <string name="ltiLaunchFailure">LTI-værktøjet kunne ikke indlæses på dette tidspunkt.</string>
     <string name="urlSubmission">URL aflevering</string>
     <string name="assignmentDeletedError">Denne opgave er ikke længere tilgængelig.</string>
     <string name="homePageIdForNotifications">Seneste aktivitet</string>
     <string name="homePageIdForModules">Moduler</string>
     <string name="homePageIdForAssignments">Opgaver</string>
+
     <string name="homePageIdForSyllabus">Læseplan</string>
 
     <string name="contentDescriptionWidgetRefresh">Opdater widget</string>
@@ -893,9 +907,44 @@
     <string name="finalGrade">Endelig karakter</string>
 
     <string name="moreThan99">99+</string>
-    <string name="dot_with_spaces">  \u2022  </string>
+    <string name="max_count">99+</string>
 
     <string name="opensInWebView">Åbner i webvisning</string>
     <string name="unsupportedTabLabel">Ikke understøttet på denne enhed</string>
+
+    <string name="downloadingFile">Downloader</string>
+    <string name="downloadFailed">Download mislykkedes</string>
+    <string name="downloadSuccessful">Download lykkedes</string>
+
+    <string name="full_due_date_details">Fulde oplysninger om afleveringsdato</string>
+    <string name="submissions">Afleveringer</string>
+    <string name="attachment">Vedhæftet fil</string>
+    <string name="contentDescription_back">Gå tilbage</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="one">%s point</item>
+        <item quantity="other">%s point</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="one">%s point</item>
+        <item quantity="other">%s point</item>
+    </plurals>
+    <string name="capitalTo">Til</string>
+
+
+    <string name="unableToViewInBrowser">Vi kan ikke finde en ekstern app til at se dette LTI-værktøj.</string>
+    <string name="commentUpload">Kommentar-upload</string>
+    <string name="unableToUploadMediaComment">For at sende en mediekommentar skal du sende eller slette din usendte tekstkommentar.</string>
+
+    <string name="frontPage">Forside</string>
+    <string name="editPage">Rediger side</string>
+    <string name="description">Beskrivelse</string>
+    <string name="pageSuccessfullyUpdated">Side blev opdateret.</string>
+    <string name="errorSavingPage">Der opstod en fejl ved forsøg på at gemme denne side. Prøv igen.</string>
+    <string name="pageTitleMustBeSet">Sidens titel skal indstilles.</string>
+    <string name="pageDetails">Sidedetaljer</string>
+    <string name="saving">Gemmer</string>
+    <string name="confirmDeleteEvent">Er du sikker på, du vil slette denne begivenhed?</string>
+    <string name="conferencesNotSupported">Konferencer understøttes endnu ikke på mobil.</string>
 
 </resources>

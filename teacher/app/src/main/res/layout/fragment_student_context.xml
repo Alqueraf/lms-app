@@ -15,6 +15,7 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/studentContextPage"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"

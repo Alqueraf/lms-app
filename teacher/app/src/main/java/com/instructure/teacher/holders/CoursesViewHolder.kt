@@ -48,7 +48,7 @@ class CoursesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         cardView.setOnClickListener { callback?.onShowCourseDetails(course) }
 
         overflow.onClickWithRequireNetwork {
-            val popup = PopupMenu(it.context, it, Gravity.START.and(Gravity.TOP))
+            val popup = PopupMenu(it.context, it, Gravity.START.and(Gravity.TOP),0,R.style.Base_Widget_AppCompat_PopupMenu_Overflow)
             val menu = popup.menu
 
             // Add things to the popup menu

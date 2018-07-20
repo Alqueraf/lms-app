@@ -255,7 +255,7 @@ public abstract class CanvasContext extends CanvasModel<CanvasContext> {
             return Tab.SYLLABUS_ID;
         }
         if (default_view.equals(HOME_WIKI)) {
-            return Tab.PAGES_ID;
+            return Tab.FRONT_PAGE_ID;
         }
         if (default_view.equals(HOME_ASSIGNMENTS)) {
             return Tab.ASSIGNMENTS_ID;
@@ -268,37 +268,46 @@ public abstract class CanvasContext extends CanvasModel<CanvasContext> {
 
     public static CanvasContext getGenericContext(final Type type, final long id, final String name) {
         CanvasContext canvasContext;
-        if(type == Type.USER){
-          User  user = new User(id);
+        if (type == Type.USER) {
+            User user = new User(id);
             user.setName(name);
+
             canvasContext = user;
-        } else if (type == Type.COURSE){
+        } else if (type == Type.COURSE) {
             Course course = new Course();
             course.setId(id);
             course.setName(name);
 
             canvasContext = course;
-        } else if (type == Type.GROUP){
+        } else if (type == Type.GROUP) {
             Group group = new Group();
             group.setId(id);
             group.setName(name);
 
             canvasContext = group;
-        } else if (type == Type.SECTION){
+        } else if (type == Type.SECTION) {
             Section section = new Section();
             section.setId(id);
             section.setName(name);
 
             canvasContext = section;
-        } else {
-            return null;
-        }
+        } else if (type == Type.UNKNOWN) {
+            canvasContext = new Unknown();
+        } else return null;
 
         return canvasContext;
     }
 
     public static CanvasContext emptyCourseContext() {
         return getGenericContext(Type.COURSE, 0, "");
+    }
+
+    public static CanvasContext emptyGroupContext(long id) {
+        return getGenericContext(Type.GROUP, id, "");
+    }
+
+    public static CanvasContext defaultCanvasContext() {
+        return getGenericContext(Type.UNKNOWN, 0, "");
     }
 
     public static CanvasContext emptyUserContext() {

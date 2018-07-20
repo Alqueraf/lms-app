@@ -60,6 +60,10 @@
     <string name="share">シェアする</string>
     <string name="share_with">と共有&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">ナビゲーションの引き出しを開く</string>
+    <string name="navigation_drawer_close">ナビゲーションの引き出しを閉じる</string>
+
     <!-- Compose Message -->
     <string name="no_subject">（件名なし）</string>
     <string name="compose_message">メッセージを作成する</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">ファイルまたは画像を選択</string>
     <string name="uploading_files">ファイルをアップロード中&#8230;</string>
     <string name="no_attachment">（添付なし）</string>
-    <string name="remove_attachment">添付ファイルの削除</string>
     <string name="creating_announcement">アナウンスメントを作成中&#8230;</string>
 
     <string name="copy_email">メールアドレスをコピー</string>
@@ -162,8 +165,6 @@
     <string name="inbox_empty_starred_title">スターありメッセージはありません</string>
     <string name="inbox_empty_message">\"+\"  をタップして新しい会話を作成する。</string>
     <string name="inbox_empty_starred_message">メッセージのスターをタップすると、メッセージにスターが付きます。</string>
-
-    <string name="download_attachment">添付をダウンロードする</string>
 
     <string name="reply">返信</string>
     <string name="replyAll">すべてに返信</string>
@@ -281,7 +282,7 @@
     <string name="inbox_starred">スターあり</string>
     <string name="inbox_sent">送信済み</string>
     <string name="inbox_archived">アーカイブ済み</string>
-    <string name="inbox_all_messages">すべてのメッセージ</string>
+    <string name="inbox_all_messages">すべて</string>
     <string name="uploading_file_num" formatted="false">%d / %d をアップロード中</string>
     <string name="page_not_found">ページが見つかりません</string>
     <string name="no_connection">接続していません</string>
@@ -330,7 +331,7 @@
     <string name="due_for_label">対象：</string>
     <string name="due_label">期限：</string>
     <string name="details_available_to_label">使用可能</string>
-    <string name="details_available_from_label">次から使用可能</string>
+    <string name="details_available_from_label">次の日時から</string>
     <string name="details_due_for_label">対象</string>
     <string name="due_date_header_label">期限</string>
     <string name="assignment_details">課題の詳細</string>
@@ -371,7 +372,7 @@
     <string name="assignee_type_students">受講生</string>
     <string name="page_title_add_assignees">課題対象者を追加する</string>
     <string name="assign_to">～へ割り当てられました</string>
-    <string name="available_from">次から使用可能</string>
+    <string name="available_from">次の日時から</string>
     <string name="available_to">利用できる人</string>
     <string name="unlock_after_due_date_error">ロック解除日を期日より後にすることはできません</string>
     <string name="lock_before_due_date_error">ロック日を期日より前にすることはできません</string>
@@ -430,7 +431,6 @@
     <string name="deleteComment">コメントを削除する</string>
     <string name="deleteAnnotation">注釈を削除する</string>
     <string name="deleteCommentConfirmation">このコメントを削除してもよろしいですか?</string>
-    <string name="deleteHeadCommentConfirmation">このコメントは注釈です。これを削除すると、すべての返信と注釈が削除されます。よろしいですか？</string>
     <string name="rubric_view_long_description">長い説明を表示</string>
     <string name="rubric">ルービック</string>
     <string name="enter_custom_value">カスタム値を入力してください</string>
@@ -490,7 +490,7 @@
         <item quantity="other">%d グループ</item>
     </plurals>
     <string name="cmp_closed">終了済み</string>
-    <string name="dot_with_spaces">  \u0022</string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">お気に入り</string>
     <string name="content_description_not_favorite">お気に入りではない</string>
@@ -499,7 +499,8 @@
     <string name="edit_course_nickname">コースニックネームを編集</string>
 
     <string name="colorPickerDialogTitle">コースの色</string>
-    <string name="colorPickerDialogMessage">これをコースのデフォルトのカラーに設定します。これは、個人的なカラーの設定に上書きしません。</string>
+    <string name="colorPickerDialogMessage">これはあなたの個人的な色の設定です。あなただけがコースにこの色を見ます。</string>
+
     <string name="colorPickerError">現時点でコースの色を設定できませんでした。</string>
 
     <string name="contentDescriptionColorCottonCandy">ピンク</string>
@@ -593,12 +594,6 @@
     <string name="quiz_details_from_to">%1$s から %2$s まで</string>
     <string name="quiz_details_after">%1$s 後</string>
     <string name="quiz_details_until">%1$s まで</string>
-    <string name="continueWithoutSavingTitle">保存せずに続行しますか？</string>
-    <string name="continueWithoutSavingMessage">保存せずに続行してよろしいですか？</string>
-    <string name="continueUnsaved">続行する</string>
-    <string name="exitWithoutSavingTitle">保存せずに終了しますか？</string>
-    <string name="exitWithoutSavingMessage">保存せずに終了してよろしいですか？</string>
-    <string name="exitUnsaved">終了</string>
     <string name="filterPointsMustBeSet">値を入力します。</string>
 
     <plurals name="quantityQuestions">
@@ -625,7 +620,6 @@
     <string name="discussions_replies_title">返信</string>
     <string name="discussions_reply">返信</string>
     <string name="discussions_edit">編集</string>
-    <string name="discussions_deleted" formatted="false">この返信 %s を削除する</string>
     <string name="discussions_forbidden">回答は、少なくとも一つの回答を掲載している人にのみ表示されます。</string>
     <string name="discussions_unknown_author">不明な作成者</string>
     <string name="discussions_delete">ディスカッションを削除</string>
@@ -697,6 +691,8 @@
     <string name="subscribe">定期購読</string>
     <string name="allowThreadedReplies">スレッドでの返信を許可する</string>
     <string name="usersMustPost">ユーザは返信を表示する前に投稿しなければなりません</string>
+    <string name="allowUserComments">ユーザーにコメントを許可する</string>
+
     <string name="discussionTitleMustBeSet">ディスカッションのタイトルを設定しなければなりません。</string>
     <string name="discussionSuccessfullyCreated">ディスカッションは正常に作成されました。</string>
     <string name="errorCreatingDiscussion">このディスカッションを作成しようといてエラーが発生しました。もう一度試してください。</string>
@@ -745,6 +741,7 @@
     <string name="choosePhotoFromGallery">ギャラリーから画像を選択する</string>
     <string name="fileNotFound">ファイルがみつかりません。</string>
     <string name="version" formatted="false">バージョン %s</string>
+    <string name="fullVersion">バージョン %s (%d)</string>
     <string name="tap_to_view_submissions_list">タップして提出リストを表示します。</string>
     <string name="assignmentDescriptionContentDescription">課題説明</string>
     <string name="quizDescriptionContentDescription">クイズ説明</string>
@@ -869,10 +866,27 @@
 
     <string name="latePenalty">遅延ペナルティ</string>
     <string name="finalGrade">最終的な成績</string>
+    <string name="moderatedGradingUnsupported">修正された採点は、現在モバイルの SpeedGrader ではサポートされていません。</string>
     <plurals name="latePolicyPenalty">
         <item quantity="other">-%s 点</item>
     </plurals>
     <plurals name="latePolicyPenaltyFull">
         <item quantity="other">-%s 点</item>
     </plurals>
+    <string name="todoUnreadCount">未読の「するべきこと」%d</string>
+    <string name="profileSettings">プロファイル設定</string>
+    <string name="downloadingFile">ファイルをダウンロード中&#8230;</string>
+    <string name="fileDownloadedSuccessfully">ファイルのダウンロードに成功しました。</string>
+    <string name="tapToView">タップして表示する</string>
+    <string name="errorDownloadingFile">あなたのファイルをダウンロードする際にエラーが発生しました。再度試してください。</string>
+
+    <string name="postTo">投稿先：</string>
+    <string name="allSections">すべてのセクション</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">今回 LTI ツールを読み込めませんでした。</string>
+
+    <string name="downloading">ダウンロード中...</string>
+
 </resources>

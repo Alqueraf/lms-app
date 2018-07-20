@@ -35,7 +35,7 @@ import java.util.List;
  * This is a stripped down base for our ListRecyclerAdapters. Most of the coupled functionality
  * was torn out of this and added to BaseListPresenter
  */
-public abstract class SyncRecyclerAdapter<MODEL extends CanvasComparable, HOLDER extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<HOLDER>{
+public abstract class SyncRecyclerAdapter<MODEL extends CanvasComparable<?>, HOLDER extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<HOLDER>{
 
     public abstract void bindHolder(MODEL model, HOLDER holder, int position);
     public abstract HOLDER createViewHolder(View v, int viewType);

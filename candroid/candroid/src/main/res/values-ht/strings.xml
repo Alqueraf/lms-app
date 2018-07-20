@@ -145,12 +145,29 @@
     <string name="toDoNoDueDate">San Delè</string>
 
     <string name="dueAt">Delè pou</string>
+    <string name="dueAtTime">Delè a %s</string>
     <string name="toDoDue">Delè</string>
+    <string name="due">Delè %1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="one">%d bezwen klasman</item>
         <item quantity="other">%d bezwen klasman</item>
     </plurals>
     <string name="myFiles">Fichye</string>
+    <string name="createAFolder">Kreye yon Dosye</string>
+    <string name="createFolder">Kreye Dosye</string>
+    <string name="createAFile">Kreye yon Fichye</string>
+    <string name="createFileFolderFabContentDesc">Afiche Bouton Kreye Fichye epi Kreye Dosye</string>
+    <string name="folderCreationError">Gen yon erè ki fèt pandan kreyasyon dosye a.</string>
+    <string name="rename">Chanje non</string>
+    <string name="renameFile">Chanje non fichye</string>
+    <string name="renameFolder">Chanje non dosye</string>
+    <string name="blankName">Non pa gendwa vid</string>
+    <string name="confirmDeleteFile">Èske se tout bon ou vle elimine fichye \'%s\'? Aksyon sa a paka defèt.</string>
+    <string name="confirmDeleteEmptyFolder">Èske se tout bon ou swete elimine dosye \'%s\'? Aksyon sa a paka defèt.</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="one">Èske se tout bon ou swete elimine dosye \'%1$s\', ansanm ak tout %2$d eleman ki ladan li an? Aksyon sa a paka defèt.</item>
+        <item quantity="other">Èske se tout bon ou swete elimine dosye \'%1$s\', ansanm ak tout %2$d eleman ki ladan li yo? Aksyon sa a paka defèt.</item>
+    </plurals>
     <string name="settings">Paramèt</string>
     <string name="name">Non</string>
     <string name="email">Imèl</string>
@@ -354,6 +371,8 @@
 	<string name="errorPostingAnnouncement">Gen yon erè ki fèt nan poste anons lan.</string>
 	<string name="errorPostingDiscussion">Gen yon erè ki fèt nan poste diskisyon an.</string>
 	<string name="allowThreading">Otorize Repons Anfile</string>
+    <string name="usersMustPost">Itilizatè yo dwe poste anvan yo wè repons yo</string>
+    <string name="allowUserComments">Pèmèt itilizatè yo kòmante</string>
 	<string name="message">Mesaj</string>
 	<string name="title">Tit</string>
 
@@ -443,6 +462,7 @@
     <string name="subTypeOnlineQuiz">Quiz an Liy</string>
 	<string name="subTypeMediaRecording">Anrejistreman Medya</string>
     <string name="sub_type_lti_launch">Lansman LTI</string>
+    <string name="subTypeDiscussionTopic">Diskisyon</string>
     <string name="turnInByHand">Ou dwe aktive sesyon sa a a la men</string>
 	<string name="noSubRequired">Soumisyon pa obligatwa</string>
 	<string name="noTurnInOnMobile">Soumisyon pòtab pa sipòte</string>
@@ -572,6 +592,7 @@
     <string name="uploadMyFiles">Fichye Mwen</string>
     <string name="uploadCourseFiles">Fichye Kou</string>
 
+    <string name="uploadToSubmissionComment">Soumèt nan Kòmantè Soumisyon </string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">Changelog</string>
 
@@ -610,14 +631,6 @@
 
     <string name="notoriousSubmissionInProgress">Soumisyon fichye Verifye ba notifikasyon an pou aktyalizasyon.</string>
     <string name="notoriousSubmissionSuccessful">Soumisyon fichye fini</string>
-
-    <string name="pinned_icon">Ikòn diskisyon fikse</string>
-    <string name="pin_discussion">Fikse Diskisyon</string>
-    <string name="unpin_discussion">Diskisyon non Fikse</string>
-    <string name="discussion_pinned">Diskisyon Fikse</string>
-    <string name="pinned_discussions">Diskisyon Epengle</string>
-    <string name="discussion_unpinned">Diskisyon non Fikse</string>
-    <string name="empty_discussions">Pa gen diskisyon pou afiche nan seksyon sa a.</string>
 
     <string name="bio">Biyo</string>
     <string name="draft">Bouyon</string>
@@ -844,6 +857,7 @@
     <string name="locked_mastery_paths">Bloke jiskaske \"%s\" evalye</string>
     <string name="locked_icon">Ikòn Vewouye</string>
     <string name="choose_assignment_group">Chwazi Gwoup Sesyon</string>
+    <string name="chooseAssignmentPath">Chwazi Pakou Sesyon</string>
     <string name="select">Seleksyone</string>
     <string name="choice_position">Chwa %d</string>
     <string name="updating_module_info">Aktyalizasyon enfòmasyon modil&#8230;</string>
@@ -873,13 +887,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">Lanse lyen nan navigatè ekstèn</string>
-    <string name="gaugeLaunchFailure">Endikatè a pa t ka chaje nan moman an.</string>
-
+    <string name="ltiLaunchFailure">Zouti LTI sa a paka chaje pou kounye a.</string>
     <string name="urlSubmission">Soumisyon URL</string>
     <string name="assignmentDeletedError">Travay sa pa diponib ankò.</string>
     <string name="homePageIdForNotifications">Aktivite Resan</string>
     <string name="homePageIdForModules">Modil</string>
     <string name="homePageIdForAssignments">Sesyon</string>
+
     <string name="homePageIdForSyllabus">Pwogram</string>
 
     <string name="contentDescriptionWidgetRefresh">Aktyalize widget</string>
@@ -893,9 +907,44 @@
     <string name="finalGrade">Nòt Final</string>
 
     <string name="moreThan99">99+</string>
-    <string name="dot_with_spaces">  \u2022  </string>
+    <string name="max_count">99+</string>
 
     <string name="opensInWebView">Li ouvè nan webview</string>
     <string name="unsupportedTabLabel">Aparèy sa a pa sipòte l</string>
+
+    <string name="downloadingFile">Telechajman</string>
+    <string name="downloadFailed">Echèk telechajan</string>
+    <string name="downloadSuccessful">Telechajman reyisi</string>
+
+    <string name="full_due_date_details">Tout detay delè</string>
+    <string name="submissions">Soumisyon</string>
+    <string name="attachment">Atachman</string>
+    <string name="contentDescription_back">Retounen</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="one">%s pwen</item>
+        <item quantity="other">%s pwen</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="one">%s pwen</item>
+        <item quantity="other">%s pwen</item>
+    </plurals>
+    <string name="capitalTo">Pou</string>
+
+
+    <string name="unableToViewInBrowser">Nou pa an mezi pou nou jwenn yon app ekstèn pou afiche zouti LTI sa a.</string>
+    <string name="commentUpload">Kòmantè Soumèt</string>
+    <string name="unableToUploadMediaComment">Pou voye yon kòmantè miltimedya, voye oswa efase yon kòmantè ki pa t ale.</string>
+
+    <string name="frontPage">Premye Paj</string>
+    <string name="editPage">Modifye Paj</string>
+    <string name="description">Deskripsyon</string>
+    <string name="pageSuccessfullyUpdated">Paj aktyalize kòrèkteman.</string>
+    <string name="errorSavingPage">Gen yon erè ki fèt pandan w ap eseye anrejistre paj sa a. Eseye ankò.</string>
+    <string name="pageTitleMustBeSet">Tit paj la dwe defini.</string>
+    <string name="pageDetails">Detay Paj</string>
+    <string name="saving">Anrejistreman</string>
+    <string name="confirmDeleteEvent">Èske vrèman ou swete elemine aktivite sa a?</string>
+    <string name="conferencesNotSupported">Konferans yo pa posib sou aparèy mobil.</string>
 
 </resources>

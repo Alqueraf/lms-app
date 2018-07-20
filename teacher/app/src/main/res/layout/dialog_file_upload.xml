@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 - present  Instructure, Inc.
   ~
   ~     This program is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/dialog_content"
+    android:id="@+id/dialogContent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clipChildren="false"
@@ -29,41 +28,42 @@
     android:paddingTop="16dp">
 
     <TextView
+        android:id="@+id/allowedExtensions"
         style="@style/TextFont.Regular"
-        android:id="@+id/allowed_extensions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="@string/allowedExtensions"
-        android:textSize="16sp"
         android:textColor="@color/defaultTextDark"
+        android:textSize="16sp"
         android:visibility="gone" />
 
     <ListView
-        android:id="@+id/file_list"
+        android:id="@+id/fileListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:divider="@color/transparent"
         android:dividerHeight="8dp"
-        tools:layout_height="130dp"
-        android:layout_marginBottom="8dp"/>
+        tools:layout_height="130dp" />
 
     <!-- Ideally these would be buttons instead of nested LinearLayouts, but as of Support Library v23.3
         support vector drawables in XML only work with the app:srcCompat attribute in ImageViews -->
+    <!--TODO: See if the native vector drawable stuff can be used here to simplify the layout-->
     <LinearLayout
-        android:id="@+id/add_buttons_container"
+        android:id="@+id/addButtonsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/from_camera"
+            android:id="@+id/fromCamera"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingBottom="8dp"
@@ -73,8 +73,8 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@string/fromCamera"
-                app:srcCompat="@drawable/vd_camera"
-                android:tint="@color/defaultTextDark" />
+                android:tint="@color/defaultTextDark"
+                app:srcCompat="@drawable/vd_camera" />
 
             <TextView
                 style="@style/TextFont.Regular"
@@ -86,11 +86,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/from_photo_gallery"
+            android:id="@+id/fromPhotoGallery"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingBottom="8dp"
@@ -100,8 +100,8 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@string/fromGallery"
-                app:srcCompat="@drawable/vd_image"
-                android:tint="@color/defaultTextDark" />
+                android:tint="@color/defaultTextDark"
+                app:srcCompat="@drawable/vd_image" />
 
             <TextView
                 style="@style/TextFont.Regular"
@@ -113,11 +113,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/from_device"
+            android:id="@+id/fromDevice"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingBottom="8dp"
@@ -126,10 +126,10 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:padding="2dp"
                 android:contentDescription="@string/fromDevice"
-                app:srcCompat="@drawable/vd_document"
-                android:tint="@color/defaultTextDark"/>
+                android:padding="2dp"
+                android:tint="@color/defaultTextDark"
+                app:srcCompat="@drawable/vd_document" />
 
             <TextView
                 style="@style/TextFont.Regular"

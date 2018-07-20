@@ -41,7 +41,7 @@ class SimpleWebViewFragment : InternalWebViewFragment() {
         super.onActivityCreated(savedInstanceState)
 
         loadUrl(url)
-        toolbar.setGone()
+        toolbar?.setGone()
     }
 
     companion object {

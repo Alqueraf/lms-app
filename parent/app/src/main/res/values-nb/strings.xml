@@ -22,7 +22,6 @@
     <string name="email">E-post</string>
     <string name="emailAddress">E-postadresse</string>
     <string name="parent_email">E-psot foreldre</string>
-    <string name="confirmPassword">Bekreft passord</string>
     <string name="firstName">Fornavn</string>
     <string name="lastName">Etternavn</string>
     <string name="password">Passord</string>
@@ -150,6 +149,9 @@
     <string name="or">eller</string>
     <string name="canvas_login_text">Logg inn med Canvas</string>
 
+    <string name="privacyPolicy">Personvernregler</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">Bruksvilkår</string>
     <!-- Feature Request -->
     <string name="featureSubject">Idé for appen Canvas Parent [Android]</string>
     <string name="understandRequest">Følgende informasjon vil hjelpe oss bedre til å forstå din idé:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Skriv inn studentens skolenavn.</string>
     <string name="findYourStudentsSchoolHint">Finn din students skole eller distrikt</string>
-    <string name="noGradeText">N/A</string>
+    <string name="noGradeText">Ingen karakter</string>
     <string name="locked">Låst</string>
+    <string name="changeUser">Endre bruker</string>
+    <string name="manageChildren">Administrere barn</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Åpne navigasjonsskuff</string>
+    <string name="navigation_drawer_close">Lukk navigasjonsskuff</string>
+    <string name="version" formatted="false">Versjon %s</string>
+    <string name="not_a_parent_title">Ikke en foresatt?</string>
+    <string name="not_a_parent_subtitle">En av våre andre applikasjoner kan være mer tilpasset. Trykk på en for å gå til Play Store.</string>
+    <string name="tryLoginAgain">Prøv å logge på igjen</string>
+
+    <string name="legalDetails">Personvernregler, bruksvilkår, åpen kilde</string>
+    <string name="assignmentGrade">Oppgave-karakter</string>
+    <string name="courseGrade">Emne-karakter</string>
+    <string name="courseAnnouncement">Emne-kunngjøring</string>
+    <string name="institutionAnnouncement">Institusjons-kunngjøring</string>
+    <string name="institutionAnnouncementUnavailable">Denne kunngjøringen har utløpt-</string>
 </resources>

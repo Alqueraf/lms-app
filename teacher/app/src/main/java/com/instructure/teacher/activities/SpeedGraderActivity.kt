@@ -46,7 +46,6 @@ import com.instructure.teacher.factory.SpeedGraderPresenterFactory
 import com.instructure.teacher.presenters.SpeedGraderPresenter
 import com.instructure.interactions.router.Route
 import com.instructure.interactions.router.RouterParams
-import com.instructure.teacher.utils.ExoAgent
 import com.instructure.teacher.utils.TeacherPrefs
 import com.instructure.teacher.utils.isTalkbackEnabled
 import com.instructure.teacher.utils.toast
@@ -294,8 +293,21 @@ class SpeedGraderActivity : BasePresenterActivity<SpeedGraderPresenter, SpeedGra
 
         @JvmStatic
         fun createIntent(context: Context, route: Route): Intent {
-            val intent = Intent(context, SpeedGraderActivity::class.java)
-            intent.putExtras(route.arguments)
+            val intent = Intent(context, SpeedGraderActivity::class.java).apply {
+                if(!route.arguments.isEmpty) {
+                    putExtras(route.arguments)
+                } else {
+                    // Try to get the information from the route that this activity needs. This happens
+                    // when we come from a push notification
+                    putExtras(Bundle().apply {
+                        putLong(Const.COURSE_ID, route.paramsHash[RouterParams.COURSE_ID]?.toLong() ?: 0)
+                        putLong(Const.ASSIGNMENT_ID, route.paramsHash[RouterParams.ASSIGNMENT_ID]?.toLong() ?: 0)
+                        putLong(RouterParams.SUBMISSION_ID, route.paramsHash[RouterParams.SUBMISSION_ID]?.toLong() ?: 0)
+                    })
+                }
+            }
+
+
             return intent
         }
 

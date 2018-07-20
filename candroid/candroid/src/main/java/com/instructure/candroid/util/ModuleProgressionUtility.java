@@ -45,7 +45,7 @@ public class ModuleProgressionUtility {
         for (int i = 0; i < modules.size(); i++) {
             headerlessItems.add(new ArrayList<ModuleItem>());
             for (int k = 0; k < moduleItems.get(i).size(); k++) {
-                if (CourseModuleProgressionFragment.shouldAddModuleItem(context, moduleItems.get(i).get(k))) {
+                if (CourseModuleProgressionFragment.Companion.shouldAddModuleItem(context, moduleItems.get(i).get(k))) {
                     headerlessItems.get(i).add(moduleItems.get(i).get(k));
                 }
             }

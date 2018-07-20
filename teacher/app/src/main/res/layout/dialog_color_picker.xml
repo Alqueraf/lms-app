@@ -37,27 +37,27 @@
         android:orientation="horizontal"
         android:layout_marginTop="12dp">
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorCottonCandy"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorCottonCandy"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorBarbie"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorBarbie"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorBarneyPurple"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorBarneyPurple"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorEggplant"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorEggplant"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorUltramarine"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorUltramarine"/>
@@ -69,27 +69,27 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorOcean11"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorOcean11"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorCyan"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorCyan"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorAquaMarine"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorAquaMarine"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorEmeraldGreen"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorEmeraldGreen"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorFreshCutLawn"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorFreshCutLawn"/>
@@ -102,27 +102,27 @@
         android:orientation="horizontal"
         android:layout_marginBottom="12dp">
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorChartreuse"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorChartreuse"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorSunFlower"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorSunFlower"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorTangerine"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorTangerine"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorBloodOrange"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorBloodOrange"/>
 
-        <ImageView
+        <com.instructure.pandautils.views.ColorPickerIcon
             android:id="@+id/colorSriracha"
             style="@style/ColorPickerDialogItem"
             android:contentDescription="@string/contentDescriptionColorSriracha"/>

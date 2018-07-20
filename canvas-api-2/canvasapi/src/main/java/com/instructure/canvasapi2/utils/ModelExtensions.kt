@@ -18,9 +18,12 @@ package com.instructure.canvasapi2.utils
 import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
+import com.instructure.canvasapi2.R
 import com.instructure.canvasapi2.apis.EnrollmentAPI
+import com.instructure.canvasapi2.managers.OAuthManager
 import com.instructure.canvasapi2.models.*
 import java.util.*
+import java.util.regex.Pattern
 
 fun Parcel.writeBoolean(bool: Boolean) = writeByte((if (bool) 1 else 0).toByte())
 fun Parcel.readBoolean() = readByte() != 0.toByte()
@@ -99,3 +102,70 @@ fun Attachment.mapToRemoteFile(): RemoteFile {
     if(this.createdAt != null) remoteFile.setCreatedAt(APIHelper.dateToString(this.createdAt))
     return remoteFile
 }
+
+val Enrollment.displayType: CharSequence
+    get() = ContextKeeper.appContext.getText(
+        when {
+            isStudent -> R.string.enrollmentTypeStudent
+            isTeacher -> R.string.enrollmentTypeTeacher
+            isObserver -> R.string.enrollmentTypeObserver
+            isTA -> R.string.enrollmentTypeTeachingAssistant
+            isDesigner -> R.string.enrollmentTypeDesigner
+            else -> R.string.enrollmentTypeUnknown
+        }
+    )
+
+/**
+ * For finding img tags in Discussion entries
+ *
+ * WARNING: This makes an api call synchronously - Only use this inside a background thread!
+ */
+fun getImageReplacementList(msg: String): List<Pair<String, IntRange>> {
+    val imageTagPattern = Pattern.compile("""<img.*>""")
+    val imageTagMatcher = imageTagPattern.matcher(msg)
+    val imageSrcPattern = Pattern.compile("""src\s*=\s*"[^"]+"""")
+
+// Replacements need to be applied in reverse order so the start/end indices remain accurate
+    val mappedReplacements = mutableListOf<Pair<String, IntRange>>()
+
+    while (imageTagMatcher.find()) {
+        val imageTag = imageTagMatcher.group()
+        if (imageTag.contains(ApiPrefs.domain)) {
+            // This is a canvas-based image
+            if (!imageTag.contains("verifier")) {
+                // This image doesn't have a verifier param, so we need to make this an authenticated url
+                val imageSourceMatcher = imageSrcPattern.matcher(imageTag)
+                if (imageSourceMatcher.find()) {
+                    // Found the source tag
+                    val src = imageSourceMatcher.group()
+                    val url = src.subSequence("src=\"".length, src.length-1).toString()
+                    // Get an authenticated URL
+                    val authenticatedSessionURL = OAuthManager.getAuthenticatedSessionSynchronous(url) ?: url
+
+                    // Replace the source in the image tag
+                    val imageReplacement = imageTag.replaceRange(imageSourceMatcher.start(), imageSourceMatcher.end(), """src="$authenticatedSessionURL"""")
+
+                    // Create a mapping for the img tag replacement
+                    mappedReplacements.add(Pair(imageReplacement, IntRange(imageTagMatcher.start(), imageTagMatcher.end())))
+                }
+            }
+        }
+    }
+
+    return mappedReplacements
+}
+
+/**
+ * Replaces the text within the IntRange with the String passed in (Pair parameters)
+ */
+fun replaceImgTags(replacementList: List<Pair<String, IntRange>>, msg: String): String {
+    var newMsg = msg
+    for (replacement in replacementList.asReversed()) {
+        // Loop through the replacements in reverse
+        newMsg = newMsg.replaceRange(replacement.second.start, replacement.second.last, replacement.first)
+    }
+
+    return newMsg
+}
+
+

@@ -16,13 +16,19 @@
  */
 package com.instructure.teacher.presenters
 
+import android.app.Activity
+import android.net.Uri
 import com.instructure.canvasapi2.managers.DiscussionManager
 import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.DiscussionEntry
+import com.instructure.canvasapi2.utils.weave.WeaveJob
 import com.instructure.canvasapi2.utils.weave.awaitApiResponse
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
 import com.instructure.pandautils.models.FileSubmitObject
+import com.instructure.pandautils.utils.MediaUploadUtils
+import com.instructure.pandautils.utils.ProfileUtils
+import com.instructure.teacher.interfaces.RceMediaUploadPresenter
 import com.instructure.teacher.viewinterface.DiscussionsReplyView
 import instructure.androidblueprint.FragmentPresenter
 import kotlinx.coroutines.experimental.Job
@@ -32,7 +38,8 @@ import java.io.File
 class DiscussionsReplyPresenter(
         val canvasContext: CanvasContext,
         val discussionTopicHeaderId: Long,
-        val discussionEntryId: Long) : FragmentPresenter<DiscussionsReplyView>() {
+        private val discussionEntryId: Long) : FragmentPresenter<DiscussionsReplyView>(), RceMediaUploadPresenter {
+    override var rceImageUploadJob: WeaveJob? = null
 
     private var postDiscussionJob: Job? = null
 
@@ -78,23 +85,22 @@ class DiscussionsReplyPresenter(
         attachment = fileSubmitObject
     }
 
-    fun getAttachment(): FileSubmitObject? {
-        return attachment
-    }
+    fun getAttachment(): FileSubmitObject? = attachment
 
-    fun hasAttachment(): Boolean {
-        return attachment != null
+    override fun uploadRceImage(imageUri: Uri, activity: Activity) {
+        rceImageUploadJob = MediaUploadUtils.uploadRceImageJob(imageUri, canvasContext, activity) { text, alt -> viewCallback?.insertImageIntoRCE(text, alt) }
     }
 
     companion object {
-        val REASON_MESSAGE_IN_PROGRESS = 1
-        val REASON_MESSAGE_EMPTY = 2
-        val REASON_MESSAGE_FAILED_TO_SEND = 3
+        const val REASON_MESSAGE_IN_PROGRESS = 1
+        const val REASON_MESSAGE_EMPTY = 2
+        const val REASON_MESSAGE_FAILED_TO_SEND = 3
         var attachment: FileSubmitObject? = null
     }
 
     override fun onDestroyed() {
         super.onDestroyed()
         postDiscussionJob?.cancel()
+        rceImageUploadJob?.cancel()
     }
 }

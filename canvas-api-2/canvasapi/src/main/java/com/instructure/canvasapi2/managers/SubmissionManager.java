@@ -32,6 +32,7 @@ import com.instructure.canvasapi2.models.SubmissionSummary;
 import com.instructure.canvasapi2.tests.SubmissionManager_Test;
 import com.instructure.canvasapi2.utils.ExhaustiveListCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -73,6 +74,29 @@ public class SubmissionManager extends BaseManager {
 
             adapter.setStatusCallback(depaginatedCallback);
             SubmissionAPI.getStudentSubmissionsForCourse(courseId, studentId, adapter, callback, params);
+        }
+    }
+
+    public static void getSubmissionsForMultipleAssignments(final long studentId, final long courseId, final List<Long> assignmentIds, @NonNull StatusCallback<List<Submission>> callback, boolean forceNetwork) {
+        if (isTesting() | mTesting) {
+
+        } else {
+            final RestBuilder adapter = new RestBuilder(callback);
+            final RestParams params = new RestParams.Builder()
+                    .withForceReadFromNetwork(forceNetwork)
+                    .withPerPageQueryParam(true)
+                    .withShouldIgnoreToken(false)
+                    .build();
+
+            StatusCallback<List<Submission>> depaginatedCallback = new ExhaustiveListCallback<Submission>(callback) {
+                @Override
+                public void getNextPage(@NonNull StatusCallback<List<Submission>> callback, @NonNull String nextUrl, boolean isCached) {
+                    SubmissionAPI.getSubmissionsForMultipleAssignments(courseId, studentId, assignmentIds, adapter, callback, params);
+                }
+            };
+
+            adapter.setStatusCallback(depaginatedCallback);
+            SubmissionAPI.getSubmissionsForMultipleAssignments(courseId, studentId, assignmentIds, adapter, callback, params);
         }
     }
 

@@ -54,7 +54,7 @@ open class DiscussionsListFragment : BaseExpandableSyncFragment<
     protected var mCanvasContext: CanvasContext by ParcelableArg(default = CanvasContext.getGenericContext(CanvasContext.Type.COURSE, -1L, ""))
 
     private var mLinearLayoutManager = LinearLayoutManager(context)
-    lateinit private var mRecyclerView: RecyclerView
+    private lateinit var mRecyclerView: RecyclerView
     private val mCourseColor by lazy { ColorKeeper.getOrGenerateColor(mCanvasContext) }
 
     private var mNeedToForceNetwork = false

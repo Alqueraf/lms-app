@@ -18,17 +18,20 @@ package com.instructure.teacher.ui
 import com.instructure.soseedy.SubmissionSeed
 import com.instructure.soseedy.SubmissionType.ONLINE_TEXT_ENTRY
 import com.instructure.teacher.ui.utils.*
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class SpeedGraderGradePageTest : TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         goToSpeedGraderGradePage()
         speedGraderGradePage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun displaysGradeDialog() {
         goToSpeedGraderGradePage()
         speedGraderGradePage.openGradeDialog()
@@ -36,6 +39,7 @@ class SpeedGraderGradePageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysNewGrade() {
         goToSpeedGraderGradePage()
         speedGraderGradePage.openGradeDialog()
@@ -45,6 +49,7 @@ class SpeedGraderGradePageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun hidesRubricWhenMissing() {
         goToSpeedGraderGradePage()
         speedGraderGradePage.assertRubricHidden()

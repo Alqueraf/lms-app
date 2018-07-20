@@ -16,8 +16,10 @@
 @file:JvmName("CanvasContextExtensions")
 package com.instructure.pandautils.utils
 
+import android.os.Bundle
 import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.Course
+import com.instructure.interactions.router.Route
 
 val CanvasContext.color: Int get() = ColorKeeper.getOrGenerateColor(this)
 
@@ -30,3 +32,13 @@ val CanvasContext.isUser: Boolean get() = this.type  == CanvasContext.Type.USER
 
 fun CanvasContext.isDesigner(): Boolean = this.isCourseContext && (this as Course).isDesigner
 
+fun CanvasContext.makeBundle(bundle: Bundle = Bundle(), block: Bundle.() -> Unit = {}): Bundle =
+    bundle.apply {
+        putParcelable(Const.CANVAS_CONTEXT, this@makeBundle)
+        block()
+    }
+
+val Route.argsWithContext get() = canvasContext?.makeBundle(arguments) ?: arguments
+
+fun Bundle.getCanvasContext(): CanvasContext? = this.getParcelable(Const.CANVAS_CONTEXT)
+fun Bundle.hasCanvasContext(): Boolean = this.containsKey(Const.CANVAS_CONTEXT)

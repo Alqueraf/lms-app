@@ -73,8 +73,10 @@ public class DiscussionAPI {
                 @Part("published") boolean isPublished,
                 @Part("discussion_type") RequestBody discussionType,
                 @Part("require_initial_post") boolean isUsersMustPost,
+                @Part("locked") boolean locked,
                 @Part("lock_at") RequestBody lockAt,
-                @Part MultipartBody.Part attachment);
+                @Part MultipartBody.Part attachment,
+                @Part("specific_sections") RequestBody specificSections);
 
         @Multipart
         @POST("{contextType}/{contextId}/discussion_topics")
@@ -87,6 +89,7 @@ public class DiscussionAPI {
                 @Part("delayed_post_at") RequestBody delayedPostAt,
                 @Part("discussion_type") RequestBody discussionType,
                 @Part("require_initial_post") boolean isUsersMustPost,
+                @Part("locked") boolean locked,
                 @Part("lock_at") RequestBody lockAt,
                 @Part MultipartBody.Part attachment);
 
@@ -105,7 +108,7 @@ public class DiscussionAPI {
         @GET("{contextType}/{contextId}/discussion_topics")
         Call<List<DiscussionTopicHeader>> getFilteredDiscussionTopic(@Path("contextType") String contextType, @Path("contextId") long courseId, @Query("search_term") String searchTerm);
 
-        @GET("{contextType}/{contextId}/discussion_topics/{topicId}")
+        @GET("{contextType}/{contextId}/discussion_topics/{topicId}?include[]=sections")
         Call<DiscussionTopicHeader> getDetailedDiscussion(@Path("contextType") String contextType, @Path("contextId") long contextId, @Path("topicId") long topicId);
 
         @GET("{contextType}/{contextId}/discussion_topics/{topicId}/entries")
@@ -166,7 +169,7 @@ public class DiscussionAPI {
         @PUT("{contextType}/{contextId}/discussion_topics/{topicId}")
         Call<DiscussionTopicHeader> updateDiscussionTopic(@Path("contextType") String contextType, @Path("contextId") long contextId, @Path("topicId") long topicId, @Query("title") String title, @Query("message")String message, @Query("published") int isPublished, @Query("discussionType")String discussionType);
 
-        @PUT("{contextType}/{contextId}/discussion_topics/{topicId}")
+        @PUT("{contextType}/{contextId}/discussion_topics/{topicId}?include[]=sections")
         Call<DiscussionTopicHeader> editDiscussionTopic(
                 @Path("contextType") String contextType,
                 @Path("contextId") long contextId,
@@ -216,8 +219,10 @@ public class DiscussionAPI {
                         newDiscussionHeader.isPublished(),
                         APIHelper.makeRequestBody(newDiscussionHeader.getDiscussionType()),
                         newDiscussionHeader.isRequireInitialPost(),
+                        newDiscussionHeader.isLocked(),
                         newDiscussionHeader.getLockAt() == null ? null : APIHelper.makeRequestBody(newDiscussionHeader.getLockAt().toString()),
-                        attachment
+                        attachment,
+                        newDiscussionHeader.getSpecificSections() == null ? null : APIHelper.makeRequestBody(newDiscussionHeader.getSpecificSections())
                 )).enqueue(callback);
 
     }
@@ -238,6 +243,7 @@ public class DiscussionAPI {
                         newDiscussionHeader.getDelayedPostAt() == null ? null : APIHelper.makeRequestBody(newDiscussionHeader.getDelayedPostAt().toString()),
                         APIHelper.makeRequestBody(newDiscussionHeader.getDiscussionType()),
                         newDiscussionHeader.isRequireInitialPost(),
+                        newDiscussionHeader.isLocked(),
                         newDiscussionHeader.getLockAt() == null ? null : APIHelper.makeRequestBody(newDiscussionHeader.getLockAt().toString()),
                         attachment
                 )).enqueue(callback);

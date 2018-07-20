@@ -79,7 +79,7 @@ data class FileFolder(
     @SerializedName("usage_rights")
     var usageRights: UsageRights? = null,
     @SerializedName("for_submissions")
-    var forSubmissions: Boolean = false
+    var forSubmissions: Boolean = false // Only for folders
 ) : CanvasModel<FileFolder>(), PaperParcelable {
 
     val isRoot: Boolean get() = parentFolderId == 0L

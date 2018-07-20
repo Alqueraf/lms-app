@@ -175,8 +175,8 @@ class UploadFilesDialog : AppCompatDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        var title = ""
-        var positiveText = ""
+        val title: String
+        val positiveText: String
 
         // Get dialog headers
         when (uploadType) {

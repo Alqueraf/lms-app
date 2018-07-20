@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         app:navigationIcon="@drawable/vd_close_gray"
-        app:title="Act As User"/>
+        app:title="@string/actAsUser"/>
 
     <View
         android:layout_width="match_parent"

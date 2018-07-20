@@ -33,6 +33,7 @@ package com.instructure.androidpolling.app.util;
  * limitations under the License.
  */
 
+import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -104,7 +105,7 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
         /**
          * Called to determine whether the view can be dismissed.
          */
-        boolean canDismiss(Object token);
+        boolean canDismiss(@Nullable Object token);
 
         /**
          * Called when the user has indicated they she would like to dismiss the view.

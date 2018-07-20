@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,10 +17,15 @@
   -->
 
 <resources>
+
     <string name="chooseMedia">メディアを選択</string>
     <string name="takeVideo">動画を撮影する</string>
     <string name="noCameraOnDevice">カメラが使用出来ません</string>
 
+    <string name="takePhoto">写真を撮る</string>
+    <string name="choosePhotoFromGallery">ギャラリーから画像を選択する</string>
+
+    <string name="utils_edit">編集</string>
     <!-- NotoriousPicker/uploadService -->
     <string name="notificationTitle">Canvasにアップロードする</string>
     <string name="preparingUpload">アップロードを準備</string>
@@ -189,5 +194,170 @@
     <string name="loading">読み込み中</string>
     <string name="save">保存</string>
     <string name="cropInstructions">ピンチ＆ドラッグで画像を調整してください。</string>
+
+    <!--Discussions-->
+    <plurals name="utils_discussionsReplies">
+        <item quantity="other">%s の返信</item>
+    </plurals>
+
+    <string name="utils_discussionsDeleted" formatted="false">この返信 %s を削除する</string>
+    <string name="utils_discussionsUnknownAuthor">不明な作成者</string>
+    <string name="utils_discussionsReply">返信</string>
+    <string name="utils_discussionsEdit">編集</string>
+    <string name="utils_discussionsDeleteWarning">この返信を本当に削除しますか？</string>
+    <string name="utils_availableToLabel">利用できる人：</string>
+    <string name="utils_availableFromLabel">利用可能となる日：</string>
+    <string name="utils_dueDateHeaderLabel">期限</string>
+    <string name="utils_dueLabel">期限：</string>
+    <string name="utils_delete">削除</string>
+    <string name="utils_dueDateAtTime" formatted="false">%1s の %2s が期限</string>
+    <string name="utils_noDateFiller">--</string>
+    <string name="utils_availabilityLabel">利用可能性：</string>
+    <string name="utils_pinnedIcon">固定ディスカッションのアイコン</string>
+    <string name="utils_pinDiscussion">ディスカッションを固定する</string>
+    <string name="utils_unpinDiscussion">ディスカッションの固定を外す</string>
+    <string name="utils_discussionPinned">固定されたディスカッション</string>
+    <string name="utils_pinnedDiscussions">ピン付けしました</string>
+    <string name="utils_discussionUnpinned">ディスカッション</string>
+    <string name="utils_emptyDiscussions">このセクションに表示するディスカッションはありません。</string>
+    <string name="utils_description">説明</string>
+    <string name="utils_allowThreadedReplies">スレッドでの返信を許可する</string>
+    <string name="utils_usersMustPost">受講生は返信を表示する前に投稿しなければなりません</string>
+    <string name="utils_discussionsClosed">コメントを閉じました</string>
+    <string name="utils_discussionsOpen">コメントを受け付ける</string>
+    <string name="utils_discussionsPin">固定</string>
+    <string name="utils_discussionsUnpin">固定の解除</string>
+    <string name="utils_discussionsOptions">オプション</string>
+    <string name="utils_discussionsDeleteTitle">ディスカッションを削除しますか？</string>
+    <string name="utils_discussionsDelete">ディスカッションを削除</string>
+    <string name="utils_discussionsDeleteMessage">これにより、ディスカッションとスレッド全体が削除されます。</string>
+    <string name="utils_discussionSentSuccess">議論の返信は正常に行われました。</string>
+    <string name="utils_discussionUpdateSuccess">ディスカッションは正常に編集されました。</string>
+    <string name="utils_discussionSentEmpty">ディスカッションの返信は空ではいけません。</string>
+    <string name="utils_discussionSentFailure">今回はディスカッション回答を送信できませんでした。</string>
+    <string name="utils_createDiscussion">新しいディスカッション</string>
+    <string name="utils_editDiscussion">ディスカッションを編集</string>
+    <string name="utils_discussionDetails">ディスカッションの詳細</string>
+    <string name="utils_discussionSuccessfullyUpdated">ディスカッションは正常に更新されました。</string>
+    <string name="utils_saving">保存</string>
+    <string name="utils_discussionSuccessfullyCreated">ディスカッションは正常に作成されました。</string>
+    <string name="utils_discussionSuccessfulAttachmentNot">添付ファイルをこのディスカッションに追加できませんでした。ファイルクオータをチェックして、もういちど試してください。</string>
+    <string name="utils_noTitle">タイトルなし</string>
+    <string name="utils_discussionsReplies_Title">返信</string>
+    <string name="utils_contentDescriptionDiscussionsOverflow">その他のオプション</string>
+    <string name="utils_discussionsUnreadRepliesBlank" formatted="false">%s %s %s</string>
+    <string name="utils_lastPost" formatted="false">最終掲示 %s</string>
+    <string name="utils_postedOnDate">%sに掲示</string>
+    <string name="utils_discussionPostBeforeRepliesEmptyText">回答は、少なくとも一つの回答を掲載している人にのみ表示されます。</string>
+    <string name="utils_createAnnouncementDelayPosting">転記遅延</string>
+    <string name="utils_postAt">投稿日時</string>
+    <string name="utils_postDate">投稿日</string>
+    <string name="utils_postTime">投稿時間</string>
+    <string name="utils_editAnnouncementTitle">発表を編集</string>
+    <string name="utils_createAnnouncementTitle">新規発表</string>
+    <string name="utils_announcementDetails">アナウンスの詳細</string>
+    <string name="utils_createAnnouncementNoDescription">説明が必要です</string>
+    <string name="utils_errorSavingAnnouncement">この発表をを保存しようとしてエラーが発生しました。もう一度試してください。</string>
+    <string name="utils_announcementSuccessfullyUpdated">発表は正常に更新されました。</string>
+    <string name="utils_announcementSuccessfullyCreated">発表は正常に作成されました。</string>
+
+    <plurals name="utils_discussionsUnread">
+        <item quantity="other">%s 未読</item>
+    </plurals>
+
+    <plurals name="utils_addAttachment">
+        <item quantity="zero">添付を追加</item>
+        <item quantity="other">添付を追加</item>
+    </plurals>
+
+
+    <!-- Assignment Override !-->
+    <string name="utils_unlockAfterDueDateError">ロック解除日を期日より後にすることはできません</string>
+    <string name="utils_lockBeforeDueDateError">ロック日を期日より前にすることはできません</string>
+    <string name="utils_lockAfterUnlockError">ロック日をロック解除日より前にすることはできません</string>
+    <string name="utils_assigneeBlankError">課題対象者を空白にすることはできません</string>
+    <string name="utils_assignTo">～へ割り当てられました</string>
+    <string name="utils_availableFrom">次の日時から</string>
+    <string name="utils_availableTo">利用できる人</string>
+    <string name="utils_availableFromDate">利用可能期間の開始日付</string>
+    <string name="utils_availableFromTime">利用可能期間の開始時間</string>
+    <string name="utils_availableToDate">利用可能期間の最終日</string>
+    <string name="utils_availableToTime">利用可能期間の最終時間</string>
+    <string name="utils_dueDate">期日</string>
+    <string name="utils_dueTime">期限存</string>
+    <string name="utils_addNew">新規を追加する</string>
+
+    <!--Attachment Layout-->
+    <string name="utils_downloadAttachment">添付をダウンロードする</string>
+    <string name="utils_removeAttachment">添付ファイルの削除</string>
+
+    <!--Unsaved Changes-->
+    <string name="utils_continueWithoutSavingTitle">保存せずに続行しますか？</string>
+    <string name="utils_continueWithoutSavingMessage">保存せずに続行してよろしいですか？</string>
+    <string name="utils_continueUnsaved">続行する</string>
+    <string name="utils_exitWithoutSavingTitle">保存せずに終了しますか？</string>
+    <string name="utils_exitWithoutSavingMessage">保存せずに終了してよろしいですか？</string>
+    <string name="utils_exitUnsaved">終了</string>
+    <string name="utils_cancel">キャンセル</string>
+
+    <string name="utils_contentDescriptionFiles">ファイルアイコン</string>
+    <string name="utils_turn_in">提出する</string>
+    <string name="utils_upload">アップロード</string>
+    <string name="utils_okay">OK</string>
+    <string name="utils_loadingFilesIndeterminate">ファイル&#8230;を読み込み中</string>
+    <string name="utils_allowedExtensions">拡張を許可する:&#160;</string>
+    <string name="utils_extensionNotAllowed">選択されたファイルタイプは許可されていません。</string>
+    <string name="utils_errorUploadingFile">あなたのファイルをアップロードする際にエラーが発生しました。再度試してください。</string>
+    <string name="utils_filesUploadedSuccessfully">ファイルがアップロードされました。</string>
+    <string name="utils_uploadingFiles">ファイル&#8230;をアップロード中</string>
+    <string name="utils_uploadingFile">ファイル&#8230;をアップロード中</string>
+    <string name="utils_noApps">お使いのデバイスには、このファイルを処理できるアプリケーションがインストールされていません。</string>
+    <string name="utils_errorGettingPhoto">画像取得中にエラーがありました。再度試してください。</string>
+    <string name="utils_oneOrMoreExtensionNotAllowed">1つ以上のファイルのファイル拡張子が許可されていません</string>
+    <string name="utils_fileUploadNotSupported">選択した課題にファイルをアップロードすることはできません。</string>
+    <string name="utils_noFilesUploaded">あなたはどのファイルも選択していません。</string>
+    <string name="utils_attachments">添付ファイル</string>
+    <string name="utils_uploadTo">アップロードする</string>
+    <string name="utils_uploadToCanvas">Canvasにアップロードする</string>
+    <string name="utils_uploadMyFiles">マイファイル</string>
+    <string name="utils_uploadCourseFiles">コースファイル</string>
+    <string name="utils_uploadToSubmissionComment">コメント送信をアップロード</string>
+    <string name="utils_attachFile">ファイルを添付する</string>
+    <string name="utils_with">と</string>
+    <string name="utils_dotWithSpaces">\u2022</string>
+
+    <string name="notificationPrimaryInboxTitle">Canvas 通知</string>
+    <string name="notificationChannelNamePrimary">一般的な Canvas 通知</string>
+    <string name="notificationChannelDescriptionPrimary">通知の詳細設定は、Canvas キャンバス通知設定のセクションで行うことができます。</string>
+
+    <string name="copyLinkAddress">リンクアドレスをコピー</string>
+    <string name="copyLink">リンクをコピー</string>
+    <string name="linkCopied">リンクがコピーされました</string>
+    <string name="link">リンク</string>
+    <string name="fileExists">ファイルがあります</string>
+    <string name="replace">置換</string>
+    <string name="shareLink">リンクを共有</string>
+    <string name="utils_launchExternalTool">外部ツールを起動する</string>
+    <string name="utils_externalToolTitle">外部ツール</string>
+    <string name="utils_placeholderTitle">外部ツール</string>
+    <string name="utils_placeholderDescription">この外部ツールを編集するには、Canvas ウェブアカウントにアクセスしてください。</string>
+
+    <string name="utils_unableToViewInBrowser">このLTIツールを表示する外部アプリを見つけられません。</string>
+
+    <string name="utils_unsupportedFileMessage">このファイルを表示できませんでした。下のボタンを使用して、デバイス上の別のアプリでファイルを開きます。</string>
+    <string name="utils_openWithAnotherApp">～にて開く...</string>
+    <string name="utils_couldNotPlayFormat">このメディアフォーマットはサポートされていません</string>
+    <string name="utils_fullscreen">全画面</string>
+
+    <string name="utils_dataUsageWarningTitle">データ使用に関する警告</string>
+    <string name="utils_dataUsageWarningMessage">この操作は大量のデータを消費する可能性があり、超過料金が発生する可能性があります。続行しますか？</string>
+    <string name="utils_doNotShowMessageAgain">このメッセージを再び表示しない</string>
+
+    <string name="utils_no_data_connection">データの接続を確認し、やり直してください。</string>
+    <string name="utils_playMedia">メディアを再生する</string>
+    <string name="utils_tryAgain">やり直し</string>
+    <string name="image_uploading">画像をアップロード中...</string>
+    <string name="image_upload_error">画像アップロードエラー</string>
+    <string name="retry">再試行</string>
 
 </resources>

@@ -18,6 +18,7 @@
 package com.instructure.parentapp.factorys;
 
 import com.instructure.canvasapi2.models.Student;
+import com.instructure.canvasapi2.models.User;
 import com.instructure.parentapp.presenters.CourseListPresenter;
 
 import instructure.androidblueprint.PresenterFactory;
@@ -27,9 +28,9 @@ import instructure.androidblueprint.PresenterFactory;
  */
 public class CourseListPresenterFactory implements PresenterFactory<CourseListPresenter> {
 
-    private Student mStudent;
+    private User mStudent;
 
-    public CourseListPresenterFactory(Student student) {
+    public CourseListPresenterFactory(User student) {
         mStudent = student;
     }
 

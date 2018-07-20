@@ -21,20 +21,21 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.support.v4.app.Fragment
 import com.instructure.canvasapi2.models.CanvasContext
-import java.util.ArrayList
-import java.util.HashMap
+import kotlinx.android.parcel.Parceler
+import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.WriteWith
+import java.util.*
 import java.util.regex.Pattern
 
-@Suppress("DataClassPrivateConstructor")
-data class Route private constructor(
+@Parcelize
+data class Route(
         /* A CanvasContext representing a Course, Group, or User*/
         var canvasContext: CanvasContext? = null,
         /* Any params needed for the fragment */
-        var arguments: Bundle = Bundle(),
+        var arguments: @WriteWith<BundleParceler> Bundle = Bundle(),
         /* The pattern of the URL we want to match against */
         var routePattern: Pattern? = null,
-        /* The original URL */
-        var url: String? = null,
+        /* The original URL as a Uri */
         var uri: Uri? = null,
         /* Primary Java Class Name ex: AssignmentsList.class */
         var primaryClass: Class<out Fragment>? = null,
@@ -53,14 +54,22 @@ data class Route private constructor(
         /* Information to understand what the route should do */
         var routeContext: RouteContext = RouteContext.UNKNOWN,
         /* Where the placement of the fragment belongs. Typically applied from the RouteMatcher. */
-        var routeType: RouteType = RouteType.FULLSCREEN
+        var routeType: RouteType = RouteType.FULLSCREEN,
+        /* A request to ignore any debouncing at the FragmentTransaction stage */
+        var ignoreDebounce: Boolean = false,
+        /* The URL of the path before the params have been replaced. */
+        var routePath: String? = null,
+        /* A tab id see the Tabs api for a definition. Not required for most routes. */
+        var tabId: String? = null
 ) : Parcelable {
 
-    constructor(route: String?) : this() {
-        if (route == null) return
+    //All constructors should eventually set the [Route.routePath]
+    constructor(routePath: String?) : this() {
+        if (routePath == null) return
+        this.routePath = routePath
 
         /* match anything but a slash after a colon and create a group for the name of the param */
-        val matcher = Pattern.compile("/:([^/]*)").matcher(route)
+        val matcher = Pattern.compile("/:([^/]*)").matcher(routePath)
 
         // Get the names of the params
         while (matcher.find()) {
@@ -68,7 +77,7 @@ data class Route private constructor(
         }
 
         /* match a slash, colon and then anything but a slash. Matched value is replaced so the param value can be parsed */
-        val paramValueMatcher = Pattern.compile("/:[^/]*").matcher(route)
+        val paramValueMatcher = Pattern.compile("/:[^/]*").matcher(routePath)
 
         if (paramValueMatcher.find()) {
             /* Create a group where the param was, so the value can be located */
@@ -76,20 +85,30 @@ data class Route private constructor(
             paramValueRegex = addLineMatchingAndOptionalEndSlash(paramValueRegex)
             routePattern = Pattern.compile(paramValueRegex)
         } else { // does not contain params, just look for exact match
-            routePattern = Pattern.compile(addLineMatchingAndOptionalEndSlash(route))
+            routePattern = Pattern.compile(addLineMatchingAndOptionalEndSlash(routePath))
         }
     }
 
-    constructor(route: String?, routeContext: RouteContext) : this(route) {
+    constructor(routePath: String?, routeContext: RouteContext) : this(routePath) {
         this.routeContext = routeContext
     }
 
-    constructor(route: String?, primaryClass: Class<out Fragment>?) : this(route) {
+    constructor(routePath: String?, primaryClass: Class<out Fragment>?) : this(routePath) {
         this.primaryClass = primaryClass
     }
 
-    constructor(route: String?, primaryClass: Class<out Fragment>?, secondaryClass: Class<out Fragment>?) : this(route, primaryClass) {
+    constructor(routePath: String?, primaryClass: Class<out Fragment>?, tabId: String) : this(routePath) {
+        this.primaryClass = primaryClass
+        this.tabId = tabId
+    }
+
+    constructor(routePath: String?, primaryClass: Class<out Fragment>?, secondaryClass: Class<out Fragment>?) : this(routePath, primaryClass) {
         this.secondaryClass = secondaryClass
+    }
+
+    constructor(routePath: String?, primaryClass: Class<out Fragment>?, secondaryClass: Class<out Fragment>?, queryParamNames: List<String> = ArrayList()) : this(routePath, primaryClass) {
+        this.secondaryClass = secondaryClass
+        this.queryParamNames.addAll(queryParamNames)
     }
 
     constructor(primaryClass: Class<out Fragment>?, canvasContext: CanvasContext?) : this() {
@@ -102,6 +121,16 @@ data class Route private constructor(
         this.arguments = arguments
     }
 
+    constructor(primaryClass: Class<out Fragment>?, canvasContext: CanvasContext?, arguments: Bundle, tabId: String) : this(primaryClass, canvasContext) {
+        this.arguments = arguments
+        this.tabId = tabId
+    }
+
+    constructor(primaryClass: Class<out Fragment>?, canvasContext: CanvasContext?, arguments: Bundle, ignoreDebounce: Boolean) : this(primaryClass, canvasContext) {
+        this.arguments = arguments
+        this.ignoreDebounce = ignoreDebounce
+    }
+
     constructor(primaryClass: Class<out Fragment>?, secondaryClass: Class<out Fragment>?, canvasContext: CanvasContext?, arguments: Bundle) : this(null, primaryClass, secondaryClass) {
         this.canvasContext = canvasContext
         this.arguments = arguments
@@ -112,13 +141,10 @@ data class Route private constructor(
         this.routeContext = routeContext
     }
 
-    fun getQueryString(): String {
-        return uri?.query ?: ""
-    }
+    fun getQueryString(): String = uri?.query ?: ""
 
-    fun getFragmentIdentifier(): String {
-        return uri?.fragment ?: ""
-    }
+    fun getFragmentIdentifier(): String = uri?.fragment ?: ""
+
 
     /**
      * Adds '^' and '$' to regex for line matching
@@ -144,32 +170,29 @@ data class Route private constructor(
      * @return true is route is a match, false otherwise
      */
     fun apply(url: String?): Boolean {
-        if (url == null) {
-            return false
-        }
+        if (url == null) return false
+
         val parsedUri = Uri.parse(url)
         val path = parsedUri.path
         val isMatch = routePattern?.matcher(path)?.find() ?: false
         if (isMatch) {
-            if (RouteContext.EXTERNAL == routeContext) {
-                return true // recognized as a match so the unsupported fragment doesn't match it, then getInternalRoute will handle it
-            }
+            if (RouteContext.EXTERNAL == routeContext) return true // recognized as a match so the unsupported fragment doesn't match it, then getInternalRoute will handle it
 
             uri = parsedUri
             paramsHash = createParamsHash(path)
             queryParamsHash = createQueryParamsHash(parsedUri)
 
-            if (!queryParamNames.isEmpty()) {
-                return checkQueryParamNamesExist(queryParamNames, queryParamsHash.keys)
+            if (!queryParamNames.isEmpty()) return queryParamsHash.keys.any {
+                key -> queryParamNames.any { param -> param.contains(key) || key.contains(param) }
             }
 
-            this.url = url
+            this.uri = Uri.parse(url)
         }
         return isMatch
     }
 
-    fun apply(primaryClass: Class<out Fragment>, secondaryClass: Class<out Fragment>): Boolean {
-        return RouteContext.EXTERNAL != routeContext && primaryClass == primaryClass && secondaryClass == secondaryClass
+    fun apply(primaryClass: Class<out Fragment>?, secondaryClass: Class<out Fragment>?): Boolean {
+        return RouteContext.EXTERNAL != routeContext && this.primaryClass == primaryClass && this.secondaryClass == secondaryClass
     }
 
     /**
@@ -212,74 +235,48 @@ data class Route private constructor(
         val queryParams = HashMap<String, String>()
         if (uri != null) {
             for (param in uri.queryParameterNames) {
-                queryParams.put(param, uri.getQueryParameter(param))
+                queryParams[param] = uri.getQueryParameter(param)
             }
         }
         return queryParams
     }
 
     private fun checkQueryParamNamesExist(expectedQueryParams: List<String>, actualQueryParams: Set<String>): Boolean {
-        return expectedQueryParams.any { actualQueryParams.contains(it) }
+        return actualQueryParams.any { expectedQueryParams.contains(it) }
     }
 
     fun getContextType(): CanvasContext.Type {
-        if (url == null && canvasContext == null) return CanvasContext.Type.UNKNOWN
-        if (canvasContext != null) return canvasContext!!.getType()
+        if (uri == null && canvasContext == null) return CanvasContext.Type.UNKNOWN
+        if (canvasContext != null) return canvasContext!!.type
 
-        val coursesMatcher = Pattern.compile("^/courses/?").matcher(url!!)
-        if (coursesMatcher.find()) {
-            return CanvasContext.Type.COURSE
-        }
+        val coursesMatcher = Pattern.compile("/courses/?").matcher(uri?.toString() ?: "")
+        if (coursesMatcher.find()) return CanvasContext.Type.COURSE
 
-        val groupsMatcher = Pattern.compile("^/groups/?").matcher(url!!)
-        if (groupsMatcher.find()) {
-            return CanvasContext.Type.GROUP
-        }
+        val groupsMatcher = Pattern.compile("/groups/?").matcher(uri?.toString() ?: "")
+        if (groupsMatcher.find()) return CanvasContext.Type.GROUP
 
-        val usersMatcher = Pattern.compile("^/users/?").matcher(url!!)
-        return if (usersMatcher.find()) {
-            CanvasContext.Type.USER
-        } else CanvasContext.Type.UNKNOWN
+        val usersMatcher = Pattern.compile("/users/?").matcher(uri?.toString() ?: "")
+        return if (usersMatcher.find()) CanvasContext.Type.USER else CanvasContext.Type.UNKNOWN
     }
 
-    constructor(source: Parcel) : this(
-            source.readParcelable<CanvasContext>(CanvasContext::class.java.classLoader),
-            source.readBundle(Route::class.java.classLoader),
-            source.readSerializable() as Pattern?,
-            source.readString(),
-            source.readParcelable<Uri>(Uri::class.java.classLoader),
-            source.readSerializable() as Class<out Fragment>?,
-            source.readSerializable() as Class<out Fragment>?,
-            source.readSerializable() as HashMap<String, String>,
-            source.readSerializable() as HashMap<String, String>,
-            source.createStringArrayList(),
-            source.createStringArrayList(),
-            source.readValue(Long::class.java.classLoader) as Long?,
-            RouteContext.values()[source.readInt()],
-            RouteType.values()[source.readInt()]
-    )
+    fun createUrl(replacementParams: HashMap<String, String>?): String {
+        if (replacementParams == null) return ""
 
-    override fun describeContents() = 0
+        var path = routePath ?: ""
 
-    override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
-        writeParcelable(canvasContext, flags)
-        writeBundle(arguments)
-        writeSerializable(routePattern)
-        writeString(url)
-        writeParcelable(uri, flags)
-        writeSerializable(primaryClass)
-        writeSerializable(secondaryClass)
-        writeSerializable(paramsHash)
-        writeSerializable(queryParamsHash)
-        writeStringList(paramNames)
-        writeStringList(queryParamNames)
-        writeValue(courseId)
-        writeInt(routeContext.ordinal)
-        writeInt(routeType.ordinal)
+        for (key in replacementParams.keys) {
+            var keyParamIndicator = key
+            if (!keyParamIndicator.startsWith(":")) {
+                keyParamIndicator = ":$key"
+            }
+            path = path.replace(keyParamIndicator.toRegex(), replacementParams[key] ?: "")
+        }
+
+        return path
     }
 
     companion object {
-        const val ROUTE = "route"
+        const val ROUTE = "route2.0"
 
         @JvmStatic
         fun extractCourseId(route: Route?): Long {
@@ -288,10 +285,16 @@ data class Route private constructor(
             } else 0L
         }
 
-        @JvmField
-        val CREATOR: Parcelable.Creator<Route> = object : Parcelable.Creator<Route> {
-            override fun createFromParcel(source: Parcel): Route = Route(source)
-            override fun newArray(size: Int): Array<Route?> = arrayOfNulls(size)
+        /* [@Parcelize] uses the paremeterless [Parcel.readBundle] for Bundles which apparently doesn't work for our
+           custom classes if passed across a remote procedure call (e.g. in an intent passed to [android.content.Context.startActivity]). */
+        private object BundleParceler : Parceler<Bundle> {
+            override fun create(parcel: Parcel): Bundle {
+                return parcel.readBundle(Route::class.java.classLoader)
+            }
+
+            override fun Bundle.write(parcel: Parcel, flags: Int) {
+                parcel.writeBundle(this)
+            }
         }
     }
 }

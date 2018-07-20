@@ -20,9 +20,10 @@ import com.instructure.canvasapi2.models.DiscussionTopicHeader
 import com.instructure.canvasapi2.models.Group
 import com.instructure.canvasapi2.models.Section
 import com.instructure.canvasapi2.models.User
+import com.instructure.teacher.interfaces.RceMediaUploadView
 import instructure.androidblueprint.FragmentViewInterface
 
-interface CreateDiscussionView : FragmentViewInterface {
+interface CreateDiscussionView : FragmentViewInterface, RceMediaUploadView {
     fun startSavingDiscussion()
     fun errorSavingDiscussion()
     fun discussionSavedSuccessfully(discussionTopic: DiscussionTopicHeader?)

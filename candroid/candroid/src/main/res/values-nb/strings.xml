@@ -145,12 +145,29 @@
     <string name="toDoNoDueDate">Ingen forfallsdato</string>
 
     <string name="dueAt">Innleveringsfrist</string>
+    <string name="dueAtTime">Innleveringsfrist %s</string>
     <string name="toDoDue">Forfall</string>
+    <string name="due">Forfall: %1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="one">%d trenger karaktersetting</item>
         <item quantity="other">%d trenger karaktersetting</item>
     </plurals>
     <string name="myFiles">Filer</string>
+    <string name="createAFolder">Opprett en mappe</string>
+    <string name="createFolder">Opprett mappe</string>
+    <string name="createAFile">Opprett en fil</string>
+    <string name="createFileFolderFabContentDesc">Vis knapper for opprett fil og opprett mappe</string>
+    <string name="folderCreationError">En fil oppsto under opprettelse av mappe.</string>
+    <string name="rename">Gi nytt navn</string>
+    <string name="renameFile">Gi nytt navn til en fil</string>
+    <string name="renameFolder">Gi nytt navn til en mappe</string>
+    <string name="blankName">Navnet kan ikke være blankt</string>
+    <string name="confirmDeleteFile">Er du sikker på at du til vil slette filen \'%s\'? Denne handlingen kan ikke angres.</string>
+    <string name="confirmDeleteEmptyFolder">Er du sikker på at du til vil slette mappen \'%s\'? Denne handlingen kan ikke angres.</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="one">Er du sikker på at du til vil slette mappen \'%1$s\', inklusive det %2$d elementet den inneholder? Denne handlingen kan ikke angres.</item>
+        <item quantity="other">Er du sikker på at du til vil slette mappen \'%1$s\', inklusive de %2$d elementene den inneholder? Denne handlingen kan ikke angres.</item>
+    </plurals>
     <string name="settings">Innstillinger</string>
     <string name="name">Navn</string>
     <string name="email">E-post</string>
@@ -274,7 +291,7 @@
 	<string name="students">Studenter</string>
     <string name="observers">Observatører</string>
 
-    <string name="syllabusMissing">En kursoversikt er ikke lagt til.</string>
+    <string name="syllabusMissing">En emneoversikt er ikke lagt til.</string>
 	<string name="canvas">Canvas</string>
 	<string name="chooseRecipient">Velg mottaker(e)</string>
     <string name="messageHasNoRecipients">Denne meldingen har foreløpig ingen mottakere.</string>
@@ -354,6 +371,8 @@
 	<string name="errorPostingAnnouncement">Det oppsto en feil med å legge ut kunngjøringen.</string>
 	<string name="errorPostingDiscussion">Det oppsto en feil med å legge ut diskusjonen</string>
 	<string name="allowThreading">Tillatt kjede-svar</string>
+    <string name="usersMustPost">Brukere må publisere før de kan se svar</string>
+    <string name="allowUserComments">Lar brukere kommentere</string>
 	<string name="message">Melding</string>
 	<string name="title">Tittel</string>
 
@@ -443,6 +462,7 @@
     <string name="subTypeOnlineQuiz">Online quiz</string>
 	<string name="subTypeMediaRecording">Medieinnspilling</string>
     <string name="sub_type_lti_launch">LTI-start</string>
+    <string name="subTypeDiscussionTopic">Diskusjon</string>
     <string name="turnInByHand">Du må levere inn denne oppgaven for hånd</string>
 	<string name="noSubRequired">Ingen innlevering påkrevd</string>
 	<string name="noTurnInOnMobile">Mobil innlevering støttes ikke</string>
@@ -572,6 +592,7 @@
     <string name="uploadMyFiles">Mine filer</string>
     <string name="uploadCourseFiles">Filer for emne</string>
 
+    <string name="uploadToSubmissionComment">Last opp til sendt inn kommentar</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">Endringslogg</string>
 
@@ -610,14 +631,6 @@
 
     <string name="notoriousSubmissionInProgress">Innsending av filer&#8230; Sjekk varslingslinjen for oppdateringer.</string>
     <string name="notoriousSubmissionSuccessful">Ferdig med å sende filen</string>
-
-    <string name="pinned_icon">Ikon for festet diskusjon</string>
-    <string name="pin_discussion">Festet diskusjon</string>
-    <string name="unpin_discussion">Løsne diskusjon</string>
-    <string name="discussion_pinned">Diskusjonen festet</string>
-    <string name="pinned_discussions">Festede diskusjoner</string>
-    <string name="discussion_unpinned">Diskusjon løst opp</string>
-    <string name="empty_discussions">Det er ingen diskusjoner å vise i denne seksjonen.</string>
 
     <string name="bio">Biografi</string>
     <string name="draft">Utkast</string>
@@ -844,6 +857,7 @@
     <string name="locked_mastery_paths">Låst inntil \"%s\" har fått karakterer</string>
     <string name="locked_icon">Låst-ikon</string>
     <string name="choose_assignment_group">Velg oppgavegruppe</string>
+    <string name="chooseAssignmentPath">Velg oppgavesti</string>
     <string name="select">Velg</string>
     <string name="choice_position">Valg %d</string>
     <string name="updating_module_info">Oppdaterer modulinformasjon&#8230;</string>
@@ -873,13 +887,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">Starte lenke i ekstern nettleser</string>
-    <string name="gaugeLaunchFailure">Målestokk kunne ikke lastes inn nå.</string>
-
+    <string name="ltiLaunchFailure">Dette LTI-verktøyet kan ikke lastes ned på dette tidspunktet.</string>
     <string name="urlSubmission">URL-innlevering</string>
     <string name="assignmentDeletedError">Denne oppgaven er ikke lenger tilgjengelig.</string>
     <string name="homePageIdForNotifications">Nylig aktivitet</string>
     <string name="homePageIdForModules">Moduler</string>
     <string name="homePageIdForAssignments">Oppgaver</string>
+
     <string name="homePageIdForSyllabus">Emneoversikt</string>
 
     <string name="contentDescriptionWidgetRefresh">Oppdater widgeten</string>
@@ -893,9 +907,44 @@
     <string name="finalGrade">Sluttkarakter</string>
 
     <string name="moreThan99">99+</string>
-    <string name="dot_with_spaces">  \u2022  </string>
+    <string name="max_count">99+</string>
 
     <string name="opensInWebView">Åpne i nettvisning</string>
     <string name="unsupportedTabLabel">Ikke støttet på denne enheten</string>
+
+    <string name="downloadingFile">Laster ned</string>
+    <string name="downloadFailed">Kunne ikke laste ned</string>
+    <string name="downloadSuccessful">Lastet ned</string>
+
+    <string name="full_due_date_details">Fulle forfallsdato detaljer</string>
+    <string name="submissions">Innleveringer</string>
+    <string name="attachment">Vedlegg</string>
+    <string name="contentDescription_back">Gå tilbake</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="one">%s poeng</item>
+        <item quantity="other">%s poeng</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="one">%s poeng</item>
+        <item quantity="other">%s poeng</item>
+    </plurals>
+    <string name="capitalTo">Til</string>
+
+
+    <string name="unableToViewInBrowser">Vi finner ikke et eksternt program for å vise dette LTI-verktøyet.</string>
+    <string name="commentUpload">Last opp kommentar</string>
+    <string name="unableToUploadMediaComment">For å sende mediekommentar, send eller slett usendt tekstkommentar.</string>
+
+    <string name="frontPage">Forside</string>
+    <string name="editPage">Endre side</string>
+    <string name="description">Beskrivelse</string>
+    <string name="pageSuccessfullyUpdated">Side oppdatert.</string>
+    <string name="errorSavingPage">En feil oppsto under lagringen av siden. Prøv igjen.</string>
+    <string name="pageTitleMustBeSet">Sidetittel må være satt.</string>
+    <string name="pageDetails">Sidedetaljer</string>
+    <string name="saving">Lagrer</string>
+    <string name="confirmDeleteEvent">Er du sikker du ønsker å slette denne hendelsen?</string>
+    <string name="conferencesNotSupported">Konferanser støttes ikke på mobil.</string>
 
 </resources>

@@ -16,27 +16,24 @@
   ~
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/default_padding"
-    android:paddingRight="@dimen/default_padding"
     android:layout_marginTop="@dimen/med_padding"
-    android:layout_centerVertical="true">
+    android:paddingLeft="@dimen/default_padding"
+    android:paddingRight="@dimen/default_padding">
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="4dp"
+        android:paddingStart="4dp"
+        android:textColor="@color/canvasTextMedium"
+        android:textSize="15sp"
+        tools:text="This Is A Header"/>
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:textColor="@color/canvasTextMedium"
-            android:textSize="15sp"
-            android:paddingEnd="4dp"
-            android:paddingStart="4dp"/>
-
-
-</RelativeLayout>
+</FrameLayout>
 

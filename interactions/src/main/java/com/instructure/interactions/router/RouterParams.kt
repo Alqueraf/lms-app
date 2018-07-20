@@ -6,6 +6,7 @@ object RouterParams {
     const val CONVERSATION_ID = "conversation_id"
     const val COURSE_ID = "course_id"
     const val FILE_ID = "file_id"
+    const val FOLDER_NAME = "file_name"
     const val GRADE_ID = "grade_id"
     const val MESSAGE_ID = "message_id" // used by discussions and announcements
     const val MODULE_ID = "module_id"
@@ -21,4 +22,6 @@ object RouterParams {
     const val ANNOUNCEMENT_ID = "announcement_id"
     const val ENTRY_ID = "entry_id"
     const val PREVIEW = "preview"
+    const val EXTERNAL_ID = "external_id"
+    const val RECENT_ACTIVITY = "view"
 }

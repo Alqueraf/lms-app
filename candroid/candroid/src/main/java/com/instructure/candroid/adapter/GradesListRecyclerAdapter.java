@@ -58,9 +58,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
-
 public class GradesListRecyclerAdapter extends ExpandableRecyclerAdapter<AssignmentGroup, Assignment, RecyclerView.ViewHolder> {
-
 
     private StatusCallback<List<AssignmentGroup>> assignmentGroupCallback;
     private StatusCallback<Course> courseCallback;
@@ -70,7 +68,7 @@ public class GradesListRecyclerAdapter extends ExpandableRecyclerAdapter<Assignm
     private AdapterToFragmentCallback<Assignment> adapterToFragmentCallback;
     private AdapterToGradesCallback adapterToGradesCallback;
     private SetSelectedItemCallback selectedItemCallback;
-    private WhatIfDialogStyled.WhatIfDialogCallback dialogStyled;
+    private WhatIfDialogStyled.WhatIfDialogCallback whatIfDialogCallback;
 
     private CanvasContext canvasContext;
     private ArrayList<AssignmentGroup> assignmentGroups;
@@ -82,7 +80,7 @@ public class GradesListRecyclerAdapter extends ExpandableRecyclerAdapter<Assignm
     private CourseGrade courseGrade;
 
     public interface AdapterToGradesCallback{
-        void notifyGradeChanged(CourseGrade courseGrade);
+        void notifyGradeChanged(@Nullable CourseGrade courseGrade);
         boolean getIsEdit();
         void setTermSpinnerState(boolean isEnabled);
         void setIsWhatIfGrading(boolean isWhatIfGrading);
@@ -98,16 +96,17 @@ public class GradesListRecyclerAdapter extends ExpandableRecyclerAdapter<Assignm
     }
 
     public GradesListRecyclerAdapter(Context context, CanvasContext canvasContext,
-        AdapterToFragmentCallback adapterToFragmentCallback,
-        AdapterToGradesCallback adapterToGradesCallback,
-        StatusCallback<GradingPeriodResponse> gradingPeriodsCallback, WhatIfDialogStyled.WhatIfDialogCallback dialogStyled) {
+                            AdapterToFragmentCallback<Assignment> adapterToFragmentCallback,
+                            AdapterToGradesCallback adapterToGradesCallback,
+                            StatusCallback<GradingPeriodResponse> gradingPeriodsCallback,
+                            WhatIfDialogStyled.WhatIfDialogCallback whatIfDialogCallback) {
         super(context, AssignmentGroup.class, Assignment.class);
 
         this.canvasContext = canvasContext;
         this.adapterToFragmentCallback = adapterToFragmentCallback;
         this.adapterToGradesCallback = adapterToGradesCallback;
         this.gradingPeriodsCallback = gradingPeriodsCallback;
-        this.dialogStyled = dialogStyled;
+        this.whatIfDialogCallback = whatIfDialogCallback;
 
         assignmentGroups = new ArrayList<>();
         assignmentsHash = new HashMap<>();
@@ -134,12 +133,8 @@ public class GradesListRecyclerAdapter extends ExpandableRecyclerAdapter<Assignm
         } else if (viewType == Types.TYPE_EMPTY_CELL) {
             return EmptyViewHolder.holderResId();
         } else {
-            return GradeViewHolder.holderResId();
+            return GradeViewHolder.Companion.holderResId();
         }
-    }
-    @Override
-    public void contextReady() {
-
     }
 
     @Override
@@ -163,8 +158,7 @@ public class GradesListRecyclerAdapter extends ExpandableRecyclerAdapter<Assignm
         CourseManager.getEnrollmentsForGradingPeriod(canvasContext.getId(), gradingPeriodID, enrollmentCallback, true);
     }
 
-
-    public void loadAssignment () {
+    private void loadAssignment () {
         // All grading periods and no grading periods are the same case
         courseGrade = ((Course) canvasContext).getCourseGrade(true);
         adapterToGradesCallback.notifyGradeChanged(courseGrade);
@@ -280,9 +274,9 @@ public class GradesListRecyclerAdapter extends ExpandableRecyclerAdapter<Assignm
     public void onBindChildHolder(RecyclerView.ViewHolder holder, AssignmentGroup assignmentGroup, Assignment assignment) {
         boolean isEdit = adapterToGradesCallback.getIsEdit();
         if(isEdit){
-            GradeBinder.bind((GradeViewHolder) holder, getContext(), ColorKeeper.getOrGenerateColor(canvasContext), assignmentsHash.get(assignment.getId()), (Course) canvasContext, adapterToGradesCallback.getIsEdit(), dialogStyled, adapterToFragmentCallback, selectedItemCallback);
+            GradeBinder.bind((GradeViewHolder) holder, getContext(), ColorKeeper.getOrGenerateColor(canvasContext), assignmentsHash.get(assignment.getId()), adapterToGradesCallback.getIsEdit(), whatIfDialogCallback, adapterToFragmentCallback, selectedItemCallback);
         } else {
-            GradeBinder.bind((GradeViewHolder) holder, getContext(), ColorKeeper.getOrGenerateColor(canvasContext), assignment, (Course) canvasContext, adapterToGradesCallback.getIsEdit(), dialogStyled, adapterToFragmentCallback, selectedItemCallback);
+            GradeBinder.bind((GradeViewHolder) holder, getContext(), ColorKeeper.getOrGenerateColor(canvasContext), assignment, adapterToGradesCallback.getIsEdit(), whatIfDialogCallback, adapterToFragmentCallback, selectedItemCallback);
         }
     }
 

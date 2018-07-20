@@ -23,13 +23,14 @@ import android.support.v7.app.AppCompatActivity
 
 import com.instructure.candroid.R
 import com.instructure.candroid.fragment.BookmarksFragment
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.candroid.util.Analytics
-import com.instructure.candroid.util.RouterUtils
 import com.instructure.canvasapi2.models.Bookmark
 import com.instructure.pandautils.utils.ColorKeeper
 import com.instructure.pandautils.utils.ColorUtils
 import com.instructure.pandautils.utils.Const
 import com.instructure.candroid.util.ShortcutUtils
+import com.instructure.canvasapi2.utils.ApiPrefs
 
 class BookmarkShortcutActivity : AppCompatActivity() {
 
@@ -38,14 +39,15 @@ class BookmarkShortcutActivity : AppCompatActivity() {
         setContentView(R.layout.activity_bookmark_shortcuts)
 
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.container, BookmarksFragment.newInstance { bookmarkSelected(it) }, BookmarksFragment::class.java.simpleName)
+        val route = BookmarksFragment.makeRoute(ApiPrefs.user)
+        ft.replace(R.id.container, BookmarksFragment.newInstance(route) { bookmarkSelected(it) }, BookmarksFragment::class.java.simpleName)
         ft.commitAllowingStateLoss()
     }
 
     @Suppress("DEPRECATION")
     private fun bookmarkSelected(bookmark: Bookmark) {
 
-        Analytics.trackButtonPressed(this, "Bookmark Selected", null)
+        Analytics.trackButtonPressed(this, "Bookmarker Selected", null)
 
         val successful = ShortcutUtils.generateShortcut(this, bookmark)
         if(successful) {
@@ -58,7 +60,7 @@ class BookmarkShortcutActivity : AppCompatActivity() {
         launchIntent.putExtra(Const.BOOKMARK, bookmark.name)
         launchIntent.putExtra(Const.URL, bookmark.url)
 
-        val color = ColorKeeper.getOrGenerateColor(RouterUtils.getContextIdFromURL(bookmark.url))
+        val color = ColorKeeper.getOrGenerateColor(RouteMatcher.getContextIdFromURL(bookmark.url) ?: "")
         val options = BitmapFactory.Options()
         options.inMutable = true
         val bitIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_bookmark, options)

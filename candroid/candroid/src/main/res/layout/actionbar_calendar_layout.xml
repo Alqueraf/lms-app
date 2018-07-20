@@ -43,7 +43,8 @@
             android:maxLength="48"
             android:textColor="@color/white"
             android:textSize="20sp"
-            tools:text="January 2018"/>
+            tools:text="January 2018"
+            tools:textColor="@color/black"/>
 
     </LinearLayout>
 
@@ -58,6 +59,8 @@
         android:importantForAccessibility="no"
         android:rotation="180"
         android:tint="@color/white"
-        app:srcCompat="@drawable/vd_expand" />
+        app:srcCompat="@drawable/vd_expand"
+        tools:src="@drawable/vd_expand"
+        tools:tint="@color/black"/>
 
 </LinearLayout>

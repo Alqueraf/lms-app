@@ -13,8 +13,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- */    package com.instructure.candroid.fragment
+ */
+package com.instructure.candroid.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -30,29 +33,32 @@ import com.instructure.canvasapi2.managers.DiscussionManager
 import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.DiscussionTopicHeader
 import com.instructure.canvasapi2.models.post_models.DiscussionTopicPostBody
-import com.instructure.canvasapi2.utils.DateHelper
 import com.instructure.canvasapi2.utils.NetworkUtils
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.dialogs.UnsavedChangesExitDialog
-import com.instructure.pandautils.models.FileSubmitObject
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.fragment_create_announcement.*
 import kotlinx.coroutines.experimental.Job
-import java.util.*
 
 class CreateAnnouncementFragment : ParentFragment() {
 
     /* The announcement to be edited. This will be null if we're creating a new announcement */
-    private var editAnnouncement by NullableParcelableArg<DiscussionTopicHeader>()
+    private var editAnnouncement by NullableParcelableArg<DiscussionTopicHeader>(key = DISCUSSION_TOPIC_HEADER)
+
+    private var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
 
     /* Menu buttons. We don't cache these because the toolbar is reconstructed on configuration change. */
     private val mSaveMenuButton get() = createAnnouncementToolbar.menu.findItem(R.id.menuSaveAnnouncement)
     private val mSaveButtonTextView: TextView? get() = view?.findViewById(R.id.menuSaveAnnouncement)
 
     private var apiJob: Job? = null
-    var isEditing = editAnnouncement != null
+    private var rceImageUploadJob: Job? = null
+
+    private var isEditing = editAnnouncement != null
+    private var skipUnsavedCheck = false
 
     /**
      * The announcement that is being edited/created. Changes should be applied directly to this
@@ -64,18 +70,14 @@ class CreateAnnouncementFragment : ParentFragment() {
     val announcement: DiscussionTopicHeader = editAnnouncement ?: DiscussionTopicHeader().apply {
         isAnnouncement = true
         isPublished = true
+        isLocked = true
         type = DiscussionTopicHeader.DiscussionType.SIDE_COMMENT
     }
 
-    override fun title() = ""
-    override fun allowBookmarking() = false
-    override fun applyTheme() {
-        setupToolbar()
-    }
-
+    //region Fragment Lifecycle Overrides
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setRetainInstance(this, true)
+        retainInstance = true
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -88,12 +90,51 @@ class CreateAnnouncementFragment : ParentFragment() {
         setupViews()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        rceImageUploadJob?.cancel()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Get the image Uri
+            when (requestCode) {
+                RequestCodes.PICK_IMAGE_GALLERY -> data?.data
+                RequestCodes.CAMERA_PIC_REQUEST -> MediaUploadUtils.handleCameraPicResult(activity, null)
+                else -> null
+            }?.let { imageUri ->
+                // If the image Uri is not null, upload it
+                rceImageUploadJob = MediaUploadUtils.uploadRceImageJob(imageUri, canvasContext, activity) { text, alt -> announcementRCEView.insertImage(text, alt) }
+            }
+        }
+    }
+    //endregion
+
+    //region Fragment Interaction Overrides
+    override fun title() = ""
+
+    override fun applyTheme() {
+        setupToolbar()
+    }
+    //endregion
+
+    //region Parent Fragment Overrides
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        announcement.message = announcementRCEView.html
+    }
+
+    //endregion
+
+    //region Setup
     private fun setupToolbar() {
         createAnnouncementToolbar.setupAsCloseButton {
-            if(announcement.message == announcementRCEView?.html) {
+            if (announcement.message == announcementRCEView?.html) {
+                skipUnsavedCheck = true
                 activity?.onBackPressed()
             } else {
                 UnsavedChangesExitDialog.show(fragmentManager, {
+                    skipUnsavedCheck = true
                     activity?.onBackPressed()
                 })
             }
@@ -101,7 +142,9 @@ class CreateAnnouncementFragment : ParentFragment() {
         createAnnouncementToolbar.title = getString(if (isEditing) R.string.utils_editAnnouncementTitle else R.string.utils_createAnnouncementTitle)
         createAnnouncementToolbar.setMenu(R.menu.create_announcement) { menuItem ->
             when (menuItem.itemId) {
-                R.id.menuSaveAnnouncement -> if(NetworkUtils.isNetworkAvailable) { saveAnnouncement() }
+                R.id.menuSaveAnnouncement -> if (NetworkUtils.isNetworkAvailable) {
+                    saveAnnouncement()
+                }
             }
         }
         ViewStyler.themeToolbarBottomSheet(activity, isTablet, createAnnouncementToolbar, Color.BLACK, false)
@@ -116,6 +159,12 @@ class CreateAnnouncementFragment : ParentFragment() {
     private fun setupViews() {
         setupTitle()
         setupDescription()
+        setupAllowCommentsSwitch()
+        setupUsersMustPostSwitch()
+
+        // Attempting to upload an image before description gets focus does nothing - hide the RCE toolbar initially -
+        announcementRCEView.hideEditorToolbar()
+        announcementRCEView.actionUploadImageCallback = { MediaUploadUtils.showPickImageDialog(this) }
     }
 
     private fun setupTitle() {
@@ -123,6 +172,9 @@ class CreateAnnouncementFragment : ParentFragment() {
         announcementNameTextInput.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
         announcementNameEditText.setText(announcement.title)
         announcementNameEditText.onTextChanged { announcement.title = it }
+        announcementNameEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) announcementRCEView.hideEditorToolbar()
+        }
     }
 
     private fun setupDescription() {
@@ -136,11 +188,39 @@ class CreateAnnouncementFragment : ParentFragment() {
         announcementRCEView.setLabel(announcementDescLabel, R.color.defaultTextDark, R.color.defaultTextGray)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        announcement.message = announcementRCEView.html
+    private fun enableUsersMustPostSwitch(enabled: Boolean) {
+        if (enabled) {
+            usersMustPostWrapper.alpha = 1f
+            usersMustPostSwitch.isEnabled = true
+        } else {
+            usersMustPostWrapper.alpha = 0.35f
+            usersMustPostSwitch.isEnabled = false
+            usersMustPostSwitch.isChecked = false
+        }
     }
 
+    private fun setupAllowCommentsSwitch() {
+        allowCommentsSwitch.applyTheme()
+        allowCommentsSwitch.isChecked = !announcement.isLocked
+        allowCommentsSwitch.setOnCheckedChangeListener { _, isChecked ->
+            announcement.isLocked = !isChecked
+            enableUsersMustPostSwitch(isChecked)
+        }
+    }
+
+    private fun setupUsersMustPostSwitch() {
+        with (usersMustPostSwitch) {
+            applyTheme()
+            isChecked = announcement.isRequireInitialPost
+            enableUsersMustPostSwitch(!announcement.isLocked)
+            setOnCheckedChangeListener { _, isChecked ->
+                announcement.isRequireInitialPost = isChecked
+            }
+        }
+    }
+    //endregion
+
+    //region Save Related
     private fun saveAnnouncement() {
         val description = announcementRCEView.html
         if (description.isNullOrBlank()) {
@@ -202,20 +282,34 @@ class CreateAnnouncementFragment : ParentFragment() {
         }
     }
 
+    override fun handleBackPressed(): Boolean {
+        return if (!skipUnsavedCheck && announcement.message != announcementRCEView?.html) {
+            UnsavedChangesExitDialog.show(fragmentManager, {
+                skipUnsavedCheck = true
+                activity?.onBackPressed()
+            })
+            true
+        } else false
+    }
+    //endregion
+
     companion object {
-        @JvmStatic private val DISCUSSION_TOPIC_HEADER = "discussion_topic_header"
+        @JvmStatic
+        private val DISCUSSION_TOPIC_HEADER = "discussion_topic_header"
 
         @JvmStatic
-        fun makeBundle(canvasContext: CanvasContext, discussionTopicHeader: DiscussionTopicHeader) : Bundle {
-            return ParentFragment.createBundle(canvasContext).apply {
-                putParcelable(DISCUSSION_TOPIC_HEADER, discussionTopicHeader)
-            }
-        }
+        fun newInstance(route: Route) = if (validRoute(route)) {
+                    CreateAnnouncementFragment().apply {
+                        arguments = route.arguments
+                    }
+                } else null
 
         @JvmStatic
-        fun newInstance(args: Bundle) = CreateAnnouncementFragment().apply {
-            arguments = args
-            editAnnouncement = args.getParcelable(DISCUSSION_TOPIC_HEADER)
-        }
+        fun makeRoute(canvasContext: CanvasContext, discussionTopicHeader: DiscussionTopicHeader?): Route =
+                Route(CreateAnnouncementFragment::class.java, canvasContext, canvasContext.makeBundle().apply {
+                    putParcelable(DISCUSSION_TOPIC_HEADER, discussionTopicHeader)
+                })
+
+        fun validRoute(route: Route) = route.canvasContext != null
     }
 }

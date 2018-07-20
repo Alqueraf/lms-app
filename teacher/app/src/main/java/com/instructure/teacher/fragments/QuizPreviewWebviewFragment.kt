@@ -82,15 +82,17 @@ class QuizPreviewWebviewFragment : InternalWebViewFragment() {
     }
 
     override fun setupToolbar(courseColor: Int) {
-        toolbar.setupBackButton {
-            if (!canGoBack()) {
-                (context as Activity).onBackPressed()
-            } else {
-                goBack()
+        toolbar?.let {
+            it.setupBackButton {
+                if (!canGoBack()) {
+                    (context as Activity).onBackPressed()
+                } else {
+                    goBack()
+                }
             }
+            ViewStyler.setToolbarElevationSmall(context, it)
+            ViewStyler.themeToolbarBottomSheet(activity, isTablet, it, Color.BLACK, false)
         }
-        ViewStyler.setToolbarElevationSmall(context, toolbar)
-        ViewStyler.themeToolbarBottomSheet(activity, isTablet, toolbar, Color.BLACK, false)
     }
 
     override fun onDestroy() {

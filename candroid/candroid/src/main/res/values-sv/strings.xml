@@ -145,12 +145,29 @@
     <string name="toDoNoDueDate">Inget inlämningsdatum</string>
 
     <string name="dueAt">Ska lämnas in</string>
+    <string name="dueAtTime">Inlämnas vid %s</string>
     <string name="toDoDue">Färdig</string>
+    <string name="due">Ska vara klar %1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="one">%d behöver betygsättning</item>
         <item quantity="other">%d behöver betygsättning</item>
     </plurals>
     <string name="myFiles">Filer</string>
+    <string name="createAFolder">Skapa en mapp</string>
+    <string name="createFolder">Skapa mapp</string>
+    <string name="createAFile">Skapa en fil</string>
+    <string name="createFileFolderFabContentDesc">Visa skapa-fil och skapa-mapp knappar</string>
+    <string name="folderCreationError">Ett fel uppstod under mapp-skapandet.</string>
+    <string name="rename">Döp om</string>
+    <string name="renameFile">Byt namn på fil</string>
+    <string name="renameFolder">Byt namn på mappen</string>
+    <string name="blankName">Namnet kan inte vara tomt</string>
+    <string name="confirmDeleteFile">Är du säker på att du vill radera fil \'%s\'? Den här åtgärden kan inte ångras.</string>
+    <string name="confirmDeleteEmptyFolder">Är du säker på att du vill ta bort mappen \'%s\'? Den här åtgärden kan inte ångras.</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="one">Är du säker på att du vill ta bort mappen \'%1$s\', inklusive föremålet som %2$d det innehåller? Den här åtgärden kan inte ångras.</item>
+        <item quantity="other">Är du säker på att du vill ta bort mappen \'%1$s\' inklusive föremålet %2$d som det innehåller? Den här åtgärden kan inte ångras.</item>
+    </plurals>
     <string name="settings">Inställningar</string>
     <string name="name">Namn</string>
     <string name="email">E-post</string>
@@ -354,6 +371,8 @@
 	<string name="errorPostingAnnouncement">Ett fel uppstod när annonseringen postades.</string>
 	<string name="errorPostingDiscussion">Ett fel uppstod när diskussionen postades.</string>
 	<string name="allowThreading">Tillåt trådsvar</string>
+    <string name="usersMustPost">Användare måste skriva ett inlägg innan de kan se svaren</string>
+    <string name="allowUserComments">Tillåt användare att kommentera</string>
 	<string name="message">Meddelande</string>
 	<string name="title">Titel</string>
 
@@ -442,6 +461,7 @@
     <string name="subTypeOnlineQuiz">Online-test</string>
 	<string name="subTypeMediaRecording">Mediainspelning</string>
     <string name="sub_type_lti_launch">LTI Lansering</string>
+    <string name="subTypeDiscussionTopic">Diskussion</string>
     <string name="turnInByHand">Du måste lämna in den här uppgiften för hand</string>
 	<string name="noSubRequired">Ingen inlämning krävs</string>
 	<string name="noTurnInOnMobile">Mobilinlämning stöds inte</string>
@@ -571,6 +591,7 @@
     <string name="uploadMyFiles">Mina filer</string>
     <string name="uploadCourseFiles">Kursfiler</string>
 
+    <string name="uploadToSubmissionComment">Ladda upp till inlämningskommentar</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">Ändringslogg</string>
 
@@ -609,14 +630,6 @@
 
     <string name="notoriousSubmissionInProgress">Skickar in filer&#8230; Se aviseringsfältet för uppdateringar.</string>
     <string name="notoriousSubmissionSuccessful">Filen lämnades in</string>
-
-    <string name="pinned_icon">Ikon för fästa diskussioner</string>
-    <string name="pin_discussion">Fäst diskussion</string>
-    <string name="unpin_discussion">Ta ner diskussion</string>
-    <string name="discussion_pinned">Diskussion är fäst</string>
-    <string name="pinned_discussions">Nålade diskussioner</string>
-    <string name="discussion_unpinned">Diskussionen har lossats</string>
-    <string name="empty_discussions">Det finns inga diskussioner att visa i den här sektionen.</string>
 
     <string name="bio">Om</string>
     <string name="draft">Skiss</string>
@@ -843,6 +856,7 @@
     <string name="locked_mastery_paths">Låst tills den \"%s\" är betygsatt</string>
     <string name="locked_icon">Lås-ikon</string>
     <string name="choose_assignment_group">Välj uppgiftsgrupp</string>
+    <string name="chooseAssignmentPath">Välj uppgiftssökväg</string>
     <string name="select">Välj</string>
     <string name="choice_position">Val %d</string>
     <string name="updating_module_info">Uppdaterar modul-information&#8230;</string>
@@ -872,13 +886,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">Starta länken i en extern webbläsare</string>
-    <string name="gaugeLaunchFailure">Mätaren kunde inte laddas vid denna tidpunkt.</string>
-
+    <string name="ltiLaunchFailure">Det här LTI-verktyget kunde inte laddas just nu.</string>
     <string name="urlSubmission">URL-inlämning</string>
     <string name="assignmentDeletedError">Denna uppgift är inte längre tillgänglig.</string>
     <string name="homePageIdForNotifications">Senaste aktivitet</string>
     <string name="homePageIdForModules">Moduler</string>
     <string name="homePageIdForAssignments">Uppgifter</string>
+
     <string name="homePageIdForSyllabus">Kursplan</string>
 
     <string name="contentDescriptionWidgetRefresh">Uppdatera widget</string>
@@ -893,9 +907,44 @@
     <string name="finalGrade">Slutbetyg</string>
 
     <string name="moreThan99">99+</string>
-    <string name="dot_with_spaces">  \u2022  </string>
+    <string name="max_count">99+</string>
 
     <string name="opensInWebView">Öppnas i webbvy</string>
     <string name="unsupportedTabLabel">Stöds ej på den här enheten</string>
+
+    <string name="downloadingFile">Laddar ned</string>
+    <string name="downloadFailed">Nedladdningen misslyckades</string>
+    <string name="downloadSuccessful">Nedladdningen lyckades</string>
+
+    <string name="full_due_date_details">Fullständiga detaljer för inlämningsdatum</string>
+    <string name="submissions">Inlämningar</string>
+    <string name="attachment">Bilaga</string>
+    <string name="contentDescription_back">Gå tillbaka</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="one">%s poäng</item>
+        <item quantity="other">%s poäng</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="one">%s poäng</item>
+        <item quantity="other">%s poäng</item>
+    </plurals>
+    <string name="capitalTo">Till</string>
+
+
+    <string name="unableToViewInBrowser">Vi kunde inte hitta en extern app för visning av det här LTI-verktyget.</string>
+    <string name="commentUpload">Ladda upp kommentar</string>
+    <string name="unableToUploadMediaComment">Om du vill skicka en mediekommentar skickar du eller tar du bort din textkommentar som inte skickats.</string>
+
+    <string name="frontPage">Förstasidan</string>
+    <string name="editPage">Redigera sida</string>
+    <string name="description">Beskrivning</string>
+    <string name="pageSuccessfullyUpdated">Sidan uppdaterades.</string>
+    <string name="errorSavingPage">Ett fel uppstod vid försök att spara den här sidan. Försök igen.</string>
+    <string name="pageTitleMustBeSet">Sidrubriken måste anges.</string>
+    <string name="pageDetails">Sidinformation</string>
+    <string name="saving">Sparar</string>
+    <string name="confirmDeleteEvent">Vill du ta bort den här händelsen?</string>
+    <string name="conferencesNotSupported">Konferenser stöds ännu inte på den här mobilen.</string>
 
 </resources>

@@ -26,6 +26,8 @@ import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.Course
 import com.instructure.canvasapi2.models.GradeableStudentSubmission
 import com.instructure.canvasapi2.utils.NumberHelper
+import com.instructure.interactions.router.Route
+import com.instructure.interactions.router.RouteContext
 import com.instructure.pandautils.fragments.BaseSyncFragment
 import com.instructure.pandautils.utils.*
 import com.instructure.teacher.R
@@ -36,14 +38,14 @@ import com.instructure.teacher.dialog.PeopleListFilterDialog
 import com.instructure.teacher.dialog.RadioButtonDialog
 import com.instructure.teacher.events.AssignmentGradedEvent
 import com.instructure.teacher.events.SubmissionCommentsUpdated
+import com.instructure.teacher.events.SubmissionFilterChangedEvent
 import com.instructure.teacher.factory.AssignmentSubmissionListPresenterFactory
 import com.instructure.teacher.holders.GradeableStudentSubmissionViewHolder
 import com.instructure.teacher.presenters.AssignmentSubmissionListPresenter
 import com.instructure.teacher.presenters.AssignmentSubmissionListPresenter.SubmissionListFilter
-import com.instructure.interactions.router.Route
-import com.instructure.interactions.router.RouteContext
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
+import com.instructure.teacher.view.QuizSubmissionGradedEvent
 import com.instructure.teacher.viewinterface.AssignmentSubmissionListView
 import instructure.androidblueprint.PresenterFactory
 import kotlinx.android.synthetic.main.fragment_assignment_submission_list.*
@@ -60,7 +62,7 @@ class AssignmentSubmissionListFragment : BaseSyncFragment<
 
     private var mAssignment: Assignment by ParcelableArg(Assignment())
     private var mCourse: Course by ParcelableArg(Course())
-    lateinit private var mRecyclerView: RecyclerView
+    private lateinit var mRecyclerView: RecyclerView
     private val mCourseColor by lazy { ColorKeeper.getOrGenerateColor(mCourse) }
     private var mFilter by SerializableArg(SubmissionListFilter.ALL)
     private var mCanvasContextsSelected = ArrayList<CanvasContext>()
@@ -221,7 +223,20 @@ class AssignmentSubmissionListFragment : BaseSyncFragment<
         filterTitle.text = filterTitle.text.toString().plus(presenter?.getSectionFilterText())
     }
 
-    fun setFilter(filterIndex: Int) {
+    private fun setFilter(filterIndex: Int = -1, canvasContexts: ArrayList<CanvasContext>? = null) {
+        canvasContexts?.let {
+            mCanvasContextsSelected = ArrayList()
+            mCanvasContextsSelected.addAll(canvasContexts)
+
+            presenter.setSections(canvasContexts)
+
+            updateFilterTitle()
+
+            filterTitle.text = filterTitle.text.toString().plus(presenter.getSectionFilterText())
+            clearFilterTextView.setVisible()
+            return
+        }
+
         when(filterIndex) {
             SubmissionListFilter.ALL.ordinal -> {
                 presenter.setFilter(SubmissionListFilter.ALL)
@@ -266,7 +281,7 @@ class AssignmentSubmissionListFragment : BaseSyncFragment<
             R.id.filterSubmissions -> {
                 val (keys, values) = mSubmissionFilters.toList().unzip()
                 val dialog = RadioButtonDialog.getInstance(activity.supportFragmentManager, getString(R.string.filter_submissions), values as ArrayList<String>, keys.indexOf(presenter.getFilter().ordinal)) { idx ->
-                    setFilter(keys[idx])
+                    EventBus.getDefault().post(SubmissionFilterChangedEvent(keys[idx]))
                 }
                 dialog.show(activity.supportFragmentManager, RadioButtonDialog::class.java.simpleName)
 
@@ -274,19 +289,13 @@ class AssignmentSubmissionListFragment : BaseSyncFragment<
             R.id.filterBySection -> {
                 //let the user select the course/group they want to see
                 PeopleListFilterDialog.getInstance(activity.supportFragmentManager, presenter.getSectionListIds(), mCourse, false) { canvasContexts ->
-                    mCanvasContextsSelected = ArrayList()
-                    mCanvasContextsSelected.addAll(canvasContexts)
-
-                    presenter.setSections(canvasContexts)
-
-                    filterTitle.text = filterTitle.text.toString().plus(presenter.getSectionFilterText())
-                    clearFilterTextView.setVisible()
+                    EventBus.getDefault().post(SubmissionFilterChangedEvent(canvasContext = canvasContexts))
                 }.show(activity.supportFragmentManager, PeopleListFilterDialog::class.java.simpleName)
             }
         }
     }
 
-    fun updateStatuses() {
+    private fun updateStatuses() {
         val isMuted = presenter.mAssignment.isMuted
         assignmentSubmissionListToolbar.menu.findItem(R.id.menuMuteGrades)?.let {
             it.title = getString(if (isMuted) R.string.unmuteGrades else R.string.muteGrades)
@@ -335,24 +344,39 @@ class AssignmentSubmissionListFragment : BaseSyncFragment<
 
     @Suppress("unused")
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    fun onQuizGraded(event: QuizSubmissionGradedEvent) {
+        event.once(javaClass.simpleName) {
+            // Force network call on resume
+            if (presenter.mAssignment.id == it.assignmentId) mNeedToForceNetwork = true
+        }
+    }
+
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onSubmissionCommentUpdated(event: SubmissionCommentsUpdated) {
         event.once(AssignmentSubmissionListFragment::class.java.simpleName) {
             mNeedToForceNetwork = true
         }
     }
 
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSubmissionFilterChanged(event: SubmissionFilterChangedEvent) {
+        setFilter(event.filterIndex, event.canvasContext)
+    }
+
     companion object {
         @JvmStatic
-        val ASSIGNMENT = "assignment"
+        private val ASSIGNMENT = "assignment"
         @JvmStatic val FILTER_TYPE = "filter_type"
 
         @JvmStatic
         fun newInstance(course: Course, args: Bundle) = AssignmentSubmissionListFragment().apply {
             mAssignment = args.getParcelable(ASSIGNMENT)
-            if(args.containsKey(FILTER_TYPE)) {
-                mFilter = args.getSerializable(FILTER_TYPE) as SubmissionListFilter
+            mFilter = if(args.containsKey(FILTER_TYPE)) {
+                args.getSerializable(FILTER_TYPE) as SubmissionListFilter
             } else {
-                mFilter = SubmissionListFilter.ALL
+                SubmissionListFilter.ALL
             }
             mCourse = course
         }

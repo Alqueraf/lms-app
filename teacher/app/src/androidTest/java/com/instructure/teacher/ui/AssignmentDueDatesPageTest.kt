@@ -19,13 +19,19 @@ import com.instructure.dataseeding.util.ago
 import com.instructure.dataseeding.util.days
 import com.instructure.dataseeding.util.fromNow
 import com.instructure.dataseeding.util.iso8601
+import com.instructure.espresso.TestRail
 import com.instructure.soseedy.Assignment
-import com.instructure.teacher.ui.utils.*
+import com.instructure.teacher.ui.utils.TeacherTest
+import com.instructure.teacher.ui.utils.seedAssignments
+import com.instructure.teacher.ui.utils.seedData
+import com.instructure.teacher.ui.utils.tokenLogin
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class AssignmentDueDatesPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134131")
     override fun displaysPageObjects() {
         getToDueDatesPage()
@@ -33,6 +39,7 @@ class AssignmentDueDatesPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134484")
     fun displaysNoDueDate() {
         getToDueDatesPage()
@@ -40,6 +47,7 @@ class AssignmentDueDatesPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134485")
     fun displaysSingleDueDate() {
         getToDueDatesPage(dueAt = 7.days.fromNow.iso8601)
@@ -47,6 +55,7 @@ class AssignmentDueDatesPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134486")
     fun displaysAvailabilityDates() {
         getToDueDatesPage(lockAt = 7.days.fromNow.iso8601, unlockAt = 7.days.ago.iso8601)

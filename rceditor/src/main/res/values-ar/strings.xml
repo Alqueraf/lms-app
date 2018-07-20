@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">تراجع</string>
     <string name="rce_contentDescription_redo">إعادة</string>
     <string name="rce_contentDescription_bold">تنسيق عامق</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">إدراج قائمة نقطية</string>
     <string name="rce_contentDescription_insert_numbers">إدراج قائمة مرقمة</string>
     <string name="rce_contentDescription_insert_photo">إدراج صورة</string>
+    <string name="rce_contentDescription_upload_photo">تحميل صورة من الجهاز</string>
     <string name="rce_contentDescription_insert_link">إدراج ارتباط</string>
     <string name="rce_contentDescription_block_quote">كتلة نصية مقتبسة</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">إدراج ارتباط</string>
     <string name="rce_insertImage">إدراج صورة</string>
 
+    <string name="rce_uploadImage">تحميل صورة</string>
     <string name="rce_done">تم</string>
     <string name="rce_cancel">إلغاء</string>
     <string name="rce_exit">خروج</string>

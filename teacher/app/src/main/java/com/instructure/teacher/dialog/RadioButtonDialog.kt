@@ -69,7 +69,7 @@ class RadioButtonDialog : AppCompatDialogFragment() {
             // NOTE: We are not using the ViewStyler.themeRadioButton for these due to issues with the buttons not unchecking,
             //       probably an issue with how they are setup in the RadioGroup
             val unselectedColor = ContextCompat.getColor(activity, R.color.unselected_radio_color)
-            (radioGroup.getChildAt(currentSelectionIdx) as AppCompatRadioButton).let {
+            (radioGroup.getChildAt(currentSelectionIdx) as? AppCompatRadioButton)?.let {
                 val colorStateList = ViewStyler.makeColorStateListForRadioGroup(ThemePrefs.brandColor, ThemePrefs.brandColor)
                 CompoundButtonCompat.setButtonTintList(it, colorStateList)
             }

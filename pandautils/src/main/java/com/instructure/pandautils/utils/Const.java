@@ -72,7 +72,7 @@ public class Const {
     public static final String COLLAPSE = "collapse";
     public static final String CALENDAR_STATE = "calendarSaveState";
     public static final String FEATURE_NAME = "featureName";
-    public static final String FILE_ALLOWED = "fileAllowed";
+    public static final String FILE_ALLOWED = "isFileUploadAllowed";
     public static final String FILE_URL = "fileUrl";
     public static final String FILE_DOWNLOADED = "fileDownloaded";
     public static final String FINISH = "finish";
@@ -102,7 +102,7 @@ public class Const {
     public static final String IS_UNSUPPORTED_FEATURE ="isUnsupportedFeature";
     public static final String LAYOUT_ID = "layout_id";
     public static final String MASTERY_PATH = "mastery_path";
-    public static final String MEDIA_UPLOAD_ALLOWED = "mediaUploadAllowed";
+    public static final String MEDIA_UPLOAD_ALLOWED = "isMediaUploadAllowed";
     public static final String MEDIA_RECORDING = "media_recording";
     public static final String MESSAGE = "message";
     public static final String MIME = "mime";
@@ -111,6 +111,7 @@ public class Const {
     public static final String MODULE_ID = "moduleId";
     public static final String MODULE_ITEM = "moduleItems";
     public static final String MODULE_ITEM_ID = "moduleItemId";
+    public static final String MODULE_OBJECT = "moduleObject";
     public static final String MODULE_OBJECTS = "moduleObjects";
     public static final String NAME = "name";
     public static final String PAGE = "page";
@@ -146,7 +147,7 @@ public class Const {
     public static final String SYLLABUS = "syllabus";
     public static final String TAB = "tab";
     public static final String TAB_ID = "tabId";
-    public static final String TEXT_ALLOWED = "textAllowed";
+    public static final String TEXT_ALLOWED = "isOnlineTextAllowed";
     public static final String TITLE_TEXT = "titleText";
     public static final String TOPIC_HEADER = "topicHeader";
     public static final String TOPIC_ID = "topicId";
@@ -156,8 +157,9 @@ public class Const {
     public static final String URI = "uri";
     public static final String TEXT_EXTRA = "textExtra";
     public static final String URL = "url";
-    public static final String URL_ALLOWED = "urlAllowed";
+    public static final String URL_ALLOWED = "isUrlEntryAllowed";
     public static final String USER = "user";
+    public static final String USER_ID = "userId";
     public static final String USER_IDS = "userIds";
     public static final String __CURRENT = "__current";
     public static final String __PREVIOUS = "__previous";
@@ -224,7 +226,6 @@ public class Const {
     public static final String COURSE_COLOR = "courses";
     public static final String COURSE_COLORS = "all_canvas_context_colors_1";
     public static final String COURSE_FAVORITES = "courseFavorites";
-    public static final String NEW_COLOR = "newColor";
     public static final String FAVORITE_STATUS = "favoriteStatus";
 
     public static final String NAVIGATION_SHORTCUTS_EXPANDED = "navigationShortcuts";
@@ -310,4 +311,6 @@ public class Const {
     // Language intent strings used for checking the incoming pending intent for a push notification
     public static final String LANGUAGES_PENDING_INTENT_KEY = "languagesPendingIntentKey";
     public static final int LANGUAGES_PENDING_INTENT_ID = 654321;
+
+    public static final String HIDE_TOOLBAR = "hideToolbar";
 }

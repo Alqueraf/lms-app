@@ -131,7 +131,7 @@ class RatingDialog : DialogFragment() {
         intent.type = "message/rfc822"
         intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.utils_mobileSupportEmailAddress)))
         //try to get the version number and version code
-        var pInfo: PackageInfo? = null
+        val pInfo: PackageInfo?
         var versionName = ""
         var versionCode = 0
         try {

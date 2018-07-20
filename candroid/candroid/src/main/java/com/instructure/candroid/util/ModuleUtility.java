@@ -19,6 +19,7 @@ package com.instructure.candroid.util;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
 import com.instructure.candroid.fragment.AssignmentFragment;
 import com.instructure.candroid.fragment.DiscussionDetailsFragment;
@@ -32,6 +33,7 @@ import com.instructure.candroid.fragment.ParentFragment;
 import com.instructure.canvasapi2.models.Course;
 import com.instructure.canvasapi2.models.ModuleItem;
 import com.instructure.canvasapi2.models.ModuleObject;
+import com.instructure.interactions.router.Route;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -57,28 +59,20 @@ public class ModuleUtility {
             url = removeDomain(url);
 
             if(moduleObject == null){
-                bundle = FileDetailsFragment.createBundle(course, url);
-            }else{
-                long itemId = moduleItem.getId();
-                long moduleId = moduleObject.getId();
-                bundle = FileDetailsFragment.createBundle(course, moduleId, itemId, url);
+                return FileDetailsFragment.newInstance(FileDetailsFragment.makeRoute(course, url));
+            } else {
+                return FileDetailsFragment.newInstance(FileDetailsFragment.makeRoute(course, moduleObject, moduleItem.getId(), url));
             }
-
-            //the fragment will handle getting the file information from the url
-            return ParentFragment.createFragment(FileDetailsFragment.class, bundle);
         }
 
         //deal with pages
         if(moduleItem.getType().equals("Page")) {
-            Bundle bundle = getPageBundle(moduleItem, course);
-
-            return ParentFragment.createFragment(PageDetailsFragment.class, bundle);
+            return PageDetailsFragment.newInstance(PageDetailsFragment.makeRoute(course, getPageName(moduleItem)));
         }
 
         //deal with assignments
         if(moduleItem.getType().equals("Assignment")) {
-            Bundle bundle = getAssignmentBundle(moduleItem, course);
-            return ParentFragment.createFragment(AssignmentFragment.class, bundle);
+            return AssignmentFragment.newInstance(AssignmentFragment.makeRoute(course, getAssignmentId(moduleItem, course)));
         }
 
         //deal with external urls
@@ -86,8 +80,8 @@ public class ModuleUtility {
 
             Uri uri =  Uri.parse(moduleItem.getHtml_url()).buildUpon().appendQueryParameter("display", "borderless").build();
 
-            Bundle bundle = InternalWebviewFragment.Companion.createBundle(course, uri.toString(), moduleItem.getTitle(), true, true, true);
-            return ParentFragment.createFragment(InternalWebviewFragment.class, bundle);
+            Route route = InternalWebviewFragment.Companion.makeRoute(course, uri.toString(), moduleItem.getTitle(), true, true, true);
+            return InternalWebviewFragment.Companion.newInstance(route);
         }
 
         //don't do anything with headers, they're just dividers so we don't show them here.
@@ -95,31 +89,27 @@ public class ModuleUtility {
             return null;
         }
 
-        //Quizzes
-        if(moduleItem.getType().equals("Quiz")) {
+        // Quizzes
+        if (moduleItem.getType().equals("Quiz")) {
             String apiURL = moduleItem.getUrl();
             apiURL = removeDomain(apiURL);
-
-            Bundle bundle = ModuleQuizDecider.createBundle(course, moduleItem.getHtml_url(), apiURL);
-            return ParentFragment.createFragment(ModuleQuizDecider.class, bundle);
+            return ModuleQuizDecider.newInstance(ModuleQuizDecider.makeRoute(course, moduleItem.getHtml_url(), apiURL));
         }
 
         //Discussions
         if(moduleItem.getType().equals("Discussion")) {
-            Bundle bundle = getDiscussionBundle(moduleItem, course);
-            return ParentFragment.createFragment(DiscussionDetailsFragment.class, bundle);
+            Route route = getDiscussionRoute(moduleItem, course);
+            return DiscussionDetailsFragment.newInstance(route);
         }
 
         if(moduleItem.getType().equals("Locked")) {
-            Bundle bundle = getLockedBundle(moduleItem, course);
-
-            return ParentFragment.createFragment(MasteryPathLockedFragment.class, bundle);
+            Route route = MasteryPathLockedFragment.makeRoute(moduleItem.getTitle());
+            return MasteryPathLockedFragment.newInstance(route);
         }
 
         if(moduleItem.getType().equals("ChooseAssignmentGroup")) {
-            Bundle bundle = MasteryPathSelectionFragment.createBundle(course, moduleItem.getMasteryPaths(), moduleObject.getId(), moduleItem.getMasteryPathsItemId());
-
-            return ParentFragment.createFragment(MasteryPathSelectionFragment.class, bundle);
+            Route route = MasteryPathSelectionFragment.makeRoute(course, moduleItem.getMasteryPaths(), moduleObject.getId(), moduleItem.getMasteryPathsItemId());
+            return MasteryPathSelectionFragment.newInstance(route);
         }
         //return null if there is a type we don't handle yet
         return null;
@@ -129,7 +119,8 @@ public class ModuleUtility {
     // Bundle Creation
     ///////////////////////////////////////////////////////////////////////////
 
-    private static Bundle getPageBundle(ModuleItem moduleItem, Course course) {
+    @Nullable
+    private static String getPageName(ModuleItem moduleItem) {
         //get the pageName from the url
         String url = moduleItem.getUrl();
         String pageName = null;
@@ -148,12 +139,12 @@ public class ModuleUtility {
                     pageName = getPageName(url, index);
                 }
             }
-
         }
-        return PageDetailsFragment.Companion.createBundle(pageName, course);
+
+        return pageName;
     }
 
-    private static Bundle getAssignmentBundle(ModuleItem moduleItem, Course course) {
+    private static long getAssignmentId(ModuleItem moduleItem, Course course) {
         //get the assignment id from the url
         String url = moduleItem.getUrl();
         long assignmentId = 0;
@@ -164,11 +155,11 @@ public class ModuleUtility {
                 assignmentId = getIdFromUrl(url, index);
             }
         }
-        return AssignmentFragment.Companion.createBundle(course, assignmentId);
+        return assignmentId;
     }
 
-    private static Bundle getDiscussionBundle(ModuleItem moduleItem, Course course) {
-        //get the topic id from the url
+    private static Route getDiscussionRoute(ModuleItem moduleItem, Course course) {
+        // Get the topic id from the url
         String url = moduleItem.getUrl();
         long topicId = 0;
         if(url.contains("discussion_topics")) {
@@ -178,12 +169,9 @@ public class ModuleUtility {
                 topicId = getIdFromUrl(url, index);
             }
         }
-        return DiscussionDetailsFragment.makeBundle(course, topicId, false);
+        return DiscussionDetailsFragment.makeRoute(course, topicId);
     }
 
-    private static Bundle getLockedBundle(ModuleItem moduleItem, Course course) {
-        return MasteryPathLockedFragment.createBundle(course, moduleItem.getTitle());
-    }
     ///////////////////////////////////////////////////////////////////////////
     // Helpers
     ///////////////////////////////////////////////////////////////////////////

@@ -16,6 +16,8 @@
  */
 package com.instructure.teacher.fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
@@ -24,12 +26,15 @@ import android.widget.Toast
 import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.DiscussionEntry
 import com.instructure.canvasapi2.models.DiscussionTopic
+import com.instructure.canvasapi2.models.RemoteFile
 import com.instructure.canvasapi2.utils.APIHelper
 import com.instructure.canvasapi2.utils.Logger
 import com.instructure.pandautils.dialogs.UnsavedChangesExitDialog
+import com.instructure.pandautils.discussions.DiscussionUtils
 import com.instructure.pandautils.fragments.BasePresenterFragment
 import com.instructure.pandautils.utils.*
 import com.instructure.pandautils.views.AttachmentView
+import com.instructure.pandautils.views.CanvasWebView
 import com.instructure.teacher.R
 import com.instructure.teacher.events.DiscussionEntryUpdatedEvent
 import com.instructure.teacher.events.post
@@ -48,9 +53,10 @@ import kotlinx.android.synthetic.main.fragment_discussions_edit.*
 class DiscussionsUpdateFragment : BasePresenterFragment<DiscussionsUpdatePresenter, DiscussionsUpdateView>(), DiscussionsUpdateView {
 
     private var mCanvasContext: CanvasContext by ParcelableArg(default = CanvasContext.getGenericContext(CanvasContext.Type.COURSE, -1L, ""))
-    private var mDiscussionTopicHeaderId: Long by LongArg(default = 0L) //The topic the discussion belongs too
+    private var mDiscussionTopicHeaderId: Long by LongArg(default = 0L) // The topic the discussion belongs too
     private var mDiscussionEntry: DiscussionEntry by ParcelableArg(default = DiscussionEntry())
     private var mDiscussionTopic: DiscussionTopic by ParcelableArg(default = DiscussionTopic())
+    private var placeHolderList: ArrayList<Placeholder> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +67,7 @@ class DiscussionsUpdateFragment : BasePresenterFragment<DiscussionsUpdatePresent
     override fun onRefreshFinished() {}
     override fun onRefreshStarted() {}
 
-    override fun layoutResId(): Int {
-        return R.layout.fragment_discussions_edit
-    }
+    override fun layoutResId(): Int = R.layout.fragment_discussions_edit
 
     override fun getPresenterFactory(): PresenterFactory<DiscussionsUpdatePresenter> =
             DiscussionsUpdatePresenterFactory(mCanvasContext, mDiscussionTopicHeaderId, mDiscussionEntry, mDiscussionTopic)
@@ -72,17 +76,41 @@ class DiscussionsUpdateFragment : BasePresenterFragment<DiscussionsUpdatePresent
 
     override fun onReadySetGo(presenter: DiscussionsUpdatePresenter?) {
         rceTextEditor.setHint(R.string.rce_empty_description)
-        rceTextEditor.setHtml(mDiscussionEntry.message, "", "", ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        rceTextEditor.actionUploadImageCallback = { MediaUploadUtils.showPickImageDialog(this) }
+
+        if (CanvasWebView.containsLTI(presenter?.discussionEntry?.message.orEmpty(), "UTF-8")) {
+            rceTextEditor.setHtml(DiscussionUtils.createLTIPlaceHolders(context, presenter?.discussionEntry?.message.orEmpty()) { _, placeholder ->
+                placeHolderList.add(placeholder)
+            }, "", "", ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        } else {
+            rceTextEditor.setHtml(presenter?.discussionEntry?.message, "", "", ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        }
+
 
         presenter?.discussionEntry?.attachments?.firstOrNull()?.let {
             val attachmentView = AttachmentView(context)
+
             attachmentView.setPendingRemoteFile(it, true) { action, attachment ->
                 if (action == AttachmentView.AttachmentAction.REMOVE) {
                     presenter.attachmentRemoved = true
                     presenter.discussionEntry.attachments.remove(attachment)
                 }
             }
+
             attachmentLayout.addView(attachmentView)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Get the image Uri
+            when (requestCode) {
+                RequestCodes.PICK_IMAGE_GALLERY -> data?.data
+                RequestCodes.CAMERA_PIC_REQUEST -> MediaUploadUtils.handleCameraPicResult(activity, null)
+                else -> null
+            }?.let { imageUri ->
+                presenter.uploadRceImage(imageUri, activity)
+            }
         }
     }
 
@@ -94,7 +122,9 @@ class DiscussionsUpdateFragment : BasePresenterFragment<DiscussionsUpdatePresent
 
     override fun messageFailure(reason: Int) {
         when (reason) {
-            REASON_MESSAGE_IN_PROGRESS -> { Logger.e("User tried to send message multiple times in a row.") }
+            REASON_MESSAGE_IN_PROGRESS -> {
+                Logger.e("User tried to send message multiple times in a row.")
+            }
             REASON_MESSAGE_EMPTY -> {
                 Logger.e("User tried to send message an empty message.")
                 toast(R.string.discussion_update_empty)
@@ -114,24 +144,27 @@ class DiscussionsUpdateFragment : BasePresenterFragment<DiscussionsUpdatePresent
     private fun setupToolbar() {
         toolbar.title = getString(R.string.edit)
         toolbar.setupCloseButton {
-            if(presenter?.discussionEntry?.message == rceTextEditor?.html) {
+            if (presenter?.discussionEntry?.message == rceTextEditor?.html) {
                 activity?.onBackPressed()
             } else {
-                UnsavedChangesExitDialog.show(fragmentManager, {
+                UnsavedChangesExitDialog.show(fragmentManager) {
                     activity?.onBackPressed()
-                })
+                }
             }
         }
         toolbar.setupMenu(R.menu.menu_discussion_update, menuItemCallback)
+
         ViewStyler.themeToolbarBottomSheet(activity, isTablet, toolbar, Color.BLACK, false)
         ViewStyler.setToolbarElevationSmall(context, toolbar)
     }
+
+    override fun insertImageIntoRCE(text: String, alt: String) = rceTextEditor.insertImage(text, alt)
 
     val menuItemCallback: (MenuItem) -> Unit = { item ->
         when (item.itemId) {
             R.id.menu_save -> {
                 if(APIHelper.hasNetworkConnection()) {
-                    presenter.editMessage(rceTextEditor.html)
+                    presenter.editMessage(handleLTIPlaceHolders(placeHolderList, rceTextEditor.html))
                 } else {
                     Toast.makeText(context, R.string.noInternetConnectionMessage, Toast.LENGTH_LONG).show()
                 }
@@ -140,10 +173,10 @@ class DiscussionsUpdateFragment : BasePresenterFragment<DiscussionsUpdatePresent
     }
 
     companion object {
-        val DISCUSSION_TOPIC_HEADER_ID = "DISCUSSION_TOPIC_HEADER_ID"
-        val DISCUSSION_ENTRY = "DISCUSSION_ENTRY"
-        val DISCUSSION_TOPIC = "DISCUSSION_TOPIC"
-        val IS_ANNOUNCEMENT = "IS_ANNOUNCEMENT"
+        private const val DISCUSSION_TOPIC_HEADER_ID = "DISCUSSION_TOPIC_HEADER_ID"
+        private const val DISCUSSION_ENTRY = "DISCUSSION_ENTRY"
+        private const val DISCUSSION_TOPIC = "DISCUSSION_TOPIC"
+        private const val IS_ANNOUNCEMENT = "IS_ANNOUNCEMENT"
 
         @JvmStatic
         fun makeBundle(
@@ -151,7 +184,6 @@ class DiscussionsUpdateFragment : BasePresenterFragment<DiscussionsUpdatePresent
                 discussionEntryId: DiscussionEntry?,
                 isAnnouncement: Boolean,
                 discussionTopic: DiscussionTopic): Bundle = Bundle().apply {
-
             putLong(DISCUSSION_TOPIC_HEADER_ID, discussionTopicHeaderId)
             putParcelable(DISCUSSION_ENTRY, discussionEntryId)
             putBoolean(IS_ANNOUNCEMENT, isAnnouncement)
@@ -159,11 +191,12 @@ class DiscussionsUpdateFragment : BasePresenterFragment<DiscussionsUpdatePresent
         }
 
         @JvmStatic
-        fun newInstance(canvasContext: CanvasContext, args: Bundle) = DiscussionsUpdateFragment().apply {
-            mDiscussionTopicHeaderId = args.getLong(DISCUSSION_TOPIC_HEADER_ID)
-            mDiscussionEntry = args.getParcelable(DISCUSSION_ENTRY)
-            mCanvasContext = canvasContext
-            mDiscussionTopic = args.getParcelable(DISCUSSION_TOPIC)
-        }
+        fun newInstance(canvasContext: CanvasContext, args: Bundle) =
+                DiscussionsUpdateFragment().apply {
+                    mDiscussionTopicHeaderId = args.getLong(DISCUSSION_TOPIC_HEADER_ID)
+                    mDiscussionEntry = args.getParcelable(DISCUSSION_ENTRY)
+                    mCanvasContext = canvasContext
+                    mDiscussionTopic = args.getParcelable(DISCUSSION_TOPIC)
+                }
     }
 }

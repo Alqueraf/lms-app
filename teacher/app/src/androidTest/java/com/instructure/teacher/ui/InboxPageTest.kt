@@ -18,10 +18,12 @@
 package com.instructure.teacher.ui
 
 import com.instructure.teacher.ui.utils.*
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class InboxPageTest: TeacherTest() {
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         val teacher = seedData(teachers = 1, courses = 1).teachersList[0]
         tokenLogin(teacher)
@@ -30,6 +32,7 @@ class InboxPageTest: TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysConversation() {
         val data = seedData(teachers = 1, courses = 1, students = 1)
         val teacher = data.teachersList[0]

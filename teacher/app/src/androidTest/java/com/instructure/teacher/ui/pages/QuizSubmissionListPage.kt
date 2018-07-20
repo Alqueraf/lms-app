@@ -16,13 +16,15 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.onViewWithId
+import com.instructure.espresso.page.onViewWithText
+import com.instructure.espresso.page.waitForViewWithText
 import com.instructure.soseedy.CanvasUser
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
-class QuizSubmissionListPage : BasePage(), PageAssert by SimplePageAssert() {
+class QuizSubmissionListPage : BasePage() {
 
     private val assignmentSubmissionListToolbar by OnViewWithId(R.id.assignmentSubmissionListToolbar)
 

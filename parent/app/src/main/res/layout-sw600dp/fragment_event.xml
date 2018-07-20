@@ -33,7 +33,7 @@
         android:elevation="@dimen/elevation">
 
         <TextView
-            android:id="@+id/toolbar_title"
+            android:id="@+id/toolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxWidth="@dimen/toolbar_title_width"
@@ -169,8 +169,8 @@
                         android:contentDescription="@string/set_reminder_toggle"/>
                 </RelativeLayout>
 
-                <com.instructure.parentapp.view.CanvasWebView
-                    android:id="@+id/description"
+                <com.instructure.pandautils.views.CanvasWebView
+                    android:id="@+id/eventWebView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"

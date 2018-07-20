@@ -17,9 +17,10 @@
 package com.instructure.teacher.viewinterface
 
 import com.instructure.canvasapi2.models.DiscussionEntry
+import com.instructure.teacher.interfaces.RceMediaUploadView
 import instructure.androidblueprint.FragmentViewInterface
 
-interface DiscussionsUpdateView : FragmentViewInterface {
+interface DiscussionsUpdateView : FragmentViewInterface, RceMediaUploadView {
     fun messageSuccess(entry: DiscussionEntry)
     fun messageFailure(reason: Int)
 }

@@ -18,6 +18,7 @@
 package com.instructure.canvasapi2.utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
@@ -301,7 +302,12 @@ public class DateHelper {
     }
 
     public static SimpleDateFormat getMonthDayYearDateFormatUniversal() {
-        return new SimpleDateFormat("MMMM d, YYYY", Locale.getDefault());
+        if (Build.VERSION.SDK_INT >= 24) {
+            return new SimpleDateFormat("MMMM d, YYYY", Locale.getDefault());
+        } else {
+            return new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
+
+        }
     }
 
     public static String getDayMonthDateStringUniversal(Date date) {

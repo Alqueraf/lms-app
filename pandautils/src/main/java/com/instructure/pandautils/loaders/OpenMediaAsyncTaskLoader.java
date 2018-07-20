@@ -30,7 +30,10 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.CookieManager;
 
+import com.instructure.canvasapi2.CanvasRestAdapter;
+import com.instructure.canvasapi2.builders.RestParams;
 import com.instructure.canvasapi2.models.CanvasContext;
 import com.instructure.canvasapi2.utils.HttpHelper;
 import com.instructure.pandautils.R;
@@ -48,6 +51,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Source;
 
 public class OpenMediaAsyncTaskLoader extends AsyncTaskLoader<OpenMediaAsyncTaskLoader.LoadedMedia> {
     public enum ERROR_TYPE { NO_APPS, UNKNOWN }
@@ -149,6 +159,11 @@ public class OpenMediaAsyncTaskLoader extends AsyncTaskLoader<OpenMediaAsyncTask
                 mimeType = args.getString(Const.MIME);
                 filename = args.getString(Const.FILE_URL);
                 filename = makeFilenameUnique(filename, url);
+            } else if (args.containsKey(Const.FILE_URL)) {
+                String name = args.getString(Const.FILE_URL);
+                if (name != null && name.length() > 0) {
+                    filename = name;
+                }
             }
             if(args.containsKey(Const.IS_SUBMISSION)) {
                 isSubmission = args.getBoolean(Const.IS_SUBMISSION);
@@ -180,7 +195,7 @@ public class OpenMediaAsyncTaskLoader extends AsyncTaskLoader<OpenMediaAsyncTask
                 Bundle bundle = FileUploadUtils.createTaskLoaderBundle(canvasContext, FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + Const.FILE_PROVIDER_AUTHORITY, file).toString(), filename, false);
                 loadedMedia.setBundle(bundle);
             } else if(isHtmlFile() && canvasContext == null) {
-                //when the canvasContext is null we're routing from the teacher app, which just needs the url and title to get the html file
+                // When the canvasContext is null we're routing from the teacher app, which just needs the url and title to get the html file
                 Bundle bundle = new Bundle();
                 bundle.putString(Const.INTERNAL_URL, url);
                 bundle.putString(Const.ACTION_BAR_TITLE, filename);
@@ -253,7 +268,7 @@ public class OpenMediaAsyncTaskLoader extends AsyncTaskLoader<OpenMediaAsyncTask
 
     /**
      *
-     * @return uri if theres a connection, returns null otherwise
+     * @return Uri if there's a connection, returns null otherwise
      * @throws Exception
      */
     private Uri attemptConnection(String url) throws IOException {
@@ -297,13 +312,13 @@ public class OpenMediaAsyncTaskLoader extends AsyncTaskLoader<OpenMediaAsyncTask
     }
 
     private File downloadFile(Context context, String url, String filename) throws Exception {
-        //They have to download the content first... gross.
-        //Download it if the file doesn't exist in the external cache....
+        // They have to download the content first... gross.
+        // Download it if the file doesn't exist in the external cache
         Log.d(Const.OPEN_MEDIA_ASYNC_TASK_LOADER_LOG, "downloadFile URL: " + url);
         File attachmentFile = new File(Utils.getAttachmentsDirectory(context), filename);
         Log.d(Const.OPEN_MEDIA_ASYNC_TASK_LOADER_LOG, "File: " + attachmentFile);
         if (!attachmentFile.exists()) {
-            //Download the content from the url
+            // Download the content from the url
             if (writeAttachmentsDirectoryFromURL(url, attachmentFile)) {
                 Log.d(Const.OPEN_MEDIA_ASYNC_TASK_LOADER_LOG, "file not cached");
                 return attachmentFile;
@@ -319,10 +334,12 @@ public class OpenMediaAsyncTaskLoader extends AsyncTaskLoader<OpenMediaAsyncTask
 
     private void attemptDownloadFile(Context context, Intent intent, LoadedMedia loadedMedia, String url, String filename) throws Exception {
         File file = downloadFile(context, url, filename);
+
         ContentResolver contentResolver = context.getContentResolver();
         Uri fileUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + Const.FILE_PROVIDER_AUTHORITY, file);
         intent.setDataAndType(fileUri, contentResolver.getType(fileUri));
         //We know that we can always handle pdf intents with pspdfkit, so we don't want to error out here
+
         if (!isIntentHandledByActivity(intent) && !mimeType.equals("application/pdf") ) {
             loadedMedia.setErrorMessage(R.string.noApps);
             loadedMedia.errorType = ERROR_TYPE.NO_APPS;
@@ -333,45 +350,35 @@ public class OpenMediaAsyncTaskLoader extends AsyncTaskLoader<OpenMediaAsyncTask
     }
 
     private boolean writeAttachmentsDirectoryFromURL(String url2, File toWriteTo) throws Exception {
-        //create the new connection
-        URL url = new URL(url2);
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        //set up some things on the connection
-        urlConnection.setRequestMethod("GET");
+        OkHttpClient client = CanvasRestAdapter.getOkHttpClient()
+                .newBuilder()
+                .cache(null)
+                .build();
 
-        //and connect!
-        urlConnection.connect();
-        HttpURLConnection connection = HttpHelper.redirectURL(urlConnection);
+        RestParams params = new RestParams.Builder().withShouldIgnoreToken(true).build();
 
-        //this will be used to write the downloaded uri into the file we created
-        String name = toWriteTo.getName();
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(url2)
+                .tag(params);
+
+        String cookie = CookieManager.getInstance().getCookie(url2);
+        if (cookie != null && cookie.length() > 0) {
+            requestBuilder.addHeader("Cookie", cookie);
+        }
+
+        Request request = requestBuilder.build();
+
+        Response response = client.newCall(request).execute();
+
+        if (!response.isSuccessful()) throw new IOException("Unable to download. Error code ${response.code()}");
+
         toWriteTo.getParentFile().mkdirs();
-        FileOutputStream fileOutput = null;
-        //if there is an external cache, we want to write to that
-        if (applicationContext.getExternalCacheDir() != null) {
-            fileOutput = new FileOutputStream(toWriteTo);
-        }  else {            //otherwise, use internal cache.
-            fileOutput = applicationContext.openFileOutput(name,
-                    Activity.MODE_WORLD_READABLE | Activity.MODE_WORLD_WRITEABLE);
-        }
-        //this will be used in reading the uri from the internet
-        InputStream inputStream = connection.getInputStream();
-
-        //this is the total size of the file
-        final int totalSize = connection.getContentLength();
-
-        //create a buffer...
-        byte[] buffer = new byte[1024];
-        int bufferLength = 0; //used to store a temporary size of the buffer
-
-        //now, read through the input buffer and write the contents to the file
-        while ((bufferLength = inputStream.read(buffer)) != -1) {
-            fileOutput.write(buffer, 0, bufferLength);
-        }
-
-        fileOutput.flush();
-        fileOutput.close();
-        inputStream.close(); // close after fileOuput.flush() or else the fileOutput won't actually close leading to open failed: EBUSY (Device or resource busy)
+        BufferedSink sink = Okio.buffer(Okio.sink(toWriteTo));
+        Source source = response.body().source();
+        sink.writeAll(source);
+        sink.flush();
+        sink.close();
+        source.close();
 
         return true;
     }
@@ -391,10 +398,11 @@ public class OpenMediaAsyncTaskLoader extends AsyncTaskLoader<OpenMediaAsyncTask
         return openMediaBundle;
     }
 
-    public static Bundle createBundle(CanvasContext canvasContext, String url) {
+    public static Bundle createBundle(CanvasContext canvasContext, String url, String filename) {
         Bundle openMediaBundle = new Bundle();
         openMediaBundle.putString(Const.URL, url);
         openMediaBundle.putParcelable(Const.CANVAS_CONTEXT, canvasContext);
+        openMediaBundle.putString(Const.FILE_URL, filename);
         return openMediaBundle;
     }
 

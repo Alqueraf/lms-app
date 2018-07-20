@@ -66,6 +66,14 @@
                     android:host="com.instructure.foos"
                     android:scheme="foos" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:host="com.instructure.foos"
+                    android:scheme="foos"/>
+            </intent-filter>
         </activity>
 
         <service android:name=".wear.WearService">

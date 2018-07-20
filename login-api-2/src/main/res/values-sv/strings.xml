@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">Försöker du logga in på Canvas Network?</string>
     <string name="remove">Ta bort</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">Maskering</string>
     <string name="userId">Användar-ID</string>
     <string name="domain">Domän</string>
 
-    <string name="masqueradingUserId">Maskera användar-ID</string>
-    <string name="masqueradingUserDomain">Maskera domän</string>
-    <string name="masqueradingBegin">Påbörja maskering</string>
-    <string name="masqueradingStop">Stoppa maskering</string>
-
+    <string name="actAsUser">Agera som användare</string>
+    <string name="stopActAsUser">Sluta att agera som en användare</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Ta bort den här användaren?</string>
     <string name="removedForever">Du måste logga in på den här användaren igen för att komma åt deras innehåll.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Nej</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">Nära Dig</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Precis bakom dig</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Tidigare inloggningar</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Hitta min skola</string>
-    <string name="appTypeTeacher">Lärare</string>
-    <string name="appTypeStudent">Student</string>
-    <string name="appTypeParent">Föräldrar</string>
     <string name="canvasLowerCase">Canvas</string>
     <string name="whatsYourSchoolName">Vad heter din skola?</string>
     <string name="next">Nästa</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">SKrolla för att se alla detaljer</string>
 
     <string name="masqueradeErrorUserId">Du måste ange ett användare-ID.</string>
-    <string name="masqueradeErrorDomain">Du måste ange en domän.</string>
+    <string name="masqueradeErrorDomain">Du måste ange en giltig domän.</string>
     <string name="masqueradeError">Fel vid maskeringsförsök.</string>
+    <string name="masqueradeInfo">\"Att uppträda som\" , loggar huvudsakligen in som den här användaren utan lösenord. Du kommer att kunna vidta åtgärder som om du var den här användaren, och från andra användares synpunkter som om den här användaren utförde dem. I historik-loggar registreras dock att du var den som utförde åtgärderna på den här användarens vägnar.</string>
+    <string name="masqueradingAs">Du agerar som %s</string>
+    <string name="stopActingAsTitle">Sluta uppträda som...</string>
+    <string name="stopActingAsMessage">Du kommer sluta att uppträda som%s , och återvända till ditt konto.</string>
+
+    <string name="weMadeChanges">Vi har gjort några ändringar.</string>
+    <string name="whatsNewText">Se vad som är nytt</string>
 </resources>

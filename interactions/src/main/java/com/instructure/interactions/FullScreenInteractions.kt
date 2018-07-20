@@ -16,4 +16,8 @@
  */
 package com.instructure.interactions
 
-interface FullScreenInteractions
+import com.instructure.interactions.router.Route
+
+interface FullScreenInteractions {
+    fun handleRoute(route: Route)
+}

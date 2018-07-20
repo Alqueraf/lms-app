@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 - present  Instructure, Inc.
   ~
   ~     This program is free software: you can redistribute it and/or modify
@@ -15,35 +14,35 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="2dp"
-        tools:ignore="UnusedAttribute"/>
+        tools:ignore="UnusedAttribute" />
 
     <instructure.rceditor.RCETextEditorView
         android:id="@+id/rceTextEditor"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:rce_controls_margin_start="0dp"
         app:rce_controls_margin_end="0dp"
-        app:rce_editor_padding="12dp"
-        app:rce_controls_visible="false"/>
+        app:rce_controls_margin_start="0dp"
+        app:rce_controls_visible="false"
+        app:rce_editor_padding="12dp" />
 
     <com.instructure.pandautils.views.AttachmentLayout
         android:id="@+id/attachmentLayout"
-        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:padding="16dp"
         app:al_previewChildCount="1"
         app:al_spacing="12dp" />

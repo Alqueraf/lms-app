@@ -36,7 +36,7 @@ public class ChooseMessageRecipientRecyclerAdapterTest extends InstrumentationTe
     private InboxRecipientAdapter mAdapter;
 
     public static class ChooseMessageRecipientRecyclerAdapterWrapper extends InboxRecipientAdapter {
-        protected ChooseMessageRecipientRecyclerAdapterWrapper(Context context) { super(context, "", null, null, false ); }
+        protected ChooseMessageRecipientRecyclerAdapterWrapper(Context context) { super(context, null, null); }
     }
 
     @Before

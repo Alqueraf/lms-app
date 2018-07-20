@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 - present  Instructure, Inc.
   ~
   ~     This program is free software: you can redistribute it and/or modify
@@ -16,56 +15,55 @@
   ~
   -->
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
     <TextView
+        android:id="@+id/pollQuestion"
         style="@style/PollingAnswerTheme"
-        android:id="@+id/poll_question"
         android:layout_width="match_parent"
-        android:padding="@dimen/editTextPadding"
-        android:gravity="center_horizontal" />
+        android:gravity="center_horizontal"
+        android:padding="@dimen/editTextPadding" />
 
     <android.support.v4.widget.SwipeRefreshLayout
 
         android:id="@+id/swipeRefreshLayout"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/button_container"
-        android:layout_below="@+id/poll_question">
+        android:layout_above="@+id/buttonContainer"
+        android:layout_below="@+id/pollQuestion"
+        android:orientation="vertical">
 
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:groupIndicator="@null"
             android:cacheColorHint="@android:color/transparent"
-            android:dividerHeight="0dp"
             android:divider="@null"
+            android:dividerHeight="0dp"
+            android:groupIndicator="@null"
             android:padding="8dp"
             android:scrollbarStyle="outsideOverlay" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
-        android:id="@+id/button_container"
+        android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
         <Button
+            android:id="@+id/submitPoll"
             style="@style/ButtonBarCanvasPollingTheme"
-            android:id="@+id/submit_poll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/submitPoll"
+            android:layout_margin="8dp"
             android:layout_weight="1"
-            android:layout_margin="8dp" />
+            android:text="@string/submitPoll" />
 
     </LinearLayout>
 

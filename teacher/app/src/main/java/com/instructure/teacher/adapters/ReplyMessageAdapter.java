@@ -36,6 +36,6 @@ public class ReplyMessageAdapter extends MessageAdapter {
 
     @Override
     public void bindHolder(Message message, MessageHolder holder, int position) {
-        ReplyMessageBinder.bind(getContext(), message, mConversation, holder, position, mCallback);
+        ReplyMessageBinder.Companion.bind(message, getMConversation(), holder, position, getMCallback());
     }
 }

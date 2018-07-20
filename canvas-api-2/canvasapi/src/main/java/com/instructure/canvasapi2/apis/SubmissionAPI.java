@@ -29,6 +29,7 @@ import com.instructure.canvasapi2.models.RubricCriterionAssessment;
 import com.instructure.canvasapi2.models.Submission;
 import com.instructure.canvasapi2.models.SubmissionSummary;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,12 @@ public class SubmissionAPI {
 
         @GET("courses/{courseId}/students/submissions?include[]=assignment&include[]=rubric_assessment&include[]=submission_history&include[]=submission_comments&include[]=group")
         Call<List<Submission>> getStudentSubmissionsForCourse(@Path("courseId") long courseId, @Query("student_ids[]") long studentId);
+
+        @GET("courses/{courseId}/students/submissions?include[]=assignment&include[]=rubric_assessment&include[]=submission_history&include[]=submission_comments&include[]=group")
+        Call<List<Submission>> getSubmissionsForMultipleAssignments(
+                @Path("courseId") long courseId,
+                @Query("student_ids[]") long studentId,
+                @Query("assignment_ids[]") List<Long> assignmentIds);
 
         @GET
         Call<List<Submission>> getNextPageSubmissions(@Url String nextUrl);
@@ -142,6 +149,14 @@ public class SubmissionAPI {
     public static void getStudentSubmissionsForCourse(long courseId, long studentId, @NonNull RestBuilder adapter, @NonNull StatusCallback<List<Submission>> callback, @NonNull RestParams params) {
         if (StatusCallback.isFirstPage(callback.getLinkHeaders())) {
             callback.addCall(adapter.build(SubmissionInterface.class, params).getStudentSubmissionsForCourse(courseId, studentId)).enqueue(callback);
+        } else if (callback.getLinkHeaders() != null && StatusCallback.moreCallsExist(callback.getLinkHeaders())) {
+            callback.addCall(adapter.build(SubmissionInterface.class, params).getNextPageSubmissions(callback.getLinkHeaders().nextUrl)).enqueue(callback);
+        }
+    }
+
+    public static void getSubmissionsForMultipleAssignments(long courseId, long studentId, List<Long> assignmentIds, @NonNull RestBuilder adapter, @NonNull StatusCallback<List<Submission>> callback, @NonNull RestParams params) {
+        if (StatusCallback.isFirstPage(callback.getLinkHeaders())) {
+            callback.addCall(adapter.build(SubmissionInterface.class, params).getSubmissionsForMultipleAssignments(courseId, studentId, assignmentIds)).enqueue(callback);
         } else if (callback.getLinkHeaders() != null && StatusCallback.moreCallsExist(callback.getLinkHeaders())) {
             callback.addCall(adapter.build(SubmissionInterface.class, params).getNextPageSubmissions(callback.getLinkHeaders().nextUrl)).enqueue(callback);
         }

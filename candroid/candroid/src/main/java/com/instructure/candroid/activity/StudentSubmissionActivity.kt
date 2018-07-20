@@ -36,20 +36,22 @@ class StudentSubmissionActivity : AppCompatActivity() {
         }
         val bundle = intent.extras
 
-        setContentView(StudentSubmissionView(this, bundle.get(COURSE) as Course, bundle.get(SUBMISSION) as GradeableStudentSubmission, bundle.get(ASSIGNMENT) as Assignment))
+        setContentView(StudentSubmissionView(this, bundle.get(COURSE) as Course, bundle.get(SUBMISSION) as GradeableStudentSubmission, bundle.get(ASSIGNMENT) as Assignment, bundle.getInt(ATTACHMENT_POSITION)))
     }
 
     companion object {
         private val ASSIGNMENT = "assignment"
         private val COURSE = "course"
         private val SUBMISSION = "submission"
+        private val ATTACHMENT_POSITION = "attachmentPosition"
         @JvmStatic
-        fun createIntent(context: Context, course: Course, assignment: Assignment, submission: GradeableStudentSubmission): Intent {
+        fun createIntent(context: Context, course: Course, assignment: Assignment, submission: GradeableStudentSubmission, attachmentPosition: Int = 0): Intent {
             val intent = Intent(context, StudentSubmissionActivity::class.java)
             val extras = Bundle()
             extras.putParcelable(ASSIGNMENT, assignment)
             extras.putParcelable(COURSE, course)
             extras.putParcelable(SUBMISSION, submission)
+            extras.putInt(ATTACHMENT_POSITION, attachmentPosition)
             intent.putExtras(extras)
             return intent
         }

@@ -71,7 +71,7 @@ class EditCourseNicknameDialog : AppCompatDialogFragment() {
                 .setCancelable(true)
                 .setTitle(activity.getString(R.string.edit_course_nickname))
                 .setView(view)
-                .setPositiveButton(activity.getString(android.R.string.ok).toUpperCase(), { dialog, which ->
+                .setPositiveButton(activity.getString(android.R.string.ok).toUpperCase(), { _, _ ->
                     mEditNicknameCallback(editCourseNicknameEditText.text.toString())
                 })
                 .setNegativeButton(activity.getString(android.R.string.cancel).toUpperCase(), null)

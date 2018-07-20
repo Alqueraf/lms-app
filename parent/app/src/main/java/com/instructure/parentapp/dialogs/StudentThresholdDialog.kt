@@ -47,7 +47,7 @@ class StudentThresholdDialog : DialogFragment() {
     private lateinit var mCallback: StudentThresholdChanged
 
     interface StudentThresholdChanged {
-        fun handlePositiveThreshold(thresholdType: Int, value: String)
+        fun handlePositiveThreshold(thresholdType: Int, threshold: String)
         fun handleNeutralThreshold(thresholdType: Int)
     }
 

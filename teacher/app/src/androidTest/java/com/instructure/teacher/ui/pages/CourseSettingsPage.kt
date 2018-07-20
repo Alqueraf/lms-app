@@ -18,13 +18,19 @@ package com.instructure.teacher.ui.pages
 
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions.matches
+import com.instructure.espresso.OnViewWithId
+import com.instructure.espresso.assertHasText
+import com.instructure.espresso.click
+import com.instructure.espresso.matchers.checked
+import com.instructure.espresso.matchers.matchToolbarText
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.onViewWithId
+import com.instructure.espresso.page.onViewWithText
+import com.instructure.espresso.replaceText
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 import org.hamcrest.Matchers.`is`
 
-class CourseSettingsPage : BasePage(), PageAssert by SimplePageAssert() {
+class CourseSettingsPage : BasePage() {
 
     private val courseImage by OnViewWithId(R.id.courseImage)
     private val editCourseNameRootView by OnViewWithId(R.id.editCourseNameRoot)
@@ -38,10 +44,9 @@ class CourseSettingsPage : BasePage(), PageAssert by SimplePageAssert() {
         editCourseNameRootView.click()
     }
 
-    fun editCourseName(): String {
+    fun editCourseName(newName: String): String {
         val dialogNameEntry = onViewWithId(R.id.newCourseName)
         val dialogOkButton = onViewWithText(android.R.string.ok)
-        val newName = randomString()
         dialogNameEntry.replaceText(newName)
         dialogOkButton.click()
         return newName

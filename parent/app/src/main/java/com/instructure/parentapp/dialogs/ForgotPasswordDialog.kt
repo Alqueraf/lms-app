@@ -54,8 +54,8 @@ class ForgotPasswordDialog : AppCompatDialogFragment() {
     private var emailInvalidTextView: TextView? = null
 
     companion object {
-        val SUCCESS = 1
-        val CANCEL = 0
+        const val SUCCESS = 1
+        const val CANCEL = 0
 
         @JvmStatic
         fun newInstance(callback: (Int) -> Unit): ForgotPasswordDialog {

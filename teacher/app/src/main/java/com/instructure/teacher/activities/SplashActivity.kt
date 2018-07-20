@@ -27,10 +27,7 @@ import com.instructure.canvasapi2.StatusCallback
 import com.instructure.canvasapi2.managers.CourseManager
 import com.instructure.canvasapi2.managers.ThemeManager
 import com.instructure.canvasapi2.managers.UserManager
-import com.instructure.canvasapi2.models.AccountRole
-import com.instructure.canvasapi2.models.CanvasColor
-import com.instructure.canvasapi2.models.CanvasTheme
-import com.instructure.canvasapi2.models.Course
+import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.ApiType
 import com.instructure.canvasapi2.utils.LinkHeaders
@@ -44,7 +41,6 @@ import com.instructure.pandautils.utils.setGone
 import com.instructure.teacher.R
 import com.instructure.teacher.fragments.NotATeacherFragment
 import com.instructure.teacher.utils.TeacherPrefs
-import com.pspdfkit.framework.i
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.experimental.Job
 import retrofit2.Response
@@ -84,18 +80,19 @@ class SplashActivity : AppCompatActivity() {
                 }
 
                 // Determine if user can masquerade
-                if (ApiPrefs.canMasquerade == null) {
+                if (ApiPrefs.canBecomeUser == null) {
                     if (ApiPrefs.domain.startsWith("siteadmin", true)) {
-                        ApiPrefs.canMasquerade = true
+                        ApiPrefs.canBecomeUser = true
                     } else try {
-                        val roles = awaitApi<List<AccountRole>> { UserManager.getSelfAccountRoles(true, it) }
-                        ApiPrefs.canMasquerade = roles.any { it.permissions["become_user"]?.enabled == true }
+                        val account = awaitApi<Account> { UserManager.getSelfAccount(true, it) }
+                        val permission = awaitApi<BecomeUserPermission> { UserManager.getBecomeUserPermission(true, account.id, it) }
+                        ApiPrefs.canBecomeUser = permission.becomeUser
                     } catch (e: StatusCallbackError) {
-                        if (e.response?.code() == 401) ApiPrefs.canMasquerade = false
+                        if (e.response?.code() == 401) ApiPrefs.canBecomeUser = false
                     }
                 }
 
-                if (!TeacherPrefs.isConfirmedTeacher && ApiPrefs.canMasquerade != true) {
+                if (!TeacherPrefs.isConfirmedTeacher && ApiPrefs.canBecomeUser != true) {
                     CourseManager.getCoursesWithEnrollmentType(true, mUserIsTeacherVerificationCallback, "teacher")
                     // The user is not a teacher in any course and cannot masquerade; Show them the door
                     canvasLoadingView.setGone()

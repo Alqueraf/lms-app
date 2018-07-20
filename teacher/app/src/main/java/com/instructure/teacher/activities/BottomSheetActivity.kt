@@ -49,6 +49,7 @@ import com.instructure.teacher.fragments.AddMessageFragment
 import com.instructure.interactions.BottomSheetInteractions
 import com.instructure.interactions.router.Route
 import com.instructure.teacher.router.RouteMatcher
+import com.instructure.teacher.router.RouteResolver
 import instructure.rceditor.RCEConst.HTML_RESULT
 import instructure.rceditor.RCEFragment
 import kotlinx.android.synthetic.main.activity_bottom_sheet.*
@@ -120,11 +121,11 @@ class BottomSheetActivity : BaseAppCompatActivity(), BottomSheetInteractions, RC
     }
 
     private fun setupWithCanvasContext(course: Course?) {
-        addFragment(RouteMatcher.getBottomSheetFragment(course, mRoute!!))
+        addFragment(RouteResolver.getBottomSheetFragment(course, mRoute!!))
     }
 
     override fun addFragment(route: Route) {
-        addFragment(RouteMatcher.getBottomSheetFragment(route.canvasContext, route))
+        addFragment(RouteResolver.getBottomSheetFragment(route.canvasContext, route))
     }
 
     private fun addFragment(fragment: Fragment?) {

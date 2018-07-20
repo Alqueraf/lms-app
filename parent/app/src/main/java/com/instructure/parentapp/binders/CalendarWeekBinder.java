@@ -150,7 +150,7 @@ public class CalendarWeekBinder extends BaseBinder {
 
                 } else {
                     //Calendar Event
-                    holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.vd_calendar_month));
+                    holder.icon.setImageDrawable(ColorKeeper.getColoredDrawable(context, R.drawable.vd_calendar_month, context.getResources().getColor(R.color.white)));
                     holder.icon.setContentDescription(context.getString(R.string.calendar_event));
                     holder.background.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.circle_background));
                     holder.title.setText(item.getTitle());
@@ -187,6 +187,13 @@ public class CalendarWeekBinder extends BaseBinder {
             return courseMap.get(id).getName();
         }
         return "";
+    }
+
+    public static Course getCourseById(final Map<Long, Course> courseMap, long id) {
+        if(courseMap.containsKey(id)) {
+            return courseMap.get(id);
+        }
+        return null;
     }
 
     private static String getStartString(Context context, ScheduleItem item) {

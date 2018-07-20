@@ -32,19 +32,20 @@ import com.instructure.candroid.adapter.InboxConversationAdapter
 import com.instructure.candroid.events.ConversationUpdatedEvent
 import com.instructure.candroid.events.MessageAddedEvent
 import com.instructure.candroid.interfaces.MessageAdapterCallback
-import com.instructure.candroid.util.DownloadMedia
-import com.instructure.candroid.util.FragUtils
-import com.instructure.candroid.util.Param
+import com.instructure.candroid.router.RouteMatcher
+import com.instructure.candroid.util.FileDownloadJobIntentService
 import com.instructure.candroid.view.AttachmentView
 import com.instructure.canvasapi2.apis.InboxApi
 import com.instructure.canvasapi2.managers.InboxManager
 import com.instructure.canvasapi2.models.*
+import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.pageview.PageView
 import com.instructure.canvasapi2.utils.weave.WeaveJob
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
-import com.instructure.interactions.FragmentInteractions
+import com.instructure.interactions.router.Route
+import com.instructure.interactions.router.RouterParams
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.fragment_inbox_conversation.*
 import kotlinx.android.synthetic.main.recycler_swipe_refresh_layout.*
@@ -56,11 +57,16 @@ import org.greenrobot.eventbus.ThreadMode
 @PageView(url = "conversations")
 class InboxConversationFragment : ParentFragment() {
 
-    private val scope by lazy { arguments.getString(Const.SCOPE) }
-
-    private lateinit var conversation: Conversation
+    private var scope by NullableStringArg(Const.SCOPE)
+    private var conversation by ParcelableArg<Conversation>(key = Const.CONVERSATION)
+    private var conversationId by LongArg(0L, Const.CONVERSATION_ID)
 
     private var conversationCall: WeaveJob? = null
+    private var starCall: WeaveJob? = null
+    private var archiveCall: WeaveJob? = null
+    private var deleteConversationCall: WeaveJob? = null
+    private var deleteMessageCall: WeaveJob? = null
+    private var unreadCall: WeaveJob? = null
 
     private val adapter: InboxConversationAdapter by lazy {
         InboxConversationAdapter(context, conversation, mAdapterCallback)
@@ -92,12 +98,6 @@ class InboxConversationFragment : ParentFragment() {
         true
     }
 
-    private var starCall: WeaveJob? = null
-    private var archiveCall: WeaveJob? = null
-    private var deleteConversationCall: WeaveJob? = null
-    private var deleteMessageCall: WeaveJob? = null
-    private var unreadCall: WeaveJob? = null
-
     private val mAdapterCallback = object : MessageAdapterCallback {
         override fun onAvatarClicked(user: BasicUser) = Unit
 
@@ -105,11 +105,11 @@ class InboxConversationFragment : ParentFragment() {
             when (action) {
                 AttachmentView.AttachmentAction.REMOVE -> Unit // Do nothing
 
-                AttachmentView.AttachmentAction.PREVIEW -> openMedia(attachment.contentType, attachment.url, attachment.filename)
+                AttachmentView.AttachmentAction.PREVIEW -> openMedia(attachment.contentType, attachment.url, attachment.filename, ApiPrefs.user!!)
                 
                 AttachmentView.AttachmentAction.DOWNLOAD -> {
                     if (PermissionUtils.hasPermissions(activity, PermissionUtils.WRITE_EXTERNAL_STORAGE)) {
-                        DownloadMedia.downloadMedia(context, attachment.url, attachment.filename, attachment.filename)
+                        FileDownloadJobIntentService.scheduleDownloadJob(context, attachment = attachment)
                     } else {
                         requestPermissions(PermissionUtils.makeArray(PermissionUtils.WRITE_EXTERNAL_STORAGE), PermissionUtils.WRITE_FILE_PERMISSION_REQUEST_CODE)
                     }
@@ -147,6 +147,8 @@ class InboxConversationFragment : ParentFragment() {
         }
     }
 
+    override fun title(): String = getString(R.string.inbox)
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
@@ -155,6 +157,31 @@ class InboxConversationFragment : ParentFragment() {
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return layoutInflater.inflate(R.layout.fragment_inbox_conversation, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        when {
+        // Setup from conversation ID
+            conversationId != 0L -> {
+                conversationCall = tryWeave {
+                    conversation = awaitApi { InboxManager.getConversation(conversationId, true, it) }
+                    conversationId = 0L
+                    setupViews()
+                } catch {
+                    it.cause?.printStackTrace()
+                    toast(R.string.errorConversationGeneric)
+                    activity.onBackPressed()
+                }
+            }
+        // Set up from conversation object
+            else -> {
+                setupViews()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -167,50 +194,8 @@ class InboxConversationFragment : ParentFragment() {
         super.onDestroy()
     }
 
-    override fun getFragmentPlacement() = FragmentInteractions.Placement.DETAIL
-
-    override fun title(): String = getString(R.string.inbox)
-
-    override fun allowBookmarking(): Boolean {
-        val isCourseContext = CanvasContext.fromContextCode(conversation.contextCode)?.isCourse == true
-        return isCourseContext && navigation?.currentFragment !is NotificationListFragment
-    }
-
     override fun applyTheme() {
         ViewStyler.themeToolbar(activity, toolbar, ThemePrefs.primaryColor, ThemePrefs.primaryTextColor)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return layoutInflater.inflate(R.layout.fragment_inbox_conversation, container, false)
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        when {
-        // Set up from normal bundle
-            arguments.containsKey(Const.CONVERSATION) -> {
-                conversation = arguments.getParcelable(Const.CONVERSATION)
-                setupViews()
-            }
-
-        // Set up from route
-            urlParams != null -> {
-                val conversationId = parseLong(urlParams[Param.CONVERSATION_ID], 0)
-                conversationCall = tryWeave {
-                    conversation = awaitApi { InboxManager.getConversation(conversationId, true, it) }
-                    setupViews()
-                } catch {
-                    it.cause?.printStackTrace()
-                    toast(R.string.errorConversationGeneric)
-                    activity.onBackPressed()
-                }
-            }
-
-            else -> {
-                toast(R.string.errorConversationGeneric)
-                activity.onBackPressed()
-            }
-        }
     }
 
     private fun setupViews() {
@@ -220,7 +205,7 @@ class InboxConversationFragment : ParentFragment() {
     }
 
     private fun initAdapter() {
-        configureRecyclerView(view, context, adapter, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView)
+        configureRecyclerView(view!!, context, adapter, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView)
         val dividerItemDecoration = DividerItemDecoration(listView.context, LinearLayoutManager.VERTICAL)
         dividerItemDecoration.setDrawable(ContextCompat.getDrawable(context, R.drawable.item_decorator_gray))
         listView.addItemDecoration(dividerItemDecoration)
@@ -331,14 +316,9 @@ class InboxConversationFragment : ParentFragment() {
         deleteMessageCall?.cancel()
         deleteMessageCall = tryWeave {
             awaitApi<Conversation> { InboxManager.deleteMessages(conversation.id, listOf(message.id), it) }
-            val topMessageDeleted = adapter.indexOf(message) == 0
             adapter.remove(message)
             if (adapter.size() > 0) {
                 toast(R.string.deleted)
-                if (topMessageDeleted) {
-                    // The top message was deleted; we need to refresh the list so the reply button is on the top message
-                    reloadData()
-                }
             } else {
                 onConversationUpdated(true)
             }
@@ -348,23 +328,23 @@ class InboxConversationFragment : ParentFragment() {
     }
 
     private fun replyAllMessage() {
-        val args = InboxComposeMessageFragment.createBundleReplyForward(
+        val route = InboxComposeMessageFragment.makeRoute(
                 true,
                 conversation,
                 adapter.participants.values.toList(),
                 longArrayOf(),
                 null)
-        navigation?.addFragment(FragUtils.getFrag(InboxComposeMessageFragment::class.java, args))
+        RouteMatcher.route(context, route)
     }
 
     private fun addMessage(message: Message, isReply: Boolean) {
-        val args = InboxComposeMessageFragment.createBundleReplyForward(
+        val route = InboxComposeMessageFragment.makeRoute(
                 isReply,
                 conversation,
                 adapter.participants.values.toList(),
                 adapter.getMessageChainIdsForMessage(message),
                 message)
-        navigation?.addFragment(FragUtils.getFrag(InboxComposeMessageFragment::class.java, args))
+        RouteMatcher.route(context, route)
     }
 
     private fun refreshConversationData() {
@@ -374,13 +354,6 @@ class InboxConversationFragment : ParentFragment() {
     private fun onConversationUpdated(goBack: Boolean) {
         EventBus.getDefault().postSticky(ConversationUpdatedEvent(conversation))
         if (goBack) activity.onBackPressed()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RequestCodes.COMPOSE_MESSAGE && resultCode == RESULT_OK) {
-            reloadData()
-        }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     @Suppress("unused")
@@ -394,18 +367,35 @@ class InboxConversationFragment : ParentFragment() {
     companion object {
 
         @JvmStatic
-        fun createBundle(conversation: Conversation, position: Int, scope: String?): Bundle {
-            val bundle = Bundle()
-            bundle.putParcelable(Const.CONVERSATION, conversation)
-            bundle.putInt(Const.POSITION, position)
-            bundle.putString(Const.SCOPE, scope)
-            return bundle
+        fun makeRoute(conversation: Conversation, scope: String?): Route {
+            val bundle = Bundle().apply {
+                putParcelable(Const.CONVERSATION, conversation)
+                putString(Const.SCOPE, scope)
+            }
+            return Route(null, InboxConversationFragment::class.java, null, bundle)
         }
 
-        fun newInstance(bundle: Bundle): InboxConversationFragment {
-            val fragment = InboxConversationFragment()
-            fragment.arguments = bundle
-            return fragment
+        @JvmStatic
+        fun makeRoute(conversationId: Long): Route {
+            val bundle = Bundle().apply { putLong(Const.CONVERSATION_ID, conversationId) }
+            return Route(null, InboxConversationFragment::class.java, null, bundle)
         }
+
+        @JvmStatic
+        fun validateRoute(route: Route): Boolean {
+            return route.arguments.containsKey(Const.CONVERSATION)
+                    || route.arguments.containsKey(Const.CONVERSATION_ID)
+                    || route.paramsHash.containsKey(RouterParams.CONVERSATION_ID)
+        }
+
+        @JvmStatic
+        fun newInstance(route: Route) : InboxConversationFragment? {
+            if (!validateRoute(route)) return null
+            route.paramsHash[RouterParams.CONVERSATION_ID]?.let {
+                route.arguments.putLong(Const.CONVERSATION_ID, it.toLong())
+            }
+            return InboxConversationFragment().withArgs(route.arguments)
+        }
+
     }
 }

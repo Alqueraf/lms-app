@@ -16,20 +16,19 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.WaitForViewWithId
+import com.instructure.espresso.assertDisplayed
+import com.instructure.espresso.click
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.waitForViewWithText
 import com.instructure.soseedy.CanvasUser
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.WaitForViewWithId
-import com.instructure.teacher.ui.utils.assertDisplayed
-import com.instructure.teacher.ui.utils.click
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
-import com.instructure.teacher.ui.utils.waitForViewWithText
 
-class ChooseRecipientsPage: BasePage(), PageAssert by SimplePageAssert() {
+class ChooseRecipientsPage: BasePage() {
 
     private val toolbar by WaitForViewWithId(R.id.toolbar)
     private val recyclerView by WaitForViewWithId(R.id.recyclerView)
-    private val menuDone by WaitForViewWithId(R.id.menu_done)
+    private val menuDone by WaitForViewWithId(R.id.menuDone)
     private val checkBox by WaitForViewWithId(R.id.checkBox)
 
     override fun assertPageObjects() {

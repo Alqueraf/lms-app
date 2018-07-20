@@ -154,6 +154,7 @@ class AssigneeListFragment : BaseExpandableSyncFragment<
         @JvmStatic val GROUPS = "groups"
         @JvmStatic val STUDENTS = "students"
 
+        @Suppress("UNCHECKED_CAST")
         @JvmStatic
         fun newInstance(args: Bundle) = AssigneeListFragment().apply {
             this.mDateGroups = args.getSerializable(DATE_GROUPS) as List<DueDateGroup>

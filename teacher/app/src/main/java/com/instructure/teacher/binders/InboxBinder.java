@@ -77,14 +77,13 @@ public class InboxBinder extends BaseBinder {
             holder.date.setText(getParsedDate(context, conversation.getLastMessageAt()));
         }
 
+        setVisible(holder.subject);
         if(!TextUtils.isEmpty(conversation.getSubject())){
-            setVisible(holder.subject);
             holder.subject.setText(conversation.getSubject());
-            holder.message.setMaxLines(1);
         } else {
-            setGone(holder.subject);
-            holder.message.setMaxLines(2);
+            holder.subject.setText(R.string.no_subject);
         }
+        holder.message.setMaxLines(1);
 
         if (conversation.getWorkflowState() == Conversation.WorkflowState.UNREAD) {
             setVisible(holder.unreadMark);

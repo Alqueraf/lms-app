@@ -21,21 +21,22 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import com.instructure.candroid.R
 import com.instructure.candroid.adapter.InboxAdapter
 import com.instructure.candroid.decorations.DividerDecoration
 import com.instructure.candroid.dialog.CanvasContextListDialog
 import com.instructure.candroid.events.ConversationUpdatedEvent
 import com.instructure.candroid.interfaces.AdapterToFragmentCallback
-import com.instructure.candroid.util.FragUtils
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.canvasapi2.apis.InboxApi
 import com.instructure.canvasapi2.apis.InboxApi.Scope
-import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.Conversation
-import com.instructure.interactions.FragmentInteractions
-import com.instructure.interactions.Navigation
 import com.instructure.canvasapi2.utils.pageview.PageView
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.fragment_inbox.*
 import org.greenrobot.eventbus.EventBus
@@ -66,10 +67,6 @@ class InboxFragment : ParentFragment() {
             onUnreadCountInvalidated?.invalidateUnreadCount()
         }
     }
-
-    override fun getFragmentPlacement() = FragmentInteractions.Placement.MASTER
-
-    override fun allowBookmarking() = false
 
     override fun title(): String = getString(R.string.inbox)
 
@@ -136,9 +133,8 @@ class InboxFragment : ParentFragment() {
 
     private fun setupListeners() {
         addMessage.onClickWithRequireNetwork {
-            navigation?.addFragment(
-                FragUtils.getFrag(InboxComposeMessageFragment::class.java, InboxComposeMessageFragment.createBundleNewConversation())
-            )
+            val route = InboxComposeMessageFragment.makeRoute()
+            RouteMatcher.route(context, route)
         }
 
         clearFilterTextView.setOnClickListener {
@@ -196,15 +192,9 @@ class InboxFragment : ParentFragment() {
     }
 
     override fun applyTheme() {
+        setupToolbarMenu(toolbar, R.menu.menu_filter_inbox)
         ViewStyler.themeToolbar(activity, toolbar, ThemePrefs.primaryColor, ThemePrefs.primaryTextColor)
         ViewStyler.themeFAB(addMessage, ThemePrefs.buttonColor)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.menu_filter_inbox, menu)
-        toolbar.post {
-            ViewStyler.themeToolbar(activity, toolbar, ThemePrefs.primaryColor, ThemePrefs.primaryTextColor)
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -227,18 +217,14 @@ class InboxFragment : ParentFragment() {
     }
 
     private fun showConversation(conversation: Conversation) {
-        if (activity !is Navigation) return
-        val fragment = FragUtils.getFrag(
-            InboxConversationFragment::class.java,
-            InboxConversationFragment.createBundle(conversation, 0, InboxApi.conversationScopeToString(messageType))
-        )
-        navigation?.addFragment(fragment)
+        val route = InboxConversationFragment.makeRoute(conversation, InboxApi.conversationScopeToString(messageType))
+        RouteMatcher.route(context, route)
     }
 
     @Suppress("unused")
     @Subscribe(sticky = true)
     fun onUpdateConversation(event: ConversationUpdatedEvent) {
-        event.once(javaClass.simpleName) {
+        event.get {
             reloadData()
 
             // update the unread count
@@ -246,14 +232,17 @@ class InboxFragment : ParentFragment() {
         }
     }
 
-    override fun reloadData() {
+    private fun reloadData() {
         adapter.refresh()
         setupFilterText()
     }
 
     companion object {
-        fun createBundle(canvasContext: CanvasContext): Bundle {
-            return ParentFragment.createBundle(canvasContext)
-        }
+
+        fun makeRoute() = Route(InboxFragment::class.java, null)
+
+        private fun validateRoute(route: Route) = route.primaryClass == InboxFragment::class.java
+
+        fun newInstance(route: Route) = if (validateRoute(route)) InboxFragment().withArgs(route.arguments) else null
     }
 }

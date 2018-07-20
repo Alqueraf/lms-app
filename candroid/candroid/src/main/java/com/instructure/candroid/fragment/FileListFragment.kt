@@ -21,6 +21,7 @@ import android.app.DialogFragment
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
 import android.support.v7.widget.PopupMenu
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +33,10 @@ import com.instructure.candroid.R
 import com.instructure.candroid.adapter.FileFolderCallback
 import com.instructure.candroid.adapter.FileListRecyclerAdapter
 import com.instructure.candroid.dialog.EditTextDialog
-import com.instructure.candroid.util.*
+import com.instructure.candroid.router.RouteMatcher
+import com.instructure.candroid.util.FileDownloadJobIntentService
+
+import com.instructure.candroid.util.StudentPrefs
 import com.instructure.canvasapi2.managers.FileFolderManager
 import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.utils.ApiPrefs
@@ -43,33 +47,33 @@ import com.instructure.canvasapi2.utils.pageview.PageViewUtils
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.interactions.bookmarks.Bookmarkable
+import com.instructure.interactions.bookmarks.Bookmarker
+import com.instructure.interactions.router.Route
+import com.instructure.interactions.router.RouterParams
+import com.instructure.pandautils.dialogs.FileExistsDialog
 import com.instructure.pandautils.dialogs.UploadFilesDialog
-import com.instructure.candroid.util.AppManager
-import com.instructure.candroid.util.DownloadMedia
-import com.instructure.candroid.util.FragUtils
-import com.instructure.candroid.util.Param
-import com.instructure.canvasapi2.models.CanvasContext
-import com.instructure.canvasapi2.models.FileFolder
-import com.instructure.interactions.FragmentInteractions
+import com.instructure.pandautils.dialogs.UploadFilesDialog.Companion.EVENT_ON_UPLOAD_BEGIN
 import com.instructure.pandautils.utils.*
-import com.instructure.pandautils.utils.Const
 import kotlinx.android.synthetic.main.fragment_file_list.*
 import kotlinx.android.synthetic.main.fragment_file_list.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
 
 @PageView
-class FileListFragment : ParentFragment() {
+class FileListFragment : ParentFragment(), Bookmarkable {
+
+    private var canvasContext by ParcelableArg<CanvasContext>(key = Const.CANVAS_CONTEXT)
+
+    private var isExpectingUpload by BooleanArg()
 
     @Suppress("unused")
     @PageViewUrl
     private fun makePageViewUrl() =
-        if (canvasContext.type == CanvasContext.Type.USER) {
-            "${ApiPrefs.fullDomain}/files"
-        } else {
-            "${ApiPrefs.fullDomain}/${canvasContext.contextId.replace("_", "s/")}/files"
-        }
+        if (canvasContext.type == CanvasContext.Type.USER) "${ApiPrefs.fullDomain}/files"
+        else "${ApiPrefs.fullDomain}/${canvasContext.contextId.replace("_", "s/")}/files"
 
     private var recyclerAdapter: FileListRecyclerAdapter? = null
 
@@ -85,16 +89,8 @@ class FileListFragment : ParentFragment() {
     private val fabReveal by lazy { AnimationUtils.loadAnimation(activity, R.anim.fab_reveal) }
     private val fabHide by lazy { AnimationUtils.loadAnimation(activity, R.anim.fab_hide) }
 
-    override fun getFragmentPlacement(): FragmentInteractions.Placement {
-        // We only want full screen dialog if its user files
-        return if(canvasContext.type == CanvasContext.Type.USER) {
-            FragmentInteractions.Placement.FULLSCREEN
-        } else {
-            FragmentInteractions.Placement.MASTER
-        }
-    }
     override fun title(): String = getString(R.string.files)
-    override fun getSelectedParamName(): String = Param.FILE_ID
+    override fun getSelectedParamName(): String = RouterParams.FILE_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,9 +103,11 @@ class FileListFragment : ParentFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = layoutInflater.inflate(R.layout.fragment_file_list, container, false)
-        rootView.toolbar.title = title()
-        rootView.toolbar.subtitle = canvasContext.name
-        rootView.addFab.setInvisible()
+        with(rootView) {
+            toolbar.title = title()
+            toolbar.subtitle = canvasContext.name
+            addFab.setInvisible()
+        }
         return rootView
     }
 
@@ -146,15 +144,14 @@ class FileListFragment : ParentFragment() {
     }
 
     private fun setUpCallbacks() {
-        adapterCallback = object : FileFolderCallback{
+        adapterCallback = object : FileFolderCallback {
 
             override fun onItemClicked(item: FileFolder) {
                 if (item.fullName != null) {
-                    val bundle = createBundle(item, canvasContext)
-                    navigation?.addFragment(FragUtils.getFrag(FileListFragment::class.java, bundle))
+                    RouteMatcher.route(context, FileListFragment.makeRoute(canvasContext, item))
                 } else {
                     recordFilePreviewEvent(item)
-                    openMedia(item.contentType, item.url, item.displayName)
+                    openMedia(item.contentType, item.url, item.displayName, canvasContext)
                 }
             }
 
@@ -168,9 +165,16 @@ class FileListFragment : ParentFragment() {
         }
     }
 
+    override fun onMediaLoadingStarted() {
+        fileLoadingProgressBar.setVisible()
+    }
+
+    override fun onMediaLoadingComplete() {
+        fileLoadingProgressBar.setGone()
+    }
+
     private fun recordFilePreviewEvent(file: FileFolder) {
-        val event = PageViewEvent("FilePreview", "${makePageViewUrl()}?preview=${file.id}", ApiPrefs.user!!.id)
-        PageViewUtils.saveSingleEvent(event)
+        PageViewUtils.saveSingleEvent("FilePreview", "${makePageViewUrl()}?preview=${file.id}")
     }
 
     override fun applyTheme() {
@@ -185,8 +189,10 @@ class FileListFragment : ParentFragment() {
     private fun themeToolbar() {
         // We style the toolbar white for user files
         if (canvasContext.type == CanvasContext.Type.USER) {
+            ViewStyler.themeProgressBar(fileLoadingProgressBar, Color.BLACK)
             ViewStyler.themeToolbar(activity, toolbar, Color.WHITE, Color.BLACK, false)
         } else {
+            ViewStyler.themeProgressBar(fileLoadingProgressBar, Color.WHITE)
             ViewStyler.themeToolbar(activity, toolbar, canvasContext)
         }
     }
@@ -195,9 +201,10 @@ class FileListFragment : ParentFragment() {
         val isUserFiles = canvasContext.type == CanvasContext.Type.USER
 
         if (recyclerAdapter == null) {
-            recyclerAdapter = FileListRecyclerAdapter(context, canvasContext, isUserFiles, folder!!, adapterCallback)
+            recyclerAdapter = FileListRecyclerAdapter(context, canvasContext, getFileMenuOptions(folder!!, canvasContext), folder!!, adapterCallback)
         }
-        configureRecyclerView(view, context, recyclerAdapter, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView)
+
+        configureRecyclerView(view!!, context, recyclerAdapter!!, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView)
 
         setupToolbarMenu(toolbar)
 
@@ -207,7 +214,7 @@ class FileListFragment : ParentFragment() {
         themeToolbar()
 
         // Only show FAB for user files
-        if (isUserFiles) {
+        if (isUserFiles && folder?.forSubmissions == false) {
             addFab.setVisible()
             addFab.onClickWithRequireNetwork { animateFabs() }
             addFileFab.onClickWithRequireNetwork {
@@ -237,19 +244,20 @@ class FileListFragment : ParentFragment() {
     private fun showOptionMenu(item: FileFolder, anchorView: View) {
         val popup = PopupMenu(context, anchorView)
         popup.inflate(R.menu.file_folder_options)
-        with (popup.menu) {
+        with(popup.menu) {
+            val options = getFileMenuOptions(item, canvasContext)
             // Only show alternate-open option for PDF files
-            findItem(R.id.openAlternate).isVisible = item.isFile && "pdf" in item.contentType.orEmpty()
-
-            // Only show download option if it's a file and the download manager is available
-            findItem(R.id.download).isVisible = item.isFile && AppManager.isDownloadManagerAvailable(context)
+            findItem(R.id.openAlternate).isVisible = options.contains(FileMenuType.OPEN_IN_ALTERNATE)
+            findItem(R.id.download).isVisible = options.contains(FileMenuType.DOWNLOAD)
+            findItem(R.id.rename).isVisible = options.contains(FileMenuType.RENAME)
+            findItem(R.id.delete).isVisible = options.contains(FileMenuType.DELETE)
         }
 
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.openAlternate -> {
                     recordFilePreviewEvent(item)
-                    openMedia(item.contentType, item.url, item.displayName, true)
+                    openMedia(item.contentType, item.url, item.displayName, true, canvasContext)
                 }
                 R.id.download -> downloadItem(item)
                 R.id.rename -> renameItem(item)
@@ -261,10 +269,26 @@ class FileListFragment : ParentFragment() {
         popup.show()
     }
 
+    enum class FileMenuType {
+        DOWNLOAD, RENAME, DELETE, OPEN_IN_ALTERNATE
+    }
+
+
     private fun downloadItem(item: FileFolder) {
+        // First check if the Download Manager exists, and is enabled
+
+        // Then check for permissions
         if (PermissionUtils.hasPermissions(activity, PermissionUtils.WRITE_EXTERNAL_STORAGE)) {
-            DownloadMedia.downloadMedia(context, item.url, item.displayName, item.displayName)
+            // Check if file exists... if so, show a dialog asking if the user wants to replace the file
+            val downloadedFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), item.displayName)
+            if (downloadedFile.exists()) {
+                FileExistsDialog.show(activity.supportFragmentManager, item.displayName
+                        ?: "") { FileDownloadJobIntentService.scheduleDownloadJob(context, item) }
+            } else {
+                FileDownloadJobIntentService.scheduleDownloadJob(context, item)
+            }
         } else {
+            // Need permission
             requestPermissions(PermissionUtils.makeArray(PermissionUtils.WRITE_EXTERNAL_STORAGE), PermissionUtils.WRITE_FILE_PERMISSION_REQUEST_CODE)
         }
     }
@@ -333,7 +357,9 @@ class FileListFragment : ParentFragment() {
     private fun uploadFile() {
         folder?.let {
             val bundle = UploadFilesDialog.createFilesBundle(null, it.id)
-            UploadFilesDialog.show(fragmentManager, bundle, { _ -> })
+            UploadFilesDialog.show(fragmentManager, bundle) { event ->
+                if (event == EVENT_ON_UPLOAD_BEGIN) isExpectingUpload = true
+            }
         }
     }
 
@@ -362,9 +388,8 @@ class FileListFragment : ParentFragment() {
         }
     }
 
-    override fun allowBookmarking(): Boolean {
-        return canvasContext.type == CanvasContext.Type.COURSE || canvasContext.type == CanvasContext.Type.GROUP
-    }
+    override val bookmark: Bookmarker
+        get() = Bookmarker(canvasContext.isCourseOrGroup, canvasContext)
 
     private fun animateFabs() = if (mFabOpen) {
         addFab.startAnimation(fabRotateBackwards)
@@ -397,10 +422,13 @@ class FileListFragment : ParentFragment() {
         mFabOpen = true
     }
 
+    @Suppress("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: FileUploadEvent) {
-        event.get {
-            recyclerAdapter?.loadData()
+        event.once(FileListFragment::class.java.name + folder?.id) {
+            if (!isExpectingUpload) return@once
+            isExpectingUpload = false
+            recyclerAdapter?.refresh()
             folder?.let {
                 StudentPrefs.staleFolderIds = StudentPrefs.staleFolderIds + it.id
             }
@@ -409,24 +437,90 @@ class FileListFragment : ParentFragment() {
 
     companion object {
 
-        fun newInstance(args: Bundle): FileListFragment {
-            val fragment = FileListFragment()
-            fragment.arguments = args
-            return fragment
+        @JvmStatic
+        fun makeRoute(canvasContext: CanvasContext, fileFolder: FileFolder): Route {
+            val bundle = Bundle().apply { putParcelable(Const.FOLDER, fileFolder) }
+            return Route(null, FileListFragment::class.java, canvasContext, bundle)
         }
 
         @JvmStatic
-        fun createBundle(folder: FileFolder, canvasContext: CanvasContext): Bundle {
-            val extras = ParentFragment.createBundle(canvasContext)
-            extras.putParcelable(Const.FOLDER, folder)
-            return extras
+        fun makeRoute(canvasContext: CanvasContext, folderId: Long = 0L): Route {
+            val bundle = Bundle().apply { putLong(Const.FOLDER_ID, folderId) }
+            return Route(null, FileListFragment::class.java, canvasContext, bundle)
+        }
+
+        private fun validateRoute(route: Route): Boolean {
+            return route.canvasContext != null
         }
 
         @JvmStatic
-        fun createBundle(folderId: Long, canvasContext: CanvasContext): Bundle {
-            val extras = ParentFragment.createBundle(canvasContext)
-            extras.putLong(Const.FOLDER_ID, folderId)
-            return extras
+        fun newInstance(route: Route): FileListFragment? {
+            if (!validateRoute(route)) return null
+            return FileListFragment().withArgs(route.canvasContext!!.makeBundle(route.arguments))
+        }
+
+        /**
+         * @return A list of possible actions the user is able to perform on the file/folder
+         */
+        fun getFileMenuOptions(fileFolder: FileFolder, canvasContext: CanvasContext): List<FileMenuType> {
+            val options: MutableList<FileMenuType> = mutableListOf()
+
+            if (canvasContext.type == CanvasContext.Type.USER) {
+                // We're in the user's files, they should have options in the options menu
+                if (!fileFolder.isLockedForUser) {
+                    // File is not locked for this user
+                    if (!fileFolder.forSubmissions) {
+                        // File/folder is not for a submission, so we can rename/delete
+                        with(options) {
+                            add(FileMenuType.RENAME)
+                            add(FileMenuType.DELETE)
+                        }
+                    }
+
+                    if (fileFolder.isFile) {
+                        // File is the user's and it's not locked, allow them to
+                        // download the file, or open it in another app (if it's a PDF)
+                        options.add(FileMenuType.DOWNLOAD)
+                        if ("pdf" in fileFolder.contentType.orEmpty()) {
+                            options.add(FileMenuType.OPEN_IN_ALTERNATE)
+                        }
+                    }
+                }
+            }
+
+            if (canvasContext.type == CanvasContext.Type.COURSE) {
+                // Course files, check if the user is able to mess with a file/folder
+                val course = (canvasContext as Course)
+
+                if (course.isStudent) {
+                    // User is a student; Students can only download course files
+                    if (!fileFolder.isLockedForUser && fileFolder.isFile) {
+                        // File isn't locked, let them download it
+                        options.add(FileMenuType.DOWNLOAD)
+
+                        if ("pdf" in fileFolder.contentType.orEmpty()) {
+                            options.add(FileMenuType.OPEN_IN_ALTERNATE)
+                        }
+                    }
+
+                } else if (course.isTeacher || course.isTA) {
+                    // User is a Teacher or TA, they can rename, delete, or (if this is a file) download
+                    with(options) {
+                        add(FileMenuType.RENAME)
+                        add(FileMenuType.DELETE)
+                    }
+
+                    if (fileFolder.isFile) {
+                        options.add(FileMenuType.DOWNLOAD)
+                        if ("pdf" in fileFolder.contentType.orEmpty()) {
+                            options.add(FileMenuType.OPEN_IN_ALTERNATE)
+                        }
+                    }
+                }
+            }
+
+            // If there's some case we didn't catch, default to not showing the menu
+            return options
         }
     }
 }

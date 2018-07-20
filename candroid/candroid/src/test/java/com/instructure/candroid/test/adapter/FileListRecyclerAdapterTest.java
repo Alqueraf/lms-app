@@ -36,7 +36,7 @@ public class FileListRecyclerAdapterTest extends InstrumentationTestCase {
     private FileListRecyclerAdapter mAdapter;
 
     public static class FileListRecyclerAdapterWrapper extends FileListRecyclerAdapter {
-        protected FileListRecyclerAdapterWrapper(Context context) { super(context, null, false, new FileFolder(), null, true); }
+        protected FileListRecyclerAdapterWrapper(Context context) { super(context, null, null, new FileFolder(), null, true); }
     }
 
     @Before

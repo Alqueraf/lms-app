@@ -18,7 +18,11 @@
 package com.instructure.candroid.interfaces;
 
 import com.instructure.canvasapi2.models.Assignment;
+import com.instructure.canvasapi2.models.GradingPeriod;
+
+import java.util.List;
 
 public interface AdapterToAssignmentsCallback extends AdapterToFragmentCallback<Assignment> {
     void setTermSpinnerState(boolean isEnabled);
+    void gradingPeriodsFetched(List<GradingPeriod> periods);
 }

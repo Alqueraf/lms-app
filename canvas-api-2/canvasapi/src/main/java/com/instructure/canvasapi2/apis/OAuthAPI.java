@@ -17,12 +17,15 @@
 package com.instructure.canvasapi2.apis;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.instructure.canvasapi2.StatusCallback;
 import com.instructure.canvasapi2.builders.RestBuilder;
 import com.instructure.canvasapi2.builders.RestParams;
 import com.instructure.canvasapi2.models.AuthenticatedSession;
 import com.instructure.canvasapi2.models.OAuthToken;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.http.DELETE;
@@ -54,5 +57,14 @@ public class OAuthAPI {
 
     public static void getAuthenticatedSession(String targetUrl, @NonNull RestParams params, @NonNull RestBuilder adapter, @NonNull StatusCallback<AuthenticatedSession> callback) {
         callback.addCall(adapter.build(OAuthInterface.class, params).getAuthenticatedSession(targetUrl)).enqueue(callback);
+    }
+
+    public static @Nullable String getAuthenticatedSessionSynchronous(String targetUrl, @NonNull RestParams params, @NonNull RestBuilder adapter) {
+        try {
+            return adapter.build(OAuthInterface.class, params).getAuthenticatedSession(targetUrl).execute().body().getSessionUrl();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -27,7 +27,7 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import com.instructure.canvasapi2.models.CanvasContext;
-import com.instructure.canvasapi2.models.Student;
+import com.instructure.canvasapi2.models.User;
 import com.instructure.canvasapi2.utils.ApiPrefs;
 import com.instructure.canvasapi2.utils.Logger;
 import com.instructure.pandautils.utils.Const;
@@ -39,7 +39,7 @@ import com.instructure.parentapp.fragments.AssignmentFragment;
 import com.instructure.parentapp.fragments.CourseSyllabusFragment;
 import com.instructure.parentapp.fragments.CourseWeekFragment;
 import com.instructure.parentapp.fragments.EventFragment;
-import com.instructure.parentapp.fragments.InternalWebviewFragment;
+import com.instructure.parentapp.fragments.InternalWebViewFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,7 +95,7 @@ public class RouterUtils {
      * @param routeIfPossible
      * @return
      */
-    public static boolean canRouteInternally(Activity activity, String url, @Nullable Student user, String domain, boolean routeIfPossible) {
+    public static boolean canRouteInternally(Activity activity, String url, @Nullable User user, String domain, boolean routeIfPossible) {
         boolean canRoute = getInternalRoute(url, domain) != null;
 
         if (canRoute && activity != null && routeIfPossible) {
@@ -149,7 +149,7 @@ public class RouterUtils {
      * @param domain
      * @return
      */
-    public static void routeUrl(Activity activity, String url, @Nullable Student user, String domain, boolean animate) {
+    public static void routeUrl(Activity activity, String url, @Nullable User user, String domain, boolean animate) {
         if (activity == null) {
             return;
         }
@@ -200,7 +200,7 @@ public class RouterUtils {
     private static void openInInternalWebViewFragment(Context context, String url, final boolean isReceivedFromOutsideOfApp) {
         Logger.d("couldNotParseUrl()");
         // TODO test if this works
-        Bundle bundle = InternalWebviewFragment.createBundle(url, null, null, null);
+        Bundle bundle = InternalWebViewFragment.Companion.createBundle(url, null, null, null);
 
         Intent intent = new Intent(context, DetailViewActivity.class);
         if(isReceivedFromOutsideOfApp) {

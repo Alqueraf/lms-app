@@ -16,6 +16,7 @@
 
 import android.content.Context
 import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
@@ -101,6 +102,10 @@ class NestedIconView @JvmOverloads constructor(
         return nestedIcon
     }
 
+    fun setIcon(icon: Drawable, @ColorInt tintColor: Int? = null) {
+        primaryIcon.setImageDrawable(icon)
+        tintColor?.let { primaryIcon.setColorFilter(it) }
+    }
 
     fun setIcon(@DrawableRes iconRes: Int, @ColorInt tintColor: Int? = null) {
         primaryIcon.setImageDrawable(ContextCompat.getDrawable(context, iconRes))

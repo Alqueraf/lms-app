@@ -18,7 +18,7 @@ package com.instructure.interactions.router
 
 import android.net.Uri
 
-class UrlValidator(url: String, userDomain: String) {
+class UrlValidator(var url: String, userDomain: String) {
 
     var isHostForLoggedInUser = false
         private set
@@ -26,12 +26,18 @@ class UrlValidator(url: String, userDomain: String) {
     var isValid = false
         private set
 
-    val uri: Uri? = Uri.parse(url)
+    val uri: Uri?
+        get() {
+            if(url.contains("//canvas-student//")) url = url.replace("canvas-student//", "")
+            if(url.contains("//canvas-teacher//")) url = url.replace("canvas-teacher//", "")
+            if(url.contains("//canvas-parent//")) url = url.replace("canvas-parent//", "")
+            return Uri.parse(url)
+        }
 
     init {
         if (uri != null) {
             isValid = true
-            val host = uri.host
+            val host = uri!!.host
             isHostForLoggedInUser = isLoggedInUserHost(host, userDomain)
         }
     }

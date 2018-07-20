@@ -44,7 +44,8 @@ class Commentator {
         ILLUMINATI_CONFIRMED(R.raw.illuminati_confirmed),
         MLG_HORN(R.raw.mlg_horn),
         LEGITNESS(R.raw.legitness),
-        PROFAMITY(R.raw.profamity)
+        PROFAMITY(R.raw.profamity),
+        POLICE_SIREN(R.raw.police_siren)
     }
 
     private val mSfxNames = Sfx.values().map { it.name }

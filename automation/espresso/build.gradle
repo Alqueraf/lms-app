@@ -22,7 +22,7 @@ def getProperty(key, defaultValue) {
 }
 
 def _compileSdkVersion = getProperty('compileSdkVersion', 26)
-def _buildToolsVersion = getProperty('buildToolsVersion', '26.0.2')
+def _buildToolsVersion = getProperty('buildToolsVersion', '27.0.3')
 def _minSdkVersion = getProperty('minSdkVersion', '17')
 def _targetSdkVersion = getProperty('targetSdkVersion', 26)
 def _versionCode = getProperty('versionCode', 1)
@@ -37,6 +37,9 @@ android {
         targetSdkVersion _targetSdkVersion
         versionCode _versionCode
         versionName _versionName
+
+        def dittoMode = findProperty("dittoMode") ?: "play"
+        buildConfigField "String", "GLOBAL_DITTO_MODE", "\"$dittoMode\""
     }
 
     buildTypes {
@@ -79,8 +82,9 @@ dependencies {
 
     def runnerVersion = Versions.ATSL_ORCHESTRATOR
     def rulesVersion = Versions.ATSL_ORCHESTRATOR
-    def espressoVersion = '3.0.2-alpha1'
-    def junitVersion = '4.12'
+    def espressoVersion = Versions.ESPRESSO
+    def junitVersion = Versions.JUNIT
+    def okReplayVersion = Versions.OKREPLAY
 
     // Update exclusions based on ./gradlew :app:androidDependencies
     implementation("com.android.support.test:runner:$runnerVersion") {
@@ -94,9 +98,28 @@ dependencies {
         exclude module: 'support-annotations'
     }
 
-    androidTestImplementation "com.android.support.test.espresso:espresso-accessibility:$espressoVersion"
+    implementation Libs.SUPPORT_DESIGN
 
-    implementation("com.android.support.test:rules:$rulesVersion") {
+    androidTestImplementation "com.android.support.test.espresso:espresso-accessibility:$espressoVersion"
+    implementation project(':dataseedingapi')
+    implementation project(':canvas-api-2')
+
+    /* OkHttp Idling Resource */
+    implementation('com.jakewharton.espresso:okhttp3-idling-resource:1.0.0') {
+        exclude module: 'espresso-idling-resource'
+    }
+
+    /* OkReplay VCR */
+    api("com.airbnb.okreplay:okreplay:$okReplayVersion") {
+        exclude module: 'snakeyaml'
+        exclude module: 'jsr305'
+    }
+    api("com.airbnb.okreplay:espresso:$okReplayVersion") {
+        exclude module: 'snakeyaml'
+        exclude module: 'jsr305'
+    }
+
+    api("com.android.support.test:rules:$rulesVersion") {
         exclude module: 'support-annotations'
     }
     api("com.android.support.test.espresso:espresso-core:$espressoVersion") {
@@ -115,9 +138,14 @@ dependencies {
     implementation("com.android.support.test.espresso:espresso-intents:$espressoVersion") {
         exclude module: 'support-annotations'
     }
-    implementation("com.android.support.test.espresso:espresso-web:$espressoVersion") {
+    api("com.android.support.test.espresso:espresso-web:$espressoVersion") {
         exclude module: 'support-annotations'
     }
     implementation("junit:junit:$junitVersion")
     implementation Libs.KOTLIN_STD_LIB
+
+    api('com.schibsted.spain:barista:2.4.0') {
+        exclude group: 'com.android.support'
+        exclude group: 'org.jetbrains.kotlin'
+    }
 }

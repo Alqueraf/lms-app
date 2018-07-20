@@ -15,26 +15,36 @@
  */
 package com.instructure.teacher.ui
 
+import com.instructure.espresso.assertContainsText
+import com.instructure.espresso.page.onViewWithId
 import com.instructure.soseedy.SeededData
 import com.instructure.soseedy.SubmissionType
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
+import com.instructure.teacher.ui.utils.TeacherTest
+import com.instructure.teacher.ui.utils.seedAssignments
+import com.instructure.teacher.ui.utils.seedData
+import com.instructure.teacher.ui.utils.tokenLogin
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class AssigneeListPageTest : TeacherTest() {
 
-    @Test override fun displaysPageObjects() {
+    @Test
+    @Ditto
+    override fun displaysPageObjects() {
         getToAssigneeListPage()
         assigneeListPage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun displaysEveryoneItem() {
         getToAssigneeListPage()
         assigneeListPage.assertDisplaysAssigneeOptions(sectionNames = listOf("Everyone"))
     }
 
     @Test
+    @Ditto
     fun displaysStudentItems() {
         val students = getToAssigneeListPage(students = 2).studentsList
         assigneeListPage.assertDisplaysAssigneeOptions(
@@ -44,6 +54,7 @@ class AssigneeListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun selectsStudents() {
         val studentNames = getToAssigneeListPage(students = 2).studentsList.map{ it.name }
         assigneeListPage.assertDisplaysAssigneeOptions(

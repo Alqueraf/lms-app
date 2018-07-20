@@ -20,9 +20,11 @@ import android.content.Context
 import android.view.View
 import com.instructure.candroid.adapter.BaseListRecyclerAdapter
 import com.instructure.canvasapi2.models.CanvaDocs.CanvaDocAnnotation
+import com.instructure.canvasapi2.models.DocSession
 
 class AnnotationCommentListRecyclerAdapter(
         context: Context,
+        val docSession: DocSession,
         val editCallback: (CanvaDocAnnotation, Int) -> Unit,
         val deleteCallback: (CanvaDocAnnotation, Int) -> Unit
         ) : BaseListRecyclerAdapter<CanvaDocAnnotation, AnnotationCommentViewHolder>(context, CanvaDocAnnotation::class.java) {
@@ -47,6 +49,10 @@ class AnnotationCommentListRecyclerAdapter(
     override fun createViewHolder(v: View, viewType: Int) = AnnotationCommentViewHolder(v)
     override fun itemLayoutResId(viewType: Int) = AnnotationCommentViewHolder.holderRes
     override fun bindHolder(model: CanvaDocAnnotation, holder: AnnotationCommentViewHolder, position: Int) {
-        holder.bind(model, editCallback, deleteCallback)
+        val canDelete = docSession.annotationMetadata.canManage()
+                || (docSession.annotationMetadata.canWrite() && model.userId == docSession.annotationMetadata.userId)
+        val canEdit = (docSession.annotationMetadata.canWrite()
+                && model.userId == docSession.annotationMetadata.userId)
+        holder.bind(model, canEdit, canDelete, editCallback, deleteCallback)
     }
 }

@@ -29,16 +29,17 @@ import com.instructure.candroid.R
 import com.instructure.candroid.adapter.EditFavoritesRecyclerAdapter
 import com.instructure.candroid.interfaces.AdapterToFragmentCallback
 import com.instructure.canvasapi2.managers.CourseManager
-import com.instructure.canvasapi2.models.Course
-import com.instructure.canvasapi2.models.Favorite
+import com.instructure.canvasapi2.managers.GroupManager
+import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.utils.pageview.PageView
 import com.instructure.canvasapi2.utils.weave.WeaveJob
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
-import com.instructure.interactions.FragmentInteractions
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.Const
 import com.instructure.pandautils.utils.ViewStyler
+import com.instructure.pandautils.utils.isTablet
 import com.instructure.pandautils.utils.setupAsBackButton
 import kotlinx.android.synthetic.main.fragment_favoriting.*
 import kotlinx.android.synthetic.main.recycler_swipe_refresh_layout.*
@@ -53,10 +54,6 @@ class EditFavoritesFragment : ParentFragment() {
 
     override fun title(): String = context.getString(R.string.editFavorites)
 
-    override fun getFragmentPlacement() = FragmentInteractions.Placement.DIALOG
-
-    override fun allowBookmarking() = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isTablet) setStyle(DialogFragment.STYLE_NORMAL, R.style.LightStatusBarDialog)
@@ -68,17 +65,20 @@ class EditFavoritesFragment : ParentFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         applyTheme()
-        mRecyclerAdapter = EditFavoritesRecyclerAdapter(activity, object : AdapterToFragmentCallback<Course> {
+        mRecyclerAdapter = EditFavoritesRecyclerAdapter(activity, object : AdapterToFragmentCallback<CanvasComparable<*>> {
             override fun onRefreshFinished() {
                 setRefreshing(false)
             }
 
-            override fun onRowClicked(course: Course, position: Int, isOpenDetail: Boolean) {
+            override fun onRowClicked(canvasContext: CanvasComparable<*>, position: Int, isOpenDetail: Boolean) {
                 mHasChanges = true
-                updateCourseFavorite(course)
+                when(canvasContext) {
+                    is Course -> updateCourseFavorite(canvasContext)
+                    is Group -> updateGroupFavorite(canvasContext)
+                }
             }
         })
-        configureRecyclerView(view, context, mRecyclerAdapter, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView, R.string.no_courses_available)
+        configureRecyclerView(view!!, context, mRecyclerAdapter!!, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView, R.string.no_courses_available)
         listView.isSelectionEnabled = false
     }
 
@@ -91,7 +91,7 @@ class EditFavoritesFragment : ParentFragment() {
     private fun updateCourseFavorite(course: Course) {
         mCourseCall?.cancel()
         course.isFavorite = !course.isFavorite
-        mRecyclerAdapter?.add(course)
+        mRecyclerAdapter?.addOrUpdateItem(EditFavoritesRecyclerAdapter.ItemType.COURSE_HEADER,course)
         mCourseCall = tryWeave {
             awaitApi<Favorite> {
                 if (course.isFavorite) CourseManager.addCourseToFavorites(course.id, it, true)
@@ -99,7 +99,22 @@ class EditFavoritesFragment : ParentFragment() {
             }
         } catch {
             course.isFavorite = !course.isFavorite
-            mRecyclerAdapter?.add(course)
+            mRecyclerAdapter?.addOrUpdateItem(EditFavoritesRecyclerAdapter.ItemType.COURSE_HEADER,course)
+        }
+    }
+
+    private fun updateGroupFavorite(group: Group) {
+        mGroupCall?.cancel()
+        group.isFavorite = !group.isFavorite
+        mRecyclerAdapter?.addOrUpdateItem(EditFavoritesRecyclerAdapter.ItemType.GROUP_HEADER,group)
+        mGroupCall = tryWeave {
+            awaitApi<Favorite> {
+                if (group.isFavorite) GroupManager.addGroupToFavorites(group.id, it)
+                else GroupManager.removeGroupFromFavorites(group.id, it)
+            }
+        } catch {
+            group.isFavorite = !group.isFavorite
+            mRecyclerAdapter?.addOrUpdateItem(EditFavoritesRecyclerAdapter.ItemType.GROUP_HEADER,group)
         }
     }
 
@@ -121,5 +136,18 @@ class EditFavoritesFragment : ParentFragment() {
             intent.putExtras(Bundle().apply { putBoolean(Const.COURSE_FAVORITES, true) })
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
         }
+    }
+
+    companion object {
+
+        fun makeRoute() = Route(EditFavoritesFragment::class.java, null)
+
+        fun validRoute(route: Route) = route.primaryClass == EditFavoritesFragment::class.java
+
+        fun newInstance(route: Route): EditFavoritesFragment? {
+            if (!validRoute(route)) return null
+            return EditFavoritesFragment()
+        }
+
     }
 }

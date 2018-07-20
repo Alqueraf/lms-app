@@ -17,6 +17,8 @@
 
 package com.instructure.candroid.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,15 +29,11 @@ import android.widget.TextView
 import com.instructure.candroid.R
 import com.instructure.candroid.dialog.UnsavedChangesExitDialog
 import com.instructure.candroid.events.PageUpdatedEvent
-import com.instructure.interactions.FragmentInteractions
-import com.instructure.canvasapi2.managers.PageManager
-import com.instructure.canvasapi2.models.CanvasContext
-import com.instructure.canvasapi2.models.Page
+import com.instructure.canvasapi2.managers.*
+import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.models.post_models.PagePostBody
-import com.instructure.canvasapi2.utils.weave.WeaveJob
-import com.instructure.canvasapi2.utils.weave.awaitApi
-import com.instructure.canvasapi2.utils.weave.catch
-import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.canvasapi2.utils.weave.*
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.fragment_edit_page.*
 import org.greenrobot.eventbus.EventBus
@@ -43,55 +41,76 @@ import org.greenrobot.eventbus.EventBus
 class EditPageDetailsFragment : ParentFragment() {
 
     private var apiJob: WeaveJob? = null
+    private var rceImageJob: WeaveJob? = null
 
     /* The page to be edited */
-    private var page by NullableParcelableArg<Page>()
+    private var page: Page by ParcelableArg(key = Const.PAGE)
+    private var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
 
-    private val mSaveMenuButton get() = toolbar.menu.findItem(R.id.menuSavePage)
-    private val mSaveButtonTextView: TextView? get() = view?.findViewById(R.id.menuSavePage)
+    private val saveMenuButton get() = toolbar.menu.findItem(R.id.menuSavePage)
+    private val saveButtonTextView: TextView? get() = view?.findViewById(R.id.menuSavePage)
 
+    //region Fragment Lifecycle Overrides
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater?.inflate(R.layout.fragment_edit_page, container, false)
 
-    override fun allowBookmarking() = false
-
-    override fun applyTheme() {
-
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        setupToolbar()
+        setupDescription()
     }
-
-    override fun getFragmentPlacement(): FragmentInteractions.Placement = FragmentInteractions.Placement.DIALOG
-
-    override fun title(): String = getString(R.string.editPage)
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater?.inflate(R.layout.fragment_edit_page, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setupToolbar()
-        setupViews()
+        pageRCEView.actionUploadImageCallback = {
+            MediaUploadUtils.showPickImageDialog(this)
+        }
+        pageRCEView.requestEditorFocus()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        rceImageJob?.cancel()
+        apiJob?.cancel()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.menuSavePage -> { savePage() }
+        when (item.itemId) {
+            R.id.menuSavePage -> savePage()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun shouldAllowExit() : Boolean {
-        // Check if edited page has changes
-        if(page?.pageId != 0L &&
-                page?.body ?: "" == pageRCEView?.html) {
-            return true
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Get the image Uri
+            when (requestCode) {
+                RequestCodes.PICK_IMAGE_GALLERY -> data?.data
+                RequestCodes.CAMERA_PIC_REQUEST -> MediaUploadUtils.handleCameraPicResult(activity, null)
+                else -> null
+            }?.let { imageUri ->
+                // If the image Uri is not null, upload it
+                rceImageJob = MediaUploadUtils.uploadRceImageJob(imageUri, canvasContext, activity) { text, alt -> pageRCEView.insertImage(text, alt) }
+            }
         }
-        return false
     }
+    //endregion
 
-    private fun setupViews() {
-        setupDescription()
+    //region Fragment Interaction Overrides
+    override fun applyTheme() = Unit
+
+    override fun title(): String = getString(R.string.editPage)
+    //endregion
+
+    //region Functionality
+
+    private fun shouldAllowExit(): Boolean {
+        // Check if edited page has changes
+        return page.pageId != 0L && page.body ?: "" == pageRCEView?.html
     }
 
     private fun setupDescription() {
         pageRCEView.setHtml(
-                page?.body,
+                page.body,
                 getString(R.string.pageDetails),
                 getString(R.string.rce_empty_description),
                 ThemePrefs.brandColor, ThemePrefs.buttonColor
@@ -100,9 +119,48 @@ class EditPageDetailsFragment : ParentFragment() {
         pageRCEView.setLabel(pageDescLabel, R.color.defaultTextDark, R.color.defaultTextGray)
     }
 
+    private fun savePage() {
+        onSaveStarted()
+        apiJob = tryWeave {
+            val postBody = PagePostBody(
+                    pageRCEView.html,
+                    page.title,
+                    page.isFrontPage == true,
+                    page.editingRoles,
+                    page.isPublished == true
+            )
+
+            val updatedPage = awaitApi<Page> { PageManager.editPage(canvasContext, page.url ?: "", postBody, it) }
+            EventBus.getDefault().post(PageUpdatedEvent(updatedPage))
+
+            onSaveSuccess()
+        } catch {
+            onSaveError()
+        }
+    }
+
+    private fun onSaveStarted() {
+        saveMenuButton.isVisible = false
+        savingProgressBar.announceForAccessibility(getString(R.string.saving))
+        savingProgressBar.setVisible()
+    }
+
+    private fun onSaveError() {
+        saveMenuButton.isVisible = true
+        savingProgressBar.setGone()
+        toast(R.string.errorSavingPage)
+    }
+
+    private fun onSaveSuccess() {
+        toast(R.string.pageSuccessfullyUpdated)
+        activity.onBackPressed() // close this fragment
+    }
+    //endregion
+
+    //region Setup
     private fun setupToolbar() {
         toolbar.setupAsCloseButton {
-            if(shouldAllowExit()) {
+            if (shouldAllowExit()) {
                 activity?.onBackPressed()
             } else {
                 UnsavedChangesExitDialog.show(fragmentManager, {
@@ -110,73 +168,35 @@ class EditPageDetailsFragment : ParentFragment() {
                 })
             }
         }
-        toolbar.title = page?.title
+        toolbar.title = page.title
         setupToolbarMenu(toolbar, R.menu.menu_edit_page)
-
         ViewStyler.themeToolbarBottomSheet(activity, isTablet, toolbar, Color.BLACK, false)
         ViewStyler.setToolbarElevationSmall(context, toolbar)
-        with(mSaveMenuButton) {
+        with(saveMenuButton) {
             setIcon(0)
             setTitle(R.string.save)
         }
-        mSaveButtonTextView?.setTextColor(ThemePrefs.buttonColor)
+        saveButtonTextView?.setTextColor(ThemePrefs.buttonColor)
     }
-
-    private fun savePage() {
-
-        val description = pageRCEView.html
-
-        onSaveStarted()
-        apiJob = tryWeave {
-            val postBody = PagePostBody(description, page?.title, page?.isFrontPage == true, page?.editingRoles, page?.isPublished == true)
-
-            val updatedPage = awaitApi<Page> { PageManager.editPage(canvasContext, page?.url ?: "", postBody, it) }
-            EventBus.getDefault().post(PageUpdatedEvent(updatedPage))
-
-            onSaveSuccess()
-        } catch {
-            onSaveError()
-
-        }
-    }
-
-    private fun onSaveStarted() {
-        mSaveMenuButton.isVisible = false
-        savingProgressBar.announceForAccessibility(getString(R.string.saving))
-        savingProgressBar.setVisible()
-    }
+    //endregion
 
 
-    private fun onSaveError() {
-        mSaveMenuButton.isVisible = true
-        savingProgressBar.setGone()
-        toast(R.string.errorSavingPage)
-    }
-
-
-    private fun onSaveSuccess() {
-        toast(R.string.pageSuccessfullyUpdated)
-
-        activity.onBackPressed() // close this fragment
-    }
-
-    override fun handleIntentExtras(extras: Bundle?) {
-        super.handleIntentExtras(extras)
-
-        page = extras?.getSerializable(Const.PAGE) as Page
-    }
 
     companion object {
-        @JvmStatic
-        fun newInstance(bundle: Bundle) = EditPageDetailsFragment().apply {
-            arguments = bundle
+
+        fun makeRoute(canvasContext: CanvasContext, page: Page): Route {
+            val bundle = Bundle().apply { putSerializable(Const.PAGE, page) }
+            return Route(EditPageDetailsFragment::class.java, canvasContext, bundle)
         }
 
-        @JvmStatic
-        fun createBundle(page: Page, canvasContext: CanvasContext): Bundle {
-            val extras = ParentFragment.createBundle(canvasContext)
-            extras.putSerializable(Const.PAGE, page)
-            return extras
+        private fun validateRoute(route: Route): Boolean {
+            return route.canvasContext != null && route.arguments.getParcelable<Page>(Const.PAGE) != null
         }
+
+        fun newInstance(route: Route): EditPageDetailsFragment? {
+            if (!validateRoute(route)) return null
+            return EditPageDetailsFragment().withArgs(route.canvasContext!!.makeBundle(route.arguments))
+        }
+
     }
 }

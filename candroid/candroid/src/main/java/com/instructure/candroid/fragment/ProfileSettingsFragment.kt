@@ -43,12 +43,13 @@ import com.instructure.canvasapi2.managers.UserManager
 import com.instructure.canvasapi2.models.AvatarWrapper
 import com.instructure.canvasapi2.models.User
 import com.instructure.canvasapi2.utils.ApiPrefs
+import com.instructure.canvasapi2.utils.Logger
 import com.instructure.canvasapi2.utils.pageview.PageView
 import com.instructure.canvasapi2.utils.weave.*
-import com.instructure.interactions.FragmentInteractions
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.dialog_photo_source.*
 import kotlinx.android.synthetic.main.fragment_profile_settings.*
+import kotlinx.coroutines.experimental.delay
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 
@@ -61,15 +62,11 @@ class ProfileSettingsFragment : ParentFragment(), LoaderManager.LoaderCallbacks<
     private var mUpdateNameCall: WeaveJob? = null
     private var mUpdateAvatarCall: WeaveJob? = null
 
-    override fun allowBookmarking() = false
-
-    override fun getFragmentPlacement() = FragmentInteractions.Placement.DETAIL
-
     override fun title(): String = getString(R.string.profileSettings)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setRetainInstance(this, true)
+        retainInstance = true
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -143,6 +140,7 @@ class ProfileSettingsFragment : ParentFragment(), LoaderManager.LoaderCallbacks<
                 ApiPrefs.user = ApiPrefs.user?.apply { avatarUrl = user.avatarUrl }
                 EventBus.getDefault().postSticky(UserUpdatedEvent(ApiPrefs.user!!))
                 toast(R.string.regularAvatarSuccessfullySaved)
+                loaderBundle = null
             } catch (e: Throwable) {
                 toast(R.string.uploadAvatarFailMsg)
             } finally {
@@ -347,8 +345,8 @@ class ProfileSettingsFragment : ParentFragment(), LoaderManager.LoaderCallbacks<
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         mPermissionCall?.cancel()
         mUpdateNameCall?.cancel()
         mUpdateAvatarCall?.cancel()
@@ -357,6 +355,9 @@ class ProfileSettingsFragment : ParentFragment(), LoaderManager.LoaderCallbacks<
     companion object {
         private const val REQUEST_CODE_PERMISSIONS_TAKE_PHOTO = 223
         private const val REQUEST_CODE_PERMISSIONS_GALLERY = 332
-    }
 
+        fun newInstance(): ProfileSettingsFragment {
+            return ProfileSettingsFragment()
+        }
+    }
 }

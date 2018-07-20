@@ -19,7 +19,7 @@ package com.instructure.parentapp.holders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.instructure.parentapp.R;
@@ -28,13 +28,13 @@ import com.instructure.parentapp.R;
 public class ExpandableViewHolder extends RecyclerView.ViewHolder {
 
     public TextView title;
-    public RelativeLayout rootView;
+    public ViewGroup rootView;
     public boolean isExpanded;
 
     public ExpandableViewHolder(View itemView) {
         super(itemView);
-        title = (TextView) itemView.findViewById(R.id.title);
-        rootView = (RelativeLayout) itemView.findViewById(R.id.rootView);
+        title = itemView.findViewById(R.id.title);
+        rootView = itemView.findViewById(R.id.rootView);
     }
 
 

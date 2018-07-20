@@ -18,7 +18,6 @@
 package com.instructure.canvasapi2.builders;
 
 import android.support.annotation.NonNull;
-
 import com.instructure.canvasapi2.CanvasRestAdapter;
 import com.instructure.canvasapi2.StatusCallback;
 import com.instructure.canvasapi2.utils.ApiPrefs;
@@ -33,7 +32,8 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public class RestBuilder extends CanvasRestAdapter {
 
-    @Deprecated
+    public static Boolean isPact = false;
+
     public RestBuilder() {
         super(new StatusCallback() {});
     }
@@ -43,6 +43,12 @@ public class RestBuilder extends CanvasRestAdapter {
     }
     
     public <T> T build(@NonNull Class<T> clazz, @NonNull RestParams params) {
+        if(isPact) {
+            params = new RestParams.Builder(params).withForceReadFromCache(false).build();
+            Retrofit restAdapter = buildAdapterForTest(params);
+            return restAdapter.create(clazz);
+        }
+
         params = new RestParams.Builder(params).withForceReadFromCache(false).build();
         Retrofit restAdapter = buildAdapter(params);
         return restAdapter.create(clazz);

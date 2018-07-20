@@ -22,7 +22,6 @@
     <string name="email">البريد الإلكتروني</string>
     <string name="emailAddress">عنوان البريد الإلكتروني</string>
     <string name="parent_email">البريد الإلكتروني لولي الأمر</string>
-    <string name="confirmPassword">تأكيد كلمة المرور</string>
     <string name="firstName">الاسم الأول</string>
     <string name="lastName">اسم العائلة</string>
     <string name="password">كلمة المرور</string>
@@ -150,6 +149,9 @@
     <string name="or">أو</string>
     <string name="canvas_login_text">قم بتسجيل الدخول في Canvas</string>
 
+    <string name="privacyPolicy">سياسة الخصوصية</string>
+    <string name="EULA">اتفاقية ترخيص المستخدم النهائي</string>
+    <string name="termsOfUse">شروط الاستخدام</string>
     <!-- Feature Request -->
     <string name="featureSubject">أفكار لتطبيق Canvas Parent [Android]</string>
     <string name="understandRequest">ستساعدنا المعلومات التالية على فهم فكرتك بشكل أفضل:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">أدخل اسم مدرسة الطالب</string>
     <string name="findYourStudentsSchoolHint">اعثر على المدرسة أو الدائرة التعليمية الخاصة بطالبك</string>
-    <string name="noGradeText">لا يوجد</string>
+    <string name="noGradeText">لا توجد أي درجة</string>
     <string name="locked">مؤمّن</string>
+    <string name="changeUser">تغيير المستخدم</string>
+    <string name="manageChildren">إدارة الأطفال</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">فتح درج التنقل</string>
+    <string name="navigation_drawer_close">إغلاق درج التنقل</string>
+    <string name="version" formatted="false">الإصدار %s</string>
+    <string name="not_a_parent_title">لست ولي أمر؟</string>
+    <string name="not_a_parent_subtitle">ربما تكون إحدى تطبيقاتنا الأخرى مناسبة بشكل أفضل. اضغط على واحد لزيارة Play Store.</string>
+    <string name="tryLoginAgain">حاول تسجيل الدخول مجددًا</string>
+
+    <string name="legalDetails">سياسة الخصوصية، شروط الاستخدام، المصدر المفتوح</string>
+    <string name="assignmentGrade">درجة المهمة</string>
+    <string name="courseGrade">درجة المساق</string>
+    <string name="courseAnnouncement">إعلان المساق</string>
+    <string name="institutionAnnouncement">إعلان المؤسسة</string>
+    <string name="institutionAnnouncementUnavailable">انتهت صلاحية هذا الإعلان.</string>
 </resources>

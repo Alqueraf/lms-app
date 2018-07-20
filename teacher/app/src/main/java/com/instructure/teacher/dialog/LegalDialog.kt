@@ -65,7 +65,6 @@ class LegalDialog : AppCompatDialogFragment() {
             // If the institution has set terms and conditions to be "no terms", just keep the item gone
             view.termsOfUse.setVisible(html.isNotBlank())
             // Now set the rest of the items visible
-            view.eula.setVisible()
             view.privacyPolicy.setVisible()
             view.openSource.setVisible()
         } catch {
@@ -83,14 +82,8 @@ class LegalDialog : AppCompatDialogFragment() {
             dialog.dismiss()
         }
 
-        view.eula.setOnClickListener {
-            val intent = InternalWebViewActivity.createIntent(activity, "http://www.canvaslms.com/policies/end-user-license-agreement", activity.getString(R.string.EULA), false)
-            activity.startActivity(intent)
-            dialog.dismiss()
-        }
-
         view.privacyPolicy.setOnClickListener {
-            val intent = InternalWebViewActivity.createIntent(activity, "https://www.canvaslms.com/policies/privacy", activity.getString(R.string.privacyPolicy), false)
+            val intent = InternalWebViewActivity.createIntent(activity, "https://www.instructure.com/policies/privacy/", activity.getString(R.string.privacyPolicy), false)
             activity.startActivity(intent)
             dialog.dismiss()
         }

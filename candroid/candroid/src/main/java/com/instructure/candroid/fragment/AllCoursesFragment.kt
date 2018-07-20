@@ -33,6 +33,7 @@ import com.instructure.candroid.dialog.ColorPickerDialog
 import com.instructure.candroid.dialog.EditCourseNicknameDialog
 import com.instructure.candroid.events.ShowGradesToggledEvent
 import com.instructure.candroid.interfaces.CourseAdapterToFragmentCallback
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.canvasapi2.managers.CourseNicknameManager
 import com.instructure.canvasapi2.managers.UserManager
 import com.instructure.canvasapi2.models.*
@@ -40,7 +41,7 @@ import com.instructure.canvasapi2.utils.pageview.PageView
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
-import com.instructure.interactions.FragmentInteractions
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.fragment_all_courses.*
 import kotlinx.android.synthetic.main.recycler_swipe_refresh_layout.*
@@ -63,8 +64,6 @@ class AllCoursesFragment : ParentFragment() {
         }
     }
 
-    override fun getFragmentPlacement() = FragmentInteractions.Placement.MASTER
-
     override fun title(): String = if (isAdded) getString(R.string.allCourses) else ""
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -83,8 +82,7 @@ class AllCoursesFragment : ParentFragment() {
             }
 
             override fun onCourseSelected(course: Course) {
-                canvasContext = course
-                navigation?.addFragment(CourseBrowserFragment.newInstance(canvasContext))
+                RouteMatcher.route(context, CourseBrowserFragment.makeRoute(course))
             }
 
             @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -137,10 +135,8 @@ class AllCoursesFragment : ParentFragment() {
 
     private fun configureRecyclerView() {
         val courseColumns = resources.getInteger(R.integer.course_card_columns)
-        configureRecyclerViewAsGrid(view, mRecyclerAdapter, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView, R.string.no_courses_available, courseColumns)
+        configureRecyclerViewAsGrid(view!!, mRecyclerAdapter!!, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView, R.string.no_courses_available, courseColumns)
     }
-
-    override fun allowBookmarking() = false
 
     override fun onStart() {
         super.onStart()
@@ -163,5 +159,18 @@ class AllCoursesFragment : ParentFragment() {
     override fun onDestroy() {
         if (mRecyclerAdapter != null) mRecyclerAdapter?.cancel()
         super.onDestroy()
+    }
+
+    companion object {
+
+        fun makeRoute() = Route(AllCoursesFragment::class.java, null)
+
+        fun validRoute(route: Route) = route.primaryClass == AllCoursesFragment::class.java
+
+        fun newInstance(route: Route): AllCoursesFragment? {
+            if (!validRoute(route)) return null
+            return AllCoursesFragment()
+        }
+
     }
 }

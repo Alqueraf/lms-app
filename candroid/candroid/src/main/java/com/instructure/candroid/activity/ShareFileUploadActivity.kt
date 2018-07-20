@@ -23,6 +23,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
@@ -39,6 +40,7 @@ import com.instructure.candroid.util.Analytics
 import com.instructure.candroid.util.AnimationHelpers
 import com.instructure.canvasapi2.managers.CourseManager
 import com.instructure.canvasapi2.models.CanvasContext
+import com.instructure.canvasapi2.models.CanvasErrorCode
 import com.instructure.canvasapi2.models.Course
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.weave.awaitApi
@@ -48,6 +50,9 @@ import com.instructure.pandautils.dialogs.UploadFilesDialog
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.activity_share_file.*
 import kotlinx.coroutines.experimental.Job
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 import java.util.ArrayList
 
@@ -108,11 +113,11 @@ class ShareFileUploadActivity : AppCompatActivity(), ShareFileDestinationDialog.
     }
 
     private fun checkLoggedIn(): Boolean {
-        if (TextUtils.isEmpty(ApiPrefs.token)) {
+        return if (TextUtils.isEmpty(ApiPrefs.token)) {
             exitActivity()
-            return false
+            false
         } else {
-            return true
+            true
         }
     }
 
@@ -131,6 +136,16 @@ class ShareFileUploadActivity : AppCompatActivity(), ShareFileDestinationDialog.
         uploadFileSourceFragment?.dismissAllowingStateLoss()
         loadCoursesJob?.cancel()
         super.onDestroy()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 
     private fun showDestinationDialog() {
@@ -162,15 +177,23 @@ class ShareFileUploadActivity : AppCompatActivity(), ShareFileDestinationDialog.
         finish()
     }
 
+
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(errorCode: CanvasErrorCode?) {
+        if (errorCode != null && errorCode.code == 400) {
+            Toast.makeText(ShareFileUploadActivity@this, getString(R.string.fileQuotaExceeded), Toast.LENGTH_SHORT).show()
+        }
+    }
     private fun getColor(bundle: Bundle?): Int {
-        if(bundle != null && bundle.containsKey(Const.CANVAS_CONTEXT)) {
+        return if(bundle != null && bundle.containsKey(Const.CANVAS_CONTEXT)) {
             val color = ColorKeeper.getOrGenerateColor(bundle.getParcelable<Parcelable>(Const.CANVAS_CONTEXT) as CanvasContext)
             ViewStyler.setStatusBarDark(this, color)
-            return color
+            color
         } else {
             val color = ContextCompat.getColor(this, R.color.login_studentAppTheme)
             ViewStyler.setStatusBarDark(this, color)
-            return color
+            color
         }
     }
 
@@ -181,9 +204,9 @@ class ShareFileUploadActivity : AppCompatActivity(), ShareFileDestinationDialog.
             it.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator) {
                     UploadFilesDialog.show(supportFragmentManager, bundle, { event ->
-                        if(event == UploadFilesDialog.EVENT_ON_UPLOAD_BEGIN) {
+                        if(event == UploadFilesDialog.EVENT_ON_UPLOAD_BEGIN || event == UploadFilesDialog.EVENT_DIALOG_CANCELED) {
                             finish()
-                        }
+                        } 
                     })
                 }
             })

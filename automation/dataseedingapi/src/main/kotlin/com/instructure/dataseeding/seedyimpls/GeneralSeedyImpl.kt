@@ -1,18 +1,20 @@
-/*
- * Copyright (C) 2017 - present Instructure, Inc.
- *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
- */
+//
+// Copyright (C) 2018-present Instructure, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+
 package com.instructure.dataseeding.seedyimpls
 
 import com.instructure.dataseeding.InProcessServer
@@ -94,7 +96,7 @@ class GeneralSeedyImpl : SeedyGeneralImplBase(), Reaper by SeedyReaper {
                 )
 
                 // Seed announcements
-                addAllDiscussions(
+                addAllAnnouncements(
                         (0 until request.announcements).map {
                             val announcementRequest = CreateAnnouncementRequest.newBuilder()
                                     .setCourseId(coursesList[0].id)
@@ -104,6 +106,36 @@ class GeneralSeedyImpl : SeedyGeneralImplBase(), Reaper by SeedyReaper {
                             InProcessServer.discussionClient.createAnnouncement(announcementRequest)
                         }
                 )
+            }
+            onSuccess(responseObserver, seededData.build())
+        } catch (e: Exception) {
+            onError(responseObserver, e)
+        }
+    }
+
+    override fun seedParentData(request: SeedParentDataRequest, responseObserver: StreamObserver<SeededParentData>) {
+        try {
+            val seededData = SeededParentData.newBuilder()
+
+            with(seededData) {
+                for (c in 0 until request.courses) {
+                    // Seed course
+                    addCourses(seedCourse(false))
+
+                    // Seed users
+                    for (s in 0 until request.students) {
+                        addStudents(seedUser())
+                        addEnrollments(seedEnrollment(coursesList[c].id, studentsList[s].id, EnrollmentTypes.STUDENT_ENROLLMENT))
+                    }
+
+                    for (t in 0 until request.parents) {
+                        addParents(seedUser())
+                        studentsList.forEach { student ->
+                            addEnrollments(seedEnrollment(coursesList[c].id, parentsList[t].id, EnrollmentTypes.OBSERVER_ENROLLMENT, student.id))
+                        }
+                    }
+                }
+
             }
             onSuccess(responseObserver, seededData.build())
         } catch (e: Exception) {

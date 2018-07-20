@@ -37,10 +37,15 @@ class QLClientConfig {
     /** The GraphQL endpoint. Defaults to "<fullDomain>/api/graphql/" */
     var url: String = ApiPrefs.fullDomain + GRAPHQL_ENDPOINT
 
-    /** The [OkHttpClient] to use for this request. Defaults to the client obtained from [CanvasRestAdapter.getOkHttpClient].
-     * It is recommended to use the default client as it has several useful behaviors such as request logging, read
-     * timeouts, and auth/user-agent/referrer header injection. */
+    /** The [OkHttpClient] to use for this request. Defaults to the client obtained from [CanvasRestAdapter.getOkHttpClient]
+     * with a supplementary interceptor to add an additional header. It is recommended to use this default client as it
+     * has several useful behaviors such as request logging, read timeouts, and auth/user-agent/referrer header injection. */
     var httpClient: OkHttpClient = CanvasRestAdapter.getOkHttpClient()
+        .newBuilder()
+        .addInterceptor { chain ->
+            chain.proceed(chain.request().newBuilder().addHeader("GraphQL-Metrics", "true").build())
+        }
+        .build()
 
     /** Whether this request should ignore any cached data and only read from the network. Default is false. */
     var networkOnly: Boolean = false

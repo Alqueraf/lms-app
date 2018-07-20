@@ -27,9 +27,9 @@ import com.instructure.teacher.activities.InitLoginActivity
 class InitializeReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        if(Intent.ACTION_BOOT_COMPLETED == intent.action || Intent.ACTION_MY_PACKAGE_REPLACED == intent.action) {
+        if (Intent.ACTION_BOOT_COMPLETED == intent.action || Intent.ACTION_MY_PACKAGE_REPLACED == intent.action) {
             // Restores stored push notifications upon boot
-            PushExternalReceiver.postStoredNotifications(context, context.getString(R.string.app_name), InitLoginActivity::class.java)
+            PushExternalReceiver.postStoredNotifications(context, context.getString(R.string.app_name), InitLoginActivity::class.java, R.color.login_teacherAppTheme)
         }
     }
 }

@@ -15,14 +15,19 @@
  */
 package com.instructure.teacher.ui
 
-import com.instructure.soseedy.*
+import com.instructure.espresso.ditto.Ditto
+import com.instructure.soseedy.CommentSeed
+import com.instructure.soseedy.FileType
+import com.instructure.soseedy.SeededCourseAssignmentSubmissions
+import com.instructure.soseedy.SubmissionSeed
+import com.instructure.soseedy.SubmissionType.ONLINE_UPLOAD
 import com.instructure.teacher.ui.utils.*
 import org.junit.Test
-import com.instructure.soseedy.SubmissionType.*
 
 class SpeedGraderFilesPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         goToSpeedGraderFilesPage(
                 submissions = listOf(
@@ -35,12 +40,14 @@ class SpeedGraderFilesPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysEmptyFilesView() {
         goToSpeedGraderFilesPage()
         speedGraderFilesPage.assertDisplaysEmptyView()
     }
 
     @Test
+    @Ditto
     fun displaysFilesList() {
         val submissions = goToSpeedGraderFilesPage(
                 submissions = listOf(
@@ -53,6 +60,7 @@ class SpeedGraderFilesPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysSelectedFile() {
         goToSpeedGraderFilesPage(
                 submissions = listOf(

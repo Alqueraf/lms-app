@@ -32,6 +32,7 @@ import com.instructure.canvasapi2.utils.isInvited
 import com.instructure.canvasapi2.utils.isValidTerm
 import com.instructure.canvasapi2.utils.weave.*
 import com.instructure.pandarecycler.util.GroupSortedList
+import com.instructure.pandautils.utils.ColorApiHelper
 
 
 class DashboardRecyclerAdapter(
@@ -137,6 +138,7 @@ class DashboardRecyclerAdapter(
     override fun loadData() {
         mApiCalls?.cancel()
         mApiCalls = tryWeave {
+            if (isRefresh) ColorApiHelper.awaitSync()
             val (rawCourses, groups, announcements) = awaitApis<List<Course>, List<Group>, List<AccountNotification>>(
                     { CourseManager.getCourses(isRefresh, it) },
                     { GroupManager.getAllGroups(it, isRefresh) },
@@ -156,16 +158,26 @@ class DashboardRecyclerAdapter(
             addOrUpdateAllItems(ItemType.COURSE_HEADER, favoriteCourses)
 
             // Add groups
-            mCourseMap = favoriteCourses.associateBy { it.id }
-            addOrUpdateAllItems(ItemType.GROUP_HEADER, groups.filter {
-                it.courseId == 0L || mCourseMap[it.courseId]?.isValidTerm() == true
-            })
+            mCourseMap = rawCourses.associateBy { it.id }
+            val rawGroups = groups.filter {
+                (it.courseId == 0L || mCourseMap[it.courseId]?.isValidTerm() == true)
+            }
+            val favoriteGroups = groups.filter {
+                (it.isFavorite)
+            }
+            if (favoriteGroups.isEmpty()) {
+                addOrUpdateAllItems(ItemType.GROUP_HEADER,rawGroups)
+            } else {
+                addOrUpdateAllItems(ItemType.GROUP_HEADER,favoriteGroups)
+            }
 
             // Add announcements
             addOrUpdateAllItems(ItemType.ANNOUNCEMENT_HEADER, announcements)
 
             // Add course invites
-            val validInvites = invites.filter { mRawCourseMap[it.courseId]?.isValidTerm() == true }
+            val validInvites = invites.filter {
+                mRawCourseMap[it.courseId]?.let { it.isValidTerm() && !it.isAccessRestrictedByDate } ?: false
+            }
             addOrUpdateAllItems(ItemType.INVITATION_HEADER, validInvites)
 
             notifyDataSetChanged()

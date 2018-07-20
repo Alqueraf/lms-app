@@ -7,18 +7,20 @@ object Versions {
     const val TARGET_SDK = 26
 
     /* Build/tooling */
-    const val ANDROID_GRADLE_TOOLS = "3.0.1"
-    const val BUILD_TOOLS = "26.0.2"
+    const val ANDROID_GRADLE_TOOLS = "3.1.0"
+    const val BUILD_TOOLS = "27.0.3"
 
     /* Testing */
-    const val ATSL_ORCHESTRATOR = "1.0.2-alpha1"
+    const val ATSL_ORCHESTRATOR = "1.0.2"
     const val JACOCO = "0.8.0"
     const val JUNIT = "4.12"
     const val ROBOLECTRIC = "3.3.2"
+    const val ESPRESSO = "3.0.2"
+    const val OKREPLAY = "1.4.0"
 
     /* Kotlin */
-    const val KOTLIN = "1.2.21"
-    const val KOTLIN_ANKO = "0.10.1"
+    const val KOTLIN = "1.2.40"
+    const val KOTLIN_ANKO = "0.10.4"
     const val KOTLIN_COROUTINES = "0.18"
 
     /* Google, Play Services */
@@ -31,7 +33,7 @@ object Versions {
     const val APOLLO = "0.4.4"
     const val CRASHLYTICS = "2.6.8@aar"
     const val PICOCLI = "2.3.0"
-    const val PSPDFKIT = "4.4.0"
+    const val PSPDFKIT = "4.6.1"
 }
 
 object Libs {
@@ -61,7 +63,8 @@ object Libs {
     const val PLAY_SERVICES = "com.google.android.gms:play-services-gcm:${Versions.PLAY_SERVICES}"
     const val PLAY_SERVICES_ANALYTICS = "com.google.android.gms:play-services-analytics:${Versions.PLAY_SERVICES}"
     const val PLAY_SERVICES_OSS_LICENSES = "com.google.android.gms:play-services-oss-licenses:${Versions.PLAY_SERVICES}"
-    const val PLAY_SERVICES_WEARABLE = "com.google.android.gms:play-services-wearable:${Versions.SUPPORT_LIBRARY}"
+    const val PLAY_SERVICES_WEARABLE = "com.google.android.gms:play-services-wearable:${Versions.PLAY_SERVICES}"
+    const val PLAY_SERVICES_AUTH = "com.google.android.gms:play-services-auth:${Versions.PLAY_SERVICES}"
 
     /* Testing */
     const val JUNIT = "junit:junit:${Versions.JUNIT}"
@@ -80,4 +83,5 @@ object Plugins {
     const val KOTLIN = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}"
     const val OSS_LICENSES = "com.google.gms:oss-licenses:${Versions.OSS_LICENSES_PLUGIN}"
     const val GOOGLE_SERVICES = "com.google.gms:google-services:${Versions.GOOGLE_SERVICES}"
+    const val OKREPLAY = "com.airbnb.okreplay:gradle-plugin:${Versions.OKREPLAY}"
 }

@@ -62,6 +62,7 @@ fun <T : RealmObject> T.copyToRealmOrUpdate() = edit { it.copyToRealmOrUpdate(th
 val Activity.mCommentator: Commentator get() = App.commentator
 
 fun Float.dp() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, App.context.displayMetrics)
+fun Float.dp(context: Context) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, context.displayMetrics)
 
 fun <T> List<T>.shift(offset: Int): List<T> = if (offset == 0) this else subList(offset, size) + subList(0, offset)
 
@@ -130,7 +131,7 @@ fun showTeamPicker(context: Context, onUserSelected: (User) -> Unit) {
     val userMap = App.realm.where(User::class.java).findAllSorted("name").toList().associateBy(User::id)
     val teams = App.realm.where(RealmTeam::class.java).isNotEmpty("teamName").findAllSorted("teamName").map { it.toCustomTeam() }
     var dialog: MaterialDialog? = null
-    val adapter = TeamAdapter(context, teams, userMap)
+    val adapter = TeamAdapter(context, teams.filter { it.users.size == 2 }, userMap)
 
     val view = LayoutInflater.from(context).inflate(R.layout.dialog_team_picker, null)
     view.teamSearchInput.addTextChangedListener(object: TextWatcher {

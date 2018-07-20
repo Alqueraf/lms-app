@@ -21,11 +21,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.instructure.androidfoosball.App
+import com.google.firebase.database.*
 import com.instructure.androidfoosball.R
 import com.instructure.androidfoosball.adapters.FoosRankLeaderboardAdapter
 import com.instructure.androidfoosball.adapters.LeaderboardAdapter
@@ -35,6 +31,8 @@ import com.instructure.androidfoosball.ktmodels.CustomTeam
 import com.instructure.androidfoosball.ktmodels.User
 import com.instructure.androidfoosball.utils.*
 import kotlinx.android.synthetic.tablet.activity_leaderboard.*
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.UI
 import org.jetbrains.anko.sdk21.listeners.onClick
 
 
@@ -47,6 +45,8 @@ class LeaderboardActivity : AppCompatActivity() {
 
     private val accentColor by lazy { this.resources.getColor(R.color.colorAccent) }
     private val grayColor by lazy { this.resources.getColor(R.color.lightGray) }
+
+    private var loadingJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,19 +65,16 @@ class LeaderboardActivity : AppCompatActivity() {
     }
 
     private fun loadIndividualLeaderboard() {
-
-        unselectAll()
-        selectIndividual()
-
-        FirebaseDatabase.getInstance().reference.child("users").addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val sortedUsers = App.realm.where(User::class.java).equalTo("guest", false).findAll().sortByWinRatio(MIN_GAMES_FOR_RANKING)
-                recyclerView.adapter = LeaderboardAdapter(this@LeaderboardActivity, sortedUsers)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-            }
-        })
+        loadingJob?.cancel()
+        loadingJob = launch(UI) {
+            progressBar.setVisible(true)
+            unselectAll()
+            selectIndividual()
+            val users = FirebaseDatabase.getInstance().reference.awaitList<User>("users")
+            val sortedUsers = awaitAsync { users.sortByWinRatio(MIN_GAMES_FOR_RANKING) }
+            recyclerView.adapter = LeaderboardAdapter(this@LeaderboardActivity, sortedUsers)
+            progressBar.setVisible(false)
+        }
     }
 
     private fun selectIndividual() {
@@ -137,65 +134,45 @@ class LeaderboardActivity : AppCompatActivity() {
     }
 
     private fun loadTeamLeaderboard() {
-
-        unselectAll()
-        selectTeam()
-
-        FirebaseDatabase.getInstance().reference.child("customTeams").addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val teams = dataSnapshot.children.mapNotNull { it.getValue(CustomTeam::class.java) }
-
-                FirebaseDatabase.getInstance().reference.child("users").addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val users = dataSnapshot.children.mapNotNull { it.getValue(User::class.java) }.associateBy { it.id }
-                        recyclerView.adapter = TeamLeaderboardAdapter(this@LeaderboardActivity, teams.sortCustomTeamByWinRatio(MIN_GAMES_FOR_TEAM_RANKING), users)
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                    }
-                })
-
-
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-            }
-        })
+        loadingJob?.cancel()
+        loadingJob = launch(UI) {
+            progressBar.setVisible(true)
+            unselectAll()
+            selectTeam()
+            val teams = FirebaseDatabase.getInstance().reference.awaitList<CustomTeam>("customTeams")
+            val users = FirebaseDatabase.getInstance().reference.awaitList<User>("users").associateBy { it.id }
+            val sortedTeam = awaitAsync { teams.sortCustomTeamByWinRatio(MIN_GAMES_FOR_TEAM_RANKING) }
+            recyclerView.adapter = TeamLeaderboardAdapter(this@LeaderboardActivity, sortedTeam, users)
+            progressBar.setVisible(false)
+        }
     }
 
     private fun loadFoosRankLeaderboard() {
-        unselectAll()
-        selectFoosRank()
-
-        FirebaseDatabase.getInstance().reference.child("users").addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val sortedUsers = dataSnapshot.children.mapNotNull { it.getValue(User::class.java) }.filter { !it.guest }.sortByFoosRanking()
-                recyclerView.adapter = FoosRankLeaderboardAdapter(this@LeaderboardActivity, sortedUsers) {
-                    startActivity(EloDialogActivity.createIntent(this@LeaderboardActivity, it.foosRankMap))
-                }
+        loadingJob?.cancel()
+        loadingJob = launch(UI) {
+            progressBar.setVisible(true)
+            unselectAll()
+            selectFoosRank()
+            val users = FirebaseDatabase.getInstance().reference.awaitList<User>("users")
+            val sortedUsers = awaitAsync { users.filter { !it.guest }.sortByFoosRanking() }
+            recyclerView.adapter = FoosRankLeaderboardAdapter(this@LeaderboardActivity, sortedUsers) {
+                startActivity(EloDialogActivity.createIntent(this@LeaderboardActivity, it.foosRankMap))
             }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-            }
-        })
-
+            progressBar.setVisible(false)
+        }
     }
 
     private fun loadTimeWasterLeaderboard() {
-        unselectAll()
-        selectTimeWaster()
-
-        FirebaseDatabase.getInstance().reference.child("users").addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val sortedUsers = dataSnapshot.children.mapNotNull { it.getValue(User::class.java) }.filter { !it.guest }.sortedByDescending { it.wins + it.losses }
-                recyclerView.adapter = TimeWasterLeaderboardAdapter(this@LeaderboardActivity, sortedUsers)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-            }
-        })
-
+        loadingJob?.cancel()
+        loadingJob = launch(UI) {
+            progressBar.setVisible(true)
+            unselectAll()
+            selectTimeWaster()
+            val users = FirebaseDatabase.getInstance().reference.awaitList<User>("users")
+            val sortedUsers = awaitAsync { users.filter { !it.guest }.sortedByDescending { it.wins + it.losses } }
+            recyclerView.adapter = TimeWasterLeaderboardAdapter(this@LeaderboardActivity, sortedUsers)
+            progressBar.setVisible(false)
+        }
     }
 
     private fun setupListeners() {
@@ -205,4 +182,37 @@ class LeaderboardActivity : AppCompatActivity() {
         timeWasterWrapper.onClick { loadTimeWasterLeaderboard() }
         hiddenButton.onDoubleTap { timeWasterWrapper.setVisible().performClick() }
     }
+
+    override fun onDestroy() {
+        loadingJob?.cancel()
+        super.onDestroy()
+    }
 }
+
+private suspend inline fun <reified T: Any> DatabaseReference.awaitList(s: String): List<T> {
+    return suspendCancellableCoroutine { continuation ->
+
+        var loaded = false
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (loaded) return
+                loaded = true
+                launch(continuation.context) {
+                    val list = async(CommonPool) {
+                        dataSnapshot.children.mapNotNull { it.getValue(T::class.java) }
+                    }.await()
+                    continuation.resume(list)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        }
+
+        continuation.invokeOnCompletion({ removeEventListener(listener) }, true)
+        this.child(s).addListenerForSingleValueEvent(listener)
+    }
+}
+
+private suspend fun <T> awaitAsync(block: suspend CoroutineScope.() -> T): T
+        = async(context = CommonPool, block = block).await()

@@ -22,6 +22,7 @@ import com.instructure.canvasapi2.apis.AlertAPI;
 import com.instructure.canvasapi2.builders.RestBuilder;
 import com.instructure.canvasapi2.builders.RestParams;
 import com.instructure.canvasapi2.models.Alert;
+import com.instructure.canvasapi2.models.ObserverAlert;
 
 import java.util.List;
 
@@ -76,6 +77,33 @@ public class AlertManager extends BaseManager {
                     .build();
 
             AlertAPI.markAlertAsRead(parentId, alertId, adapter, callback, params);
+        }
+    }
+
+    public static void getObserverAlerts(long studentId, boolean forceNetwork, StatusCallback<List<ObserverAlert>> callback) {
+        if (isTesting() || mTesting) {
+            //TODO:
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withPerPageQueryParam(true)
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+
+            AlertAPI.getObserverAlerts(studentId, adapter, callback, params);
+        }
+    }
+
+    public static void updateObserverAlert(long alertId, String workflowState, StatusCallback<ObserverAlert> callback) {
+        if (isTesting() || mTesting) {
+            //TODO:
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withPerPageQueryParam(false)
+                    .build();
+
+            AlertAPI.updateObserverAlert(alertId, workflowState, adapter, callback, params);
         }
     }
 }

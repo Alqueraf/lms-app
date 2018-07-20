@@ -34,4 +34,3 @@ fun Fragment.withRequireNetwork(block: () -> Unit) = activity.withRequireNetwork
 var Fragment.statusBarColor: Int
     get() = activity.statusBarColor
     set(value) { activity.statusBarColor = value }
-

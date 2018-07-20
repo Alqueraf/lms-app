@@ -20,6 +20,7 @@ package com.instructure.parentapp.viewinterface;
 import android.support.annotation.NonNull;
 
 import com.instructure.canvasapi2.models.Alert;
+import com.instructure.canvasapi2.models.ObserverAlert;
 
 import instructure.androidblueprint.SyncManager;
 
@@ -27,10 +28,9 @@ import instructure.androidblueprint.SyncManager;
  * Copyright (c) 2016 Instructure. All rights reserved.
  */
 
-public interface AlertView extends SyncManager<Alert> {
+public interface AlertView extends SyncManager<ObserverAlert> {
     @NonNull String airwolfDomain();
     @NonNull String parentId();
     void markPositionAsRead(int position);
-    void updateUnreadCount();
     void onUpdateUnreadCount(int unreadCount);
 }

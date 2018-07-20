@@ -263,6 +263,7 @@ public class Assignment extends CanvasModel<Assignment> {
         scheduleItem.setHtmlUrl(this.getHtmlUrl());
         scheduleItem.setQuizId(this.getQuizId());
         scheduleItem.setDiscussionTopicHeader(this.getDiscussionTopicHeader());
+        scheduleItem.setCourseId(this.courseId);
         scheduleItem.setAssignment(this);
         if(getLockInfo() != null && getLockInfo().getLockedModuleName() != null) {
             scheduleItem.setLockedModuleName(this.getLockInfo().getLockedModuleName());

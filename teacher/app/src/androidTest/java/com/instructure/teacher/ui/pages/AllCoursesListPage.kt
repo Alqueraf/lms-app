@@ -19,14 +19,13 @@ package com.instructure.teacher.ui.pages
 
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.matcher.ViewMatchers.withText
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
 import com.instructure.soseedy.Course
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
 @Suppress("unused")
-class AllCoursesListPage : BasePage(), PageAssert by SimplePageAssert() {
+class AllCoursesListPage : BasePage() {
 
     private val backButton by OnViewWithContentDescription(android.support.v7.appcompat.R.string.abc_action_bar_up_description)
 

@@ -20,16 +20,21 @@ import com.instructure.soseedy.SeededData
 import com.instructure.teacher.ui.utils.TeacherTest
 import com.instructure.teacher.ui.utils.seedData
 import com.instructure.teacher.ui.utils.tokenLogin
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class DiscussionsListPageTest : TeacherTest() {
 
-    @Test override fun displaysPageObjects() {
+    @Test
+    @Ditto
+    override fun displaysPageObjects() {
         getToDiscussionsListPage()
         discussionsListPage.assertPageObjects()
     }
 
-    @Test fun assertHasDiscussion() {
+    @Test
+    @Ditto
+    fun assertHasDiscussion() {
         val discussion = getToDiscussionsListPage().discussionsList[0]
         discussionsListPage.assertHasDiscussion(discussion)
     }

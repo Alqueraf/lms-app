@@ -77,6 +77,10 @@ public abstract class CanvasRestAdapter {
         return mOkHttpClient;
     }
 
+    public static void setClient(@NonNull OkHttpClient client) {
+        mOkHttpClient = client;
+    }
+
     public void deleteCache() {
         try {
             getOkHttpClient().cache().evictAll();
@@ -133,7 +137,31 @@ public abstract class CanvasRestAdapter {
         return client;
     }
 
+    @NonNull
+    private OkHttpClient getOkHttpClientForTest() {
+
+        if(mOkHttpClient == null) {
+            mOkHttpClient = new OkHttpClient.Builder()
+                    .addNetworkInterceptor(new PactRequestInterceptor())
+                    .addNetworkInterceptor(new ResponseInterceptor())
+                    .readTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
+                    .dispatcher(mDispatcher)
+                    .build();
+        }
+
+        return mOkHttpClient;
+    }
+
     //region Adapter Builders
+
+    public Retrofit buildAdapterForTest(@NonNull RestParams params) {
+
+        return new Retrofit.Builder()
+                .baseUrl(params.getDomain() + params.getAPIVersion())
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(getOkHttpClientForTest())
+                .build();
+    }
 
     public Retrofit buildAdapterNoRedirects(@NonNull RestParams params) {
         if(params.getDomain() == null || params.getDomain().length() == 0) {

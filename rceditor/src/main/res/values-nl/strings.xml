@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">Ongedaan maken</string>
     <string name="rce_contentDescription_redo">Opnieuw</string>
     <string name="rce_contentDescription_bold">Vet</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">Opsommingslijst invoegen</string>
     <string name="rce_contentDescription_insert_numbers">Genummerde lijst invoegen</string>
     <string name="rce_contentDescription_insert_photo">Foto invoegen</string>
+    <string name="rce_contentDescription_upload_photo">Foto vanaf apparaat uploaden</string>
     <string name="rce_contentDescription_insert_link">Koppeling invoegen</string>
     <string name="rce_contentDescription_block_quote">Blokcitaat</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">Koppeling invoegen</string>
     <string name="rce_insertImage">Afbeelding invoegen</string>
 
+    <string name="rce_uploadImage">Afbeelding uploaden</string>
     <string name="rce_done">Gereed</string>
     <string name="rce_cancel">Annuleren</string>
     <string name="rce_exit">Afsluiten</string>

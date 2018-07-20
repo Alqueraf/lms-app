@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,10 +17,15 @@
   -->
 
 <resources>
+
     <string name="chooseMedia">اختيار الوسط</string>
     <string name="takeVideo">التقاط فيديو</string>
     <string name="noCameraOnDevice">لا توجد كاميرا</string>
 
+    <string name="takePhoto">التقاط صورة</string>
+    <string name="choosePhotoFromGallery">اختيار صورة من معرض الصور</string>
+
+    <string name="utils_edit">تحرير</string>
     <!-- NotoriousPicker/uploadService -->
     <string name="notificationTitle">التحميل إلى Canvas</string>
     <string name="preparingUpload">إعداد التحميل</string>
@@ -189,5 +194,184 @@
     <string name="loading">يتم الآن التحميل</string>
     <string name="save">حفظ</string>
     <string name="cropInstructions">تصغير الصورة وسحبها لضبطها.</string>
+
+    <!--Discussions-->
+    <plurals name="utils_discussionsReplies">
+        <item quantity="zero">%s ردود</item>
+        <item quantity="one">%s رد</item>
+        <item quantity="two">%s ردود</item>
+        <item quantity="few">%s ردود</item>
+        <item quantity="many">%s ردود</item>
+        <item quantity="other">%s ردود</item>
+    </plurals>
+
+    <string name="utils_discussionsDeleted" formatted="false">تم حذف هذا الرد %s</string>
+    <string name="utils_discussionsUnknownAuthor">مؤلف غير معروف</string>
+    <string name="utils_discussionsReply">رد</string>
+    <string name="utils_discussionsEdit">تحرير</string>
+    <string name="utils_discussionsDeleteWarning">هل تريد بالتأكيد حذف هذا الرد؟</string>
+    <string name="utils_availableToLabel">متوفر لـ :</string>
+    <string name="utils_availableFromLabel">متوفر بدءًا من:</string>
+    <string name="utils_dueDateHeaderLabel">الاستحقاق</string>
+    <string name="utils_dueLabel">تاريخ الاستحقاق:</string>
+    <string name="utils_delete">حذف</string>
+    <string name="utils_dueDateAtTime" formatted="false">تاريخ الاستحقاق %1s في %2s</string>
+    <string name="utils_noDateFiller">--</string>
+    <string name="utils_availabilityLabel">الإتاحة:</string>
+    <string name="utils_pinnedIcon">أيقونة المناقشات المثبتة</string>
+    <string name="utils_pinDiscussion">تثبيت المناقشة</string>
+    <string name="utils_unpinDiscussion">إلغاء تثبيت المناقشة</string>
+    <string name="utils_discussionPinned">تم تثبيت المناقشة</string>
+    <string name="utils_pinnedDiscussions">تم التثبيت</string>
+    <string name="utils_discussionUnpinned">النقاشات</string>
+    <string name="utils_emptyDiscussions">لا توجد مناقشات لعرضها في هذا القسم.</string>
+    <string name="utils_description">الوصف</string>
+    <string name="utils_allowThreadedReplies">السماح بالردود المترابطة</string>
+    <string name="utils_usersMustPost">يجب على الطلاب النشر قبل رؤية الردود</string>
+    <string name="utils_discussionsClosed">مغلق للتعليقات</string>
+    <string name="utils_discussionsOpen">مفتوح للتعليقات</string>
+    <string name="utils_discussionsPin">تثبيت</string>
+    <string name="utils_discussionsUnpin">إلغاء التثبيت</string>
+    <string name="utils_discussionsOptions">خيارات</string>
+    <string name="utils_discussionsDeleteTitle">هل تريد حذف النقاش؟</string>
+    <string name="utils_discussionsDelete">حذف النقاش</string>
+    <string name="utils_discussionsDeleteMessage">سيؤدي هذا إلى حذف النقاش والمحادثة بأكملها.</string>
+    <string name="utils_discussionSentSuccess">الرد على النقاش كان ناجحًا.</string>
+    <string name="utils_discussionUpdateSuccess">تحرير النقاش كان ناجحًا.</string>
+    <string name="utils_discussionSentEmpty">لا يمكن ترك الرد على النقاش فارغًا.</string>
+    <string name="utils_discussionSentFailure">تعذر إرسال الرد على النقاش في الوقت الحالي.</string>
+    <string name="utils_createDiscussion">نقاش جديد</string>
+    <string name="utils_editDiscussion">تحرير النقاش</string>
+    <string name="utils_discussionDetails">تفاصيل النقاش</string>
+    <string name="utils_discussionSuccessfullyUpdated">تم تحديث النقاش بنجاح.</string>
+    <string name="utils_saving">جارٍ الحفظ</string>
+    <string name="utils_discussionSuccessfullyCreated">تم إنشاء النقاش بنجاح.</string>
+    <string name="utils_discussionSuccessfulAttachmentNot">تعذر إضافة المرفق إلى هذا النقاش. يرجى التحقق من الحصة النسبية للملف وإعادة المحاولة.</string>
+    <string name="utils_noTitle">بلا عنوان</string>
+    <string name="utils_discussionsReplies_Title">ردود</string>
+    <string name="utils_contentDescriptionDiscussionsOverflow">مزيد من الخيارات</string>
+    <string name="utils_discussionsUnreadRepliesBlank" formatted="false">%s %s %s</string>
+    <string name="utils_lastPost" formatted="false">آخر منشور %s</string>
+    <string name="utils_postedOnDate">تم النشر على %s</string>
+    <string name="utils_discussionPostBeforeRepliesEmptyText">تظهر الردود فقط للأشخاص الذين أرسلوا ردًا واحدًا على الأقل.</string>
+    <string name="utils_createAnnouncementDelayPosting">تأخير النشر</string>
+    <string name="utils_postAt">نشر في</string>
+    <string name="utils_postDate">تاريخ النشر</string>
+    <string name="utils_postTime">ترحيل الوقت</string>
+    <string name="utils_editAnnouncementTitle">تحرير الإعلان</string>
+    <string name="utils_createAnnouncementTitle">إعلان جديد</string>
+    <string name="utils_announcementDetails">تفاصيل الإعلان</string>
+    <string name="utils_createAnnouncementNoDescription">الوصف مطلوب</string>
+    <string name="utils_errorSavingAnnouncement">حدث خطأ أثناء محاولة حفظ هذا الإعلان. حاول مرة أخرى.</string>
+    <string name="utils_announcementSuccessfullyUpdated">تم تحديث الإعلان بنجاح.</string>
+    <string name="utils_announcementSuccessfullyCreated">تم إنشاء الإعلان بنجاح.</string>
+
+    <plurals name="utils_discussionsUnread">
+        <item quantity="zero">%s غير مقروء</item>
+        <item quantity="one">%s غير مقروء</item>
+        <item quantity="two">%s غير مقروء</item>
+        <item quantity="few">%s غير مقروء</item>
+        <item quantity="many">%s غير مقروء</item>
+        <item quantity="other">%s غير مقروء</item>
+    </plurals>
+
+    <plurals name="utils_addAttachment">
+        <item quantity="zero">إضافة مرفقات</item>
+        <item quantity="one">إضافة مرفق</item>
+        <item quantity="two">إضافة مرفقات</item>
+        <item quantity="few">إضافة مرفقات</item>
+        <item quantity="many">إضافة مرفقات</item>
+        <item quantity="other">إضافة مرفقات</item>
+    </plurals>
+
+
+    <!-- Assignment Override !-->
+    <string name="utils_unlockAfterDueDateError">لا يمكن أن يكون تاريخ إلغاء التأمين بعد تاريخ الاستحقاق</string>
+    <string name="utils_lockBeforeDueDateError">لا يمكن أن يكون تاريخ التأمين قبل تاريخ الاستحقاق</string>
+    <string name="utils_lockAfterUnlockError">لا يمكن أن يكون تاريخ التأمين قبل تاريخ إلغاء التأمين</string>
+    <string name="utils_assigneeBlankError">لا يمكن أن يكون المعين له فارغ</string>
+    <string name="utils_assignTo">تعيين إلى</string>
+    <string name="utils_availableFrom">متوفر من</string>
+    <string name="utils_availableTo">متوفر لـ</string>
+    <string name="utils_availableFromDate">متاح من تاريخ</string>
+    <string name="utils_availableFromTime">متاح من وقت</string>
+    <string name="utils_availableToDate">متاح حتى تاريخ</string>
+    <string name="utils_availableToTime">متاح حتى وقت</string>
+    <string name="utils_dueDate">تاريخ الاستحقاق</string>
+    <string name="utils_dueTime">موعد الاستحقاق</string>
+    <string name="utils_addNew">إضافة جديد</string>
+
+    <!--Attachment Layout-->
+    <string name="utils_downloadAttachment">تنزيل مرفق</string>
+    <string name="utils_removeAttachment">إزالة مرفق</string>
+
+    <!--Unsaved Changes-->
+    <string name="utils_continueWithoutSavingTitle">متابعة دون حفظ؟</string>
+    <string name="utils_continueWithoutSavingMessage">هل أنت متأكد من أنك تريد المتابعة دون حفظ؟</string>
+    <string name="utils_continueUnsaved">متابعة</string>
+    <string name="utils_exitWithoutSavingTitle">الخروج دون حفظ؟</string>
+    <string name="utils_exitWithoutSavingMessage">هل أنت متأكد من أنك تريد الخروج دون حفظ؟</string>
+    <string name="utils_exitUnsaved">خروج</string>
+    <string name="utils_cancel">إلغاء</string>
+
+    <string name="utils_contentDescriptionFiles">أيقونة الملف</string>
+    <string name="utils_turn_in">التسليم</string>
+    <string name="utils_upload">تحميل</string>
+    <string name="utils_okay">موافق</string>
+    <string name="utils_loadingFilesIndeterminate">جارٍ تحميل الملفات&#8230;</string>
+    <string name="utils_allowedExtensions">الامتدادات المسموح بها:&#160;</string>
+    <string name="utils_extensionNotAllowed">نوع الملف المحدد غير مسموح به.</string>
+    <string name="utils_errorUploadingFile">حدث خطأ أثناء تحميل ملفك. يرجى إعادة المحاولة.</string>
+    <string name="utils_filesUploadedSuccessfully">تم تحميل الملفات بنجاح.</string>
+    <string name="utils_uploadingFiles">جارٍ تحميل الملفات&#8230;</string>
+    <string name="utils_uploadingFile">جارٍ تحميل الملف&#8230;</string>
+    <string name="utils_noApps">لا توجد أي تطبيقات مثبتة على جهازك قادرة على معالجة هذا الملف.</string>
+    <string name="utils_errorGettingPhoto">حدث خطأ أثناء الحصول على الصورة. يرجى إعادة المحاولة.</string>
+    <string name="utils_oneOrMoreExtensionNotAllowed">ملف واحد أو أكثر له امتداد غير مسموح به</string>
+    <string name="utils_fileUploadNotSupported">لا يمكنك تحميل ملفات إلى المهمة المحددة.</string>
+    <string name="utils_noFilesUploaded">لم تقم بتحديد أي ملفات.</string>
+    <string name="utils_attachments">المرفقات</string>
+    <string name="utils_uploadTo">التحميل إلى </string>
+    <string name="utils_uploadToCanvas">التحميل إلى Canvas</string>
+    <string name="utils_uploadMyFiles">ملفاتي</string>
+    <string name="utils_uploadCourseFiles">ملفات المساق</string>
+    <string name="utils_uploadToSubmissionComment">التحميل إلى تعليق الإرسال</string>
+    <string name="utils_attachFile">إرفاق ملف</string>
+    <string name="utils_with">مع</string>
+    <string name="utils_dotWithSpaces">  \u2022  </string>
+
+    <string name="notificationPrimaryInboxTitle">إخطار Canvas</string>
+    <string name="notificationChannelNamePrimary">إخطارات Canvas عامة</string>
+    <string name="notificationChannelDescriptionPrimary">يمكن إجراء تكوين إضافي للإخطارات داخل قسم تفضيلات إخطار Canvas.</string>
+
+    <string name="copyLinkAddress">نسخ عنوان الارتباط</string>
+    <string name="copyLink">نسخ الرابط</string>
+    <string name="linkCopied">تم نسخ الارتباط</string>
+    <string name="link">ارتباط</string>
+    <string name="fileExists">الملف موجود</string>
+    <string name="replace">استبدال</string>
+    <string name="shareLink">مشاركة الارتباط</string>
+    <string name="utils_launchExternalTool">تشغيل الأداة الخارجية</string>
+    <string name="utils_externalToolTitle">أداة خارجية</string>
+    <string name="utils_placeholderTitle">أداة خارجية</string>
+    <string name="utils_placeholderDescription">قم بزيارة حسابك على Canvas على الويب لتحرير هذه الأداة الخارجية.</string>
+
+    <string name="utils_unableToViewInBrowser">لا يمكننا العثور على تطبيق خارجي لعرض أداة LTI (تبادلية أدوات التعلم) هذه.</string>
+
+    <string name="utils_unsupportedFileMessage">تعذر عرض هذا الملف. استخدم الزر أدناه لفتح الملف بواسطة تطبيق آخر على جهازك.</string>
+    <string name="utils_openWithAnotherApp">فتح بواسطة...</string>
+    <string name="utils_couldNotPlayFormat">تنسيق الوسائط هذا غير مدعوم</string>
+    <string name="utils_fullscreen">شاشة كاملة</string>
+
+    <string name="utils_dataUsageWarningTitle">تحذير استخدام البيانات</string>
+    <string name="utils_dataUsageWarningMessage">قد يؤدي هذا الإجراء إلى استهلاك قدر كبير من البيانات، مما قد يكبد تكاليف زائدة. هل ترغب في المتابعة؟</string>
+    <string name="utils_doNotShowMessageAgain">لا تظهر هذه الرسالة مرة أخرى</string>
+
+    <string name="utils_no_data_connection">يرجى التأكد من الاتصال بالإنترنت والمحاولة من جديد.</string>
+    <string name="utils_playMedia">تشغيل وسائط</string>
+    <string name="utils_tryAgain">حاول مرة أخرى</string>
+    <string name="image_uploading">جارٍ تحميل الصورة...</string>
+    <string name="image_upload_error">خطأ في تحميل الصورة</string>
+    <string name="retry">إعادة المحاولة</string>
 
 </resources>

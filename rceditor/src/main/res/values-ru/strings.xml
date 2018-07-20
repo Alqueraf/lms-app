@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">Аннулировать</string>
     <string name="rce_contentDescription_redo">Повторить</string>
     <string name="rce_contentDescription_bold">Форматирование жирного шрифта</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">Вставить маркированный список</string>
     <string name="rce_contentDescription_insert_numbers">Вставить нумерованный список</string>
     <string name="rce_contentDescription_insert_photo">Вставить фотографию</string>
+    <string name="rce_contentDescription_upload_photo">Загрузить фотографию с устройства</string>
     <string name="rce_contentDescription_insert_link">Вставить ссылку</string>
     <string name="rce_contentDescription_block_quote">Блокировать кавычки</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">Вставить ссылку</string>
     <string name="rce_insertImage">Вставить изображение</string>
 
+    <string name="rce_uploadImage">Загрузить изображение</string>
     <string name="rce_done">Готово</string>
     <string name="rce_cancel">Отменить</string>
     <string name="rce_exit">Выход</string>

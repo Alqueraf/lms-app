@@ -159,6 +159,10 @@ class AssignmentListPresenter(private val mCanvasContext: CanvasContext) :
     fun getCanvasContext() = mCanvasContext
 
     override fun compare(group: AssignmentGroup?, item1: Assignment, item2: Assignment): Int {
-        return item1.position.compareTo(item2.position)
+        var result = item1.position.compareTo(item2.position)
+        if (result == 0) {
+            result = item1.name.compareTo(item2.name,true)
+        }
+        return result
     }
 }

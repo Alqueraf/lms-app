@@ -21,6 +21,7 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -33,12 +34,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,6 +87,8 @@ public abstract class BaseLoginLandingPageActivity extends AppCompatActivity {
     private GestureDetector mGesture;
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerRecyclerView;
+    private View changesLayout;
+    private TextView whatsNew;
 
     private boolean mGestureFirstFree = true;
     private long mGestureFirst = 0;
@@ -96,6 +101,11 @@ public abstract class BaseLoginLandingPageActivity extends AppCompatActivity {
     protected abstract @ColorInt int themeColor();
     protected abstract @StringRes int appTypeName();
     protected abstract Intent launchApplicationMainActivityIntent();
+
+
+    protected String appChangesLink() {
+        return null;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,11 +120,16 @@ public abstract class BaseLoginLandingPageActivity extends AppCompatActivity {
 
     private void bindViews() {
         mPreviousLoginWrapper = findViewById(R.id.previousLoginWrapper);
-        mPreviousLoginRecyclerView = (RecyclerView) findViewById(R.id.previousLoginRecyclerView);
-        mFindMySchoolButton = (Button) findViewById(R.id.findMySchool);
-        mAppDescriptionType = (TextView) findViewById(R.id.appDescriptionType);
-        mCanvasLogo = (ImageView) findViewById(R.id.canvasLogo);
+        mPreviousLoginRecyclerView = findViewById(R.id.previousLoginRecyclerView);
+        mFindMySchoolButton = findViewById(R.id.findMySchool);
+        mAppDescriptionType = findViewById(R.id.appDescriptionType);
+        mCanvasLogo = findViewById(R.id.canvasLogo);
         View canvasNetwork = findViewById(R.id.canvasNetwork);
+        changesLayout = findViewById(R.id.changesLayout);
+        View whatsNew = findViewById(R.id.whatsNew);
+
+        // Only show the what's new text if the app supports it
+        changesLayout.setVisibility((appChangesLink() != null) ? View.VISIBLE : View.GONE);
 
         mFindMySchoolButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,6 +154,15 @@ public abstract class BaseLoginLandingPageActivity extends AppCompatActivity {
                 } else {
                     NoInternetConnectionDialog.show(getSupportFragmentManager());
                 }
+            }
+        });
+
+        whatsNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(appChangesLink()));
+                startActivity(i);
             }
         });
     }
@@ -179,6 +203,11 @@ public abstract class BaseLoginLandingPageActivity extends AppCompatActivity {
             }
         }));
         mPreviousLoginWrapper.setVisibility((previousUsers.size() > 0) ? View.VISIBLE : View.GONE);
+        // Don't show the new changes view if there are previous users, it will clutter the view
+        if(appChangesLink() != null) {
+            changesLayout.setVisibility(previousUsers.size() > 0 ? View.GONE : View.VISIBLE);
+        }
+
     }
 
     private void resizePreviousUsersRecyclerView(ArrayList<SignedInUser> previousUsers) {

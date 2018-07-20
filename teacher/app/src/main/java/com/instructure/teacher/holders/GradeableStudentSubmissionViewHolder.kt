@@ -128,7 +128,11 @@ class GradeableStudentSubmissionViewHolder(view: View) : RecyclerView.ViewHolder
 
         // Set submission status
 
-        submissionStatus.setVisible()
+        if (assignment.turnInType != Assignment.TURN_IN_TYPE.ON_PAPER && assignment.turnInType != Assignment.TURN_IN_TYPE.NONE) {
+            submissionStatus.setVisible()
+        } else {
+            submissionStatus.setGone()
+        }
 
         val (stringRes, colorRes) = assignment.getResForSubmission(gradeableStudentSubmission.submission)
         if (stringRes == -1 || colorRes == -1) {

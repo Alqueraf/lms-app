@@ -25,14 +25,12 @@ import com.instructure.canvasapi2.models.Course
 import com.instructure.canvasapi2.utils.globalName
 import com.instructure.pandautils.fragments.BasePresenterFragment
 import com.instructure.pandautils.utils.*
-import com.instructure.pandautils.utils.ColorKeeper
-import com.instructure.pandautils.utils.Const
 import com.instructure.teacher.R
 import com.instructure.teacher.dialog.EditCourseNameDialog
 import com.instructure.teacher.dialog.RadioButtonDialog
 import com.instructure.teacher.factory.CourseSettingsFragmentPresenterFactory
 import com.instructure.teacher.presenters.CourseSettingsFragmentPresenter
-import com.instructure.teacher.utils.*
+import com.instructure.teacher.utils.setupBackButton
 import com.instructure.teacher.viewinterface.CourseSettingsFragmentView
 import kotlinx.android.synthetic.main.fragment_course_settings.*
 import kotlinx.android.synthetic.main.view_edit_course_homepage.*
@@ -45,7 +43,8 @@ class CourseSettingsFragment : BasePresenterFragment<
     private var mCourse: Course by ParcelableArg(default = Course())
 
     private val mHomePages: Map<String, String> by lazy {
-        hashMapOf(
+        // Use LinkedHashMap map to keep order consistent between API levels
+        linkedMapOf(
                 Pair("feed", getString(R.string.course_activity_stream)),
                 Pair("wiki", getString(R.string.pages_front_page)),
                 Pair("modules", getString(R.string.course_modules)),

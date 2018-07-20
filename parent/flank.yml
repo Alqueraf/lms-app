@@ -1,0 +1,14 @@
+#projectId: bootstraponline-awesome-sauce
+projectId: delta-essence-114723
+appApk: ./app/build/outputs/apk/qa/debug/app-qa-debug.apk
+testApk: ./app/build/outputs/apk/androidTest/qa/debug/app-qa-debug-androidTest.apk
+rootGcsBucket: android-parent
+useOrchestrator: true
+disablePerformanceMetrics: true
+disableVideoRecording: false
+testTimeoutMinutes: 60
+testShards: 1
+testRuns: 1
+waitForResults: true
+#testMethods:
+# - com.instructure.parentapp.ui.ViewStudentPageTest#switchesUsers

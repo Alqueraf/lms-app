@@ -22,7 +22,7 @@
         app:showAsAction="collapseActionView|always"
         app:actionViewClass="android.support.v7.widget.SearchView" />
     <item
-        android:id="@+id/peopleFilter"
+        android:id="@+id/peopleFilterMenuItem"
         android:icon="@drawable/vd_filter"
         android:title="@string/filterPeople"
         app:showAsAction="always" />

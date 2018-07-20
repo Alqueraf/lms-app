@@ -22,7 +22,6 @@
     <string name="email">E-mail</string>
     <string name="emailAddress">Endereço de email</string>
     <string name="parent_email">Email dos Pais</string>
-    <string name="confirmPassword">Confirmar senha</string>
     <string name="firstName">Primeiro nome</string>
     <string name="lastName">Sobrenome</string>
     <string name="password">Senha</string>
@@ -150,6 +149,9 @@
     <string name="or">ou</string>
     <string name="canvas_login_text">Conectar-se com Canvas</string>
 
+    <string name="privacyPolicy">Política de privacidade</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">Termos de Uso</string>
     <!-- Feature Request -->
     <string name="featureSubject">Ideia para o Aplicativo Canvas Parent [Android]</string>
     <string name="understandRequest">As informações a seguir nos ajudarão a compreender melhor a sua ideia:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Digite o nome da escola do aluno.</string>
     <string name="findYourStudentsSchoolHint">Encontre a escola ou distrito do seu aluno.</string>
-    <string name="noGradeText">N/A</string>
+    <string name="noGradeText">Sem Nota</string>
     <string name="locked">Bloqueado(a)</string>
+    <string name="changeUser">Trocar Usuário</string>
+    <string name="manageChildren">Gerenciar crianças</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Abrir gaveta de navegação</string>
+    <string name="navigation_drawer_close">Fechar gaveta de navegação</string>
+    <string name="version" formatted="false">Versão %s</string>
+    <string name="not_a_parent_title">Não é um pai?</string>
+    <string name="not_a_parent_subtitle">Um dos nossos outros apps pode ser uma escolha melhor. Toque em um para visitar o Play Store.</string>
+    <string name="tryLoginAgain">Tente entrar novamente</string>
+
+    <string name="legalDetails">Política de privacidade, termos e uso, fonte aberta</string>
+    <string name="assignmentGrade">Nota da tarefa</string>
+    <string name="courseGrade">Nota do curso</string>
+    <string name="courseAnnouncement">Anúncio do curso</string>
+    <string name="institutionAnnouncement">Anúncio da instituição</string>
+    <string name="institutionAnnouncementUnavailable">Este anúncio expirou.</string>
 </resources>

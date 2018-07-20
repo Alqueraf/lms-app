@@ -60,6 +60,10 @@
     <string name="share">Поделиться</string>
     <string name="share_with">Поделиться с&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Открыть панель навигации</string>
+    <string name="navigation_drawer_close">Закрыть панель навигации</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(нет субъекта)</string>
     <string name="compose_message">Написать сообщение</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Выбрать файлы или фотографии</string>
     <string name="uploading_files">Выполняется отправка файлов&#8230;</string>
     <string name="no_attachment">(без вложений)</string>
-    <string name="remove_attachment">Удалить вложение</string>
     <string name="creating_announcement">Выполняется создание объявления&#8230;</string>
 
     <string name="copy_email">Копировать адрес эл. почты</string>
@@ -168,8 +171,6 @@
     <string name="inbox_empty_starred_title">Нет сообщений, помеченных звездочкой</string>
     <string name="inbox_empty_message">Нажмите на \"+\" для создания нового разговора.</string>
     <string name="inbox_empty_starred_message">Отметьте сообщения звездочкой касанием к звездочке в сообщении.</string>
-
-    <string name="download_attachment">Загрузить вложение</string>
 
     <string name="reply">Ответить</string>
     <string name="replyAll">Ответить на все</string>
@@ -293,7 +294,7 @@
     <string name="inbox_starred">Отмечено звездочкой</string>
     <string name="inbox_sent">Отправлено</string>
     <string name="inbox_archived">Помещено в архив</string>
-    <string name="inbox_all_messages">Все сообщения</string>
+    <string name="inbox_all_messages">Все</string>
     <string name="uploading_file_num" formatted="false">Отправка %d из %d</string>
     <string name="page_not_found">Страница не найдена</string>
     <string name="no_connection">Нет связи</string>
@@ -442,7 +443,6 @@
     <string name="deleteComment">Удалить комментарий</string>
     <string name="deleteAnnotation">Удалить аннотацию</string>
     <string name="deleteCommentConfirmation">Удалить данный комментарий?</string>
-    <string name="deleteHeadCommentConfirmation">Этот комментарий является аннотацией. Его удаление приведет к удалению всех ответов и аннотации. Вы действительно хотите сделать это?</string>
     <string name="rubric_view_long_description">Просмотреть длинное описание</string>
     <string name="rubric">Рубрика</string>
     <string name="enter_custom_value">Ввести пользовательское значение</string>
@@ -523,7 +523,7 @@
         <item quantity="other">%d групп</item>
     </plurals>
     <string name="cmp_closed">Закрыто</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">предпочтительный</string>
     <string name="content_description_not_favorite">не предпочтительный</string>
@@ -532,7 +532,8 @@
     <string name="edit_course_nickname">Редактировать псевдоним курса</string>
 
     <string name="colorPickerDialogTitle">Цвет курса</string>
-    <string name="colorPickerDialogMessage">Задайте этот цвет в качестве цвета курса по умолчанию. Это не приведет к отмене персональной настройки цвета.</string>
+    <string name="colorPickerDialogMessage">Это ваша персональная настройка цвета. Только вы будет видеть этот цвет для курса.</string>
+
     <string name="colorPickerError">В данный момент невозможно задать цвет курса.</string>
 
     <string name="contentDescriptionColorCottonCandy">Розовый</string>
@@ -626,12 +627,6 @@
     <string name="quiz_details_from_to">От %1$s до %2$s</string>
     <string name="quiz_details_after">После %1$s</string>
     <string name="quiz_details_until">До %1$s</string>
-    <string name="continueWithoutSavingTitle">Продолжить без сохранения?</string>
-    <string name="continueWithoutSavingMessage">Вы действительно хотите продолжить без сохранения?</string>
-    <string name="continueUnsaved">Продолжить</string>
-    <string name="exitWithoutSavingTitle">Выйти без сохранения?</string>
-    <string name="exitWithoutSavingMessage">Вы действительно хотите выйти без сохранения?</string>
-    <string name="exitUnsaved">Выход</string>
     <string name="filterPointsMustBeSet">Ввести значение.</string>
 
     <plurals name="quantityQuestions">
@@ -664,7 +659,6 @@
     <string name="discussions_replies_title">Ответы</string>
     <string name="discussions_reply">Ответить</string>
     <string name="discussions_edit">Редактировать</string>
-    <string name="discussions_deleted" formatted="false">Удалить этот ответ %s</string>
     <string name="discussions_forbidden">Ответы видны только тем, кто опубликовал не менее одного ответа.</string>
     <string name="discussions_unknown_author">Неизвестный автор</string>
     <string name="discussions_delete">Удалить дискуссию</string>
@@ -736,6 +730,8 @@
     <string name="subscribe">Подписаться</string>
     <string name="allowThreadedReplies">Разрешить цепочечные ответы</string>
     <string name="usersMustPost">Пользователи должны публиковать сообщения, прежде чем увидят ответы</string>
+    <string name="allowUserComments">Разрешить пользователям комментирование</string>
+
     <string name="discussionTitleMustBeSet">Необходимо задать заголовок дискуссии.</string>
     <string name="discussionSuccessfullyCreated">Дискуссия успешно создана.</string>
     <string name="errorCreatingDiscussion">Произошла ошибка при попытке создания этой дискуссии. Повторить попытку.</string>
@@ -784,6 +780,7 @@
     <string name="choosePhotoFromGallery">Выбрать фотографию из галереи</string>
     <string name="fileNotFound">Файл не найден.</string>
     <string name="version" formatted="false">Версия %s</string>
+    <string name="fullVersion">Версия %s (%d)</string>
     <string name="tap_to_view_submissions_list">Прикоснитесь для просмотра списка отправок.</string>
     <string name="assignmentDescriptionContentDescription">Описание задания</string>
     <string name="quizDescriptionContentDescription">Описание теста</string>
@@ -908,6 +905,7 @@
 
     <string name="latePenalty">Снижение оценки за опоздание</string>
     <string name="finalGrade">Итоговая оценка</string>
+    <string name="moderatedGradingUnsupported">Модерированное выставление оценок в текущий момент не поддерживается в мобильной версии SpeedGrader.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s балл</item>
         <item quantity="few">-%s балла/баллов</item>
@@ -920,4 +918,20 @@
         <item quantity="many">-%s балла/баллов</item>
         <item quantity="other">-%s балла/баллов</item>
     </plurals>
+    <string name="todoUnreadCount">Выполнить непрочитанные %d</string>
+    <string name="profileSettings">Настройки профиля</string>
+    <string name="downloadingFile">Загрузка файла&#8230;</string>
+    <string name="fileDownloadedSuccessfully">Файл успешно загружен.</string>
+    <string name="tapToView">Прикоснуться для просмотра</string>
+    <string name="errorDownloadingFile">Произошла ошибка при загрузке вашего файла. Попробуйте еще раз.</string>
+
+    <string name="postTo">Опубликовать в</string>
+    <string name="allSections">Все разделы</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">В данный момент загрузка этого LTI невозможна.</string>
+
+    <string name="downloading">Загрузка...</string>
+
 </resources>

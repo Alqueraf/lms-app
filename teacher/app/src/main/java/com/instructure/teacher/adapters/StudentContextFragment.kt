@@ -25,16 +25,17 @@ import com.instructure.canvasapi2.models.StudentAssignee
 import com.instructure.canvasapi2.type.EnrollmentType
 import com.instructure.canvasapi2.utils.DateHelper
 import com.instructure.canvasapi2.utils.isValid
+import com.instructure.interactions.MasterDetailInteractions
+import com.instructure.interactions.router.Route
+import com.instructure.interactions.router.RouteContext
 import com.instructure.pandautils.utils.*
 import com.instructure.teacher.R
 import com.instructure.teacher.activities.SpeedGraderActivity
+import com.instructure.teacher.events.AssignmentGradedEvent
 import com.instructure.teacher.factory.StudentContextPresenterFactory
 import com.instructure.teacher.fragments.AddMessageFragment
 import com.instructure.teacher.holders.StudentContextSubmissionView
-import com.instructure.interactions.MasterDetailInteractions
 import com.instructure.teacher.presenters.StudentContextPresenter
-import com.instructure.interactions.router.Route
-import com.instructure.interactions.router.RouteContext
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.displayText
 import com.instructure.teacher.utils.setupBackButton
@@ -43,6 +44,9 @@ import com.instructure.teacher.utils.updateToolbarExpandCollapseIcon
 import com.instructure.teacher.viewinterface.StudentContextView
 import instructure.androidblueprint.PresenterFragment
 import kotlinx.android.synthetic.main.fragment_student_context.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 class StudentContextFragment : PresenterFragment<StudentContextPresenter, StudentContextView>(), StudentContextView {
@@ -50,8 +54,28 @@ class StudentContextFragment : PresenterFragment<StudentContextPresenter, Studen
     private var mStudentId by LongArg()
     private var mCourseId by LongArg()
     private var mLaunchSubmissions by BooleanArg()
-
+    private var mNeedToForceNetwork = false
     private var mHasLoaded = false
+
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    fun onAssignmentGraded(event: AssignmentGradedEvent) {
+        event.once(javaClass.simpleName) {
+            //force network call on resume
+            mNeedToForceNetwork = true
+            mHasLoaded = false
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mHasLoaded = false
@@ -76,10 +100,14 @@ class StudentContextFragment : PresenterFragment<StudentContextPresenter, Studen
     override fun onPresenterPrepared(presenter: StudentContextPresenter) {}
 
     override fun onReadySetGo(presenter: StudentContextPresenter) {
-        if (!mHasLoaded) {
-            presenter.loadData(false)
+        if(!mHasLoaded) {
+            presenter.refresh(mNeedToForceNetwork)
             mHasLoaded = true
         }
+    }
+
+    override fun clear() {
+        submissionListContainer.removeAllViewsInLayout()
     }
 
     override fun setData(course: AsCourse, student: User, summary: Analytics?, isStudent: Boolean) {

@@ -17,7 +17,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_container"
+    android:id="@+id/fragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.instructure.androidpolling.app.activities.PollListActivity">
@@ -26,20 +26,19 @@
         android:id="@+id/tabs"
         android:layout_width="wrap_content"
         android:layout_height="48dip"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true" />
 
     <com.jfeinstein.jazzyviewpager.JazzyViewPager
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tabs"/>
+        android:layout_below="@+id/tabs" />
 
     <TextView
-        android:id="@+id/no_poll_text"
-        android:text="@string/no_poll_text_student"
+        android:id="@+id/noPollText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:text="@string/no_poll_text_student"
+        android:visibility="gone" />
 
 </RelativeLayout>

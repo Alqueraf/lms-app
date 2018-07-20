@@ -22,7 +22,6 @@
     <string name="email">Адрес электронной почты</string>
     <string name="emailAddress">Адрес электронной почты</string>
     <string name="parent_email">Email Родителя</string>
-    <string name="confirmPassword">Подтвердить пароль</string>
     <string name="firstName">Имя</string>
     <string name="lastName">Фамилия</string>
     <string name="password">Пароль</string>
@@ -150,6 +149,9 @@
     <string name="or">или</string>
     <string name="canvas_login_text">Войти через Canvas</string>
 
+    <string name="privacyPolicy">Политика конфиденциальности</string>
+    <string name="EULA">Лицензионный договор</string>
+    <string name="termsOfUse">Условия использования</string>
     <!-- Feature Request -->
     <string name="featureSubject">Идея для приложения Canvas Родители [Android]</string>
     <string name="understandRequest">Следующая информация поможет нам лучше понять вашу идею:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Ввести название учебного заведения студента</string>
     <string name="findYourStudentsSchoolHint">Найти учебное заведение или район проживания студента</string>
-    <string name="noGradeText">Н/Д</string>
+    <string name="noGradeText">Нет оценки</string>
     <string name="locked">Заблокировано</string>
+    <string name="changeUser">Сменить пользователя</string>
+    <string name="manageChildren">Управление детьми</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Открыть панель навигации</string>
+    <string name="navigation_drawer_close">Закрыть панель навигации</string>
+    <string name="version" formatted="false">Версия %s</string>
+    <string name="not_a_parent_title">Не являетесь родителем?</string>
+    <string name="not_a_parent_subtitle">Одно из наших других приложений может подойти лучше. Прикоснитесь один раз для входа в Play Store.</string>
+    <string name="tryLoginAgain">Попробуйте войти еще раз</string>
+
+    <string name="legalDetails">Политика конфиденциальности, условия использования, открытый источник</string>
+    <string name="assignmentGrade">Оценка задания</string>
+    <string name="courseGrade">Оценка курса</string>
+    <string name="courseAnnouncement">Объявление о курсе</string>
+    <string name="institutionAnnouncement">Объявление об учебном заведении</string>
+    <string name="institutionAnnouncementUnavailable">Срок действия этого объявления истек.</string>
 </resources>

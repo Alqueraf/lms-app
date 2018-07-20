@@ -19,12 +19,22 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.apollographql.android'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'au.com.dius.pact'
 
 static String isTesting() {
     if ( System.getenv("IS_TESTING") == "true" ) {
         "true"
     } else {
         "false"
+    }
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'au.com.dius:pact-jvm-provider-gradle_2.11:3.5.14'
     }
 }
 
@@ -73,8 +83,8 @@ dependencies {
     }
 
     /* PaperParcel */
-    implementation 'nz.bradcampbell:paperparcel:2.0.2'
-    implementation 'nz.bradcampbell:paperparcel-kotlin:2.0.2'
+    api 'nz.bradcampbell:paperparcel:2.0.2'
+    api 'nz.bradcampbell:paperparcel-kotlin:2.0.2'
     kapt 'nz.bradcampbell:paperparcel-compiler:2.0.2'
 
     /* OKHttp */
@@ -95,6 +105,9 @@ dependencies {
 
     /* Test Dependencies */
     testImplementation Libs.JUNIT
+    testImplementation "org.mockito:mockito-inline:2.11.0"
+    testImplementation "au.com.dius:pact-jvm-consumer-junit_2.11:3.5.14"
+    testImplementation group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.25'
 
     /* Support Libs */
     implementation Libs.SUPPORT_APPCOMPAT
@@ -102,4 +115,10 @@ dependencies {
 
     /* Paper No SQl Storage */
     api 'io.paperdb:paperdb:2.6'
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

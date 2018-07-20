@@ -22,7 +22,6 @@
     <string name="email">Imèl</string>
     <string name="emailAddress">Adrès imèl</string>
     <string name="parent_email">Imèl Paran</string>
-    <string name="confirmPassword">Konfime modpas</string>
     <string name="firstName">Non</string>
     <string name="lastName">siyati</string>
     <string name="password">Modpas</string>
@@ -150,6 +149,9 @@
     <string name="or">oswa</string>
     <string name="canvas_login_text">Konekte ak Canvas</string>
 
+    <string name="privacyPolicy">Politik Konfidansyalite</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">Kondisyon Itilizasyon</string>
     <!-- Feature Request -->
     <string name="featureSubject">Ide pou app Canvas Parent [Android]</string>
     <string name="understandRequest">Enfòmasyon annapre yo ap ede nou konprann ide ou a pi byen:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Antre non lekòl elèv ou a</string>
     <string name="findYourStudentsSchoolHint">Jwenn lekòl oswa distri elèv ou a</string>
-    <string name="noGradeText">N/A</string>
+    <string name="noGradeText">Pa gen Klas</string>
     <string name="locked">Bloke</string>
+    <string name="changeUser">Chanje Itilizatè</string>
+    <string name="manageChildren">Jere Timoun yo</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Ouvri meni navigasyon</string>
+    <string name="navigation_drawer_close">Fèmen meni navigasyon</string>
+    <string name="version" formatted="false">Vèsyon %s</string>
+    <string name="not_a_parent_title">Ou pa yon paran?</string>
+    <string name="not_a_parent_subtitle">Yonn nan lòt aplikasyon nou yo kapab pi bon. Tape sou li pou vizite Play Store la.</string>
+    <string name="tryLoginAgain">Eseye rekonekte</string>
+
+    <string name="legalDetails">Politik konfidansyalite, kondisyon itilizasyon, open source</string>
+    <string name="assignmentGrade">Nòt Sesyon</string>
+    <string name="courseGrade">Nòt Kou</string>
+    <string name="courseAnnouncement">Anons Kou</string>
+    <string name="institutionAnnouncement">Anons Enstitisyon</string>
+    <string name="institutionAnnouncementUnavailable">Anons sa a ekspire.</string>
 </resources>

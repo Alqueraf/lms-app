@@ -22,29 +22,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar_layout" />
+    <include layout="@layout/toolbar_layout" />
 
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp">
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp">
 
         <TextView
+            android:id="@+id/subjectView"
             style="@style/TextFont.Medium"
-            android:id="@+id/subject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="16dp"
             android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
             android:layout_toStartOf="@+id/starred"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@color/defaultTextDark"
             android:textSize="18sp"
             tools:text="This is a subject Line Demo that is really long" />
@@ -54,8 +52,8 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="12dp"
             android:layout_centerVertical="true"
+            android:layout_marginEnd="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/star"
             android:padding="4dp"
@@ -69,10 +67,12 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/header"
         android:background="@color/messageBackgroundGray">
+
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/utils_editTextColor"/>
+            android:background="@color/utils_editTextColor" />
+
         <include
             layout="@layout/recycler_swipe_refresh_layout"
             android:layout_width="match_parent"

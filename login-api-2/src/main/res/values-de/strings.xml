@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">Sie versuchen sich im Canvas Network anzumelden?</string>
     <string name="remove">Entfernen</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">Maskieren</string>
     <string name="userId">Benutzer-ID</string>
     <string name="domain">Domäne</string>
 
-    <string name="masqueradingUserId">Benutzer-ID maskieren</string>
-    <string name="masqueradingUserDomain">Domäne maskieren</string>
-    <string name="masqueradingBegin">Maskieren beginnen</string>
-    <string name="masqueradingStop">Maskieren beenden</string>
-
+    <string name="actAsUser">Handeln als Benutzer</string>
+    <string name="stopActAsUser">Nicht mehr handeln als Benutzer</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Diesen Benutzer entfernen?</string>
     <string name="removedForever">Sie müssen sich bei diesem Benutzer erneut anmelden, um auf seine Inhalte zugreifen zu können.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Kein</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">In Ihrer Nähe</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Direkt hinter Ihnen</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Frühere Anmeldungen</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Meine Schule suchen</string>
-    <string name="appTypeTeacher">Dozent</string>
-    <string name="appTypeStudent">Student</string>
-    <string name="appTypeParent">Elternteil</string>
     <string name="canvasLowerCase">Canvas</string>
     <string name="whatsYourSchoolName">Wie heißt Ihre Schule?</string>
     <string name="next">Weiter</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">Blättern, um alle Details zu sehen</string>
 
     <string name="masqueradeErrorUserId">Sie müssen eine Benutzer-ID eingeben.</string>
-    <string name="masqueradeErrorDomain">Sie müssen eine Domäne eingeben.</string>
+    <string name="masqueradeErrorDomain">Sie müssen eine gültige Domäne eingeben.</string>
     <string name="masqueradeError">Fehler beim Maskieren.</string>
+    <string name="masqueradeInfo">\"Handeln als\" heißt im Grunde, sich als dieser Benutzer ohne Kennwort anzumelden. Sie können beliebige Maßnahmen ergreifen, als wären Sie dieser Benutzer, und aus der Sicht anderer Benutzer wird es sein, als ob dieser Benutzer sie ausführt. Die Audit-Protokolle zeichnen auf, dass Sie die Aktionen im Namen des Benutzers durchgeführt haben.</string>
+    <string name="masqueradingAs">Sie handeln als %s.</string>
+    <string name="stopActingAsTitle">Aufhören, als Benutzer [...] zu handeln</string>
+    <string name="stopActingAsMessage">Sie hören auf, als %s zu handeln, und kehren zu Ihrem Konto zurück.</string>
+
+    <string name="weMadeChanges">Wir haben ein paar kleine Veränderungen vorgenommen.</string>
+    <string name="whatsNewText">Was ist neu?</string>
 </resources>

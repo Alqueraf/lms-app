@@ -60,6 +60,10 @@
     <string name="share">مشاركة</string>
     <string name="share_with">المشاركة مع&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">فتح درج التنقل</string>
+    <string name="navigation_drawer_close">إغلاق درج التنقل</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(لا يوجد أي موضوع)</string>
     <string name="compose_message">إنشاء رسالة</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">تحديد ملفات أو صور</string>
     <string name="uploading_files">جارٍ تحميل الملفات&#8230;</string>
     <string name="no_attachment">(لا توجد مرفقات)</string>
-    <string name="remove_attachment">إزالة مرفق</string>
     <string name="creating_announcement">جارٍ إنشاء إعلان&#8230;</string>
 
     <string name="copy_email">نسخ عنوان البريد الإلكتروني</string>
@@ -172,8 +175,6 @@
     <string name="inbox_empty_starred_title">لا توجد رسائل معلّمة بنجمة</string>
     <string name="inbox_empty_message">انقر فوق \"+\" لإنشاء محادثة جديدة</string>
     <string name="inbox_empty_starred_message">ضع علامة نجمة على الرسائل من خلال الضغط على النجمة الموجودة في الرسالة.</string>
-
-    <string name="download_attachment">تنزيل مرفق</string>
 
     <string name="reply">رد</string>
     <string name="replyAll">رد على الكل</string>
@@ -301,7 +302,7 @@
     <string name="inbox_starred">تم وضع نجمة عليها</string>
     <string name="inbox_sent">مرسَل</string>
     <string name="inbox_archived">مؤرشف</string>
-    <string name="inbox_all_messages">جميع الرسائل</string>
+    <string name="inbox_all_messages">الكل</string>
     <string name="uploading_file_num" formatted="false">جارٍ تحميل %d من %d</string>
     <string name="page_not_found">لم يتم العثور على الصفحة.</string>
     <string name="no_connection">لا يوجد اتصال</string>
@@ -450,7 +451,6 @@
     <string name="deleteComment">حذف التعليق</string>
     <string name="deleteAnnotation">حذف التعليق التوضيحي</string>
     <string name="deleteCommentConfirmation">هل تريد بالتأكيد حذف هذا التعليق؟</string>
-    <string name="deleteHeadCommentConfirmation">يُعد هذا التعليق تعليقًا توضيحيًا. سيؤدي حذف هذا إلى حذف جميع الردود والتعليق التوضيحي. هل ترغب بالتأكيد في فعل هذا؟</string>
     <string name="rubric_view_long_description">عرض وصف طويل</string>
     <string name="rubric">تقييم روبرك</string>
     <string name="enter_custom_value">أدخل قيمة مخصصة</string>
@@ -545,7 +545,7 @@
         <item quantity="other">%d مجموعات</item>
     </plurals>
     <string name="cmp_closed">مغلق</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">مفضلة</string>
     <string name="content_description_not_favorite">غير مفضلة</string>
@@ -554,7 +554,8 @@
     <string name="edit_course_nickname">تحرير اسم شهرة المساق</string>
 
     <string name="colorPickerDialogTitle">لون المساق</string>
-    <string name="colorPickerDialogMessage">تعيين هذا للون الافتراضي للمساق. لن يؤدي هذا إلى تجاوز إعداد اللون الشخصي.</string>
+    <string name="colorPickerDialogMessage">هذا إعداد اللون الشخصي الخاص بك. أنت فقط من سترى هذا اللون للمساق.</string>
+
     <string name="colorPickerError">تعذر تعيين لون المساق في الوقت الحالي.</string>
 
     <string name="contentDescriptionColorCottonCandy">وردي</string>
@@ -648,12 +649,6 @@
     <string name="quiz_details_from_to">من %1$s إلى %2$s</string>
     <string name="quiz_details_after">بعد %1$s</string>
     <string name="quiz_details_until">حتى %1$s</string>
-    <string name="continueWithoutSavingTitle">متابعة دون حفظ؟</string>
-    <string name="continueWithoutSavingMessage">هل أنت متأكد من أنك تريد المتابعة دون حفظ؟</string>
-    <string name="continueUnsaved">متابعة</string>
-    <string name="exitWithoutSavingTitle">الخروج دون حفظ؟</string>
-    <string name="exitWithoutSavingMessage">هل أنت متأكد من أنك تريد الخروج دون حفظ؟</string>
-    <string name="exitUnsaved">خروج</string>
     <string name="filterPointsMustBeSet">أدخل قيمة.</string>
 
     <plurals name="quantityQuestions">
@@ -690,7 +685,6 @@
     <string name="discussions_replies_title">ردود</string>
     <string name="discussions_reply">رد</string>
     <string name="discussions_edit">تحرير</string>
-    <string name="discussions_deleted" formatted="false">تم حذف هذا الرد %s</string>
     <string name="discussions_forbidden">تظهر الردود فقط للأشخاص الذين أرسلوا ردًا واحدًا على الأقل.</string>
     <string name="discussions_unknown_author">مؤلف غير معروف</string>
     <string name="discussions_delete">حذف النقاش</string>
@@ -762,6 +756,8 @@
     <string name="subscribe">اشتراك</string>
     <string name="allowThreadedReplies">السماح بالردود المترابطة</string>
     <string name="usersMustPost">يجب على المستخدمين النشر قبل رؤية الردود</string>
+    <string name="allowUserComments">السماح للمستخدمين بالتعليق</string>
+
     <string name="discussionTitleMustBeSet">يجب تعيين عنوان النقاش.</string>
     <string name="discussionSuccessfullyCreated">تم إنشاء النقاش بنجاح.</string>
     <string name="errorCreatingDiscussion">حدث خطأ أثناء محاولة إنشاء هذا النقاش. حاول مرة أخرى.</string>
@@ -810,6 +806,7 @@
     <string name="choosePhotoFromGallery">اختيار صورة من معرض الصور</string>
     <string name="fileNotFound">لم يتم العثور على الملف.</string>
     <string name="version" formatted="false">الإصدار %s</string>
+    <string name="fullVersion">الإصدار %s (%d)</string>
     <string name="tap_to_view_submissions_list">اضغط لعرض قائمة الإرسالات.</string>
     <string name="assignmentDescriptionContentDescription">وصف التعيين</string>
     <string name="quizDescriptionContentDescription">وصف الاختبار الموجز</string>
@@ -934,6 +931,7 @@
 
     <string name="latePenalty">عقوبة التأخير</string>
     <string name="finalGrade">الدرجة النهائية</string>
+    <string name="moderatedGradingUnsupported">منح الدرجات تحت الإشراف غير مدعوم حاليًا في تطبيق SpeedGrader للهاتف المحمول.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="zero">-%s نقاط</item>
         <item quantity="one">-%s نقطة</item>
@@ -950,4 +948,20 @@
         <item quantity="many">-%s نقطة</item>
         <item quantity="other">-%s نقاط</item>
     </plurals>
+    <string name="todoUnreadCount">قائمة مهام %d غير مقروءة</string>
+    <string name="profileSettings">إعدادات ملف التعريف</string>
+    <string name="downloadingFile">تنزيل الملف&#8230;</string>
+    <string name="fileDownloadedSuccessfully">تم تنزيل الملف بنجاح.</string>
+    <string name="tapToView">اضغط للعرض</string>
+    <string name="errorDownloadingFile">حدث خطأ أثناء تنزيل ملفك. يرجى إعادة المحاولة.</string>
+
+    <string name="postTo">النشر في</string>
+    <string name="allSections">كل الأقسام</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">تعذر تحميل أداة LTI في الوقت الحالي.</string>
+
+    <string name="downloading">جارٍ التنزيل...</string>
+
 </resources>

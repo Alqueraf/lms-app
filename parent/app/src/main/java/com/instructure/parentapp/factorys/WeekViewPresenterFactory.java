@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 
 import com.instructure.canvasapi2.models.Course;
 import com.instructure.canvasapi2.models.Student;
+import com.instructure.canvasapi2.models.User;
 import com.instructure.parentapp.presenters.WeekPresenter;
 
 import instructure.androidblueprint.PresenterFactory;
@@ -30,10 +31,10 @@ import instructure.androidblueprint.PresenterFactory;
  */
 public class WeekViewPresenterFactory implements PresenterFactory<WeekPresenter> {
 
-    private Student mStudent;
+    private User mStudent;
     private Course mCourse;
 
-    public WeekViewPresenterFactory(Student student, @Nullable Course course) {
+    public WeekViewPresenterFactory(User student, @Nullable Course course) {
         mStudent = student;
         mCourse = course;
     }

@@ -17,8 +17,8 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#008EE2</color>
+    <color name="colorPrimaryDark">#0079bf</color>
     <color name="colorAccent">#4452A6</color>
     <color name="purpleTransparent">#997C46A9</color>
     <color name="lightPurple">#AB98CC</color>
@@ -47,6 +47,7 @@
     <color name="colorPrimaryDarkAlpha">#ff303f9f</color>
     <color name="colorAccentAlpha">#ff7C46A9</color>
 
+
     <color name="colorGradientYellow">#CCFFC700</color>
     <color name="colorGradientRed">#CCFF0000</color>
     <color name="colorGradientCyan">#CC00E1FF</color>
@@ -74,6 +75,10 @@
 
     <color name="canvasTextDark">#191919</color>
     <color name="canvasTextMedium">#4A4A4A</color>
+    <color name="defaultTextGray">#8b969e</color>
 
     <color name="statusBarSemiTransparent">#20000000</color>
+    <color name="alertGreen">#00AC18</color>
+    <color name="alertRed">#EE0612</color>
+    <color name="alertOrange">#FC5E13</color>
 </resources>

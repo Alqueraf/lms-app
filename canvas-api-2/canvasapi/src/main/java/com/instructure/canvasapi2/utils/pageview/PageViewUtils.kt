@@ -21,22 +21,42 @@ import android.view.ViewTreeObserver
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.Logger
 import com.instructure.canvasapi2.utils.weave.weave
+import io.paperdb.Book
 import io.paperdb.Paper
 import java.lang.ref.WeakReference
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 object PageViewUtils {
 
-    private const val MIN_INTERACTION_SECONDS = 0.6
+    private const val MIN_INTERACTION_SECONDS = 1.0
 
-    private const val ENABLED = false
+    private val contextRegex = """/(courses|groups)/([^/]+)""".toRegex()
 
-    private val book = Paper.book("pageViewEvents")
+    val book: Book = Paper.book("pageViewEvents")
+
+    val session = PageViewSession()
 
     @JvmStatic
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
+    @Suppress("EXPERIMENTAL_FEATURE_WARNING", "MemberVisibilityCanBePrivate")
     fun startEvent(eventName: String, url: String): PageViewEvent? {
-        if (!ENABLED || ApiPrefs.token.isBlank()) return null
-        val event = PageViewEvent(eventName, url, ApiPrefs.user?.id ?: return null)
+        if (ApiPrefs.token.isBlank()) return null
+        val loginId = ApiPrefs.user?.id ?: return null
+        val pandataInfo = ApiPrefs.pandataInfo ?: return null
+        val (userId, realUserId) = if (ApiPrefs.isMasquerading) ApiPrefs.masqueradeId to loginId else loginId to null
+        val (contextType, contextId) = url.contextInfo
+        val event = PageViewEvent(
+            eventName = eventName,
+            sessionId = session.id,
+            postUrl = pandataInfo.postUrl,
+            url = url,
+            contextType = contextType,
+            contextId = contextId,
+            signedProperties = pandataInfo.signedProperties,
+            domain = ApiPrefs.domain,
+            userId = userId,
+            realUserId = realUserId
+        )
         Logger.d("PageView: Event STARTED $url ($eventName)")
         weave { inBackground { book.write(event.key, event) } }
         return event
@@ -45,7 +65,7 @@ object PageViewUtils {
     @JvmStatic
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     fun stopEvent(event: PageViewEvent?) {
-        if (!ENABLED || event == null || event.eventDuration > 0) return
+        if (event == null || event.eventDuration > 0) return
         event.eventDuration = (System.currentTimeMillis() - event.timestamp.time) / 1000.0
         Logger.d("PageView: Event STOPPED ${event.url} (${event.eventName}) - ${event.eventDuration} seconds")
         weave {
@@ -62,32 +82,22 @@ object PageViewUtils {
 
     @JvmStatic
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    fun saveSingleEvent(event: PageViewEvent) {
-        if (!ENABLED) return
-        weave { inBackground { book.write(event.key, event) } }
-        Logger.d("PageView: Event SAVED ${event.url} (${event.eventName})")
+    fun saveSingleEvent(eventName: String, url: String) {
+        startEvent(eventName, url)?.let {
+            weave { inBackground { book.write(it.key, it) } }
+            Logger.d("PageView: Single event SAVED ${it.url} (${it.eventName})")
+        }
     }
 
-    @JvmStatic
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    fun clearEvents(events: List<PageViewEvent>) {
-        if (!ENABLED) return
-        weave { inBackground { events.forEach { book.delete(it.key) } } }
-    }
-
-    @JvmStatic
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    fun clearAllEvents() {
-        if (!ENABLED) return
-        weave { inBackground { book.destroy() } }
-    }
-
-    @JvmStatic
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    fun uploadData(loggingOut: Boolean = false) {
-        if (!ENABLED) return
-        // TODO: Upload page views
-    }
+    private val String.contextInfo: Pair<String?, String?>
+        get() {
+            val (rawType, id) = contextRegex.find(this)?.destructured ?: return null to null
+            return when (rawType) {
+                "courses" -> "Course"
+                "groups" -> "Group"
+                else -> null
+            } to id
+        }
 
 }
 
@@ -136,6 +146,30 @@ class PageViewWindowFocusListener(focusInterface: PageViewWindowFocus) : ViewTre
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         ref.get()?.onPageViewWindowFocusChanged(hasFocus)
+    }
+
+}
+
+class PageViewSession {
+
+    private var lastCheck: Long = System.currentTimeMillis()
+
+    private var _id: String? = null
+
+    val id: String
+        get() {
+            val now = System.currentTimeMillis()
+            if (_id == null || now > lastCheck + SESSION_TIMEOUT) _id = UUID.randomUUID().toString()
+            lastCheck = now
+            return _id!!
+        }
+
+    fun clear() {
+        _id = null
+    }
+
+    companion object {
+        val SESSION_TIMEOUT = TimeUnit.MINUTES.toMillis(30)
     }
 
 }

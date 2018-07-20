@@ -20,9 +20,9 @@ repositories {
 }
 
 dependencies {
-    compile("com.android.tools.build:gradle:3.0.1")
-    compile("com.android.tools.build:gradle-api:3.0.1")
-    compile("org.javassist:javassist:3.22.0-GA")
+    implementation("com.android.tools.build:gradle:3.1.0")
+    implementation("com.android.tools.build:gradle-api:3.1.0")
+    implementation("org.javassist:javassist:3.22.0-GA")
 }
 
 plugins {

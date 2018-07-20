@@ -59,39 +59,36 @@ public class ExpandableListAdapter<G extends Comparable<G>, I extends Comparable
 
         if (areGroupsSorted) {
             if(areGroupReversedSorted){
-                groups = new TreeSet<G>(Collections.reverseOrder());
+                groups = new TreeSet<>(Collections.reverseOrder());
             }
             else{
-               groups = new TreeSet<G>();
+               groups = new TreeSet<>();
             }
         } else {
             // this will keep the ordering of the set like an array
-            groups = new LinkedHashSet<G>();
+            groups = new LinkedHashSet<>();
         }
 
-        children = new HashMap<G, Set<I>>();
+        children = new HashMap<>();
 
-        cachedItemsForGroup = new HashMap<G, I[]>(groups.size());
-        itemsInvalidForGroup = new HashMap<G, Boolean>();
+        cachedItemsForGroup = new HashMap<>(groups.size());
+        itemsInvalidForGroup = new HashMap<>();
     }
     ///////////////////////////////////////////////////////////////////////////
     //Public Static Getters
     //////////////////////////////////////////////////////////////////////////
 
-    public static<G, I> ExpandableListAdapter getExpandableListAdapter(ExpandableListDelegate<G, I> delegate,boolean areGroupSorted, boolean isItemSorted, boolean areGroupsReversedSorted, boolean isItemReversedSorted){
-        if(isItemSorted){
-            if(isItemReversedSorted){
+    public static <G, I> ExpandableListAdapter getExpandableListAdapter(ExpandableListDelegate<G, I> delegate, boolean areGroupSorted, boolean isItemSorted, boolean areGroupsReversedSorted, boolean isItemReversedSorted) {
+        if (isItemSorted) {
+            if (isItemReversedSorted) {
                 return getItemReverseSortedExpandableListAdapter(delegate, areGroupSorted, areGroupsReversedSorted);
-            }
-            else{
+            } else {
                 return getItemSortedExpandableListAdapter(delegate, areGroupSorted, areGroupsReversedSorted);
             }
 
- }
-        else{
+        } else {
             return getItemUnsortedExpandableListAdapter(delegate, areGroupSorted, areGroupsReversedSorted);
         }
-
     }
 
     public static<G, I> ExpandableListAdapter getExpandableListAdapter(ExpandableListDelegate<G, I> delegate, boolean areGroupSorted, boolean areGroupsReversedSorted, boolean isItemSorted){

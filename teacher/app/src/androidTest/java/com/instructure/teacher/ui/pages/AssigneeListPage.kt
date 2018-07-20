@@ -22,17 +22,19 @@ import android.support.test.espresso.contrib.RecyclerViewActions.scrollToHolder
 import android.support.test.espresso.matcher.BoundedMatcher
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.v7.widget.RecyclerView
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
+
+
+import com.instructure.espresso.page.onViewWithId
 import com.instructure.teacher.R
 import com.instructure.teacher.holders.AssigneeItemViewHolder
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.PageWithIdAssert
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 
 @Suppress("unused")
-class AssigneeListPage : BasePage(), PageAssert by PageWithIdAssert(R.id.assigneeListPage) {
+class AssigneeListPage : BasePage(pageResId = R.id.assigneeListPage) {
 
     private val titleTextView by OnViewWithText(R.string.page_title_add_assignees)
     private val closeButton by OnViewWithContentDescription(R.string.close)
@@ -44,7 +46,7 @@ class AssigneeListPage : BasePage(), PageAssert by PageWithIdAssert(R.id.assigne
             groupNames: List<String> = emptyList(),
             studentNames: List<String> = emptyList()) {
         for (assigneeName in (sectionNames + groupNames + studentNames)) {
-            onView(allOf(withText(assigneeName), hasSibling(withId(R.id.assigneeSubtitleView)))).assertDisplayed()
+            onView(allOf(withText(assigneeName), hasSibling(withId(R.id.assigneeTitleView)))).assertDisplayed()
         }
     }
 

@@ -43,5 +43,5 @@ var Activity.statusBarColor: Int
     set(value) { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.statusBarColor = value }
 
 val Activity.isTablet: Boolean
-    get() = resources.getBoolean(R.bool.is_device_tablet)
+    get() = resources.getBoolean(R.bool.isDeviceTablet)
 

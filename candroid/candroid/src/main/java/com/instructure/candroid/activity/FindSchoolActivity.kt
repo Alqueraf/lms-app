@@ -25,17 +25,11 @@ import com.instructure.loginapi.login.activities.BaseLoginFindSchoolActivity
 
 class FindSchoolActivity : BaseLoginFindSchoolActivity() {
 
-    override fun themeColor(): Int {
-        return ContextCompat.getColor(this, R.color.login_studentAppTheme)
-    }
+    override fun themeColor(): Int = ContextCompat.getColor(this, R.color.login_studentAppTheme)
 
-    override fun signInActivityIntent(accountDomain: AccountDomain): Intent {
-        return SignInActivity.createIntent(this, accountDomain)
-    }
+    override fun signInActivityIntent(accountDomain: AccountDomain): Intent = SignInActivity.createIntent(this, accountDomain)
 
     companion object {
-        fun createIntent(context: Context): Intent {
-            return Intent(context, FindSchoolActivity::class.java)
-        }
+        fun createIntent(context: Context): Intent = Intent(context, FindSchoolActivity::class.java)
     }
 }

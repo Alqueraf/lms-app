@@ -65,6 +65,16 @@ public class QuizMatchSpinnerAdapter extends ArrayAdapter<QuizSubmissionMatch> {
             viewHolder = (MatchViewHolder)convertView.getTag();
         }
 
+        // Fixes weird issue in android where even if a textview says it's shouldn't be one line, it forces
+        // it to one line and ellipsizes it.
+        // See: https://stackoverflow.com/questions/14139106/spinner-does-not-wrap-text-is-this-an-android-bug
+        viewHolder.title.post(new Runnable() {
+            @Override
+            public void run() {
+                viewHolder.title.setSingleLine(false);
+            }
+        });
+
         viewHolder.title.setText(matches.get(position).getText());
         return convertView;
     }

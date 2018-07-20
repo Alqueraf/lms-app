@@ -142,6 +142,32 @@ public class FileFolderManager extends BaseManager {
         }
     }
 
+    public static void getCourseFile(long courseId, long fileId, boolean forceNetwork, StatusCallback<FileFolder> callback) {
+        if (isTesting() || mTesting) {
+
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+
+            FileFolderAPI.getCourseFile(courseId, fileId, adapter, params, callback);
+        }
+    }
+
+    public static void getUserFile(long fileId, boolean forceNetwork, StatusCallback<FileFolder> callback) {
+        if (isTesting() || mTesting) {
+
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+
+            FileFolderAPI.getUserFile(fileId, adapter, params, callback);
+        }
+    }
+
     public static void getFirstPageFolders(long folderId, boolean forceNetwork, StatusCallback<List<FileFolder>> callback) {
 
         if (isTesting() || mTesting) {

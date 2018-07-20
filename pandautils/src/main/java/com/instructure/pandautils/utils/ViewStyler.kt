@@ -43,6 +43,7 @@ import android.text.Spanned
 import android.text.style.ScaleXSpan
 import android.view.View
 import android.widget.Button
+import android.widget.CheckedTextView
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.instructure.canvasapi2.models.CanvasContext
@@ -284,6 +285,12 @@ object ViewStyler {
 
         return builder
     }
+}
+
+fun AppCompatCheckBox.applyTheme(@ColorInt brand: Int) {
+    val defaultColor = ContextCompat.getColor(context, R.color.utils_editTextColor)
+    supportButtonTintList = ViewStyler.makeColorStateList(defaultColor, brand)
+    highlightColor = ThemePrefs.increaseAlpha(defaultColor)
 }
 
 fun SwitchCompat.applyTheme(@ColorInt color: Int = ThemePrefs.brandColor) {

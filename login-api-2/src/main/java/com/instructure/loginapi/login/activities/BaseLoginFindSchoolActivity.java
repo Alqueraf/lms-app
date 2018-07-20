@@ -51,6 +51,8 @@ import com.instructure.canvasapi2.managers.AccountDomainManager;
 import com.instructure.canvasapi2.models.AccountDomain;
 import com.instructure.canvasapi2.utils.ApiType;
 import com.instructure.canvasapi2.utils.LinkHeaders;
+import com.instructure.interactions.router.BaseRouteMatcher;
+import com.instructure.interactions.router.Route;
 import com.instructure.loginapi.login.R;
 import com.instructure.loginapi.login.adapter.DomainAdapter;
 import com.instructure.loginapi.login.api.zendesk.utilities.ZendeskDialogStyled;
@@ -172,9 +174,8 @@ public abstract class BaseLoginFindSchoolActivity extends AppCompatActivity impl
 
             @Override
             public void onHelpClick() {
-                ZendeskDialogStyled dialog = new ZendeskDialogStyled();
-                dialog.setArguments(ZendeskDialogStyled.createBundle(true, true));
-                dialog.show(getSupportFragmentManager(), ZendeskDialogStyled.TAG);
+                Intent webHelpIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.FIND_SCHOOL_HELP_URL));
+                startActivity(webHelpIntent);
             }
         });
 

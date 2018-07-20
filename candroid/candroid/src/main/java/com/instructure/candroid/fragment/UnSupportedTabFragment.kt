@@ -17,44 +17,63 @@
 
 package com.instructure.candroid.fragment
 
-import android.os.Bundle
-import android.support.annotation.StringRes
+import com.instructure.candroid.R
 import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.Tab
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.ContextKeeper
-import com.instructure.pandautils.utils.Const
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.setupAsBackButton
+import kotlinx.android.synthetic.main.fragment_webview.*
 
-class UnSupportedTabFragment : InternalWebviewFragment() {
+class UnsupportedTabFragment : InternalWebviewFragment() {
 
     override fun applyTheme() {
         super.applyTheme()
-        toolbar?.setupAsBackButton {
+        toolbar.setupAsBackButton {
             navigation?.popCurrentFragment()
         }
     }
 
     companion object {
 
+        fun newInstance(route: Route) = if (validRoute(route)) {
+            UnsupportedTabFragment().apply {
+                val info = extractInfo(route.canvasContext!!, route.tabId!!)
+                arguments = InternalWebviewFragment.makeBundle(route.canvasContext!!, info.first, info.second, true, true, false)
+            }
+
+        } else null
+
         @JvmStatic
-        fun createBundle(canvasContext: CanvasContext, tabId: String, @StringRes title: Int): Bundle {
+        fun makeRoute(canvasContext: CanvasContext, tabId: String): Route {
+            val info = extractInfo(canvasContext, tabId)
+            val bundle = InternalWebviewFragment.makeRoute(info.first, info.second, true, true, false)
+            return Route(UnsupportedTabFragment::class.java, canvasContext, bundle, tabId)
+        }
+
+        private fun validRoute(route: Route) = route.canvasContext != null && route.tabId != null
+
+        private fun extractInfo(canvasContext: CanvasContext, tabId: String): Pair<String, String> {
             var url = ApiPrefs.fullDomain
-            val featureTitle = ContextKeeper.appContext.getString(title)
+            var featureTitle = ""
+
             when {
                 tabId.equals(Tab.CONFERENCES_ID, ignoreCase = true) -> {
                     url += canvasContext.toAPIString() + "/conferences"
+                    featureTitle = ContextKeeper.appContext.getString(R.string.conferences)
                 }
                 tabId.equals(Tab.COLLABORATIONS_ID, ignoreCase = true) -> {
                     url += canvasContext.toAPIString() + "/collaborations"
+                    featureTitle = ContextKeeper.appContext.getString(R.string.collaborations)
                 }
                 tabId.equals(Tab.OUTCOMES_ID, ignoreCase = true) -> {
                     url += canvasContext.toAPIString() + "/outcomes"
+                    featureTitle = ContextKeeper.appContext.getString(R.string.outcomes)
                 }
             }
-            val bundle = InternalWebviewFragment.createBundle(canvasContext, url, featureTitle, true, true, false)
-            bundle.putString(Const.TAB_ID, tabId)
-            return bundle
+
+            return Pair(url, featureTitle)
         }
     }
 }

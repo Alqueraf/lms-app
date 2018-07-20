@@ -145,11 +145,27 @@
     <string name="toDoNoDueDate">期日なし</string>
 
     <string name="dueAt">期限</string>
+    <string name="dueAtTime">%s が期限</string>
     <string name="toDoDue">期限</string>
+    <string name="due">期限 %1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="other">%d が採点が必要です</item>
     </plurals>
     <string name="myFiles">ファイル</string>
+    <string name="createAFolder">フォルダを作成する</string>
+    <string name="createFolder">フォルダを作成する</string>
+    <string name="createAFile">ファイルを作成する</string>
+    <string name="createFileFolderFabContentDesc">ファイルの作成オタンとフォルダの作成ボタンを表示する</string>
+    <string name="folderCreationError">フォルダー作成中にエラーが起こりました。</string>
+    <string name="rename">名前変更</string>
+    <string name="renameFile">ファイルの名前をつけかえる</string>
+    <string name="renameFolder">フォルダ名の変更</string>
+    <string name="blankName">名前を空白にすることはできません</string>
+    <string name="confirmDeleteFile">ファイル \'%s\'をほんとうに削除しますか?この操作は元に戻すことはできません。</string>
+    <string name="confirmDeleteEmptyFolder">フォルダ \'%s\'をほんとうに削除しますか？この操作は元に戻すことはできません。</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="other">フォルダ \'%1$s\'をほんとうに削除しますか？%2$dアイテムが含まれています。この操作は元に戻すことはできません。</item>
+    </plurals>
     <string name="settings">設定</string>
     <string name="name">名前</string>
     <string name="email">メールアドレス</string>
@@ -350,6 +366,8 @@
 	<string name="errorPostingAnnouncement">アナウンスメントのポスト中にエラーが発生しました。</string>
 	<string name="errorPostingDiscussion">ディスカッションのポスト中にエラーが発生しました。</string>
 	<string name="allowThreading">スレッド表示返信を許可</string>
+    <string name="usersMustPost">ユーザは返信を表示する前に投稿しなければなりません</string>
+    <string name="allowUserComments">ユーザーにコメントを許可する</string>
 	<string name="message">メッセージ</string>
 	<string name="title">タイトル</string>
 
@@ -439,6 +457,7 @@
     <string name="subTypeOnlineQuiz">オンラインクイズ</string>
 	<string name="subTypeMediaRecording">メディアレコーディング</string>
     <string name="sub_type_lti_launch">LTI の開始</string>
+    <string name="subTypeDiscussionTopic">ディスカッション</string>
     <string name="turnInByHand">この課題は、手渡しで提出する必要があります</string>
 	<string name="noSubRequired">提出は必要ありません</string>
 	<string name="noTurnInOnMobile">モバイル提出はサポートされていません</string>
@@ -568,6 +587,7 @@
     <string name="uploadMyFiles">マイファイル</string>
     <string name="uploadCourseFiles">コースファイル</string>
 
+    <string name="uploadToSubmissionComment">コメント送信をアップロード</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">変更ログ</string>
 
@@ -606,14 +626,6 @@
 
     <string name="notoriousSubmissionInProgress">ファイルを送信&#8230; 通知バーで更新を確認してください。</string>
     <string name="notoriousSubmissionSuccessful">ファイルの送信が終了しました</string>
-
-    <string name="pinned_icon">固定ディスカッションのアイコン</string>
-    <string name="pin_discussion">ディスカッションを固定する</string>
-    <string name="unpin_discussion">ディスカッションの固定を外す</string>
-    <string name="discussion_pinned">固定されたディスカッション</string>
-    <string name="pinned_discussions">固定したディスカッション</string>
-    <string name="discussion_unpinned">ディスカッションの固定を外しました</string>
-    <string name="empty_discussions">このセクションに表示するディスカッションはありません。</string>
 
     <string name="bio">略歴</string>
     <string name="draft">ドラフト：</string>
@@ -838,6 +850,7 @@
     <string name="locked_mastery_paths">\"%s\" が採点されるまで、ロックされています</string>
     <string name="locked_icon">ロックされているアイコン</string>
     <string name="choose_assignment_group">課題グループを選択する</string>
+    <string name="chooseAssignmentPath">課題グループを選択する</string>
     <string name="select">選択</string>
     <string name="choice_position">選択肢%d</string>
     <string name="updating_module_info">モジュール情報を更新する</string>
@@ -867,13 +880,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">外部ブラウザでリンクを起動する</string>
-    <string name="gaugeLaunchFailure">今回ゲージを読み込めませんでした。</string>
-
+    <string name="ltiLaunchFailure">今回 LTI ツールを読み込めませんでした。</string>
     <string name="urlSubmission">URL 提出</string>
     <string name="assignmentDeletedError">この機能はもう利用できません。</string>
     <string name="homePageIdForNotifications">最近のアクティビティ</string>
     <string name="homePageIdForModules">モジュール</string>
     <string name="homePageIdForAssignments">課題</string>
+
     <string name="homePageIdForSyllabus">シラバス</string>
 
     <string name="contentDescriptionWidgetRefresh">ウィジェットを更新</string>
@@ -887,9 +900,42 @@
     <string name="finalGrade">最終的な成績</string>
 
     <string name="moreThan99">99+</string>
-    <string name="dot_with_spaces">\u2022</string>
+    <string name="max_count">99+</string>
 
     <string name="opensInWebView">ウェブビューで開く</string>
     <string name="unsupportedTabLabel">このデバイスではサポートされていません</string>
+
+    <string name="downloadingFile">読み込み中</string>
+    <string name="downloadFailed">ダウンロードに失敗</string>
+    <string name="downloadSuccessful">ダウンロードに成功</string>
+
+    <string name="full_due_date_details">締め切り日の全詳細</string>
+    <string name="submissions">提出物</string>
+    <string name="attachment">添付ファイル</string>
+    <string name="contentDescription_back">戻る</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="other">%s 点</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="other">%s 点</item>
+    </plurals>
+    <string name="capitalTo">変更後</string>
+
+
+    <string name="unableToViewInBrowser">このLTIツールを表示する外部アプリを見つけられません。</string>
+    <string name="commentUpload">コメントをアップロード</string>
+    <string name="unableToUploadMediaComment">メディアコメントを送信するには、未送信のテキストコメントを送信または削除します。</string>
+
+    <string name="frontPage">フロントページ</string>
+    <string name="editPage">ページを編集</string>
+    <string name="description">説明</string>
+    <string name="pageSuccessfullyUpdated">ページは正常に更新されました。</string>
+    <string name="errorSavingPage">この発表を保存しようとしてエラーが発生しました。もう一度試してください。</string>
+    <string name="pageTitleMustBeSet">ページのタイトルを設定しなければなりません。</string>
+    <string name="pageDetails">ページ詳細</string>
+    <string name="saving">保存</string>
+    <string name="confirmDeleteEvent">このイベントを削除してもよろしいですか？</string>
+    <string name="conferencesNotSupported">会議はまだモバイルではサポートされていません。</string>
 
 </resources>

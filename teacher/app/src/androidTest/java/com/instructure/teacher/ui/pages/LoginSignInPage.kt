@@ -4,13 +4,16 @@ import android.support.test.espresso.web.sugar.Web
 import android.support.test.espresso.web.sugar.Web.onWebView
 import android.support.test.espresso.web.webdriver.DriverAtoms.*
 import android.support.test.espresso.web.webdriver.Locator
+import com.instructure.espresso.OnViewWithId
+import com.instructure.espresso.assertDisplayed
+import com.instructure.espresso.page.BasePage
 import com.instructure.soseedy.CanvasUser
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.OnViewWithId
-import com.instructure.teacher.ui.utils.assertDisplayed
+import com.instructure.teacher.ui.utils.repeatedlyUntil
+import com.instructure.teacher.ui.utils.repeatedlyUntilNot
 
 @Suppress("unused")
-class LoginSignInPage: BasePage() {
+class LoginSignInPage : BasePage() {
 
     private val EMAIL_FIELD_CSS = "input[name=\"pseudonym_session[unique_id]\"]"
     private val PASSWORD_FIELD_CSS = "input[name=\"pseudonym_session[password]\"]"
@@ -71,7 +74,9 @@ class LoginSignInPage: BasePage() {
     }
 
     fun clickLoginButton() {
-        loginButton().perform(webClick())
+        loginButton().repeatedlyUntilNot(action = webClick(),
+                desiredStateMatcher = ::emailField,
+                maxAttempts = 20)
     }
 
     fun clickForgotPasswordButton() {
@@ -79,17 +84,16 @@ class LoginSignInPage: BasePage() {
     }
 
     fun loginAs(teacher: CanvasUser) {
-        enterEmail(teacher.loginId)
-        enterPassword(teacher.password)
-        clickLoginButton()
-        authorizeButton().perform(webClick())
+        loginAs(teacher.loginId, teacher.password)
     }
 
     fun loginAs(loginId: String, password: String) {
         enterEmail(loginId)
         enterPassword(password)
         clickLoginButton()
-        authorizeButton().perform(webClick())
+        authorizeButton().repeatedlyUntilNot(action = webClick(),
+                desiredStateMatcher = ::authorizeButton,
+                maxAttempts = 20)
     }
 
     //endregion

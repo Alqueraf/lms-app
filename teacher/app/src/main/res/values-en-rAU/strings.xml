@@ -60,6 +60,10 @@
     <string name="share">Share</string>
     <string name="share_with">Share With&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(no subject)</string>
     <string name="compose_message">Compose message</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Select files or photos</string>
     <string name="uploading_files">Uploading files&#8230;</string>
     <string name="no_attachment">(No Attachment)</string>
-    <string name="remove_attachment">Remove attachment</string>
     <string name="creating_announcement">Creating Announcement&#8230;</string>
 
     <string name="copy_email">Copy email address</string>
@@ -164,8 +167,6 @@
     <string name="inbox_empty_starred_title">No Starred Messages</string>
     <string name="inbox_empty_message">Tap the \"+\" to create a new conversation.</string>
     <string name="inbox_empty_starred_message">Star messages by tapping the star in the message.</string>
-
-    <string name="download_attachment">Download Attachment</string>
 
     <string name="reply">Reply</string>
     <string name="replyAll">Reply All</string>
@@ -285,7 +286,7 @@
     <string name="inbox_starred">Starred</string>
     <string name="inbox_sent">Sent</string>
     <string name="inbox_archived">Archived</string>
-    <string name="inbox_all_messages">All Messages</string>
+    <string name="inbox_all_messages">All</string>
     <string name="uploading_file_num" formatted="false">Uploading %d of %d</string>
     <string name="page_not_found">Page not found.</string>
     <string name="no_connection">No Connection</string>
@@ -434,7 +435,6 @@
     <string name="deleteComment">Delete Comment</string>
     <string name="deleteAnnotation">Delete Annotation</string>
     <string name="deleteCommentConfirmation">Are you sure you want to delete this comment?</string>
-    <string name="deleteHeadCommentConfirmation">This comment is an annotation. Deleting this will delete all replies and the annotation. Are you sure you want to do this?</string>
     <string name="rubric_view_long_description">View long description</string>
     <string name="rubric">Rubric</string>
     <string name="enter_custom_value">Enter a custom value</string>
@@ -501,7 +501,7 @@
         <item quantity="other">%d groups</item>
     </plurals>
     <string name="cmp_closed">Closed</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">favourite</string>
     <string name="content_description_not_favorite">not favourite</string>
@@ -510,7 +510,8 @@
     <string name="edit_course_nickname">Edit Course Nickname</string>
 
     <string name="colorPickerDialogTitle">Course Colour</string>
-    <string name="colorPickerDialogMessage">Set this for the default colour of the course. This won\'t override a personal colour setting.</string>
+    <string name="colorPickerDialogMessage">This is your personal colour setting. Only you will see this colour for the course.</string>
+
     <string name="colorPickerError">The course colour could not be set at this time.</string>
 
     <string name="contentDescriptionColorCottonCandy">Pink</string>
@@ -604,12 +605,6 @@
     <string name="quiz_details_from_to">From %1$s to %2$s</string>
     <string name="quiz_details_after">After %1$s</string>
     <string name="quiz_details_until">Until %1$s</string>
-    <string name="continueWithoutSavingTitle">Continue without saving?</string>
-    <string name="continueWithoutSavingMessage">Are you sure you would like to continue without saving?</string>
-    <string name="continueUnsaved">Continue</string>
-    <string name="exitWithoutSavingTitle">Exit without saving?</string>
-    <string name="exitWithoutSavingMessage">Are you sure you would like to exit without saving?</string>
-    <string name="exitUnsaved">Exit</string>
     <string name="filterPointsMustBeSet">Enter a value.</string>
 
     <plurals name="quantityQuestions">
@@ -638,7 +633,6 @@
     <string name="discussions_replies_title">Replies</string>
     <string name="discussions_reply">Reply</string>
     <string name="discussions_edit">Edit</string>
-    <string name="discussions_deleted" formatted="false">Deleted this reply %s</string>
     <string name="discussions_forbidden">Replies are only visible to those who have posted at least one reply.</string>
     <string name="discussions_unknown_author">Unknown Author</string>
     <string name="discussions_delete">Delete Discussion</string>
@@ -710,6 +704,8 @@
     <string name="subscribe">Subscribe</string>
     <string name="allowThreadedReplies">Allow threaded replies</string>
     <string name="usersMustPost">Users must post before seeing replies</string>
+    <string name="allowUserComments">Allow users to comment</string>
+
     <string name="discussionTitleMustBeSet">Discussion title must be set.</string>
     <string name="discussionSuccessfullyCreated">Discussion successfully created.</string>
     <string name="errorCreatingDiscussion">An error occurred trying to create this discussion. Try again.</string>
@@ -758,6 +754,7 @@
     <string name="choosePhotoFromGallery">Choose photo from Gallery</string>
     <string name="fileNotFound">File not found</string>
     <string name="version" formatted="false">Version %s</string>
+    <string name="fullVersion">Version %s (%d)</string>
     <string name="tap_to_view_submissions_list">Tap to view submissions list.</string>
     <string name="assignmentDescriptionContentDescription">Assignment Description</string>
     <string name="quizDescriptionContentDescription">Quiz Description</string>
@@ -882,6 +879,7 @@
 
     <string name="latePenalty">Late penalty</string>
     <string name="finalGrade">Final Grade</string>
+    <string name="moderatedGradingUnsupported">Moderated grading is not currently supported in mobile SpeedGrader.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s pt</item>
         <item quantity="other">-%s pts</item>
@@ -890,4 +888,20 @@
         <item quantity="one">-%s point</item>
         <item quantity="other">-%s points</item>
     </plurals>
+    <string name="todoUnreadCount">To do %d unread</string>
+    <string name="profileSettings">Profile Settings</string>
+    <string name="downloadingFile">Downloading file&#8230;</string>
+    <string name="fileDownloadedSuccessfully">File downloaded successfully.</string>
+    <string name="tapToView">Tap to view</string>
+    <string name="errorDownloadingFile">An error occurred downloading your file. Please try again.</string>
+
+    <string name="postTo">Post To</string>
+    <string name="allSections">All Sections</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">This LTI tool could not be loaded at this time.</string>
+
+    <string name="downloading">Downloading...</string>
+
 </resources>

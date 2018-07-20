@@ -24,9 +24,7 @@ import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.ApiType
 import com.instructure.canvasapi2.utils.DateHelper
 import com.instructure.canvasapi2.utils.LinkHeaders
-import com.instructure.canvasapi2.utils.weave.awaitApi
-import com.instructure.canvasapi2.utils.weave.awaitApiResponse
-import com.instructure.canvasapi2.utils.weave.weave
+import com.instructure.canvasapi2.utils.weave.*
 import com.instructure.teacher.R
 import com.instructure.teacher.events.DiscussionTopicEvent
 import com.instructure.teacher.events.DiscussionTopicHeaderEvent
@@ -46,6 +44,8 @@ class DiscussionsDetailsPresenter(
         val isAnnouncement: Boolean) : FragmentPresenter<DiscussionsDetailsView>() {
 
     var scrollPosition: Int = 0
+    var discussionEntryInitJob: Job? = null
+
     private var mApiCalls: Job? = null
     private var discussionEntryRatingCallback: StatusCallback<Void>? = null
     private var mDiscussionMarkAsReadApiCalls: Job? = null
@@ -74,7 +74,7 @@ class DiscussionsDetailsPresenter(
     }
 
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    fun getDiscussionTopicHeader(discussionTopicHeaderId: Long, forceNetwork: Boolean) {
+    fun getDiscussionTopicHeader(discussionTopicHeaderId: Long) {
         DiscussionManager.getDetailedDiscussion(canvasContext, discussionTopicHeaderId, object: StatusCallback<DiscussionTopicHeader>() {
             override fun onResponse(response: Response<DiscussionTopicHeader>, linkHeaders: LinkHeaders, type: ApiType) {
                 response.body()?.let {
@@ -116,22 +116,24 @@ class DiscussionsDetailsPresenter(
             return
         }
 
-        //Find the parent, add it to the list of views
-        discussionTopic.views.forEach { discussionEntry ->
-            if(discussionEntry.id == newEntry.parentId) {
-                newEntry.init(discussionTopic, discussionEntry)
-                discussionEntry.addReply(newEntry)
-                discussionEntry.totalChildren += 1
-                notifyEntryAdded(populateAfter)
-                return
-            } else {
-                val parentEntry = recursiveFind(newEntry.parentId, discussionEntry.replies)
-                if(parentEntry != null) {
-                    newEntry.init(discussionTopic, parentEntry)
-                    parentEntry.addReply(newEntry)
-                    parentEntry.totalChildren += 1
-                    notifyEntryAdded(populateAfter)
-                    return
+        discussionEntryInitJob = weave {
+            //Find the parent, add it to the list of views
+            inBackground {
+                discussionTopic.views.forEach { discussionEntry ->
+                    if (discussionEntry.id == newEntry.parentId) {
+                        newEntry.init(discussionTopic, discussionEntry)
+                        discussionEntry.addReply(newEntry)
+                        discussionEntry.totalChildren += 1
+                        notifyEntryAdded(populateAfter)
+                    } else {
+                        val parentEntry = recursiveFind(newEntry.parentId, discussionEntry.replies)
+                        if (parentEntry != null) {
+                            newEntry.init(discussionTopic, parentEntry)
+                            parentEntry.addReply(newEntry)
+                            parentEntry.totalChildren += 1
+                            notifyEntryAdded(populateAfter)
+                        }
+                    }
                 }
             }
         }
@@ -152,12 +154,15 @@ class DiscussionsDetailsPresenter(
                 //forbidden
                 viewCallback?.populateAsForbidden()
             } else {
-                response.body()?.let {
-                    discussionTopic = it
-                    discussionTopic.views.forEach {
-                        it.init(discussionTopic, it)
+                if(discussionEntryInitJob?.isActive == true) discussionEntryInitJob?.cancel()
+                discussionEntryInitJob = weave {
+                    response.body()?.let {
+                        discussionTopic = it
+                        inBackground {
+                            discussionTopic.views.forEach { it.init(discussionTopic, it) }
+                        }
+                        viewCallback?.populateDiscussionTopic(discussionTopicHeader, discussionTopic)
                     }
-                    viewCallback?.populateDiscussionTopic(discussionTopicHeader, discussionTopic)
                 }
             }
         }
@@ -286,5 +291,6 @@ class DiscussionsDetailsPresenter(
     override fun onDestroyed() {
         super.onDestroyed()
         mDiscussionMarkAsReadApiCalls?.cancel()
+        discussionEntryInitJob?.cancel()
     }
 }

@@ -22,7 +22,6 @@
     <string name="email">E-Mail</string>
     <string name="emailAddress">E-Mail-Adresse</string>
     <string name="parent_email">Parent E-Mail</string>
-    <string name="confirmPassword">Kennwort bestätigen</string>
     <string name="firstName">Vorname</string>
     <string name="lastName">Nachname</string>
     <string name="password">Kennwort</string>
@@ -150,6 +149,9 @@
     <string name="or">oder</string>
     <string name="canvas_login_text">Bei Canvas anmelden</string>
 
+    <string name="privacyPolicy">Datenschutzrichtlinien</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">Nutzungsbedingungen</string>
     <!-- Feature Request -->
     <string name="featureSubject">Idee für Canvas-Parent-App [Android]</string>
     <string name="understandRequest">Die folgende Information hilft uns, Ihre Idee besser zu verstehen:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Den Namen der Schule des Studenten eingeben.</string>
     <string name="findYourStudentsSchoolHint">Die Schule oder den Bezirk des Studenten suchen</string>
-    <string name="noGradeText">k. A.</string>
+    <string name="noGradeText">Keine Note</string>
     <string name="locked">Gesperrt</string>
+    <string name="changeUser">Benutzer wechseln</string>
+    <string name="manageChildren">Kinder verwalten</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Navigation-Schubfach öffnen</string>
+    <string name="navigation_drawer_close">Navigation-Schubfach schließen</string>
+    <string name="version" formatted="false">Version %s</string>
+    <string name="not_a_parent_title">Kein Elternteil?</string>
+    <string name="not_a_parent_subtitle">Eine unserer anderen Apps passt möglicherweise besser. Tippen Sie auf eine, um den Play Store zu besuchen.</string>
+    <string name="tryLoginAgain">Versuchen Sie erneut, sich anzumelden.</string>
+
+    <string name="legalDetails">Datenschutz, Nutzungsbedingungen, Open-Source</string>
+    <string name="assignmentGrade">Aufgabenbenotung</string>
+    <string name="courseGrade">Kursbenotung</string>
+    <string name="courseAnnouncement">Kursankündigung</string>
+    <string name="institutionAnnouncement">Institutsankündigung</string>
+    <string name="institutionAnnouncementUnavailable">Diese Ankündigung ist abgelaufen.</string>
 </resources>

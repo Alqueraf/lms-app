@@ -60,6 +60,10 @@
     <string name="share">Teilen</string>
     <string name="share_with">Teilen mit &#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Navigation-Schubfach öffnen</string>
+    <string name="navigation_drawer_close">Navigation-Schubfach schließen</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(Kein Betreff)</string>
     <string name="compose_message">Nachricht verfassen</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Dateien oder Fotos auswählen</string>
     <string name="uploading_files">Dateien werden hochgeladen &#8230;</string>
     <string name="no_attachment">(Kein Anhang)</string>
-    <string name="remove_attachment">Anhang entfernen</string>
     <string name="creating_announcement">Ankündigung erstellen &#8230;</string>
 
     <string name="copy_email">E-Mail-Adresse kopieren</string>
@@ -164,8 +167,6 @@
     <string name="inbox_empty_starred_title">Keine markierten Nachrichten</string>
     <string name="inbox_empty_message">Tippen Sie auf das \" und \", um eine neue Konversation zu erstellen.</string>
     <string name="inbox_empty_starred_message">Markieren Sie Nachrichten, indem Sie auf den Stern in der Nachricht tippen.</string>
-
-    <string name="download_attachment">Anhang herunterladen</string>
 
     <string name="reply">Antwort</string>
     <string name="replyAll">Allen antworten</string>
@@ -285,7 +286,7 @@
     <string name="inbox_starred">Mit Stern markiert</string>
     <string name="inbox_sent">Gesendet</string>
     <string name="inbox_archived">Archiviert</string>
-    <string name="inbox_all_messages">Alle Nachrichten</string>
+    <string name="inbox_all_messages">Alle</string>
     <string name="uploading_file_num" formatted="false">%d von %d werden hochgeladen</string>
     <string name="page_not_found">Seite nicht gefunden</string>
     <string name="no_connection">Keine Verbindung</string>
@@ -434,7 +435,6 @@
     <string name="deleteComment">Kommentar löschen</string>
     <string name="deleteAnnotation">Anmerkung löschen</string>
     <string name="deleteCommentConfirmation">Möchten Sie diesen Kommentar wirklich löschen?</string>
-    <string name="deleteHeadCommentConfirmation">Dieser Kommentar ist eine Anmerkung. Wenn Sie dies löschen, werden alle Antworten und die Anmerkung gelöscht. Möchten Sie dies wirklich tun?</string>
     <string name="rubric_view_long_description">Lange Beschreibung anzeigen</string>
     <string name="rubric">Bewertungsschema</string>
     <string name="enter_custom_value">Geben Sie einen benutzerdefinierten Wert ein</string>
@@ -501,7 +501,7 @@
         <item quantity="other">%d Gruppen</item>
     </plurals>
     <string name="cmp_closed">Geschlossen</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">Favorit</string>
     <string name="content_description_not_favorite">Kein Favorit</string>
@@ -510,7 +510,8 @@
     <string name="edit_course_nickname">Kursspitznamen ändern</string>
 
     <string name="colorPickerDialogTitle">Kursfarbe</string>
-    <string name="colorPickerDialogMessage">Machen Sie diese zur Standardfarbe des Kurses. Dies überschreibt nicht die persönliche Farbeinstellung.</string>
+    <string name="colorPickerDialogMessage">Dies ist Ihre persönliche Farbeinstellung. Nur Sie sehen diese Farbe für den Kurs.</string>
+
     <string name="colorPickerError">Die Kursfarbe konnte jetzt nicht festgelegt werden.</string>
 
     <string name="contentDescriptionColorCottonCandy">Rosa</string>
@@ -604,12 +605,6 @@
     <string name="quiz_details_from_to">Von %1$s bis %2$s</string>
     <string name="quiz_details_after">Nach %1$s</string>
     <string name="quiz_details_until">bis %1$s</string>
-    <string name="continueWithoutSavingTitle">Fortfahren, ohne zu speichern?</string>
-    <string name="continueWithoutSavingMessage">Sind Sie sicher, dass Sie fortfahren möchten, ohne zu speichern?</string>
-    <string name="continueUnsaved">Weiter</string>
-    <string name="exitWithoutSavingTitle">Beenden, ohne zu speichern?</string>
-    <string name="exitWithoutSavingMessage">Sind Sie sicher, dass Sie beenden möchten, ohne zu speichern?</string>
-    <string name="exitUnsaved">Beenden</string>
     <string name="filterPointsMustBeSet">Geben Sie einen Wert ein.</string>
 
     <plurals name="quantityQuestions">
@@ -638,7 +633,6 @@
     <string name="discussions_replies_title">Antworten</string>
     <string name="discussions_reply">Antwort</string>
     <string name="discussions_edit">Ändern</string>
-    <string name="discussions_deleted" formatted="false">Diese Antwort %s gelöscht</string>
     <string name="discussions_forbidden">Die Antworten sind nur für Benutzer sichtbar, die mindestens eine Antwort gepostet haben.</string>
     <string name="discussions_unknown_author">Unbekannter Autor</string>
     <string name="discussions_delete">Diskussion löschen</string>
@@ -710,6 +704,8 @@
     <string name="subscribe">Anmelden</string>
     <string name="allowThreadedReplies">Gelistete Antworten zulassen</string>
     <string name="usersMustPost">Benutzer müssen gepostet haben, bevor sie Antworten sehen können.</string>
+    <string name="allowUserComments">Benutzern Kommentare erlauben</string>
+
     <string name="discussionTitleMustBeSet">Ein Diskussionstitel muss festgelegt werden.</string>
     <string name="discussionSuccessfullyCreated">Die Diskussion wurde erstellt.</string>
     <string name="errorCreatingDiscussion">Fehler beim Erstellen der Diskussion. Versuchen Sie es erneut.</string>
@@ -758,6 +754,7 @@
     <string name="choosePhotoFromGallery">Foto aus der Galerie auswählen</string>
     <string name="fileNotFound">Datei nicht gefunden.</string>
     <string name="version" formatted="false">Version %s</string>
+    <string name="fullVersion">Version %s (%d)</string>
     <string name="tap_to_view_submissions_list">Zum Anzeigen der Abgabeliste tippen.</string>
     <string name="assignmentDescriptionContentDescription">Aufgabenbeschreibung</string>
     <string name="quizDescriptionContentDescription">Quizbeschreibung</string>
@@ -882,6 +879,7 @@
 
     <string name="latePenalty">Strafe für Verspätung</string>
     <string name="finalGrade">Gesamtnote</string>
+    <string name="moderatedGradingUnsupported">Moderierte Benotungen werden derzeit im mobilen SpeedGrader nicht unterstützt.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">%s Pkt.</item>
         <item quantity="other">%s Pkte.</item>
@@ -890,4 +888,20 @@
         <item quantity="one">%s Punkt</item>
         <item quantity="other">%s Punkte</item>
     </plurals>
+    <string name="todoUnreadCount">%d Ungelesene erledigen</string>
+    <string name="profileSettings">Profileinstellungen</string>
+    <string name="downloadingFile">Datei herunterladen&#8230;</string>
+    <string name="fileDownloadedSuccessfully">Datei erfolgreich heruntergeladen.</string>
+    <string name="tapToView">Zum Anzeigen antippen</string>
+    <string name="errorDownloadingFile">Fehler beim Herunterladen der Datei. Bitte versuchen Sie es noch einmal.</string>
+
+    <string name="postTo">Posten an</string>
+    <string name="allSections">Alle Abschnitte</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">Dieses LTI-Tool konnte zu diesem Zeitpunkt nicht geladen werden.</string>
+
+    <string name="downloading">Download läuft...</string>
+
 </resources>

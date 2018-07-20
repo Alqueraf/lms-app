@@ -20,6 +20,10 @@
     <string name="chooseMedia">Choose Media</string>
     <string name="takeVideo">Take Video</string>
     <string name="noCameraOnDevice">No Camera</string>
+    <string name="takePhoto">Take Photo</string>
+    <string name="choosePhotoFromGallery">Choose Photo From Gallery</string>
+
+    <string name="utils_edit">Edit</string>
 
     <!-- NotoriousPicker/uploadService -->
     <string name="notificationTitle">Uploading to Canvas</string>
@@ -320,7 +324,6 @@
     <string name="utils_uploadMyFiles">My Files</string>
     <string name="utils_uploadCourseFiles">Course Files</string>
     <string name="utils_uploadToSubmissionComment">Upload to Submission Comment</string>
-
     <string name="utils_attachFile">Attach a file</string>
     <string name="utils_with">with</string>
     <string name="utils_dotWithSpaces">\u0020\u0020\u2022\u0020\u0020</string>
@@ -330,11 +333,33 @@
     <string name="notificationChannelDescriptionPrimary">Further configuration of notifications can be done within the Canvas Notification Preferences section.</string>
 
     <string name="copyLinkAddress">Copy link address</string>
+    <string name="copyLink">Copy Link</string>
     <string name="linkCopied">Link copied</string>
     <string name="link">Link</string>
+    <string name="fileExists">File Exists</string>
+    <string name="replace">Replace</string>
     <string name="shareLink">Share link</string>
 
     <string name="utils_launchExternalTool">Launch External Tool</string>
+    <string name="utils_externalToolTitle">External Tool</string>
+    <string name="utils_placeholderTitle">External Tool</string>
+    <string name="utils_placeholderDescription">Visit your Canvas web account to edit this external tool.</string>
     <string name="utils_unableToViewInBrowser">We are unable to find an external app to view this LTI tool.</string>
+
+    <string name="utils_unsupportedFileMessage">This file could not be displayed. Use the button below to open the file with another app on your device.</string>
+    <string name="utils_openWithAnotherApp">Open with…</string>
+    <string name="utils_couldNotPlayFormat">This media format is not supported</string>
+    <string name="utils_fullscreen">fullscreen</string>
+
+    <string name="utils_dataUsageWarningTitle">Data Usage Warning</string>
+    <string name="utils_dataUsageWarningMessage">This action might consume a large amount of data, potentially incurring overage charges. Would you like to continue?</string>
+    <string name="utils_doNotShowMessageAgain">Do not show this message again</string>
+
+    <string name="utils_no_data_connection">Please check your data connection and try again.</string>
+    <string name="utils_playMedia">Play media</string>
+    <string name="utils_tryAgain">Try again</string>
+    <string name="image_uploading">Image Uploading...</string>
+    <string name="image_upload_error">Image Upload Error</string>
+    <string name="retry">Retry</string>
 
 </resources>

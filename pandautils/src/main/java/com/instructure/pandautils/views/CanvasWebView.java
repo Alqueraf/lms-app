@@ -89,6 +89,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CanvasWebView extends WebView implements NestedScrollingChild {
 
@@ -194,16 +196,18 @@ public class CanvasWebView extends WebView implements NestedScrollingChild {
                 String filename = "file" + contentLength;
                 if (contentDisposition != null) {
                     String temp = "filename=";
-                    int index = contentDisposition.indexOf(temp) + temp.length();
+                    int index = contentDisposition.indexOf(temp);
 
                     if (index > -1) {
                         int end = contentDisposition.indexOf(";", index);
                         if (end > -1) {
                             //+1 and -1 to remove the quotes
-                            filename = contentDisposition.substring(index + 1, end - 1);
+                            filename = contentDisposition.substring(index + temp.length(), end - 1);
+                        } else {
+                            filename = contentDisposition.substring(index + temp.length());
                         }
                         //make the filename unique
-                        filename = String.format(Locale.getDefault(), "%s_%d", filename, url.hashCode());
+                        filename = String.format(Locale.getDefault(), "%d_%s", url.hashCode(), filename);
                     }
 
                     if (mCanvasWebViewClientCallback != null) {
@@ -557,7 +561,6 @@ public class CanvasWebView extends WebView implements NestedScrollingChild {
      * @param title
      * @return
      */
-    @Deprecated
     public String formatHTML(String content, String title) {
         String html = FileUtils.getAssetsFile(mContext, "html_wrapper.html");
 
@@ -595,6 +598,17 @@ public class CanvasWebView extends WebView implements NestedScrollingChild {
             //sanitize the html
             String sanitized = html.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
             if (URLDecoder.decode(sanitized, encoding).contains("instructuremedia.com/lti/launch")) return true;
+        } catch (UnsupportedEncodingException e) { /* do nothing */ }
+        return false;
+    }
+
+    public static boolean containsLTI(@NonNull String html, String encoding) {
+        // BaseURL is set as Referer. Referer needed for some vimeo videos to play
+        // Arc needs the protocol attached to the referrer, so use that if we're using arc
+        try {
+            //sanitize the html
+            String sanitized = html.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+            if (URLDecoder.decode(sanitized, encoding).contains("/external_tools/retrieve")) return true;
         } catch (UnsupportedEncodingException e) { /* do nothing */ }
         return false;
     }

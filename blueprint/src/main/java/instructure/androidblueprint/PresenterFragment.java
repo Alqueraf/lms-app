@@ -26,6 +26,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 
+import com.instructure.canvasapi2.models.Section;
+
 public abstract class PresenterFragment<
         PRESENTER extends FragmentPresenter<VIEW>,
         VIEW extends FragmentViewInterface> extends Fragment {

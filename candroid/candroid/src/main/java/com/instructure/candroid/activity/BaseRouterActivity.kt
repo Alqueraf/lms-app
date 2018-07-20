@@ -24,36 +24,34 @@ import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
 import android.widget.Toast
 import com.instructure.candroid.R
-import com.instructure.candroid.fragment.*
-import com.instructure.candroid.fragment.LTIWebViewRoutingFragment
-import com.instructure.candroid.model.PushNotification
-import com.instructure.candroid.util.*
+import com.instructure.candroid.fragment.InternalWebviewFragment
+import com.instructure.candroid.router.RouteMatcher
+import com.instructure.candroid.util.FileUtils
 import com.instructure.canvasapi2.StatusCallback
-import com.instructure.canvasapi2.managers.*
-import com.instructure.canvasapi2.models.*
-import com.instructure.canvasapi2.utils.ApiPrefs
+import com.instructure.canvasapi2.managers.FileFolderManager
+import com.instructure.canvasapi2.models.CanvasContext
+import com.instructure.canvasapi2.models.FileFolder
 import com.instructure.canvasapi2.utils.ApiType
 import com.instructure.canvasapi2.utils.LinkHeaders
 import com.instructure.canvasapi2.utils.Logger
-import com.instructure.canvasapi2.utils.weave.awaitApi
-import com.instructure.canvasapi2.utils.weave.catch
-import com.instructure.canvasapi2.utils.weave.tryWeave
-import com.instructure.interactions.Navigation
+import com.instructure.interactions.FullScreenInteractions
+import com.instructure.interactions.router.Route
+import com.instructure.interactions.router.RouteContext
 import com.instructure.pandautils.loaders.OpenMediaAsyncTaskLoader
+import com.instructure.pandautils.models.PushNotification
 import com.instructure.pandautils.receivers.PushExternalReceiver
 import com.instructure.pandautils.utils.Const
 import com.instructure.pandautils.utils.LoaderUtils
+import com.instructure.pandautils.utils.toast
 import kotlinx.coroutines.experimental.Job
-import java.util.*
 
 //Intended to handle all routing to fragments from links both internal and external
-abstract class BaseRouterActivity : CallbackActivity() {
+abstract class BaseRouterActivity : CallbackActivity(), FullScreenInteractions {
 
     private var routeCanvasContextJob: Job? = null
     private var routeModuleProgressionJob: Job? = null
     private var routeLTIJob: Job? = null
 
-    protected abstract fun routeFragment(fragment: ParentFragment)
     protected abstract fun existingFragmentCount(): Int
     protected abstract fun loadLandingPage(clearBackStack: Boolean = false)
 
@@ -94,7 +92,7 @@ abstract class BaseRouterActivity : CallbackActivity() {
     private var openMediaBundle: Bundle? = null
     private var openMediaCallbacks: LoaderManager.LoaderCallbacks<OpenMediaAsyncTaskLoader.LoadedMedia>? = null
 
-    //show pdf with PSPDFkit - set to null, otherwise the progressDialog will appear again
+    // Show pdf with PSPDFkit - set to null, otherwise the progressDialog will appear again
     private val loaderCallbacks: LoaderManager.LoaderCallbacks<OpenMediaAsyncTaskLoader.LoadedMedia>
         get() {
             if (openMediaCallbacks == null) {
@@ -109,9 +107,9 @@ abstract class BaseRouterActivity : CallbackActivity() {
 
                         try {
                             if (loadedMedia.isError) {
-                                Toast.makeText(context, getString(loadedMedia.errorMessage), Toast.LENGTH_LONG).show()
+                                toast(loadedMedia.errorMessage, Toast.LENGTH_LONG)
                             } else if (loadedMedia.isHtmlFile) {
-                                InternalWebviewFragment.loadInternalWebView(this@BaseRouterActivity, this@BaseRouterActivity as Navigation, loadedMedia.bundle)
+                                InternalWebviewFragment.loadInternalWebView(this@BaseRouterActivity, InternalWebviewFragment.makeRoute(loadedMedia.bundle))
                             } else if (loadedMedia.intent != null) {
                                 if (loadedMedia.intent.type!!.contains("pdf")) {
                                     val uri = loadedMedia.intent.data
@@ -121,7 +119,7 @@ abstract class BaseRouterActivity : CallbackActivity() {
                                 }
                             }
                         } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(context, R.string.noApps, Toast.LENGTH_LONG).show()
+                            toast(R.string.noApps, Toast.LENGTH_LONG)
                         }
 
                         openMediaBundle = null
@@ -138,73 +136,6 @@ abstract class BaseRouterActivity : CallbackActivity() {
     // endregion
 
     /**
-     * Handles the Route based on Navigation context, route type, and master/detail classes
-     * Use RouterUtils.canRouteInternally()
-     * @param route
-     */
-    fun handleRoute(route: RouterUtils.Route) {
-        try {
-            if (route.paramsHash.containsKey(Param.COURSE_ID)) {
-                val courseId: Long? = parseCourseId(route.paramsHash[Param.COURSE_ID]!!) ?: return
-
-                if (RouterUtils.ROUTE_TYPE.FILE_DOWNLOAD == route.routeType) {
-                    if (route.queryParamsHash.containsKey(Param.VERIFIER) && route.queryParamsHash.containsKey(Param.DOWNLOAD_FRD)) {
-                        openMedia(CanvasContext.getGenericContext(CanvasContext.Type.COURSE, courseId!!, ""), route.url)
-                        return
-                    }
-                    route.paramsHash[Param.FILE_ID]?.let { handleSpecificFile(courseId!!, it) }
-                    return
-                }
-
-
-                if (RouterUtils.ROUTE_TYPE.LTI == route.routeType) {
-                    routeLTI(courseId!!, route)
-                } else {
-                    val tab = TabHelper.getTabForType(this, route.tabId)
-                    if (route.contextType == CanvasContext.Type.COURSE) {
-                        routeToCourse(courseId!!, route, tab)
-                    } else if (route.contextType == CanvasContext.Type.GROUP) {
-                        routeToGroup(courseId!!, route, tab)
-                    }
-                }
-                return  // do not remove return
-            }
-
-            val canvasContext = CanvasContext.emptyUserContext()
-            if (RouterUtils.ROUTE_TYPE.FILE_DOWNLOAD == route.routeType) {
-                openMedia(canvasContext, route.url)
-                return
-            }
-
-            if (RouterUtils.ROUTE_TYPE.NOTIFICATION_PREFERENCES == route.routeType) {
-                Analytics.trackAppFlow(this@BaseRouterActivity, NotificationPreferencesActivity::class.java)
-                startActivity(Intent(context, NotificationPreferencesActivity::class.java))
-                return
-            }
-
-            if (route.masterCls != null) {
-                val bundle = ParentFragment.createBundle(canvasContext, route.paramsHash, route.queryParamsHash, route.url, null)
-                if (route.detailCls != null) {
-                    if (existingFragmentCount() == 0) {
-                        //Add the landing page fragment, then the details fragment.
-                        loadLandingPage()
-                    }
-                    val fragment = FragUtils.getFragment(route.detailCls, bundle)
-                    if(fragment != null) routeFragment(fragment)
-                } else {
-                    val fragment = FragUtils.getFragment(route.masterCls, bundle)
-                    if(fragment != null) routeFragment(fragment)
-                }
-            }
-
-        } catch (e: Exception) {
-            LoggingUtility.LogExceptionPlusCrashlytics(this@BaseRouterActivity, e)
-            Logger.e("Could not parse and route url in BaseRouterActivity")
-            routeToCourseGrid()
-        }
-    }
-
-    /**
      * The intent will have information about the url to open (usually from clicking on a link in an email)
      * @param intent
      */
@@ -214,255 +145,28 @@ abstract class BaseRouterActivity : CallbackActivity() {
         val extras = intent.extras
         Logger.logBundle(extras)
 
+        if (extras.containsKey(Route.ROUTE)) {
+            handleRoute(extras.getParcelable(Route.ROUTE) as Route)
+            return
+        }
+
         if (extras.containsKey(Const.MESSAGE) && extras.containsKey(Const.MESSAGE_TYPE)) {
             showMessage(extras.getString(Const.MESSAGE))
         }
 
-        if (extras.containsKey(Const.PARSE)) {
-            val url = extras.getString(Const.URL)
-            RouterUtils.routeUrl(this, url, false)
-        } else if (extras.containsKey(Const.BOOKMARK)) {
-            val url = extras.getString(Const.URL)
-            RouterUtils.routeUrl(this, url, false)
-        } else if (extras.containsKey(PushExternalReceiver.NEW_PUSH_NOTIFICATION)) {
-            val url = extras.getString(PushNotification.HTML_URL)
-            RouterUtils.routeUrl(this, url, false)
-        }
-    }
-
-    private fun routeLTI(courseId: Long, route: RouterUtils.Route) {
-        //Since we do not know if the LTI is a tab we load in a details fragment.
-        if (route.contextType == CanvasContext.Type.COURSE) {
-            routeLTIForCourse(courseId, route)
-        } else if (route.contextType == CanvasContext.Type.GROUP) {
-            routeLTIForGroup(courseId, route)
-        }
-    }
-
-    private fun routeLTIForCourse(courseId: Long, route: RouterUtils.Route) {
-        Logger.d("BaseRouterActivity: routeLTIForCourse()")
-
-        routeLTIJob = tryWeave {
-            showLoadingIndicator()
-            val course = awaitApi<Course?> { CourseManager.getCourseWithGrade(courseId, it, false) }
-            if(course == null) {
-                showMessage(getString(R.string.could_not_route_course))
-            } else {
-                routeFragment(ParentFragment.createFragment(LTIWebViewRoutingFragment::class.java,
-                        LTIWebViewRoutingFragment.createBundle(course, route.url)))
+        when {
+            extras.containsKey(Const.PARSE) || extras.containsKey(Const.BOOKMARK) -> {
+                val url = extras.getString(Const.URL)
+                RouteMatcher.routeUrl(this, url)
             }
-            hideLoadingIndicator()
-        } catch {
-            hideLoadingIndicator()
-            Logger.e("Error routing to LTI for course: " + it.message)
-        }
-    }
-
-    private fun routeLTIForGroup(groupId: Long, route: RouterUtils.Route) {
-        Logger.d("BaseRouterActivity: routeLTIForGroup()")
-
-        routeLTIJob = tryWeave {
-            showLoadingIndicator()
-            val group = awaitApi<Group?> { GroupManager.getDetailedGroup(groupId, it, false) }
-            if(group == null) {
-                showMessage(getString(R.string.could_not_route_group))
-            } else {
-                routeFragment(ParentFragment.createFragment(LTIWebViewRoutingFragment::class.java,
-                        LTIWebViewRoutingFragment.createBundle(group, route.url)))
-            }
-            hideLoadingIndicator()
-        } catch {
-            hideLoadingIndicator()
-            Logger.e("Error routing to LTI for group: " + it.message)
-        }
-    }
-
-    private fun routeModuleProgression(canvasContext: CanvasContext, route: RouterUtils.Route) {
-        Logger.d("BaseRouterActivity: routeModuleProgression()")
-
-        val moduleItemId = route.queryParamsHash["module_item_id"]
-        if(moduleItemId != null) {
-            routeModuleProgressionJob = tryWeave {
-                showLoadingIndicator()
-                val moduleItemSequence = awaitApi<ModuleItemSequence> { ModuleManager.getModuleItemSequence(canvasContext, ModuleManager.MODULE_ASSET_MODULE_ITEM, moduleItemId, it, false) }
-                //make sure that there is a sequence
-                if (moduleItemSequence.items.isNotEmpty()) {
-                    //get the current module item. we'll use the id of this down below
-                    val current = moduleItemSequence.items[0].current
-
-                    val moduleItems = awaitApi<List<ModuleItem>> { ModuleManager.getAllModuleItems(canvasContext, current.moduleId, it, false) }
-
-                    val moduleItemsArrayList = ArrayList<ArrayList<ModuleItem>>(1)
-                    moduleItemsArrayList.add(ArrayList(moduleItems))
-
-                    val moduleObjectsArray = ArrayList<ModuleObject>()
-                    moduleObjectsArray.add(moduleItemSequence.modules[0])
-
-                    val moduleHelper = ModuleProgressionUtility.prepareModulesForCourseProgression(this@BaseRouterActivity, current.id, moduleObjectsArray, moduleItemsArrayList)
-
-                    routeFragment(ParentFragment.createFragment(CourseModuleProgressionFragment::class.java, CourseModuleProgressionFragment.createBundle(
-                            moduleObjectsArray,
-                            moduleHelper.strippedModuleItems,
-                            canvasContext as Course?,
-                            moduleHelper.newGroupPosition,
-                            moduleHelper.newChildPosition)))
-                }
-                hideLoadingIndicator()
-            } catch {
-                hideLoadingIndicator()
-                Logger.e("Error routing modules: " + it.message)
+            extras.containsKey(PushExternalReceiver.NEW_PUSH_NOTIFICATION) -> {
+                val url = extras.getString(PushNotification.HTML_URL)
+                RouteMatcher.routeUrl(this, url)
             }
         }
     }
 
-    private fun routeToCourseGrid() {
-        Logger.d("BaseRouterActivity: routeToCourseGrid()")
-        routeFragment(FragUtils.getFrag(DashboardFragment::class.java))
-    }
-
-    private fun routeMasterDetail(canvasContext: CanvasContext, route: RouterUtils.Route, tab: Tab?) {
-        Logger.d("routing with tab: " + if (tab == null) "??" else tab.tabId)
-        val bundle = ParentFragment.createBundle(canvasContext, route.paramsHash, route.queryParamsHash, route.url, tab)
-        if (route.detailCls != null) {
-            if (existingFragmentCount() == 0) {
-                //Add the landing page fragment, then the details fragment.
-                loadLandingPage()
-            }
-
-            //check if it's supposed to go to a quiz so we can check which page to route it to
-            if(route.detailCls == BasicQuizViewFragment::class.java) {
-                //if we can get a quiz and display it natively, we should do that
-                routeToQuiz(route, canvasContext, bundle)
-            } else {
-                val fragment = FragUtils.getFragment(route.detailCls, bundle)
-                if(fragment != null) routeFragment(fragment)
-            }
-
-        } else {
-            if (route.masterCls != null) {
-                val fragment = FragUtils.getFragment(route.masterCls, bundle)
-                if(fragment != null) routeFragment(fragment)
-            } else { // Used for Tab.Home (so that no masterCls has to be set)
-                routeFragment(TabHelper.getFragmentByTab(tab, canvasContext))
-            }
-        }
-    }
-
-    private fun routeDetail(canvasContext: CanvasContext, route: RouterUtils.Route, tab: Tab?) {
-        Logger.d("routing to single fragment: " + if (tab == null) "??" else tab.tabId)
-        val bundle = ParentFragment.createBundle(canvasContext, route.paramsHash, route.queryParamsHash, route.url, tab)
-        if (route.detailCls != null) {
-            if (existingFragmentCount() == 0) {
-                //Add the landing page fragment, then the details fragment.
-                loadLandingPage()
-            }
-
-            //check if it's supposed to go to a quiz so we can check which page to route it to
-            if(route.detailCls == BasicQuizViewFragment::class.java) {
-                //if we can get a quiz and display it natively, we should do that
-                routeToQuiz(route, canvasContext, bundle)
-            } else {
-                val fragment = FragUtils.getFragment(route.detailCls, bundle)
-                if(fragment != null) routeFragment(fragment)
-            }
-
-        } else {
-            // if the detailCls is null and the masterCls is null, that means we're linking to a navigation list (pages, people, assignments, etc)
-            if (route.masterCls != null && tabCanStillBeLinkedTo(tab)) {
-                val fragment = FragUtils.getFragment(route.masterCls, bundle)
-                if(fragment != null) routeFragment(fragment)
-            } else { // Used for Tab.Home (so that no masterCls has to be set)
-                //cannot route because tabs are locked.
-                showMessage(getString(R.string.could_not_route_locked))
-            }
-        }
-    }
-
-    /*
-        Some tabs are hidden and can still be linked to (People, Discussions, Grades) and others are truly disabled (can't be linked to)
-     */
-    private fun tabCanStillBeLinkedTo(tab: Tab?) : Boolean = (tab?.tabId == Tab.PEOPLE_ID || tab?.tabId == Tab.DISCUSSIONS_ID || tab?.tabId == Tab.GRADES_ID)
-
-    private fun routeToQuiz(route: RouterUtils.Route, canvasContext: CanvasContext, bundle: Bundle) {
-        var apiURL = route.url.substring(ApiPrefs.fullDomain.length)
-        apiURL = ApiPrefs.fullDomain + "/api/v1" + apiURL
-
-        tryWeave {
-            val quiz = awaitApi<Quiz?> { QuizManager.getDetailedQuizByUrl(apiURL, true, it) }
-            if (QuizListFragment.isNativeQuiz(canvasContext, quiz)) {
-                val quizBundle = QuizStartFragment.createBundle(canvasContext, quiz)
-                routeFragment(FragUtils.getFrag(QuizStartFragment::class.java, quizBundle))
-            } else {
-                val fragment = FragUtils.getFragment(route.detailCls, bundle)
-                if(fragment != null) routeFragment(fragment)
-            }
-        } catch {
-            val fragment = FragUtils.getFragment(route.detailCls, bundle)
-            if(fragment != null) routeFragment(fragment)
-        }
-    }
-
-    private fun routeToCourse(courseId: Long, route: RouterUtils.Route, tab: Tab) {
-        Logger.d("BaseRouterActivity: routeToCourse()")
-
-        routeCanvasContextJob = tryWeave {
-            showLoadingIndicator()
-            val course = awaitApi<Course?> { CourseManager.getCourseWithGrade(courseId, it, false) }
-            if(course == null) {
-                showMessage(getString(R.string.could_not_route_course))
-            } else {
-                val tabs = awaitApi<List<Tab>> { TabManager.getTabs(course, it, false) }
-                val tabExists = tabs.any { it.tabId == tab.tabId }
-
-                routeWithCanvasContextAndTab(course, route, tab, tabExists)
-            }
-            hideLoadingIndicator()
-        } catch {
-            hideLoadingIndicator()
-            Logger.e("Error routing to course: " + it.message)
-        }
-    }
-
-    private fun routeToGroup(groupId: Long, route: RouterUtils.Route, tab: Tab) {
-        Logger.d("BaseRouterActivity: routeToGroup()")
-
-        routeCanvasContextJob = tryWeave {
-            showLoadingIndicator()
-            val group = awaitApi<Group?> { GroupManager.getDetailedGroup(groupId, it, false) }
-            if(group == null) {
-                showMessage(getString(R.string.could_not_route_group))
-            } else {
-                val tabs = awaitApi<List<Tab>> { TabManager.getTabs(group, it, false) }
-                val tabExists = tabs.any { it.tabId == tab.tabId }
-
-                routeWithCanvasContextAndTab(group, route, tab, tabExists)
-            }
-            hideLoadingIndicator()
-        } catch {
-            hideLoadingIndicator()
-            Logger.e("Error routing to group: " + it.message)
-        }
-    }
-
-    private fun routeWithCanvasContextAndTab(canvasContext: CanvasContext, route: RouterUtils.Route, tab: Tab, tabExists: Boolean) {
-        if (Tab.SYLLABUS_ID == tab.tabId) {
-            //Route cause tab exists
-            Logger.d("Attempting to route to group: " + canvasContext.name)
-            routeMasterDetail(canvasContext, route, tab)
-        } else if (route.queryParamsHash != null && route.queryParamsHash.containsKey("module_item_id")) {
-            //if we're routing to something in a module then we need to open it inside of CourseModuleProgression
-            routeModuleProgression(canvasContext, route)
-        } else {
-            Logger.d("Attempting to route to course or group: " + canvasContext.name)
-            if(tabExists) {
-                routeMasterDetail(canvasContext, route, tab)
-            } else {
-                routeDetail(canvasContext, route, tab)
-            }
-        }
-    }
-
-    private fun handleSpecificFile(courseId: Long, fileID: String) {
+    protected fun handleSpecificFile(courseId: Long, fileID: String) {
         val canvasContext = CanvasContext.getGenericContext(CanvasContext.Type.COURSE, courseId, "")
         Logger.d("BaseRouterActivity: handleSpecificFile()")
         //If the file no longer exists (404), we want to show a different crouton than the default.
@@ -481,8 +185,25 @@ abstract class BaseRouterActivity : CallbackActivity() {
         FileFolderManager.getFileFolderFromURL("files/" + fileID, fileFolderCanvasCallback)
     }
 
+    private fun handleSpecificFile(fileID: String) {
+        Logger.d("BaseRouterActivity: handleSpecificFile() no context")
+        //If the file no longer exists (404), we want to show a different crouton than the default.
+        val fileFolderCanvasCallback = object : StatusCallback<FileFolder>() {
+            override fun onResponse(response: retrofit2.Response<FileFolder>, linkHeaders: LinkHeaders, type: ApiType) {
+                response.body()?.let {
+                    if (it.isLocked || it.isLockedForUser) {
+                        Toast.makeText(context, String.format(context.getString(R.string.fileLocked), if (it.displayName == null) getString(R.string.file) else it.displayName), Toast.LENGTH_LONG).show()
+                    } else {
+                        openMedia(CanvasContext.emptyUserContext(), it.contentType.orEmpty(), it.url.orEmpty(), it.displayName.orEmpty())
+                    }
+                }
+            }
+        }
+
+        FileFolderManager.getFileFolderFromURL("files/" + fileID, fileFolderCanvasCallback)
+    }
     fun openMedia(canvasContext: CanvasContext?, url: String) {
-        openMediaBundle = OpenMediaAsyncTaskLoader.createBundle(canvasContext, url)
+        openMediaBundle = OpenMediaAsyncTaskLoader.createBundle(canvasContext, url, null)
         LoaderUtils.restartLoaderWithBundle<LoaderManager.LoaderCallbacks<OpenMediaAsyncTaskLoader.LoadedMedia>>(this.supportLoaderManager, openMediaBundle, loaderCallbacks, R.id.openMediaLoaderID)
     }
 

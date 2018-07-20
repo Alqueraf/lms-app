@@ -49,6 +49,8 @@ import com.instructure.interactions.Identity
 import com.instructure.teacher.models.DueDateGroup
 import com.instructure.teacher.presenters.EditQuizDetailsPresenter
 import com.instructure.interactions.router.Route
+import com.instructure.pandautils.discussions.DiscussionUtils
+import com.instructure.pandautils.views.CanvasWebView
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
 import com.instructure.teacher.view.AssignmentOverrideView
@@ -79,6 +81,8 @@ class EditQuizDetailsFragment : BasePresenterFragment<
     private var mScrollToDates = false
 
     private val saveButton: TextView? get() = view?.findViewById<TextView>(R.id.menu_save)
+
+    private var placeHolderList: ArrayList<Placeholder> = ArrayList()
 
     // Keeps track of which override we were editing so we can scroll back to it when the user returns from editing assignees
     private var scrollBackToOverride: AssignmentOverrideView? = null
@@ -336,10 +340,20 @@ class EditQuizDetailsFragment : BasePresenterFragment<
         descriptionProgressBar.setVisible()
 
         // Load description
-        descriptionWebView.setHtml(quiz.description,
-                getString(R.string.quizDescriptionContentDescription),
-                getString(R.string.rce_empty_description),
-                ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        if (CanvasWebView.containsLTI(quiz.description, "UTF-8")) {
+            descriptionWebView.setHtml(DiscussionUtils.createLTIPlaceHolders(context, quiz.description, { _, placeholder ->
+                placeHolderList.add(placeholder)
+            }),
+                    getString(R.string.quizDescriptionContentDescription),
+                    getString(R.string.rce_empty_description),
+                    ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        } else {
+            descriptionWebView.setHtml(quiz.description,
+                    getString(R.string.quizDescriptionContentDescription),
+                    getString(R.string.rce_empty_description),
+                    ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        }
+
 
         // when the RCE editor has focus we want the label to be darker so it matches the title's functionality
         descriptionWebView.setLabel(quizDescLabel, R.color.defaultTextDark, R.color.defaultTextGray)
@@ -402,7 +416,7 @@ class EditQuizDetailsFragment : BasePresenterFragment<
 
     fun assembleQuizPostData(): QuizPostBody = QuizPostBody().apply {
         title = editQuizTitle.text.toString()
-        description = descriptionWebView.html ?: presenter.mQuiz.description
+        description = handleLTIPlaceHolders(placeHolderList, descriptionWebView.html)
         notifyOfUpdate = false
         if (mHasAccessCode) {
             accessCode = editAccessCode.text.toString()

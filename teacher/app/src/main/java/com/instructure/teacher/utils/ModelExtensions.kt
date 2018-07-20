@@ -33,9 +33,10 @@ import com.instructure.teacher.fragments.ViewHtmlFragment
 import com.instructure.teacher.fragments.ViewImageFragment
 import com.instructure.teacher.fragments.ViewPdfFragment
 import com.instructure.teacher.fragments.ViewUnsupportedFileFragment
-import com.instructure.teacher.models.EditableFile
 import com.instructure.interactions.router.Route
 import com.instructure.interactions.router.RouteContext
+import com.instructure.pandautils.activities.BaseViewMediaActivity
+import com.instructure.pandautils.models.EditableFile
 import com.instructure.teacher.router.RouteMatcher
 import com.pspdfkit.ui.PdfFragment
 
@@ -96,7 +97,7 @@ fun viewMedia(context: Context, filename: String, contentType: String, url: Stri
         }
     // Audio/Video
         contentType.startsWith("video") || contentType.startsWith("audio") -> {
-            val bundle = ViewMediaActivity.makeBundle(url.orEmpty(), thumbnailUrl, contentType, displayName, true, editableFile)
+            val bundle = BaseViewMediaActivity.makeBundle(url.orEmpty(), thumbnailUrl, contentType, displayName, true, editableFile)
             RouteMatcher.route(context, Route(bundle, RouteContext.MEDIA))
         }
     // Image

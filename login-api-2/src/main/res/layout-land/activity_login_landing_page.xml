@@ -67,6 +67,33 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/changesLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/weMadeChanges"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:textColor="@color/login_grayText"
+                android:textSize="14sp"
+                android:text="@string/weMadeChanges"/>
+            <TextView
+                android:id="@+id/whatsNew"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:selectableItemBackground"
+                android:textColor="@color/linkBlue"
+                android:textSize="14sp"
+                android:text="@string/whatsNewText"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/previousLoginWrapper"
             android:layout_width="@dimen/previousLoginWidth"
             android:layout_height="wrap_content"

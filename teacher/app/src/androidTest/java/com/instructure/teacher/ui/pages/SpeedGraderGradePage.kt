@@ -15,12 +15,13 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.getStringFromResource
+import com.instructure.espresso.page.onViewWithId
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
-class SpeedGraderGradePage : BasePage(), PageAssert by SimplePageAssert() {
+class SpeedGraderGradePage : BasePage() {
 
     private val gradeContainer by OnViewWithId(R.id.gradeContainer)
     private val gradeTextContainer by OnViewWithId(R.id.gradeTextContainer)

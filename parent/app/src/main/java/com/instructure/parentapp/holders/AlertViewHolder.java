@@ -27,22 +27,19 @@ import com.instructure.parentapp.R;
 
 public class AlertViewHolder extends RecyclerView.ViewHolder {
 
-    public ImageView icon, closeButton;
-    public FrameLayout iconWrapper;
-    public TextView title, description, grade, date;
+    public ImageView icon, closeButton, unreadMark;
+    public TextView title, grade, alertType, date;
 
     public AlertViewHolder(View itemView) {
         super(itemView);
 
-        icon = (ImageView)itemView.findViewById(R.id.icon);
-        iconWrapper = (FrameLayout)itemView.findViewById(R.id.iconWrapper);
-        closeButton = (ImageView)itemView.findViewById(R.id.closeButton);
-
-        title = (TextView)itemView.findViewById(R.id.title);
-        description = (TextView)itemView.findViewById(R.id.description);
-        grade = (TextView)itemView.findViewById(R.id.grade);
-        date = (TextView)itemView.findViewById(R.id.date);
-
+        icon = itemView.findViewById(R.id.icon);
+        closeButton = itemView.findViewById(R.id.closeButton);
+        unreadMark = itemView.findViewById(R.id.unreadMark);
+        title = itemView.findViewById(R.id.title);
+        grade = itemView.findViewById(R.id.grade);
+        alertType = itemView.findViewById(R.id.alertType);
+        date = itemView.findViewById(R.id.date);
     }
 
     public static int holderResId() {

@@ -23,7 +23,9 @@ import android.support.annotation.WorkerThread;
 import com.instructure.canvasapi2.StatusCallback;
 import com.instructure.canvasapi2.builders.RestBuilder;
 import com.instructure.canvasapi2.builders.RestParams;
+import com.instructure.canvasapi2.models.Account;
 import com.instructure.canvasapi2.models.AccountRole;
+import com.instructure.canvasapi2.models.BecomeUserPermission;
 import com.instructure.canvasapi2.models.CanvasColor;
 import com.instructure.canvasapi2.models.CanvasContext;
 import com.instructure.canvasapi2.models.Enrollment;
@@ -105,7 +107,7 @@ public class UserAPI {
         @GET("users/{user_id}/profile")
         Call<User> getUser(@Path("user_id") Long userId);
 
-        @GET("{contextType}/{contextId}/users/{userId}?include[]=avatar_url&include[]=user_id&include[]=email&include[]=bio")
+        @GET("{contextType}/{contextId}/users/{userId}?include[]=avatar_url&include[]=user_id&include[]=email&include[]=bio&include[]=enrollments")
         Call<User> getUserForContextId(@Path("contextType") String contextType, @Path("contextId") long contextId, @Path("userId")long userId);
 
         @GET("{context_id}/users?include[]=enrollments&include[]=avatar_url&include[]=user_id&include[]=email&include[]=bio")
@@ -122,6 +124,15 @@ public class UserAPI {
 
         @GET("accounts/self/roles")
         Call<List<AccountRole>> getAccountRoles();
+
+        @GET("accounts/self")
+        Call<Account> getAccount();
+
+        @GET("accounts/{accountId}/permissions?permissions[]=become_user")
+        Call<BecomeUserPermission> getBecomeUserPermission(@Path("accountId") long accountId);
+
+        @GET("users/self/observees")
+        Call<List<User>> getFirstPageObservees();
 
         //region Airwolf
         @DELETE("student/{parentId}/{studentId}")
@@ -151,6 +162,9 @@ public class UserAPI {
         //Only used for observer role in Canvas
         @GET("students/{observerId}")
         Call<List<Student>> getObserveesForParent(@Path("observerId") String observerId);
+
+        @DELETE("users/self/observees/{observeeId}")
+        Call<User> removeObservee(@Path("observeeId") Long observeeId);
         //endregion
     }
 
@@ -262,6 +276,18 @@ public class UserAPI {
         callback.addCall(adapter.build(UsersInterface.class, params).getAccountRoles()).enqueue(callback);
     }
 
+    public static void removeObservee(long observeeId, RestBuilder adapter, RestParams params, StatusCallback<User> callback) {
+        callback.addCall(adapter.build(UsersInterface.class, params).removeObservee(observeeId)).enqueue(callback);
+    }
+
+    public static void getSelfAccount(RestBuilder adapter, RestParams params, StatusCallback<Account> callback) {
+        callback.addCall(adapter.build(UsersInterface.class, params).getAccount()).enqueue(callback);
+    }
+
+    public static void getBecomeUserPermission(RestBuilder adapter, RestParams params, Long accountId, StatusCallback<BecomeUserPermission> callback) {
+        callback.addCall(adapter.build(UsersInterface.class, params).getBecomeUserPermission(accountId)).enqueue(callback);
+    }
+
     private static String getEnrollmentTypeString(ENROLLMENT_TYPE enrollmentType){
         String enrollmentString = "";
         switch (enrollmentType){
@@ -284,7 +310,13 @@ public class UserAPI {
         return enrollmentString;
     }
 
-    //region Airwolf
+    public static void getObserveesList(@NonNull RestBuilder adapter, @NonNull RestParams params, @NonNull StatusCallback<List<User>> callback) {
+        if (StatusCallback.isFirstPage(callback.getLinkHeaders())) {
+            callback.addCall(adapter.build(UsersInterface.class, params).getFirstPageObservees()).enqueue(callback);
+        } else if (StatusCallback.moreCallsExist(callback.getLinkHeaders()) && callback.getLinkHeaders() != null) {
+            callback.addCall(adapter.build(UsersInterface.class, params).next(callback.getLinkHeaders().nextUrl)).enqueue(callback);
+        }
+    }
 
     //region Airwolf
     /**

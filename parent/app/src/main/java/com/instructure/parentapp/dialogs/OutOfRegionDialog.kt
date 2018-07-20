@@ -18,7 +18,7 @@ class OutOfRegionDialog : AppCompatDialogFragment() {
     private var callback: (Int) -> Unit by Delegates.notNull()
 
     companion object {
-        private val REGION_STRING = "region"
+        private const val REGION_STRING = "region"
 
         fun newInstance(readableRegion: String, callback: (Int) -> Unit): OutOfRegionDialog {
             val dialog = OutOfRegionDialog()

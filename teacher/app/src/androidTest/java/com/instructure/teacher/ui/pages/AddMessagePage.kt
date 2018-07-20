@@ -16,31 +16,30 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.waitForViewWithText
 import com.instructure.soseedy.CanvasUser
 import com.instructure.soseedy.Course
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
-class AddMessagePage: BasePage(), PageAssert by SimplePageAssert() {
+class AddMessagePage: BasePage() {
 
-    private val subjectTextView by WaitForViewWithId(R.id.subject)
+    private val subjectTextView by WaitForViewWithId(R.id.subjectView)
     private val recipientsEditTextView by WaitForViewWithId(R.id.recipient)
     private val messageEditText by WaitForViewWithId(R.id.message)
     private val sendButton by WaitForViewWithId(R.id.menu_send)
     private val coursesSpinner by WaitForViewWithId(R.id.courseSpinner)
     private val editSubjectEditText by WaitForViewWithId(R.id.editSubject)
-    private val addContactsButton by WaitForViewWithId(R.id.contacts_image_button)
+    private val addContactsButton by WaitForViewWithId(R.id.contactsImageButton)
 
     override fun assertPageObjects() {
         subjectTextView.assertDisplayed()
         recipientsEditTextView.assertDisplayed()
     }
 
-    fun addReply() {
-        val reply = randomString()
-        messageEditText.replaceText(reply)
+    fun addReply(message: String) {
+        messageEditText.replaceText(message)
         sendButton.click()
     }
 

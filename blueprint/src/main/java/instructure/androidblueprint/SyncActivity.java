@@ -31,7 +31,7 @@ import com.instructure.pandarecycler.util.UpdatableSortedList;
 
 
 public abstract class SyncActivity<
-        MODEL extends CanvasComparable,
+        MODEL extends CanvasComparable<?>,
         PRESENTER extends SyncPresenter<MODEL, VIEW>,
         VIEW extends SyncManager<MODEL>,
         HOLDER extends RecyclerView.ViewHolder,

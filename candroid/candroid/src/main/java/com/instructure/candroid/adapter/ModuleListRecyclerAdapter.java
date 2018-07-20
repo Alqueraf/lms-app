@@ -262,6 +262,13 @@ public class ModuleListRecyclerAdapter extends ExpandableRecyclerAdapter<ModuleO
         return dialog;
     }
 
+    public void updateWithoutResettingViews(ModuleObject moduleObject) {
+        mModuleItemCallbacks.clear();
+        mModuleObjectCallback.cancel();
+
+        ModuleManager.getFirstPageModuleItems(mCanvasContext, moduleObject.getId(),getModuleItemsCallback(moduleObject, false), true );
+    }
+
     public void updateMasteryPathItems() {
 
         final ProgressDialog dialog = createProgressDialog(getContext());
@@ -332,6 +339,7 @@ public class ModuleListRecyclerAdapter extends ExpandableRecyclerAdapter<ModuleO
                         masteryPathsSelect.setMasteryPathsItemId(item.getId());
                         masteryPathsSelect.setMasteryPaths(item.getMasteryPaths());
                         addOrUpdateItem(this.getModuleObject(), masteryPathsSelect);
+                        notifyDataSetChanged();
                     }
                     return position;
                 }
@@ -434,9 +442,6 @@ public class ModuleListRecyclerAdapter extends ExpandableRecyclerAdapter<ModuleO
                 ModuleListRecyclerAdapter.this.onCallbackFinished(type);
             }
         };
-
-
-
     }
 
     @Override

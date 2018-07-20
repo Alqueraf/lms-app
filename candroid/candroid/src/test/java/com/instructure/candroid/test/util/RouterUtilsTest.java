@@ -39,14 +39,14 @@ import com.instructure.candroid.fragment.PeopleDetailsFragment;
 import com.instructure.candroid.fragment.PeopleListFragment;
 import com.instructure.candroid.fragment.QuizListFragment;
 import com.instructure.candroid.fragment.ScheduleListFragment;
-import com.instructure.candroid.fragment.UnSupportedTabFragment;
-import com.instructure.candroid.util.Param;
-import com.instructure.candroid.util.RouterUtils;
+import com.instructure.candroid.fragment.UnsupportedTabFragment;
+import com.instructure.candroid.router.RouteMatcher;
 import com.instructure.canvasapi2.models.CanvasContext;
-import com.instructure.canvasapi2.models.Tab;
 import com.instructure.canvasapi2.utils.ApiPrefs;
 import com.instructure.canvasapi2.utils.ContextKeeper;
-
+import com.instructure.interactions.router.RouteContext;
+import com.instructure.interactions.router.RouterParams;
+import com.instructure.interactions.router.Route;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -84,7 +84,7 @@ public class RouterUtilsTest extends InstrumentationTestCase {
     public void testCanRouteInternally_courseIdParseCorrect() {
         // Written due to a crash found by Crashlytics
         // See: https://fabric.io/instructure/android/apps/com.instructure.candroid/issues/5a69f6858cb3c2fa63977be1?time=1509408000000%3A1517270399999
-        assertEquals(833052L, BaseRouterActivity.parseCourseId("sis_course_id:833052"));
+        assertEquals((Long)833052L, BaseRouterActivity.parseCourseId("sis_course_id:833052"));
     }
 
     @Test(expected = RuntimeException.class)
@@ -105,17 +105,17 @@ public class RouterUtilsTest extends InstrumentationTestCase {
     }
 
     private boolean callCanRouteInternally(String url) {
-        return RouterUtils.canRouteInternally(null, url, "mobiledev.instructure.com", false);
+        return RouteMatcher.canRouteInternally(null, url, "mobiledev.instructure.com", false);
     }
 
-    private RouterUtils.Route callGetInternalRoute(String url) {
+    private Route callGetInternalRoute(String url) {
         //String domain = APIHelper.getDomain(RuntimeEnvironment.application);
-        return RouterUtils.getInternalRoute(url, "mobiledev.instructure.com");
+        return RouteMatcher.getInternalRoute(url, "mobiledev.instructure.com");
     }
 
     @Test
     public void testGetInternalRoute_supportedDomain() {
-        RouterUtils.Route route = callGetInternalRoute("https://instructure.com");
+        Route route = callGetInternalRoute("https://instructure.com");
         assertNull(route);
 
         route = callGetInternalRoute("https://mobiledev.instructure.com");
@@ -130,7 +130,7 @@ public class RouterUtilsTest extends InstrumentationTestCase {
 
     @Test
     public void testGetInternalRoute_nonSupportedDomain() {
-        RouterUtils.Route route = callGetInternalRoute("https://google.com");
+        Route route = callGetInternalRoute("https://google.com");
         assertNull(route);
 
         route = callGetInternalRoute("https://youtube.com");
@@ -142,7 +142,7 @@ public class RouterUtilsTest extends InstrumentationTestCase {
 
     @Test
     public void testGetInternalRoute_calendar() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/calendar2?include_contexts=course_833052#view_name=month&view_start=2015-03-19T06%3A00%3A00.000Z");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/calendar2?include_contexts=course_833052#view_name=month&view_start=2015-03-19T06%3A00%3A00.000Z");
         assertNotNull(route);
         // TODO add test for calendar
         //assertEquals(CalendarEventFragment.class, route.getMasterCls());
@@ -153,7 +153,7 @@ public class RouterUtilsTest extends InstrumentationTestCase {
 
     @Test
     public void testGetInternalRoute_externalTools() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/833052/external_tools/131971");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/833052/external_tools/131971");
         assertNotNull(route);
 
     }
@@ -164,13 +164,13 @@ public class RouterUtilsTest extends InstrumentationTestCase {
     public void testGetInternalRoute_files() {
 
         // courses
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/833052/files/63383591/download?wrap=1");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/833052/files/63383591/download?wrap=1");
         assertNotNull(route);
-        assertEquals(RouterUtils.ROUTE_TYPE.FILE_DOWNLOAD, route.getRouteType());
+        assertEquals(RouteContext.FILE, route.getRouteType());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "833052");
-        expectedParams.put(Param.FILE_ID, "63383591");
+        expectedParams.put(RouterParams.COURSE_ID, "833052");
+        expectedParams.put(RouterParams.FILE_ID, "63383591");
         assertEquals(expectedParams, route.getParamsHash());
 
         HashMap<String, String> expectedQueryParams = new HashMap<>();
@@ -179,311 +179,311 @@ public class RouterUtilsTest extends InstrumentationTestCase {
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/833052/files/63383591");
         assertNotNull(route); // route is not supported
-        assertEquals(null, route.getMasterCls());
+        assertEquals(null, route.getPrimaryClass());
 
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/833052/files/63383591/download?verifier=12344556");
         assertNotNull(route);
-        assertEquals(RouterUtils.ROUTE_TYPE.FILE_DOWNLOAD, route.getRouteType());
+        assertEquals(RouteContext.FILE, route.getRouteType());
 
         // files
         route = callGetInternalRoute("https://mobiledev.instructure.com/files/63383591/download?wrap=1");
         assertNotNull(route);
-        assertEquals(RouterUtils.ROUTE_TYPE.FILE_DOWNLOAD, route.getRouteType());
+        assertEquals(RouteContext.FILE, route.getRouteType());
 
         expectedParams = new HashMap<>();
-        expectedParams.put(Param.FILE_ID, "63383591");
+        expectedParams.put(RouterParams.FILE_ID, "63383591");
         assertEquals(expectedParams, route.getParamsHash());
 
         assertEquals(expectedQueryParams, route.getQueryParamsHash());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/files/63383591");
         assertNotNull(route);
-        assertEquals(FileListFragment.class, route.getMasterCls());
+        assertEquals(FileListFragment.class, route.getPrimaryClass());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/833052/files/63383591/download?verifier=12344556");
         assertNotNull(route);
-        assertEquals(RouterUtils.ROUTE_TYPE.FILE_DOWNLOAD, route.getRouteType());
+        assertEquals(RouteContext.FILE, route.getRouteType());
     }
 
     @Test
     public void testGetInternalRoute_conversation() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/conversations/");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/conversations/");
         assertNotNull(route);
-        assertEquals(InboxFragment.class, route.getMasterCls());
+        assertEquals(InboxFragment.class, route.getPrimaryClass());
 
         // Detailed Conversation
         route = callGetInternalRoute("https://mobiledev.instructure.com/conversations/1078680");
         assertNotNull(route);
-        assertEquals(InboxFragment.class, route.getMasterCls());
+        assertEquals(InboxFragment.class, route.getPrimaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.CONVERSATION_ID, "1078680");
+        expectedParams.put(RouterParams.CONVERSATION_ID, "1078680");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_modules() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/modules");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/modules");
         assertNotNull(route);
-        assertEquals(ModuleListFragment.class, route.getMasterCls());
+        assertEquals(ModuleListFragment.class, route.getPrimaryClass());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/modules/48753");
         assertNotNull(route);
-        assertEquals(ModuleListFragment.class, route.getMasterCls());
+        assertEquals(ModuleListFragment.class, route.getPrimaryClass());
 
         // discussion
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/24219/discussion_topics/1129998?module_item_id=12345");
         assertNotNull(route);
-        assertEquals(ModuleListFragment.class, route.getMasterCls());
-        assertEquals(CourseModuleProgressionFragment.class, route.getDetailCls());
+        assertEquals(ModuleListFragment.class, route.getPrimaryClass());
+        assertEquals(CourseModuleProgressionFragment.class, route.getPrimaryClass());
 
         HashMap<String, String> expectedQueryParams = new HashMap<>();
-        expectedQueryParams.put(Param.MODULE_ITEM_ID, "12345");
+        expectedQueryParams.put(RouterParams.MODULE_ITEM_ID, "12345");
         assertEquals(expectedQueryParams, route.getQueryParamsHash());
 
         // pages
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/24219/pages/1129998?module_item_id=12345");
         assertNotNull(route);
-        assertEquals(ModuleListFragment.class, route.getMasterCls());
-        assertEquals(CourseModuleProgressionFragment.class, route.getDetailCls());
+        assertEquals(ModuleListFragment.class, route.getPrimaryClass());
+        assertEquals(CourseModuleProgressionFragment.class, route.getPrimaryClass());
         assertEquals(expectedQueryParams, route.getQueryParamsHash());
 
         // quizzes
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/24219/quizzes/1129998?module_item_id=12345");
         assertNotNull(route);
-        assertEquals(ModuleListFragment.class, route.getMasterCls());
-        assertEquals(CourseModuleProgressionFragment.class, route.getDetailCls());
+        assertEquals(ModuleListFragment.class, route.getPrimaryClass());
+        assertEquals(CourseModuleProgressionFragment.class, route.getPrimaryClass());
         assertEquals(expectedQueryParams, route.getQueryParamsHash());
 
         // assignments
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/24219/assignments/1129998?module_item_id=12345");
         assertNotNull(route);
-        assertEquals(ModuleListFragment.class, route.getMasterCls());
-        assertEquals(CourseModuleProgressionFragment.class, route.getDetailCls());
+        assertEquals(ModuleListFragment.class, route.getPrimaryClass());
+        assertEquals(CourseModuleProgressionFragment.class, route.getPrimaryClass());
         assertEquals(expectedQueryParams, route.getQueryParamsHash());
 
         // files
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/24219/files/1129998?module_item_id=12345");
         assertNotNull(route);
-        assertEquals(ModuleListFragment.class, route.getMasterCls());
-        assertEquals(CourseModuleProgressionFragment.class, route.getDetailCls());
+        assertEquals(ModuleListFragment.class, route.getPrimaryClass());
+        assertEquals(CourseModuleProgressionFragment.class, route.getPrimaryClass());
         assertEquals(expectedQueryParams, route.getQueryParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_notifications() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/notifications");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/notifications");
         assertNotNull(route);
-        assertEquals(NotificationListFragment.class, route.getMasterCls());
+        assertEquals(NotificationListFragment.class, route.getPrimaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_grades() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/grades");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/grades");
         assertNotNull(route);
-        assertEquals(GradesListFragment.class, route.getMasterCls());
+        assertEquals(GradesListFragment.class, route.getPrimaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_users() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/users");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/users");
         assertNotNull(route);
-        assertEquals(PeopleListFragment.class, route.getMasterCls());
+        assertEquals(PeopleListFragment.class, route.getPrimaryClass());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/users/1234");
         assertNotNull(route);
-        assertEquals(PeopleListFragment.class, route.getMasterCls());
-        assertEquals(PeopleDetailsFragment.class, route.getDetailCls());
+        assertEquals(PeopleListFragment.class, route.getPrimaryClass());
+        assertEquals(PeopleDetailsFragment.class, route.getSecondaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
-        expectedParams.put(Param.USER_ID, "1234");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.USER_ID, "1234");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_discussion() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/discussion_topics");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/discussion_topics");
         assertNotNull(route);
-        assertEquals(DiscussionListFragment.class, route.getMasterCls());
+        assertEquals(DiscussionListFragment.class, route.getPrimaryClass());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/discussion_topics/1234");
         assertNotNull(route);
-        assertEquals(DiscussionListFragment.class, route.getMasterCls());
-        assertEquals(DiscussionDetailsFragment.class, route.getDetailCls());
+        assertEquals(DiscussionListFragment.class, route.getPrimaryClass());
+        assertEquals(DiscussionDetailsFragment.class, route.getSecondaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
-        expectedParams.put(Param.MESSAGE_ID, "1234");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.MESSAGE_ID, "1234");
         assertEquals(expectedParams, route.getParamsHash());
 
     }
 
     @Test
     public void testGetInternalRoute_pages() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/pages");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/pages");
         assertNotNull(route);
-        assertEquals(PageListFragment.class, route.getMasterCls());
+        assertEquals(PageListFragment.class, route.getPrimaryClass());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/pages/hello");
         assertNotNull(route);
-        assertEquals(PageListFragment.class, route.getMasterCls());
-        assertEquals(PageDetailsFragment.class, route.getDetailCls());
+        assertEquals(PageListFragment.class, route.getPrimaryClass());
+        assertEquals(PageDetailsFragment.class, route.getSecondaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
-        expectedParams.put(Param.PAGE_ID, "hello");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.PAGE_ID, "hello");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_announcements() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/announcements");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/announcements");
         assertNotNull(route);
-        assertEquals(AnnouncementListFragment.class, route.getMasterCls());
+        assertEquals(AnnouncementListFragment.class, route.getPrimaryClass());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/announcements/12345");
         assertNotNull(route);
-        assertEquals(AnnouncementListFragment.class, route.getMasterCls());
-        assertEquals(DiscussionDetailsFragment.class, route.getDetailCls());
+        assertEquals(AnnouncementListFragment.class, route.getPrimaryClass());
+        assertEquals(DiscussionDetailsFragment.class, route.getSecondaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
-        expectedParams.put(Param.MESSAGE_ID, "12345");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.MESSAGE_ID, "12345");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_quiz() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/quizzes");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/quizzes");
         assertNotNull(route);
-        assertEquals(QuizListFragment.class, route.getMasterCls());
+        assertEquals(QuizListFragment.class, route.getPrimaryClass());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/quizzes/12345");
         assertNotNull(route);
-        assertEquals(QuizListFragment.class, route.getMasterCls());
-        assertEquals(BasicQuizViewFragment.class, route.getDetailCls());
+        assertEquals(QuizListFragment.class, route.getPrimaryClass());
+        assertEquals(BasicQuizViewFragment.class, route.getSecondaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
-        expectedParams.put(Param.QUIZ_ID, "12345");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.QUIZ_ID, "12345");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_syllabus() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/assignments/syllabus");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/assignments/syllabus");
         assertNotNull(route);
-        assertEquals(ScheduleListFragment.class, route.getMasterCls());
-        assertEquals(ScheduleListFragment.class, route.getDetailCls());
+        assertEquals(ScheduleListFragment.class, route.getPrimaryClass());
+        assertEquals(ScheduleListFragment.class, route.getSecondaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_assignments() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/assignments/");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/assignments/");
         assertNotNull(route);
-        assertEquals(AssignmentListFragment.class, route.getMasterCls());
+        assertEquals(AssignmentListFragment.class, route.getPrimaryClass());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/assignments/213445213445213445213445213445213445213445213445213445213445213445213445");
         assertNotNull(route);
-        assertEquals(AssignmentListFragment.class, route.getMasterCls());
-        assertEquals(AssignmentFragment.class, route.getDetailCls());
+        assertEquals(AssignmentListFragment.class, route.getPrimaryClass());
+        assertEquals(AssignmentFragment.class, route.getSecondaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
-        expectedParams.put(Param.ASSIGNMENT_ID, "213445213445213445213445213445213445213445213445213445213445213445213445");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.ASSIGNMENT_ID, "213445213445213445213445213445213445213445213445213445213445213445213445");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_submissions_rubric() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/assignments/12345/rubric");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/assignments/12345/rubric");
         assertNotNull(route);
-        assertEquals(AssignmentListFragment.class, route.getMasterCls());
-        assertEquals(AssignmentFragment.class, route.getDetailCls());
+        assertEquals(AssignmentListFragment.class, route.getPrimaryClass());
+        assertEquals(AssignmentFragment.class, route.getSecondaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
-        expectedParams.put(Param.ASSIGNMENT_ID, "12345");
-        expectedParams.put(Param.SLIDING_TAB_TYPE, "rubric");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.ASSIGNMENT_ID, "12345");
+        expectedParams.put(RouterParams.SLIDING_TAB_TYPE, "rubric");
         assertEquals(expectedParams, route.getParamsHash());
 
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/assignments/213445213445213445213445213445213445213445213445213445213445213445213445/submissions/1234");
         assertNotNull(route);
-        assertEquals(AssignmentListFragment.class, route.getMasterCls());
-        assertEquals(AssignmentFragment.class, route.getDetailCls());
+        assertEquals(AssignmentListFragment.class, route.getPrimaryClass());
+        assertEquals(AssignmentFragment.class, route.getSecondaryClass());
 
         expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
-        expectedParams.put(Param.ASSIGNMENT_ID, "213445213445213445213445213445213445213445213445213445213445213445213445");
-        expectedParams.put(Param.SLIDING_TAB_TYPE, "submissions");
-        expectedParams.put(Param.SUBMISSION_ID, "1234");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.ASSIGNMENT_ID, "213445213445213445213445213445213445213445213445213445213445213445213445");
+        expectedParams.put(RouterParams.SLIDING_TAB_TYPE, "submissions");
+        expectedParams.put(RouterParams.SUBMISSION_ID, "1234");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_settings() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/settings/");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/settings/");
         assertNotNull(route);
-        assertEquals(CourseSettingsFragment.class, route.getMasterCls());
+        assertEquals(CourseSettingsFragment.class, route.getPrimaryClass());
 
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
         assertEquals(expectedParams, route.getParamsHash());
     }
 
     @Test
     public void testGetInternalRoute_unsupported() {
-        RouterUtils.Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/collaborations/");
+        Route route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/collaborations/");
         assertNotNull(route);
-        assertEquals(UnSupportedTabFragment.class, route.getMasterCls());
-        assertEquals(Tab.COLLABORATIONS_ID, route.getTabId());
+        assertEquals(UnsupportedTabFragment.class, route.getPrimaryClass());
+//        assertEquals(Tab.COLLABORATIONS_ID, route.getTabId());
         HashMap<String, String> expectedParams = new HashMap<>();
-        expectedParams.put(Param.COURSE_ID, "836357");
+        expectedParams.put(RouterParams.COURSE_ID, "836357");
         assertEquals(expectedParams, route.getParamsHash());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/collaborations/234"); // not an actual url
         assertNotNull(route);
-        assertEquals(UnSupportedTabFragment.class, route.getMasterCls());
-        assertEquals(Tab.COLLABORATIONS_ID, route.getTabId());
+        assertEquals(UnsupportedTabFragment.class, route.getPrimaryClass());
+//        assertEquals(Tab.COLLABORATIONS_ID, route.getTabId());
         assertEquals(expectedParams, route.getParamsHash());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/conferences/");
         assertNotNull(route);
-        assertEquals(UnSupportedTabFragment.class, route.getMasterCls());
-        assertEquals(Tab.CONFERENCES_ID, route.getTabId());
+        assertEquals(UnsupportedTabFragment.class, route.getPrimaryClass());
+//        assertEquals(Tab.CONFERENCES_ID, route.getTabId());
         assertEquals(expectedParams, route.getParamsHash());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/conferences/234"); // not an actual url
         assertNotNull(route);
-        assertEquals(UnSupportedTabFragment.class, route.getMasterCls());
-        assertEquals(Tab.CONFERENCES_ID, route.getTabId());
+        assertEquals(UnsupportedTabFragment.class, route.getPrimaryClass());
+//        assertEquals(Tab.CONFERENCES_ID, route.getTabId());
         assertEquals(expectedParams, route.getParamsHash());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/outcomes/");
         assertNotNull(route);
-        assertEquals(UnSupportedTabFragment.class, route.getMasterCls());
-        assertEquals(Tab.OUTCOMES_ID, route.getTabId());
+        assertEquals(UnsupportedTabFragment.class, route.getPrimaryClass());
+//        assertEquals(Tab.OUTCOMES_ID, route.getTabId());
         assertEquals(expectedParams, route.getParamsHash());
 
         route = callGetInternalRoute("https://mobiledev.instructure.com/courses/836357/outcomes/234"); // not an actual url
         assertNotNull(route);
-        assertEquals(UnSupportedTabFragment.class, route.getMasterCls());
-        assertEquals(Tab.OUTCOMES_ID, route.getTabId());
+        assertEquals(UnsupportedTabFragment.class, route.getPrimaryClass());
+//        assertEquals(Tab.OUTCOMES_ID, route.getTabId());
         assertEquals(expectedParams, route.getParamsHash());
     }
 
@@ -492,14 +492,14 @@ public class RouterUtilsTest extends InstrumentationTestCase {
     public void testCreateBookmarkCourse() {
         ApiPrefs.setDomain("mobiledev.instructure.com");
         HashMap<String, String> replacementParams = new HashMap<>();
-        replacementParams.put(Param.COURSE_ID, "123");
-        replacementParams.put(Param.QUIZ_ID, "456");
+        replacementParams.put(RouterParams.COURSE_ID, "123");
+        replacementParams.put(RouterParams.QUIZ_ID, "456");
         CanvasContext canvasContext = CanvasContext.getGenericContext(CanvasContext.Type.COURSE, 123, "");
 
         HashMap<String, String> queryParams = new HashMap<>();
 
 
-        String url = RouterUtils.createUrl(canvasContext.getType(), QuizListFragment.class, BasicQuizViewFragment.class, replacementParams, queryParams);
+        String url = RouteMatcher.generateUrl(canvasContext.getType(), QuizListFragment.class, BasicQuizViewFragment.class, replacementParams, queryParams);
         assertEquals("https://mobiledev.instructure.com/courses/123/quizzes/456", url);
     }
 
@@ -507,13 +507,13 @@ public class RouterUtilsTest extends InstrumentationTestCase {
     public void testCreateBookmarkGroups() {
         ApiPrefs.setDomain("mobiledev.instructure.com");
         HashMap<String, String> replacementParams = new HashMap<>();
-        replacementParams.put(Param.COURSE_ID, "123");
-        replacementParams.put(Param.QUIZ_ID, "456");
+        replacementParams.put(RouterParams.COURSE_ID, "123");
+        replacementParams.put(RouterParams.QUIZ_ID, "456");
         CanvasContext canvasContext = CanvasContext.getGenericContext(CanvasContext.Type.GROUP, 123, "");
 
         HashMap<String, String> queryParams = new HashMap<>();
 
-        String url = RouterUtils.createUrl(canvasContext.getType(), QuizListFragment.class, BasicQuizViewFragment.class, replacementParams, queryParams);
+        String url = RouteMatcher.generateUrl(canvasContext.getType(), QuizListFragment.class, BasicQuizViewFragment.class, replacementParams, queryParams);
         assertEquals("https://mobiledev.instructure.com/groups/123/quizzes/456", url);
     }
 }

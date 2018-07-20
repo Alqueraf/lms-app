@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -67,5 +67,13 @@
     <string name="graded_survey">採点済みのサーベイ</string>
     <string name="ungraded_survey">未採点のサーベイ</string>
     <string name="andMore"> そしてさらに%d</string>
+
+    <!-- Enrollment Types -->
+    <string name="enrollmentTypeStudent">受講者</string>
+    <string name="enrollmentTypeTeacher">講師</string>
+    <string name="enrollmentTypeObserver">オブザーバー</string>
+    <string name="enrollmentTypeTeachingAssistant">TA</string>
+    <string name="enrollmentTypeDesigner">設計者</string>
+    <string name="enrollmentTypeUnknown">不明</string>
 
 </resources>

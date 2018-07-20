@@ -87,7 +87,7 @@ class AttendanceListPresenter(private val mCanvasContext: CanvasContext, private
                     EnrollmentManager.getAllEnrollmentsForUserInCourse(mCanvasContext.id, userId, mForceNetwork, it)
                 }
 
-                var atLeastOneUnlimitedEnrollment = false
+                var atLeastOneUnlimitedEnrollment : Boolean
                 try { enrollmentsList.first { !it.isLimitPrivilegesToCourseSection }
                     atLeastOneUnlimitedEnrollment = true
                 } catch (e: NoSuchElementException) {

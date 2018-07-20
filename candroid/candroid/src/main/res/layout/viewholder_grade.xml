@@ -17,84 +17,55 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/AdapterItem"
     android:orientation="horizontal">
 
-    <ImageView
+    <com.instructure.pandautils.views.NestedIconView
         android:id="@+id/icon"
         style="@style/AdapterItemIcon"
         android:importantForAccessibility="no"
         tools:srcCompat="@drawable/vd_copy" />
 
+
     <LinearLayout
         android:id="@+id/textContainer"
         style="@style/AdapterItemTextContainer"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/title"
+            style="@style/AdapterItemTitleText"
+            tools:text="Assignment Title" />
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/AdapterItemTitleText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="Course Notification Title" />
+        <TextView
+            android:id="@+id/date"
+            style="@style/AdapterItemDescriptionText"
+            tools:text="No Due Date" />
 
-            <ImageView
-                android:id="@+id/edit"
-                android:layout_width="@dimen/gridIconSize"
-                android:layout_height="@dimen/gridIconSize"
-                android:contentDescription="@string/edit"
-                android:padding="4dp"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                tools:visibility="visible"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="No Due Date"
-                style="@style/AdapterItemDescriptionText"/>
-
-            <TextView
-                android:id="@+id/points"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="100%"
-                style="@style/AdapterItemDescriptionText"
-                android:gravity="center"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:textColor="@color/white"
-                android:textStyle="bold"/>
-
-            <ImageView
-                android:id="@+id/pendingReviewIcon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="12dp"
-                android:contentDescription="@string/pending_review"
-                android:src="@drawable/vd_quiz"
-                android:visibility="gone"
-                tools:visibility="visible"/>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/points"
+            style="@style/AdapterItemDescriptionText"
+            tools:text="100%"
+            android:textSize="16sp"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/edit"
+        style="@style/AdapterItemIcon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:contentDescription="@string/edit"
+        android:padding="8dp"
+        app:srcCompat="@drawable/vd_edit"
+        android:tint="@color/canvasTextDark"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:layout_marginEnd="8dp"/>
 
 </LinearLayout>

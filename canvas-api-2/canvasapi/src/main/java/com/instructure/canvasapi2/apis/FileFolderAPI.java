@@ -71,6 +71,12 @@ public class FileFolderAPI {
         @GET("folders/{folderId}")
         Call<FileFolder> getFolder(@Path("folderId") long folderId);
 
+        @GET("courses/{courseId}/files/{folderId}")
+        Call<FileFolder> getCourseFile(@Path("courseId") long contextId, @Path("folderId") long folderId);
+
+        @GET("users/self/files/{folderId}")
+        Call<FileFolder> getUserFile(@Path("folderId") long folderId);
+
         @GET("folders/{folderId}/folders")
         Call<List<FileFolder>> getFirstPageFolders(@Path("folderId") long folderId);
 
@@ -178,6 +184,14 @@ public class FileFolderAPI {
 
     public static void getFolder(long folderId, @NonNull RestBuilder adapter, @NonNull RestParams params, @NonNull StatusCallback<FileFolder> callback) {
         callback.addCall(adapter.build(FilesFoldersInterface.class, params).getFolder(folderId)).enqueue(callback);
+    }
+
+    public static void getCourseFile(long courseId, long folderId, @NonNull RestBuilder adapter, @NonNull RestParams params, @NonNull StatusCallback<FileFolder> callback) {
+        callback.addCall(adapter.build(FilesFoldersInterface.class, params).getCourseFile(courseId, folderId)).enqueue(callback);
+    }
+
+    public static void getUserFile(long folderId, @NonNull RestBuilder adapter, @NonNull RestParams params, @NonNull StatusCallback<FileFolder> callback) {
+        callback.addCall(adapter.build(FilesFoldersInterface.class, params).getUserFile(folderId)).enqueue(callback);
     }
 
     public static void getFirstPageFolders(@NonNull RestBuilder adapter, long folderId, StatusCallback<List<FileFolder>> callback, @NonNull RestParams params) {

@@ -20,13 +20,14 @@ import android.content.Context
 import android.support.v7.widget.PopupMenu
 import android.text.format.DateFormat
 import android.view.Gravity
-import android.view.View
 import android.widget.TextView
+import com.instructure.canvasapi2.models.Attachment
 import com.instructure.canvasapi2.models.BasicUser
 import com.instructure.canvasapi2.models.Conversation
 import com.instructure.canvasapi2.models.Message
 import com.instructure.canvasapi2.utils.APIHelper
 import com.instructure.canvasapi2.utils.ContextKeeper
+import com.instructure.canvasapi2.utils.asAttachment
 import com.instructure.pandautils.utils.ProfileUtils
 import com.instructure.pandautils.utils.ThemePrefs
 import com.instructure.pandautils.utils.setVisible
@@ -35,43 +36,51 @@ import com.instructure.teacher.R
 import com.instructure.teacher.holders.MessageHolder
 import com.instructure.teacher.interfaces.MessageAdapterCallback
 import com.instructure.teacher.utils.linkifyTextView
+import kotlinx.android.synthetic.main.adapter_message.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 object MessageBinder : BaseBinder() {
 
-    fun bind(context: Context, message: Message, conversation: Conversation, author: BasicUser?, holder: MessageHolder, position: Int, callback: MessageAdapterCallback) {
+    fun bind(message: Message, conversation: Conversation, author: BasicUser?, holder: MessageHolder, position: Int, callback: MessageAdapterCallback) {
 
         // Set author info
-        if (author != null) {
-            holder.authorName.text = getAuthorTitle(context, author.id, conversation, message)
-            ProfileUtils.loadAvatarForUser(holder.authorAvatar, author)
-            holder.authorAvatar.setupAvatarA11y(author.name)
-            holder.authorAvatar.setOnClickListener { callback.onAvatarClicked(author) }
-        } else {
-            holder.authorName.text = ""
-            holder.authorAvatar.setImageDrawable(null)
-            holder.authorAvatar.setOnClickListener(null)
+        with(holder.itemView.authorName) {
+            if (author != null) {
+                text = getAuthorTitle(author.id, conversation, message)
+                ProfileUtils.loadAvatarForUser(holder.itemView.authorAvatar, author)
+                setupAvatarA11y(author.name)
+                setOnClickListener { callback.onAvatarClicked(author) }
+            } else {
+                text = ""
+                with(holder.itemView.authorAvatar) {
+                    setImageDrawable(null)
+                    setOnClickListener(null)
+                }
+            }
         }
 
         // Set attachments
-        if (message.attachments == null || message.attachments.isEmpty()) {
-            holder.attachmentContainer.visibility = View.GONE
-        } else {
-            holder.attachmentContainer.visibility = View.VISIBLE
-            holder.attachmentContainer.setAttachments(message.attachments) { action, attachment -> callback.onAttachmentClicked(action, attachment) }
+        with(holder.itemView.attachmentContainer) {
+            val attachments: MutableList<Attachment> = message.attachments?.toMutableList() ?: kotlin.collections.mutableListOf()
+            message.mediaComment?.let { attachments.add(it.asAttachment()) }
+            setVisible(attachments.isNotEmpty()).setAttachments(attachments) { action, attachment ->
+                callback.onAttachmentClicked(action, attachment)
+            }
         }
 
+
         // Set body
-        holder.body.setText(message.body, TextView.BufferType.SPANNABLE)
-        holder.body.linkifyTextView()
+        holder.itemView.messageBody.setText(message.body, TextView.BufferType.SPANNABLE)
+        holder.itemView.messageBody.linkifyTextView()
+
         // Set message date/time
         val messageDate = APIHelper.stringToDate(message.createdAt)
-        holder.dateTime.text = dateFormat.format(messageDate)
+        holder.itemView.dateTime.text = dateFormat.format(messageDate)
 
         // Set up message options
-        holder.messageOptions.setOnClickListener { v ->
+        holder.itemView.messageOptions.setOnClickListener { v ->
             // Set up popup menu
             val actions = MessageAdapterCallback.MessageClickAction.values()
             val popup = PopupMenu(v.context, v, Gravity.START)
@@ -90,33 +99,35 @@ object MessageBinder : BaseBinder() {
             popup.show()
         }
 
-        holder.reply.setTextColor(ThemePrefs.buttonColor)
-        holder.reply.setVisible(position == 0)
-        holder.reply.setOnClickListener { callback.onMessageAction(MessageAdapterCallback.MessageClickAction.REPLY, message) }
+        with(holder.itemView.reply) {
+            setTextColor(ThemePrefs.buttonColor)
+            setVisible(position == 0)
+            setOnClickListener { callback.onMessageAction(MessageAdapterCallback.MessageClickAction.REPLY, message) }
+        }
     }
 
     private var dateFormat = SimpleDateFormat(if (DateFormat.is24HourFormat(ContextKeeper.appContext)) "MMM d, yyyy, HH:mm" else "MMM d, yyyy, h:mm a",
-                    Locale.getDefault())
+            Locale.getDefault())
 
-    fun getAuthorTitle(context: Context, myUserId: Long, conversation: Conversation, message: Message): String {
+    private fun getAuthorTitle(myUserId: Long, conversation: Conversation, message: Message): String {
 
         // we don't want to filter by the messages participating user ids because they don't always contain the correct information
-        var users = conversation.participants
+        val users = conversation.participants
 
         val author = users.firstOrNull { it.id == myUserId }
 
         //we want the author first
-        if(author != null) {
+        if (author != null) {
             users.remove(author)
             users.add(0, author)
         }
 
-        if (users.isEmpty()) {
-            return ""
+        return if (users.isEmpty()) {
+            ""
         } else {
-            return when (users.size) {
+            when (users.size) {
                 in 0..2 -> users.joinToString { it.name }
-                else -> context.getString(R.string.conversation_message_title, users.first().name, users.lastIndex.toString())
+                else -> "${users[0].name}, +${message.participatingUserIds.size - 1}"
             }
         }
     }

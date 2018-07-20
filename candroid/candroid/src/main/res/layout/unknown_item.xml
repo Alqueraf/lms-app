@@ -15,60 +15,73 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ~
   -->
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/canvasBackgroundLight">
+    android:background="@color/canvasBackgroundLight"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/defaultPrimary"
+        android:elevation="6dp"
+        app:popupTheme="@style/ToolBarPopupStyle"
+        app:theme="@style/ToolBarStyle"
+        tools:targetApi="lollipop"/>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
-        android:background="@color/canvasBackgroundLight"
-        android:orientation="vertical">
+        android:background="@color/canvasBackgroundLight">
 
-        <TextView
-            android:id="@+id/title"
-            android:autoLink="all"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/TextStyle.Primary"/>
+            android:background="@color/canvasBackgroundLight"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/message"
-            android:autoLink="all"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextStyle.Primary"/>
+            <TextView
+                android:id="@+id/message"
+                style="@style/TextStyle.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="all"/>
 
-        <TextView
-            android:id="@+id/url"
-            android:autoLink="all"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextStyle.Primary"/>
+            <TextView
+                android:id="@+id/url"
+                style="@style/TextStyle.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="all"/>
 
-        <TextView
-            android:id="@+id/html_url"
-            android:autoLink="all"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextStyle.Primary"/>
+            <TextView
+                android:id="@+id/html_url"
+                style="@style/TextStyle.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="all"/>
 
-        <TextView
-            android:id="@+id/notification_category"
-            android:autoLink="all"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextStyle.Primary"/>
+            <TextView
+                android:id="@+id/notificationCategory"
+                style="@style/TextStyle.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="all"/>
 
-        <TextView
-            android:id="@+id/updated_date_time"
-            android:autoLink="all"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextStyle.Primary"/>
+            <TextView
+                android:id="@+id/updatedDateTime"
+                style="@style/TextStyle.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="all"/>
 
-    </LinearLayout>
-</ScrollView>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

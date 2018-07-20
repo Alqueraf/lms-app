@@ -37,10 +37,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.instructure.canvasapi2.managers.CourseNicknameManager
 import com.instructure.canvasapi2.managers.UserManager
-import com.instructure.canvasapi2.models.CanvasColor
-import com.instructure.canvasapi2.models.Course
-import com.instructure.canvasapi2.models.CourseNickname
-import com.instructure.canvasapi2.models.User
+import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.MasqueradeHelper
 import com.instructure.canvasapi2.utils.weave.awaitApi
@@ -67,6 +64,7 @@ import com.instructure.teacher.factory.InitActivityPresenterFactory
 import com.instructure.teacher.fragments.*
 import com.instructure.teacher.presenters.InitActivityPresenter
 import com.instructure.teacher.router.RouteMatcher
+import com.instructure.teacher.router.RouteResolver
 import com.instructure.teacher.tasks.LogoutAsyncTask
 import com.instructure.teacher.tasks.SwitchUsersAsyncTask
 import com.instructure.teacher.utils.AppType
@@ -215,6 +213,10 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
                 R.id.navigationDrawerItem_files -> {
                     RouteMatcher.route(this@InitActivity, Route(FileListFragment::class.java, ApiPrefs.user))
                 }
+                R.id.navigationDrawerItem_gauge, R.id.navigationDrawerItem_arc -> {
+                    val launchDefinition = v.tag as? LaunchDefinition
+                    if (launchDefinition != null) startActivity(LTIActivity.createIntent(this@InitActivity, launchDefinition))
+                }
                 R.id.navigationDrawerItem_changeUser -> SwitchUsersAsyncTask().execute()
                 R.id.navigationDrawerItem_logout -> {
                     AlertDialog.Builder(this@InitActivity)
@@ -241,6 +243,8 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
 
         // Navigation items
         navigationDrawerItem_files.setOnClickListener(navDrawerOnClick)
+        navigationDrawerItem_gauge.setOnClickListener(navDrawerOnClick)
+        navigationDrawerItem_arc.setOnClickListener(navDrawerOnClick)
         navigationDrawerItem_changeUser.setOnClickListener(navDrawerOnClick)
         navigationDrawerItem_logout.setOnClickListener(navDrawerOnClick)
         navigationDrawerSettings.setOnClickListener(navDrawerOnClick)
@@ -264,8 +268,19 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
 
         ViewStyler.themeToolbar(this, toolbar, ThemePrefs.primaryColor, ThemePrefs.primaryTextColor)
 
-        navigationDrawerItem_startMasquerading.setVisible(!ApiPrefs.isMasquerading && ApiPrefs.canMasquerade == true)
+        navigationDrawerItem_startMasquerading.setVisible(!ApiPrefs.isMasquerading && ApiPrefs.canBecomeUser == true)
         navigationDrawerItem_stopMasquerading.setVisible(ApiPrefs.isMasquerading)
+    }
+
+    override fun gotLaunchDefinitions(launchDefinitions: List<LaunchDefinition>?) {
+        val arcLaunchDefinition = launchDefinitions?.firstOrNull { it.domain == LaunchDefinition._ARC_DOMAIN }
+        val gaugeLaunchDefinition = launchDefinitions?.firstOrNull { it.domain == LaunchDefinition._GAUGE_DOMAIN }
+
+        navigationDrawerItem_arc.setVisible(arcLaunchDefinition != null)
+        navigationDrawerItem_arc.tag = arcLaunchDefinition
+
+        navigationDrawerItem_gauge.setVisible(gaugeLaunchDefinition != null)
+        navigationDrawerItem_gauge.tag = gaugeLaunchDefinition
     }
 
     override fun onStartMasquerading(domain: String, userId: Long) {
@@ -337,7 +352,7 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
     private fun addCoursesFragment() {
         if (supportFragmentManager.findFragmentByTag(CoursesFragment::class.java.simpleName) == null) {
             setBaseFragment(CoursesFragment.getInstance())
-        } else if (resources.getBoolean(R.bool.is_device_tablet)) {
+        } else if (resources.getBoolean(R.bool.isDeviceTablet)) {
             container.visibility = View.VISIBLE
             masterDetailContainer.visibility = View.GONE
         }
@@ -346,9 +361,9 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
     private fun addInboxFragment() {
         if (supportFragmentManager.findFragmentByTag(InboxFragment::class.java.simpleName) == null) {
             // if we're a tablet we want the master detail view
-            if (resources.getBoolean(R.bool.is_device_tablet)) {
+            if (resources.getBoolean(R.bool.isDeviceTablet)) {
                 val route = Route(InboxFragment::class.java, null)
-                val masterFragment = RouteMatcher.getMasterFragment(null, route)
+                val masterFragment = RouteResolver.getMasterFragment(null, route)
                 val detailFragment =
                     EmptyFragment.newInstance(RouteMatcher.getClassDisplayName(this, route.primaryClass))
                 putFragments(masterFragment, detailFragment, true)
@@ -357,7 +372,7 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
             } else {
                 setBaseFragment(InboxFragment())
             }
-        } else if (resources.getBoolean(R.bool.is_device_tablet)) {
+        } else if (resources.getBoolean(R.bool.isDeviceTablet)) {
             masterDetailContainer.visibility = View.VISIBLE
             container.setGone()
             middleTopDivider.setBackgroundColor(ThemePrefs.primaryColor)
@@ -366,7 +381,7 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
     }
 
     override fun addFragment(route: Route) {
-        addDetailFragment(RouteMatcher.getDetailFragment(route.canvasContext, route))
+        addDetailFragment(RouteResolver.getDetailFragment(route.canvasContext, route))
     }
 
     private fun addDetailFragment(fragment: Fragment?) {
@@ -395,7 +410,7 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
     private fun addToDoFragment() {
         if (supportFragmentManager.findFragmentByTag(ToDoFragment::class.java.simpleName) == null) {
             setBaseFragment(ToDoFragment())
-        } else if (resources.getBoolean(R.bool.is_device_tablet)) {
+        } else if (resources.getBoolean(R.bool.isDeviceTablet)) {
             container.visibility = View.VISIBLE
             masterDetailContainer.visibility = View.GONE
         }
@@ -517,7 +532,7 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
                 val htmlUrl = extras.getString(PushNotification.HTML_URL, "")
 
                 if (!RouteMatcher.canRouteInternally(this, htmlUrl, ApiPrefs.domain, true)) {
-                    RouteMatcher.routeUrl(this, htmlUrl, ApiPrefs.domain, RouteContext.EXTERNAL)
+                    RouteMatcher.routeUrl(this, htmlUrl, ApiPrefs.domain)
                 }
             }
         }
@@ -530,7 +545,7 @@ class InitActivity : BasePresenterActivity<InitActivityPresenter, InitActivityVi
 
     private fun setPushNotificationAsRead() {
         intent.putExtra(PushExternalReceiver.NEW_PUSH_NOTIFICATION, false)
-        PushNotification.clearPushHistory(applicationContext)
+        PushNotification.clearPushHistory()
     }
 
     //endregion

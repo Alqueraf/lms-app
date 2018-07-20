@@ -16,6 +16,7 @@
  */
 package com.instructure.androidfoosball.activities
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -34,6 +35,7 @@ import com.instructure.androidfoosball.ktmodels.*
 import com.instructure.androidfoosball.push.PushIntentService
 import com.instructure.androidfoosball.receivers.GoalReceiver
 import com.instructure.androidfoosball.utils.*
+import com.instructure.androidfoosball.views.TableRequestedDialog
 import com.instructure.androidfoosball.views.WinGameDialog
 import com.instructure.androidfoosball.views.WinRoundDialog
 import kotlinx.android.synthetic.tablet.activity_game.*
@@ -44,14 +46,21 @@ import java.util.*
 
 class GameActivity : AppCompatActivity() {
 
-    companion object {
-        val EXTRA_GAME_ID = "gameId"
-    }
+    private val table = Table.getSelectedTable()
+    private val incomingDataRef = FirebaseDatabase.getInstance().reference.child("incoming").child(table.id)
 
     private val mGameId by lazy { intent.getStringExtra(EXTRA_GAME_ID) ?: "" }
     private val mGame by lazy { App.realm.where(Game::class.java).equalTo("id", mGameId).findFirst()!! }
     private val mDatabase: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val mTable = Table.getSelectedTable()
+
+    private val nfcListener = object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            TableRequestedDialog.showIfNecessary(incomingDataRef, dataSnapshot, supportFragmentManager)
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) { }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,8 +70,10 @@ class GameActivity : AppCompatActivity() {
         setupRound()
         GoalReceiver.register(this, goalReceiver, 100)
         updateGameStatusBusy()
+        incomingDataRef.addValueEventListener(nfcListener)
     }
 
+    @SuppressLint("Range")
     private fun setupViews() {
 
         // Get table colors
@@ -246,6 +257,7 @@ class GameActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         GoalReceiver.unregister(this, goalReceiver)
+        incomingDataRef.removeEventListener(nfcListener)
     }
 
     private fun updateTeamStats(winningTeam: List<User>, losingTeam: List<User>) {
@@ -375,4 +387,9 @@ class GameActivity : AppCompatActivity() {
     override fun onBackPressed() {
         // Do nothing
     }
+
+    companion object {
+        const val EXTRA_GAME_ID = "gameId"
+    }
+
 }

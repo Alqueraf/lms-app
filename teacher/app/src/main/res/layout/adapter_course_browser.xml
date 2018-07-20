@@ -5,17 +5,17 @@
     android:layout_height="wrap_content"
     android:background="?android:selectableItemBackground"
     android:gravity="center_vertical"
-    android:minHeight="?android:listPreferredItemHeight"
+    android:minHeight="?android:listPreferredItemHeightSmall"
     android:orientation="horizontal"
     android:paddingEnd="16dp"
     android:paddingStart="16dp">
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:importantForAccessibility="no"
-        tools:src="@drawable/icon_assignments"/>
+        tools:src="@drawable/vd_assignment"/>
 
     <TextView
         android:id="@+id/label"

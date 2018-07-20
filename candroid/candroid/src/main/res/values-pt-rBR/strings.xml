@@ -145,12 +145,29 @@
     <string name="toDoNoDueDate">Sem Prazo</string>
 
     <string name="dueAt">Para ser entregue às</string>
+    <string name="dueAtTime">Com vencimento às %s</string>
     <string name="toDoDue">Vencimento</string>
+    <string name="due">Vencimento %1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="one">%d precisa de classificação</item>
         <item quantity="other">%d precisam de classificação</item>
     </plurals>
     <string name="myFiles">Arquivos</string>
+    <string name="createAFolder">Criar uma pasta</string>
+    <string name="createFolder">Criar Pasta</string>
+    <string name="createAFile">Criar um arquivo</string>
+    <string name="createFileFolderFabContentDesc">Mostrar botões Criar arquivo e Criar pasta</string>
+    <string name="folderCreationError">Um erro ocorreu durante a criação da pasta.</string>
+    <string name="rename">Renomear</string>
+    <string name="renameFile">Renomear arquivo</string>
+    <string name="renameFolder">Renomear pasta</string>
+    <string name="blankName">Nome não pode estar em branco</string>
+    <string name="confirmDeleteFile">Tem certeza de que deseja excluir o arquivo ’%s\'? Essa ação não pode ser desfeita.</string>
+    <string name="confirmDeleteEmptyFolder">Tem certeza de que deseja excluir a pasta \'%s\'? Essa ação não pode ser desfeita.</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="one">Tem certeza de que deseja excluir a pasta \'%1$s\', incluindo o %2$d item que ele possui? Essa ação não pode ser desfeita.</item>
+        <item quantity="other">Tem certeza de que deseja excluir a pasta \'%1$s\', incluindo os %2$d itens que ele possui? Essa ação não pode ser desfeita.</item>
+    </plurals>
     <string name="settings">Configurações</string>
     <string name="name">Nome</string>
     <string name="email">E-mail</string>
@@ -354,6 +371,8 @@
 	<string name="errorPostingAnnouncement">Houve um erro ao postar o anúncio.</string>
 	<string name="errorPostingDiscussion">Houve um erro ao postar a discussão.</string>
 	<string name="allowThreading">Permitir Respostas Vinculadas</string>
+    <string name="usersMustPost">Os usuários devem publicar antes de ver as respostas</string>
+    <string name="allowUserComments">Permitir que os usuários comentem</string>
 	<string name="message">Mensagem</string>
 	<string name="title">Título</string>
 
@@ -443,6 +462,7 @@
     <string name="subTypeOnlineQuiz">Questionário Online</string>
 	<string name="subTypeMediaRecording">Gravação de Mídia</string>
     <string name="sub_type_lti_launch">Lançamento LTI</string>
+    <string name="subTypeDiscussionTopic">Discussão</string>
     <string name="turnInByHand">Você deve entregar esta tarefa à mão</string>
 	<string name="noSubRequired">Nenhum trabalho submetido necessário</string>
 	<string name="noTurnInOnMobile">Submissão por dispositivo móvel não suportada.</string>
@@ -572,6 +592,7 @@
     <string name="uploadMyFiles">Meus arquivos</string>
     <string name="uploadCourseFiles">Arquivos do Curso</string>
 
+    <string name="uploadToSubmissionComment">Carregar em comentário de envio</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">Registro de alterações</string>
 
@@ -610,14 +631,6 @@
 
     <string name="notoriousSubmissionInProgress">Enviando arquivos&#8230; Confira na barra de notificações por atualizações.</string>
     <string name="notoriousSubmissionSuccessful">Terminou de enviar arquivo</string>
-
-    <string name="pinned_icon">ícone para discussão anexada</string>
-    <string name="pin_discussion">Anexar Discussão</string>
-    <string name="unpin_discussion">Desanexar Discussão</string>
-    <string name="discussion_pinned">Discussão Anexada</string>
-    <string name="pinned_discussions">Discussões fixadas</string>
-    <string name="discussion_unpinned">Discussão Desanexada</string>
-    <string name="empty_discussions">Não há discussões para mostrar nesta seção.</string>
 
     <string name="bio">Bio</string>
     <string name="draft">Rascunho</string>
@@ -844,6 +857,7 @@
     <string name="locked_mastery_paths">Bloqueado até que \"%s\" seja classificado</string>
     <string name="locked_icon">Ícone bloqueado</string>
     <string name="choose_assignment_group">Escolher grupo de tarefas</string>
+    <string name="chooseAssignmentPath">Escolher caminho da tarefa</string>
     <string name="select">Selecionar</string>
     <string name="choice_position">Escolha %d</string>
     <string name="updating_module_info">Atualizando informações do módulo&#8230;</string>
@@ -873,13 +887,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">Lançar link no navegador externo</string>
-    <string name="gaugeLaunchFailure">Não foi possível carregar o Gauge neste momento.</string>
-
+    <string name="ltiLaunchFailure">Não foi possível carregar esta ferramenta LTI neste momento.</string>
     <string name="urlSubmission">Envio de URL</string>
     <string name="assignmentDeletedError">Essa tarefa não está mais disponível.</string>
     <string name="homePageIdForNotifications">Atividade recente</string>
     <string name="homePageIdForModules">Módulos</string>
     <string name="homePageIdForAssignments">Tarefas</string>
+
     <string name="homePageIdForSyllabus">Programa de estudos</string>
 
     <string name="contentDescriptionWidgetRefresh">Atualizar widget</string>
@@ -893,9 +907,44 @@
     <string name="finalGrade">Nota final</string>
 
     <string name="moreThan99">+99</string>
-    <string name="dot_with_spaces">  \u2022  </string>
+    <string name="max_count">+99</string>
 
     <string name="opensInWebView">Abre na visualização web</string>
     <string name="unsupportedTabLabel">Não suportado nesse dispositivo</string>
+
+    <string name="downloadingFile">Baixando</string>
+    <string name="downloadFailed">Falha do download</string>
+    <string name="downloadSuccessful">Download bem-sucedido</string>
+
+    <string name="full_due_date_details">Detalhes completos da data de vencimento</string>
+    <string name="submissions">Envios</string>
+    <string name="attachment">Anexo</string>
+    <string name="contentDescription_back">Voltar</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="one">%s pt</item>
+        <item quantity="other">%s pts</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="one">%s ponto</item>
+        <item quantity="other">%s pontos</item>
+    </plurals>
+    <string name="capitalTo">Para</string>
+
+
+    <string name="unableToViewInBrowser">Não conseguimos encontrar um app externo para visualizar esta ferramenta LTI.</string>
+    <string name="commentUpload">Carregamento de comentários</string>
+    <string name="unableToUploadMediaComment">Para enviar um comentário de mídia, envie ou exclua o comentário de texto não enviado.</string>
+
+    <string name="frontPage">Primeira página</string>
+    <string name="editPage">Editar página</string>
+    <string name="description">Descrição</string>
+    <string name="pageSuccessfullyUpdated">Página atualizada com sucesso.</string>
+    <string name="errorSavingPage">Ocorreu um erro ao tentar salvar essa página. Tente novamente.</string>
+    <string name="pageTitleMustBeSet">O título da página deve ser definido.</string>
+    <string name="pageDetails">Detalhes da página</string>
+    <string name="saving">Salvando</string>
+    <string name="confirmDeleteEvent">Tem certeza de que deseja excluir este evento?</string>
+    <string name="conferencesNotSupported">Conferências ainda não são suportadas em dispositivos móveis.</string>
 
 </resources>

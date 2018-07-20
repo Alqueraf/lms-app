@@ -23,6 +23,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.instructure.candroid.R
 import com.instructure.candroid.adapter.FileFolderCallback
+import com.instructure.candroid.fragment.FileListFragment
 import com.instructure.canvasapi2.models.FileFolder
 import com.instructure.canvasapi2.utils.isValid
 import com.instructure.pandautils.utils.*
@@ -31,14 +32,17 @@ import java.text.DecimalFormat
 
 class FileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(item: FileFolder, tint: Int, context: Context, hasOptions: Boolean, callback: FileFolderCallback): Unit = with(itemView) {
+    fun bind(item: FileFolder, tint: Int, context: Context, hasOptions: List<FileListFragment.FileMenuType>, callback: FileFolderCallback): Unit = with(itemView) {
         // Set up click listeners
         onClick { callback.onItemClicked(item) }
         onLongClick { overflowButton.performClick() }
-        if (hasOptions) {
+
+        if (hasOptions.isNotEmpty()) {
+            // User has options
             overflowButton.setVisible()
             overflowButton.onClick { callback.onOpenItemMenu(item, overflowButton) }
         } else {
+            // No options, don't show the... "kabob"
             overflowButton.setGone()
             overflowButton.setOnClickListener(null)
         }

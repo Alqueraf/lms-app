@@ -23,10 +23,12 @@ import android.support.v4.content.ContextCompat
 import android.webkit.CookieManager
 import com.instructure.candroid.BuildConfig
 import com.instructure.candroid.R
+import com.instructure.canvasapi2.models.User
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.interactions.router.Route
 import com.instructure.loginapi.login.activities.BaseLoginInitActivity
 import com.instructure.pandautils.services.PushNotificationRegistrationService
+import com.instructure.pandautils.utils.Utils
 
 class LoginActivity : BaseLoginInitActivity() {
 
@@ -59,6 +61,20 @@ class LoginActivity : BaseLoginInitActivity() {
     override fun finish() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         super.finish()
+    }
+
+    /**
+     * ONLY USE FOR UI TESTING
+     * Skips the traditional login process by directly setting the domain, token, and user info.
+     */
+    fun loginWithToken(token: String, domain: String, user: User) {
+        ApiPrefs.token = token
+        ApiPrefs.domain = domain
+        ApiPrefs.user = user
+        ApiPrefs.userAgent = Utils.generateUserAgent(this, userAgent())
+        finish()
+        val intent = Intent(this, NavigationActivity.startActivityClass).apply { intent?.extras?.let { putExtras(it) } }
+        startActivity(intent)
     }
 
     companion object {

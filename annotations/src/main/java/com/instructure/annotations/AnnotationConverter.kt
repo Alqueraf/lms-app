@@ -35,7 +35,7 @@ fun CanvaDocAnnotation.convertCanvaDocAnnotationToPDF(context: Context) : Annota
         CanvaDocAnnotation.AnnotationType.STRIKEOUT -> convertStrikeoutType(this, context)
         CanvaDocAnnotation.AnnotationType.SQUARE -> convertSquareType(this, context)
         CanvaDocAnnotation.AnnotationType.FREE_TEXT -> convertFreeTextType(this, context)
-        CanvaDocAnnotation.AnnotationType.TEXT -> convertTextType(this, context)
+        CanvaDocAnnotation.AnnotationType.TEXT -> convertTextType(this)
         else -> null
     }
 }
@@ -46,7 +46,7 @@ fun Annotation.convertPDFAnnotationToCanvaDoc(canvaDocId: String) : CanvaDocAnno
         AnnotationType.HIGHLIGHT -> (this as HighlightAnnotation).convertToCanvaDoc(canvaDocId)
         AnnotationType.STRIKEOUT -> (this as StrikeOutAnnotation).convertToCanvaDoc(canvaDocId)
         AnnotationType.SQUARE -> (this as SquareAnnotation).convertToCanvaDoc(canvaDocId)
-        AnnotationType.NOTE -> (this as NoteAnnotation).convertToCanvaDoc(canvaDocId)
+        AnnotationType.STAMP -> (this as StampAnnotation).convertToCanvaDoc(canvaDocId)
         AnnotationType.FREETEXT -> (this as FreeTextAnnotation).convertToCanvaDoc(canvaDocId)
         else -> null
     }
@@ -56,7 +56,8 @@ fun Annotation.convertPDFAnnotationToCanvaDoc(canvaDocId: String) : CanvaDocAnno
 private fun convertInkType(canvaDocAnnotation: CanvaDocAnnotation, context: Context): InkAnnotation {
     val inkAnnotation = CanvaInkAnnotation(
             CanvaPdfAnnotation(
-                    page = canvaDocAnnotation.page
+                    page = canvaDocAnnotation.page,
+                    userId = canvaDocAnnotation.userId
             )
     )
 
@@ -75,7 +76,8 @@ private fun convertHighlightType(canvaDocAnnotation: CanvaDocAnnotation, context
 
     val highLightAnnotation = CanvaHighlightAnnotation(CanvaPdfAnnotation(
             page = canvaDocAnnotation.page,
-            rectList = rectList
+            rectList = rectList,
+            userId = canvaDocAnnotation.userId
     ))
     highLightAnnotation.contents = canvaDocAnnotation.contents
     highLightAnnotation.color = canvaDocAnnotation.getColorInt(ContextCompat.getColor(context, (R.color.canvas_default_button)))
@@ -89,7 +91,8 @@ private fun convertStrikeoutType(canvaDocAnnotation: CanvaDocAnnotation, context
 
     val strikeOutAnnotation = CanvaStrikeOutAnnotation(CanvaPdfAnnotation(
             page = canvaDocAnnotation.page,
-            rectList = rectList
+            rectList = rectList,
+            userId = canvaDocAnnotation.userId
     ))
     strikeOutAnnotation.contents = canvaDocAnnotation.contents
     strikeOutAnnotation.color = canvaDocAnnotation.getColorInt(ContextCompat.getColor(context, (R.color.canvas_default_button)))
@@ -102,7 +105,8 @@ private fun convertSquareType(canvaDocAnnotation: CanvaDocAnnotation, context: C
     val rect = canvaDocAnnotation.rect?.let { RectF(it[0][0], it[0][1], it[1][0], it[1][1]) }
     val squareAnnotation = CanvaSquareAnnotation(CanvaPdfAnnotation(
             page = canvaDocAnnotation.page,
-            rect = rect
+            rect = rect,
+            userId = canvaDocAnnotation.userId
     ))
     squareAnnotation.contents = canvaDocAnnotation.contents
     squareAnnotation.color = canvaDocAnnotation.getColorInt(ContextCompat.getColor(context, (R.color.canvas_default_button)))
@@ -116,7 +120,8 @@ private fun convertFreeTextType(canvaDocAnnotation: CanvaDocAnnotation, context:
     val rect = canvaDocAnnotation.rect?.let { RectF(it[0][0], it[1][1], it[1][0], it[0][1]) }
     val freeTextAnnotation = CanvaFreeTextAnnotation(CanvaPdfAnnotation(
             page = canvaDocAnnotation.page,
-            rect = rect
+            rect = rect,
+            userId = canvaDocAnnotation.userId
     ), contents = canvaDocAnnotation.contents ?: "")
 
     freeTextAnnotation.color = canvaDocAnnotation.getColorInt(ContextCompat.getColor(context, (R.color.black)))
@@ -127,17 +132,18 @@ private fun convertFreeTextType(canvaDocAnnotation: CanvaDocAnnotation, context:
     return freeTextAnnotation
 }
 
-private fun convertTextType(canvaDocAnnotation: CanvaDocAnnotation, context: Context) : NoteAnnotation {
+private fun convertTextType(canvaDocAnnotation: CanvaDocAnnotation) : StampAnnotation {
     val rect = canvaDocAnnotation.rect?.let { RectF(it[0][0], it[0][1], it[1][0], it[1][1]) }
-    val noteAnnotation = CanvaNoteAnnotation(CanvaPdfAnnotation(
+    val stampAnnotation = CanvaStampAnnotation(CanvaPdfAnnotation(
             page = canvaDocAnnotation.page,
-            rect = rect
-    ), NoteAnnotation.CIRCLE, canvaDocAnnotation.contents ?: "")
+            rect = rect,
+            userId = canvaDocAnnotation.userId
+    ))
 
-    noteAnnotation.color = canvaDocAnnotation.getColorInt(ContextCompat.getColor(context, (R.color.canvas_default_button)))
-    noteAnnotation.name = canvaDocAnnotation.annotationId
+    stampAnnotation.name = canvaDocAnnotation.annotationId
+    stampAnnotation.subject = getStampSubjectFromColorHex(canvaDocAnnotation.color)
 
-    return noteAnnotation
+    return stampAnnotation
 }
 //endregion
 
@@ -218,7 +224,7 @@ fun SquareAnnotation.convertToCanvaDoc(canvaDocId: String): CanvaDocAnnotation {
     )
 }
 
-fun NoteAnnotation.convertToCanvaDoc(canvaDocId: String): CanvaDocAnnotation {
+fun StampAnnotation.convertToCanvaDoc(canvaDocId: String): CanvaDocAnnotation {
     return CanvaDocAnnotation(
             annotationId = this.name ?: "",
             userName = ApiPrefs.user?.shortName,
@@ -230,7 +236,7 @@ fun NoteAnnotation.convertToCanvaDoc(canvaDocId: String): CanvaDocAnnotation {
             annotationType = CanvaDocAnnotation.AnnotationType.TEXT,
             rect = listOfRectsToListOfListOfFloats(listOf(this.boundingBox)),
             icon = "Comment",
-            color = this.colorToHexString(),
+            color = getColorHexFromStampSubject(this.subject),
             contents = this.contents,
             iconColor= this.colorToHexString(),
             isEditable = true
@@ -270,6 +276,7 @@ fun createCommentReplyAnnotation(contents: String, inReplyTo: String, canvaDocId
             inReplyTo = inReplyTo,
             isEditable = true)
 }
+//endregion
 
 
 fun listOfRectsToListOfListOfFloats(rects: List<RectF>?): ArrayList<ArrayList<Float>>? {
@@ -335,4 +342,81 @@ fun Annotation.colorToHexString() = String.format("#%06X", 0xFFFFFF and this.col
 
 fun generateAnnotationId() = UUID.randomUUID().toString()
 
-//endregion
+fun Annotation.transformStamp() {
+    val centerX = this.boundingBox.centerX()
+    val centerY = this.boundingBox.centerY()
+
+    // Goal dimension is 9.33w x 13.33h
+    val newRect = RectF(centerX - 4.665f, centerY + 6.665f, centerX + 4.665f, centerY - 6.665f)
+
+    this.boundingBox = newRect
+}
+
+private fun getStampSubjectFromColorHex(color: String?): String {
+    return when (color) {
+        blackStampHex -> blackStampSubject
+        blueStampHex -> blueStampSubject
+        brownStampHex -> brownStampSubject
+        greenStampHex -> greenStampSubject
+        navyStampHex -> navyStampSubject
+        orangeStampHex -> orangeStampSubject
+        pinkStampHex -> pinkStampSubject
+        purpleStampHex -> purpleStampSubject
+        redStampHex -> redStampSubject
+        yellowStampHex -> yellowStampSubject
+        else -> blueStampSubject
+    }
+}
+
+private fun getColorHexFromStampSubject(subject: String?): String {
+    return when (subject) {
+        blackStampSubject -> blackStampHex
+        blueStampSubject -> blueStampHex
+        brownStampSubject -> brownStampHex
+        greenStampSubject -> greenStampHex
+        navyStampSubject -> navyStampHex
+        orangeStampSubject -> orangeStampHex
+        pinkStampSubject -> pinkStampHex
+        purpleStampSubject -> purpleStampHex
+        redStampSubject -> redStampHex
+        yellowStampSubject -> yellowStampHex
+        else -> blueStampHex
+    }
+}
+
+// Stamp file asset names
+const val blackStampFile = "stamps/blackpoint.pdf"
+const val blueStampFile = "stamps/bluepoint.pdf"
+const val brownStampFile = "stamps/brownpoint.pdf"
+const val greenStampFile = "stamps/greenpoint.pdf"
+const val navyStampFile = "stamps/navypoint.pdf"
+const val orangeStampFile = "stamps/orangepoint.pdf"
+const val pinkStampFile = "stamps/pinkpoint.pdf"
+const val purpleStampFile = "stamps/purplepoint.pdf"
+const val redStampFile = "stamps/redpoint.pdf"
+const val yellowStampFile = "stamps/yellowpoint.pdf"
+
+// Stamp subject names
+const val blackStampSubject = "BlackStamp"
+const val blueStampSubject = "BlueStamp"
+const val brownStampSubject = "BrownStamp"
+const val greenStampSubject = "GreenStamp"
+const val navyStampSubject = "NavyStamp"
+const val orangeStampSubject = "OrangeStamp"
+const val pinkStampSubject = "PinkStamp"
+const val purpleStampSubject = "PurpleStamp"
+const val redStampSubject = "RedStamp"
+const val yellowStampSubject = "YellowStamp"
+
+// Stamp hex color codes
+const val blackStampHex = "#363636"
+const val blueStampHex = "#008EE2"
+const val brownStampHex = "#8D6437"
+const val greenStampHex = "#00AC18"
+const val navyStampHex = "#234C9F"
+const val orangeStampHex = "#FC5E13"
+const val pinkStampHex = "#C31FA8"
+const val purpleStampHex = "#741865"
+const val redStampHex = "#EE0612"
+const val yellowStampHex = "#FCB900"
+

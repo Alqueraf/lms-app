@@ -28,6 +28,8 @@ import java.util.*
 data class CanvaDocAnnotation(
         @SerializedName("id")
         var annotationId: String,
+        var page: Int,
+        var isEditable: Boolean,
         @SerializedName("ctx_and_id")
         var ctxId: String? = null,
         @SerializedName("user_id")
@@ -42,7 +44,6 @@ data class CanvaDocAnnotation(
         var documentId: String? = null,
         var subject: String? = null,
         var flags: List<String>? = null,
-        var page: Int,
         var context: String? = null,
         var width: Float? = null,
         @SerializedName("type")
@@ -57,7 +58,13 @@ data class CanvaDocAnnotation(
         var inklist: CanvaDocInkList? = null,
         @SerializedName("inreplyto")
         var inReplyTo: String? = null,
-        var isEditable: Boolean
+        var deleted: Boolean = false,
+        @SerializedName("deleted_by")
+        var deletedBy: String? = null,
+        @SerializedName("delete_acknowledged")
+        var deleteAcknowledged: String? = null,
+        @SerializedName("deleted_at")
+        var deletedAt: String? = null
 ) : PaperParcelable, CanvasModel<CanvaDocAnnotation>() {
 
     override fun getId() = annotationId.hashCode().toLong()

@@ -125,9 +125,9 @@
             <!--app:srcCompat="@drawable/vd_rce_format_quote"/>-->
 
         <ImageButton
-            android:id="@+id/action_insert_image"
+            android:id="@+id/actionUploadImage"
             style="@style/RCE_Item"
-            android:contentDescription="@string/rce_contentDescription_insert_photo"
+            android:contentDescription="@string/rce_contentDescription_upload_photo"
             app:srcCompat="@drawable/vd_rce_insert_photo"/>
 
         <ImageButton

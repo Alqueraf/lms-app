@@ -38,19 +38,6 @@ object PermissionUtils {
     const val RECORD_AUDIO = Manifest.permission.RECORD_AUDIO
 
     /**
-     * Extension method on [Context] to check for permissions
-     */
-    @JvmStatic
-    fun Context.hasPermissions(vararg permissions: String): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return permissions
-                    .map { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
-                    .all { it }
-        }
-        return true
-    }
-
-    /**
      * Checks to see if we have the necessary permissions.
      * @param activity A context in the form of an activity
      * @param permissions A string of permissions (we have hard coded values in [PermissionUtils])
@@ -69,6 +56,7 @@ object PermissionUtils {
 
     // Helper to make an array
     @JvmStatic
+    @Suppress("UNCHECKED_CAST")
     fun makeArray(vararg items: String): Array<String> {
         return items as Array<String>
     }
@@ -94,3 +82,16 @@ object PermissionUtils {
         return permissionsGranted
     }
 }
+
+/**
+ * Extension method on [Context] to check for permissions
+ */
+fun Context.hasPermissions(vararg permissions: String): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        return permissions
+                .map { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
+                .all { it }
+    }
+    return true
+}
+

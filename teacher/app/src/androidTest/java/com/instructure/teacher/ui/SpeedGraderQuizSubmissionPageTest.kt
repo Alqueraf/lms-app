@@ -17,29 +17,34 @@ package com.instructure.teacher.ui
 
 import com.instructure.dataseeding.util.*
 import com.instructure.teacher.ui.utils.*
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class SpeedGraderQuizSubmissionPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         getToQuizSubmissionPage()
         speedGraderQuizSubmissionPage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun displaysNoSubmission() {
         getToQuizSubmissionPage(submitQuiz = false)
         speedGraderQuizSubmissionPage.assertShowsNoSubmissionState()
     }
 
     @Test
+    @Ditto
     fun displaysPendingReviewState() {
         getToQuizSubmissionPage(addQuestion = true)
         speedGraderQuizSubmissionPage.assertShowsPendingReviewState()
     }
 
     @Test
+    @Ditto
     fun displaysViewQuizState() {
         getToQuizSubmissionPage()
         speedGraderQuizSubmissionPage.assertShowsViewQuizState()

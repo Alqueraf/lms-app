@@ -20,6 +20,7 @@
 package android.support.test.rule
 
 import android.app.Activity
+import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.runner.MonitoringInstrumentationAccessor
 import android.util.Log
 
@@ -35,7 +36,7 @@ import java.lang.reflect.Field
  * test ends in a different activity than which it was started. In this implementation, we call finish() on all
  * Activity classes that are started and wait until they actually finish before proceeding.
  */
-open class FinishingActivityTestRule<T : Activity> : ActivityTestRule<T> {
+open class FinishingActivityTestRule<T : Activity> : IntentsTestRule<T> {
 
     constructor(activityClass: Class<T>) : super(activityClass) {}
 

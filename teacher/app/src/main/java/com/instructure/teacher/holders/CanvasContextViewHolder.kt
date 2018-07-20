@@ -16,6 +16,7 @@
  */
 package com.instructure.teacher.holders
 
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.View
@@ -36,10 +37,10 @@ class CanvasContextViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         if(canvasContext.id == -1L) {
             //this is a header, so we want it a gray color
             title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            title.setTextColor(resources.getColor(R.color.defaultTextGray))
+            title.setTextColor(ContextCompat.getColor(context, R.color.defaultTextGray))
         } else {
             title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-            title.setTextColor(resources.getColor(R.color.defaultTextDark))
+            title.setTextColor(ContextCompat.getColor(context, R.color.defaultTextDark))
         }
         itemView.setOnClickListener {
             // The headers have an id of -1

@@ -59,33 +59,4 @@ public class CourseListRecyclerAdapter extends SyncRecyclerAdapter<Course, Cours
     public int itemLayoutResId(int viewType) {
         return CourseViewHolder.holderResId();
     }
-
-//    public CourseListRecyclerAdapter(Context context, Student student, AdapterToFragmentUpdateListCallback<Student, Course> adapterToFragmentCallback) {
-//        super(context, Course.class);
-//        setItemCallback(new ItemComparableCallback<Course>() {
-//            @Override
-//            public int compare(Course o1, Course o2) {
-//                return o1.compareTo(o2);
-//            }
-//
-//            @Override
-//            public boolean areContentsTheSame(Course oldItem, Course newItem) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean areItemsTheSame(Course item1, Course item2) {
-//                return item1.getContextId().hashCode() == item2.getContextId().hashCode();
-//            }
-//
-//            @Override
-//            public long getUniqueItemId(Course item) {
-//                return item.getContextId().hashCode();
-//            }
-//        });
-//
-//        mAdapterToFragmentCallback = adapterToFragmentCallback;
-//        mStudent = student;
-//        mContext = context;
-//    }
 }

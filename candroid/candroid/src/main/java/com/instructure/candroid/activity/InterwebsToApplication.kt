@@ -28,12 +28,14 @@ import android.view.View
 import android.view.Window
 
 import com.instructure.candroid.R
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.candroid.util.Analytics
 import com.instructure.candroid.util.LoggingUtility
-import com.instructure.candroid.util.RouterUtils
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.interactions.router.Route
+import com.instructure.interactions.router.RouteContext
 import com.instructure.pandautils.utils.Const
 import kotlinx.android.synthetic.main.loading_canvas_view.*
 import kotlinx.coroutines.experimental.Job
@@ -100,7 +102,7 @@ class InterwebsToApplication : AppCompatActivity() {
             } else {
                 //Allow the UI to show.
                 delay(700)
-                RouterUtils.routeUrl(this@InterwebsToApplication, url, false)
+                RouteMatcher.routeUrl(this@InterwebsToApplication, url, domain)
                 finish()
             }
         } catch {

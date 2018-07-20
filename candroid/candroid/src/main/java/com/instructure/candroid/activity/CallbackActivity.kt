@@ -20,6 +20,7 @@ package com.instructure.candroid.activity
 import android.os.Bundle
 import com.crashlytics.android.Crashlytics
 import com.instructure.candroid.fragment.InboxFragment
+import com.instructure.candroid.service.StudentPageViewService
 import com.instructure.canvasapi2.StatusCallback
 import com.instructure.canvasapi2.managers.LaunchDefinitionsManager
 import com.instructure.canvasapi2.managers.ThemeManager
@@ -27,6 +28,9 @@ import com.instructure.canvasapi2.managers.UnreadCountManager
 import com.instructure.canvasapi2.managers.UserManager
 import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.utils.*
+import com.instructure.canvasapi2.utils.pageview.PageViewUtils
+import com.instructure.canvasapi2.utils.pageview.PandataInfo
+import com.instructure.canvasapi2.utils.pageview.PandataManager
 import com.instructure.canvasapi2.utils.weave.StatusCallbackError
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
@@ -43,7 +47,7 @@ abstract class CallbackActivity : ParentActivity(), InboxFragment.OnUnreadCountI
 
     private var loadInitialDataJob: Job? = null
 
-    abstract fun gotLaunchDefinitions(launchDefinition: LaunchDefinition?)
+    abstract fun gotLaunchDefinitions(launchDefinitions: List<LaunchDefinition>?)
     abstract fun updateUnreadCount(unreadCount: String)
     abstract fun initialCoreDataLoadingComplete()
 
@@ -57,14 +61,15 @@ abstract class CallbackActivity : ParentActivity(), InboxFragment.OnUnreadCountI
         loadInitialDataJob = tryWeave {
 
             // Determine if user can masquerade
-            if (ApiPrefs.canMasquerade == null) {
+            if (ApiPrefs.canBecomeUser == null) {
                 if (ApiPrefs.domain.startsWith("siteadmin", true)) {
-                    ApiPrefs.canMasquerade = true
+                    ApiPrefs.canBecomeUser = true
                 } else try {
-                    val roles = awaitApi<List<AccountRole>> { UserManager.getSelfAccountRoles(true, it) }
-                    ApiPrefs.canMasquerade = roles.any { it.permissions["become_user"]?.enabled == true }
+                    val account = awaitApi<Account> { UserManager.getSelfAccount(true, it) }
+                    val permission = awaitApi<BecomeUserPermission> { UserManager.getBecomeUserPermission(true, account.id, it) }
+                    ApiPrefs.canBecomeUser = permission.becomeUser
                 } catch (e: StatusCallbackError) {
-                    if (e.response?.code() == 401) ApiPrefs.canMasquerade = false
+                    if (e.response?.code() == 401) ApiPrefs.canBecomeUser = false
                 }
             }
 
@@ -83,12 +88,21 @@ abstract class CallbackActivity : ParentActivity(), InboxFragment.OnUnreadCountI
                 ThemePrefs.applyCanvasTheme(awaitApi<CanvasTheme> { ThemeManager.getTheme(it, true) })
             }
 
+            // Refresh pandata info if null or expired
+            if (ApiPrefs.pandataInfo?.isValid != true) {
+                try {
+                    ApiPrefs.pandataInfo = awaitApi<PandataInfo> {
+                        PandataManager.getToken(StudentPageViewService.pandataAppKey, it)
+                    }
+                } catch (ignore: Throwable) {
+                    Logger.w("Unable to refresh pandata info")
+                }
+            }
+
             val launchDefinitions = awaitApi<List<LaunchDefinition>?> { LaunchDefinitionsManager.getLaunchDefinitions(it, false) }
             launchDefinitions?.let {
-                val match = launchDefinitions.filter { it.domain == "gauge.instructure.com" }
-                if(match.isNotEmpty()) {
-                    gotLaunchDefinitions(match.first())
-                }
+                val definitions = launchDefinitions.filter { it.domain == LaunchDefinition._ARC_DOMAIN || it.domain == LaunchDefinition._GAUGE_DOMAIN }
+                gotLaunchDefinitions(definitions)
             }
 
             if(!ApiPrefs.isMasquerading) {

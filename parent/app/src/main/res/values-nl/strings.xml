@@ -22,7 +22,6 @@
     <string name="email">E-mail</string>
     <string name="emailAddress">E-mailadres</string>
     <string name="parent_email">E-mail ouders</string>
-    <string name="confirmPassword">Wachtwoord bevestigen</string>
     <string name="firstName">Voornaam</string>
     <string name="lastName">Achternaam</string>
     <string name="password">Wachtwoord</string>
@@ -150,6 +149,9 @@
     <string name="or">of</string>
     <string name="canvas_login_text">Aanmelden op Canvas</string>
 
+    <string name="privacyPolicy">Privacybeleid</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">Gebruiksvoorwaarden</string>
     <!-- Feature Request -->
     <string name="featureSubject">Idee voor Canvas Parent App  [Android]</string>
     <string name="understandRequest">De volgende informatie helpt ons een beter idee te krijgen van jouw idee:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Voer de schoolnaam van de cursist in</string>
     <string name="findYourStudentsSchoolHint">Vind de school of het district van je cursist</string>
-    <string name="noGradeText">Niet van toepassing</string>
+    <string name="noGradeText">Geen cijfer</string>
     <string name="locked">Vergrendeld</string>
+    <string name="changeUser">Gebruiker wijzigen</string>
+    <string name="manageChildren">Kinderen beheren</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Open navigatielade</string>
+    <string name="navigation_drawer_close">Sluit navigatielade</string>
+    <string name="version" formatted="false">Versie %s</string>
+    <string name="not_a_parent_title">Geen ouder?</string>
+    <string name="not_a_parent_subtitle">Wellicht is een van onze andere apps hiervoor beter geschikt. Tik op een van de apps om de Play Store te openen.</string>
+    <string name="tryLoginAgain">Probeer je opnieuw aan te melden</string>
+
+    <string name="legalDetails">Privacybeleid, gebruiksvoor</string>
+    <string name="assignmentGrade">Opdrachtcijfer</string>
+    <string name="courseGrade">Cursuscijfer</string>
+    <string name="courseAnnouncement">Cursusaankondiging</string>
+    <string name="institutionAnnouncement">Aankondiging organisatie</string>
+    <string name="institutionAnnouncementUnavailable">Deze aankondiging is vervallen.</string>
 </resources>

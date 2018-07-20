@@ -41,9 +41,9 @@ import com.instructure.teacher.events.FileFolderDeletedEvent
 import com.instructure.teacher.events.FileFolderUpdatedEvent
 import com.instructure.teacher.factory.FileListPresenterFactory
 import com.instructure.teacher.holders.FileFolderViewHolder
-import com.instructure.teacher.models.EditableFile
 import com.instructure.teacher.presenters.FileListPresenter
 import com.instructure.interactions.router.Route
+import com.instructure.pandautils.models.EditableFile
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
 import com.instructure.teacher.viewinterface.FileListView
@@ -60,7 +60,9 @@ class FileListFragment : BaseSyncFragment<
         FileListAdapter>(), FileListView {
 
     private lateinit var mRecyclerView: RecyclerView
+
     private val courseColor by lazy { ColorKeeper.getOrGenerateColor(mCanvasContext) }
+
     private var mCanvasContext: CanvasContext by ParcelableArg(Course())
     private var currentFolder: FileFolder by ParcelableArg(FileFolder())
     private var fabOpen = false
@@ -198,6 +200,7 @@ class FileListFragment : BaseSyncFragment<
                     UploadFilesDialog.createCourseBundle(null, mCanvasContext as Course, presenter.currentFolder.id)
                 else
                     UploadFilesDialog.createUserBundle(null, mCanvasContext as User, presenter.currentFolder.id)
+
                 UploadFilesDialog.show(fragmentManager, bundle, { _ -> })
             }
         }
@@ -235,7 +238,6 @@ class FileListFragment : BaseSyncFragment<
             ViewStyler.themeToolbar(activity, fileListToolbar, ThemePrefs.primaryColor, ThemePrefs.primaryTextColor)
         } else ViewStyler.themeToolbar(activity, fileListToolbar, courseColor, Color.WHITE)
     }
-
 
     private fun animateFabs() = if (fabOpen) {
         addFab.startAnimation(fabRotateBackwards)

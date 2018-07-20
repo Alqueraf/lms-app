@@ -60,6 +60,10 @@
     <string name="share">Dele</string>
     <string name="share_with">Del med&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Åpne navigasjonsskuff</string>
+    <string name="navigation_drawer_close">Lukk navigasjonsskuff</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(uten tittel)</string>
     <string name="compose_message">Skriv melding</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Velge filer eller bilder</string>
     <string name="uploading_files">Laster opp filer&#8230;</string>
     <string name="no_attachment">(Ingen vedlegg)</string>
-    <string name="remove_attachment">Fjern vedlegg</string>
     <string name="creating_announcement">Oppretter kunngjøring&#8230;</string>
 
     <string name="copy_email">Kopier e-postadresse</string>
@@ -164,8 +167,6 @@
     <string name="inbox_empty_starred_title">Ingen stjernemerkede meldinger</string>
     <string name="inbox_empty_message">Klill \"+\" for å lage en ny samtale.</string>
     <string name="inbox_empty_starred_message">Sett stjerne på meldinger ved å klikke på stjernen i meldingen.</string>
-
-    <string name="download_attachment">Laste ned vedlegg</string>
 
     <string name="reply">Svar</string>
     <string name="replyAll">Svar alle</string>
@@ -285,7 +286,7 @@
     <string name="inbox_starred">Stjernemerket</string>
     <string name="inbox_sent">Sendt</string>
     <string name="inbox_archived">Arkivert</string>
-    <string name="inbox_all_messages">Alle meldinger</string>
+    <string name="inbox_all_messages">Alle</string>
     <string name="uploading_file_num" formatted="false">Laster opp %d av %d</string>
     <string name="page_not_found">Siden finnes ikke.</string>
     <string name="no_connection">Ingen forbindelse</string>
@@ -434,7 +435,6 @@
     <string name="deleteComment">Slett kommentar</string>
     <string name="deleteAnnotation">Slett merknad</string>
     <string name="deleteCommentConfirmation">Er du sikker på at du vil slette denne kommentaren?</string>
-    <string name="deleteHeadCommentConfirmation">Denne kommentaren er en merknad. Slette dette vil slette alle svarene og merknaden. Er du sikker på at du vil gjøre dette?</string>
     <string name="rubric_view_long_description">Vis lang beskrivelse</string>
     <string name="rubric">Rubrikk</string>
     <string name="enter_custom_value">Angi en egendefinert verdi</string>
@@ -501,7 +501,7 @@
         <item quantity="other">%d grupper</item>
     </plurals>
     <string name="cmp_closed">Lukket</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">favoritt</string>
     <string name="content_description_not_favorite">ikke favoritt</string>
@@ -510,7 +510,8 @@
     <string name="edit_course_nickname">Rediger kallenavn for emne</string>
 
     <string name="colorPickerDialogTitle">Emnefarge</string>
-    <string name="colorPickerDialogMessage">Innstill dette som standardfarge på emne. Denne vil ikke overstyre en personlig fargeinnstilling.</string>
+    <string name="colorPickerDialogMessage">Dette er din personlige fargeinnstilling. Bare du vil se denne fargen for emnet.</string>
+
     <string name="colorPickerError">Emnefargen kan ikke angis nå.</string>
 
     <string name="contentDescriptionColorCottonCandy">Rosa</string>
@@ -604,12 +605,6 @@
     <string name="quiz_details_from_to">Fra %1$s til %2$s</string>
     <string name="quiz_details_after">Etter %1$s</string>
     <string name="quiz_details_until">Til %1$s</string>
-    <string name="continueWithoutSavingTitle">Fortsette uten å lagre?</string>
-    <string name="continueWithoutSavingMessage">Er du sikker på at du vil fortsette uten å lagre?</string>
-    <string name="continueUnsaved">Fortsett</string>
-    <string name="exitWithoutSavingTitle">Avslutt uten å lagre?</string>
-    <string name="exitWithoutSavingMessage">Er du sikker på at du vil avslutte uten å lagre?</string>
-    <string name="exitUnsaved">Avslutt</string>
     <string name="filterPointsMustBeSet">Angi en verdi.</string>
 
     <plurals name="quantityQuestions">
@@ -638,7 +633,6 @@
     <string name="discussions_replies_title">Svar</string>
     <string name="discussions_reply">Svar</string>
     <string name="discussions_edit">Rediger</string>
-    <string name="discussions_deleted" formatted="false">Slett dette svaret %s</string>
     <string name="discussions_forbidden">Svarene er kun synlige for dem som har postet minst ett svar.</string>
     <string name="discussions_unknown_author">Ukjent forfatter</string>
     <string name="discussions_delete">Slett diskusjon</string>
@@ -710,6 +704,8 @@
     <string name="subscribe">Abonner</string>
     <string name="allowThreadedReplies">Tillat svartråder</string>
     <string name="usersMustPost">Brukere må publisere før de kan se svar</string>
+    <string name="allowUserComments">Lar brukere kommentere</string>
+
     <string name="discussionTitleMustBeSet">Diskusjons-tittel må angis.</string>
     <string name="discussionSuccessfullyCreated">Diskusjon opprettet.</string>
     <string name="errorCreatingDiscussion">Avvik ved forsøk på å opprette denne diskusjonen. Prøv igjen.</string>
@@ -758,6 +754,7 @@
     <string name="choosePhotoFromGallery">Velg foto fra galleri</string>
     <string name="fileNotFound">Fil ikke funnet.</string>
     <string name="version" formatted="false">Versjon %s</string>
+    <string name="fullVersion">Versjon %s (%d)</string>
     <string name="tap_to_view_submissions_list">Trykk for å vise innleverings liste.</string>
     <string name="assignmentDescriptionContentDescription">Oppgavebeskrivelse</string>
     <string name="quizDescriptionContentDescription">Testbeskrivelse</string>
@@ -882,6 +879,7 @@
 
     <string name="latePenalty">Forsinkelsesstraff</string>
     <string name="finalGrade">Sluttkarakter</string>
+    <string name="moderatedGradingUnsupported">Moderert vurdering er for øyeblikket ikke støttet i SpeedGrader for mobiler.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s poeng</item>
         <item quantity="other">-%s poeng</item>
@@ -890,4 +888,20 @@
         <item quantity="one">-%s poeng</item>
         <item quantity="other">-%s poeng</item>
     </plurals>
+    <string name="todoUnreadCount">Å gjøre %d ulest</string>
+    <string name="profileSettings">Profilinnstillinger</string>
+    <string name="downloadingFile">Laster ned fil&#8230;</string>
+    <string name="fileDownloadedSuccessfully">Filnedlasting utført.</string>
+    <string name="tapToView">Klikk for å vise</string>
+    <string name="errorDownloadingFile">En feil oppso under nedlasting av filen din. Vennligst prøv igjen.</string>
+
+    <string name="postTo">Post til</string>
+    <string name="allSections">Alle seksjoner</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">Dette LTI-verktøyet kan ikke lastes ned på dette tidspunktet.</string>
+
+    <string name="downloading">Laster ned ...</string>
+
 </resources>

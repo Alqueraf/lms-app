@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">Fortryd</string>
     <string name="rce_contentDescription_redo">Annuller fortryd</string>
     <string name="rce_contentDescription_bold">Formater fed</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">Indsæt punktliste</string>
     <string name="rce_contentDescription_insert_numbers">Indsæt nummeret liste</string>
     <string name="rce_contentDescription_insert_photo">Indsæt foto</string>
+    <string name="rce_contentDescription_upload_photo">Upload foto fra enhed</string>
     <string name="rce_contentDescription_insert_link">Indsæt link</string>
     <string name="rce_contentDescription_block_quote">Citatblok</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">Indsæt link</string>
     <string name="rce_insertImage">Indsæt billede</string>
 
+    <string name="rce_uploadImage">Upload billede</string>
     <string name="rce_done">Udført</string>
     <string name="rce_cancel">Annuller</string>
     <string name="rce_exit">Afslut</string>

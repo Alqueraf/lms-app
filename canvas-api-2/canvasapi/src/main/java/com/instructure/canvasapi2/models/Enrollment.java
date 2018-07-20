@@ -80,6 +80,8 @@ public class Enrollment extends CanvasModel<Enrollment> implements Parcelable {
     private Date lastActivityAt;
     @SerializedName("limit_privileges_to_course_section")
     private boolean mLimitPrivilegesToCourseSection;
+    @SerializedName("observed_user")
+    private User observedUser;
 
     private User user;
     public Enrollment(){
@@ -274,6 +276,10 @@ public class Enrollment extends CanvasModel<Enrollment> implements Parcelable {
         return mLimitPrivilegesToCourseSection;
     }
 
+    public User getObservedUser() {
+        return observedUser;
+    }
+
     //endregion
 
     //region Setters
@@ -374,6 +380,10 @@ public class Enrollment extends CanvasModel<Enrollment> implements Parcelable {
         this.mLimitPrivilegesToCourseSection = limitPrivilegesToCourseSection;
     }
 
+    public void setObservedUser(User observedUser) {
+        this.observedUser = observedUser;
+    }
+
     //endregion
 
     //region Parcelable
@@ -409,6 +419,7 @@ public class Enrollment extends CanvasModel<Enrollment> implements Parcelable {
         dest.writeParcelable(this.user, flags);
         dest.writeSerializable(lastActivityAt);
         dest.writeByte(this.mLimitPrivilegesToCourseSection ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.observedUser, flags);
     }
 
     protected Enrollment(Parcel in) {
@@ -436,6 +447,7 @@ public class Enrollment extends CanvasModel<Enrollment> implements Parcelable {
         this.user = in.readParcelable(User.class.getClassLoader());
         this.lastActivityAt = (Date) in.readSerializable();
         this.mLimitPrivilegesToCourseSection = in.readByte() != 0;
+        this.observedUser = in.readParcelable(User.class.getClassLoader());
     }
 
     public static final Creator<Enrollment> CREATOR = new Creator<Enrollment>() {

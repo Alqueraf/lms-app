@@ -16,14 +16,16 @@
 package com.instructure.teacher.ui.pages
 
 import android.support.test.InstrumentationRegistry
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
+
+
+import com.instructure.espresso.page.scrollTo
 import com.instructure.soseedy.Assignment
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.PageWithIdAssert
 
 @Suppress("unused")
-class AssignmentDetailsPage : BasePage(), PageAssert by PageWithIdAssert(R.id.assignmentDetailsPage) {
+class AssignmentDetailsPage : BasePage(pageResId = R.id.assignmentDetailsPage) {
 
     private val backButton by OnViewWithContentDescription(android.support.v7.appcompat.R.string.abc_action_bar_up_description)
     private val toolbarTitle by OnViewWithText(R.string.assignment_details)
@@ -50,7 +52,7 @@ class AssignmentDetailsPage : BasePage(), PageAssert by PageWithIdAssert(R.id.as
     private val notSubmittedDonutWrapper by OnViewWithId(R.id.notSubmittedWrapper, autoAssert = false)
 
     fun assertDisplaysInstructions() {
-        descriptionWebView.scrollTo()
+        scrollTo(R.id.descriptionWebView)
         descriptionWebView.assertVisible()
     }
 
@@ -67,7 +69,8 @@ class AssignmentDetailsPage : BasePage(), PageAssert by PageWithIdAssert(R.id.as
     }
 
     fun openSubmissionsPage() {
-        viewAllSubmissions.scrollTo().click()
+        scrollTo(R.id.viewAllSubmissions)
+        viewAllSubmissions.click()
     }
 
     fun assertAssignmentDetails(assignment: Assignment) {

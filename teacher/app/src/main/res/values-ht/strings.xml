@@ -60,6 +60,10 @@
     <string name="share">Pataje</string>
     <string name="share_with">Pataje Ak&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Ouvri meni navigasyon</string>
+    <string name="navigation_drawer_close">Fèmen meni navigasyon</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(pa gen sijè)</string>
     <string name="compose_message">Konpoze yon mesaj</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Seleksyone Fichye oswa foto</string>
     <string name="uploading_files">Transfè fichye&#8230;</string>
     <string name="no_attachment">(Pa gen Atachman)</string>
-    <string name="remove_attachment">Retire atachman</string>
     <string name="creating_announcement">Kreyasyon Anons&#8230;</string>
 
     <string name="copy_email">Kopye adrès imèl</string>
@@ -164,8 +167,6 @@
     <string name="inbox_empty_starred_title">Pa gen Mesaj ki Make</string>
     <string name="inbox_empty_message">Tape sou \"+\" pou kreye yon nouvo konvèsasyon.</string>
     <string name="inbox_empty_starred_message">Tape sou etwal nan mesaj yo pou ka make yo</string>
-
-    <string name="download_attachment">Telechaje Atachman</string>
 
     <string name="reply">Reponn</string>
     <string name="replyAll">Reponn Tout</string>
@@ -285,7 +286,7 @@
     <string name="inbox_starred">Favori</string>
     <string name="inbox_sent">Voye</string>
     <string name="inbox_archived">Achive</string>
-    <string name="inbox_all_messages">Tout Mesaj</string>
+    <string name="inbox_all_messages">Tout</string>
     <string name="uploading_file_num" formatted="false">Chajman %d sou %d</string>
     <string name="page_not_found">Paj entwouvab.</string>
     <string name="no_connection">Pa gen Koneksyon</string>
@@ -434,7 +435,6 @@
     <string name="deleteComment">Efase Kòmantè</string>
     <string name="deleteAnnotation">Efase Anotasyon</string>
     <string name="deleteCommentConfirmation">Ou kwè vrèman ou vle efase kòmantè sa a?</string>
-    <string name="deleteHeadCommentConfirmation">Kòmantè sa a se yon anotasyon. Si w efase sa a l ap efase tout repons ak anotasyon yo. Ou kwè vrèman ou vle fè sa?</string>
     <string name="rubric_view_long_description">Afiche tout deskripsyon</string>
     <string name="rubric">Ribrik</string>
     <string name="enter_custom_value">Mete yon valè pèsonalize</string>
@@ -501,7 +501,7 @@
         <item quantity="other">%d gwoup</item>
     </plurals>
     <string name="cmp_closed">Fèmen</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">prefere</string>
     <string name="content_description_not_favorite">pa prefere</string>
@@ -510,7 +510,8 @@
     <string name="edit_course_nickname">Modifye Ti Non Kou</string>
 
     <string name="colorPickerDialogTitle">Koulè Kou</string>
-    <string name="colorPickerDialogMessage">Konfigire sa a kòm koulè pa defo kou a. Sa pa p ranplase yon paramèt koulè pèsonèl.</string>
+    <string name="colorPickerDialogMessage">Sa se paramèt koulè pèsonèl ou. Sèlman ou menm k ap wè koulè sa a pou kou a.</string>
+
     <string name="colorPickerError">Koulè kou a paka defini nan moman sa a,</string>
 
     <string name="contentDescriptionColorCottonCandy">Woz</string>
@@ -604,12 +605,6 @@
     <string name="quiz_details_from_to">De %1$s jiska %2$s</string>
     <string name="quiz_details_after">Aprè %1$s</string>
     <string name="quiz_details_until">Jiska %1$s</string>
-    <string name="continueWithoutSavingTitle">Kontinye san sovgade?</string>
-    <string name="continueWithoutSavingMessage">Se tout bon ou ta renmen kontinye san w pa sovgade?</string>
-    <string name="continueUnsaved">Kontinye</string>
-    <string name="exitWithoutSavingTitle">Soti san sovgade?</string>
-    <string name="exitWithoutSavingMessage">Se tout bon ou ta renmen soti san w pa sovgade?</string>
-    <string name="exitUnsaved">Soti</string>
     <string name="filterPointsMustBeSet">Mete yon valè.</string>
 
     <plurals name="quantityQuestions">
@@ -638,7 +633,6 @@
     <string name="discussions_replies_title">Repons</string>
     <string name="discussions_reply">Reponn</string>
     <string name="discussions_edit">Modifye</string>
-    <string name="discussions_deleted" formatted="false">Efase repons sa a %s</string>
     <string name="discussions_forbidden">Sèlman moun ki poste yon repons pou pi piti k ap ka wè repons yo.</string>
     <string name="discussions_unknown_author">Otè Enkoni</string>
     <string name="discussions_delete">Efase Diskisyon</string>
@@ -710,6 +704,8 @@
     <string name="subscribe">Enskri</string>
     <string name="allowThreadedReplies">Otorize repons filte</string>
     <string name="usersMustPost">Itilizatè yo dwe poste anvan yo wè repons yo</string>
+    <string name="allowUserComments">Pèmèt itilizatè yo kòmante</string>
+
     <string name="discussionTitleMustBeSet">Tit diskisyon an dwe defini.</string>
     <string name="discussionSuccessfullyCreated">Diskisyon kreye kòrèkteman.</string>
     <string name="errorCreatingDiscussion">Gen yon erè ki fèt pandan w ap eseye kreye diskisyon sa a. Eseye ankò.</string>
@@ -758,6 +754,7 @@
     <string name="choosePhotoFromGallery">Chwazi foto nan Galri</string>
     <string name="fileNotFound">Fichye entwouvab.</string>
     <string name="version" formatted="false">Vèsyon %s</string>
+    <string name="fullVersion">Vèsyon %s (%d)</string>
     <string name="tap_to_view_submissions_list">tape pou afiche lis soumisyon.</string>
     <string name="assignmentDescriptionContentDescription">Deskripsyon Sesyon</string>
     <string name="quizDescriptionContentDescription">Deskripsyon Quiz</string>
@@ -882,6 +879,7 @@
 
     <string name="latePenalty">Penalite pou Reta</string>
     <string name="finalGrade">Nòt Final</string>
+    <string name="moderatedGradingUnsupported">Notasyon modere a pa sipòte pou kounye a nan SpeedGrader mobil.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s pwen</item>
         <item quantity="other">-%s pwen yo</item>
@@ -890,4 +888,20 @@
         <item quantity="one">-%s pwen</item>
         <item quantity="other">-%s pwen yo</item>
     </plurals>
+    <string name="todoUnreadCount">Pou fè %d poko li</string>
+    <string name="profileSettings">Paramèt  Pwofi</string>
+    <string name="downloadingFile">Telechajman fichye&#8230;</string>
+    <string name="fileDownloadedSuccessfully">Fichye telechaje kòrèkteman.</string>
+    <string name="tapToView">Tape pou afiche</string>
+    <string name="errorDownloadingFile">Gen yon erè ki fèt pandan w ap telechaje fichye w la. Tanpri eseye ankò.</string>
+
+    <string name="postTo">Poste Nan</string>
+    <string name="allSections">Tout Seksyon</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">Zouti LTI sa a paka chaje pou kounye a.</string>
+
+    <string name="downloading">Telechajman an kou...</string>
+
 </resources>

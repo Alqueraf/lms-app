@@ -29,6 +29,8 @@ public class Recipient extends CanvasComparable<Recipient> {
 
     public enum Type {group, metagroup, person}
 
+    public enum Enrollment {teacher, teachingAssistant, designer, student, observer, other}
+
     private String id;
 
     private String name;
@@ -109,6 +111,17 @@ public class Recipient extends CanvasComparable<Recipient> {
         }
 
         return Type.metagroup;
+    }
+
+    public Enrollment getEnrollment() {
+        switch (name) {
+            case "Teachers": return Enrollment.teacher;
+            case "Teaching Assistants": return Enrollment.teachingAssistant;
+            case "Designers": return Enrollment.designer;
+            case "Students": return Enrollment.student;
+            case "Observers": return Enrollment.observer;
+            default: return Enrollment.other;
+        }
     }
 
     public int getItemCount() {

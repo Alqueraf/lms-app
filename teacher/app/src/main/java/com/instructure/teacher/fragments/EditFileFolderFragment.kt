@@ -125,8 +125,8 @@ class EditFileFolderFragment : BasePresenterFragment<
         activity.onBackPressed()
     }
 
-    override fun showError(s: Int) {
-        super.showToast(s)
+    override fun showError(stringResId: Int) {
+        super.showToast(stringResId)
     }
 
     private fun setupToolbar() {

@@ -59,9 +59,9 @@ object SvgUtils {
  */
 @GlideModule
 class SvgModule : AppGlideModule() {
-    override fun registerComponents(context: Context?, glide: Glide?, registry: Registry?) {
-        registry?.register(SVG::class.java, PictureDrawable::class.java, SvgDrawableTranscoder())
-                ?.append(InputStream::class.java, SVG::class.java, SvgDecoder())
+    override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
+        registry.register(SVG::class.java, PictureDrawable::class.java, SvgDrawableTranscoder())
+                .append(InputStream::class.java, SVG::class.java, SvgDecoder())
     }
 
     // Disable manifest parsing to avoid adding similar modules twice.
@@ -75,7 +75,7 @@ class SvgModule : AppGlideModule() {
  * Convert the [SVG]'s internal representation to an Android-compatible one ([Picture][android.graphics.Picture]).
  */
 internal class SvgDrawableTranscoder : ResourceTranscoder<SVG, PictureDrawable> {
-    override fun transcode(toTranscode: Resource<SVG>): Resource<PictureDrawable> {
+    override fun transcode(toTranscode: Resource<SVG>, options: Options): Resource<PictureDrawable>? {
         val picture = toTranscode.get().renderToPicture()
         val drawable = PictureDrawable(picture)
         return SimpleResource(drawable)
@@ -107,10 +107,10 @@ internal class SvgSoftwareLayerSetter : RequestListener<PictureDrawable> {
  * https://github.com/bumptech/glide/blob/v4.1.1/samples/svg/src/main/java/com/bumptech/glide/samples/svg/SvgDecoder.java
  */
 internal class SvgDecoder : ResourceDecoder<InputStream, SVG> {
-    override fun handles(p0: InputStream?, p1: Options?) = true
+    override fun handles(source: InputStream, options: Options): Boolean = true
 
     @Throws(IOException::class)
-    override fun decode(source: InputStream?, width: Int, height: Int, options: Options?): Resource<SVG>? {
+    override fun decode(source: InputStream, width: Int, height: Int, options: Options): Resource<SVG>? {
         try {
             val svg = SVG.getFromInputStream(source)
             return SimpleResource(svg)

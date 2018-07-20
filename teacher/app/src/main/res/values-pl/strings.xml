@@ -60,6 +60,10 @@
     <string name="share">Udostępnij</string>
     <string name="share_with">Udostępnij&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Otwórz fiszkę nawigacji</string>
+    <string name="navigation_drawer_close">Zamknij fiszkę nawigacji</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(brak tematu)</string>
     <string name="compose_message">Utwórz wiadomość</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Wybierz pliku lub zdjęcia</string>
     <string name="uploading_files">Przesyłanie plików&#8230;</string>
     <string name="no_attachment">(Brak załącznika)</string>
-    <string name="remove_attachment">Usuń załącznik</string>
     <string name="creating_announcement">Tworzenie powiadomienia&#8230;</string>
 
     <string name="copy_email">Kopiuj adres e-mail</string>
@@ -168,8 +171,6 @@
     <string name="inbox_empty_starred_title">Brak ulubionych wiadomości</string>
     <string name="inbox_empty_message">Stuknij \"+\", aby utworzyć nową dyskusję.</string>
     <string name="inbox_empty_starred_message">Dodaj wiadomość do ulubionych, stukając gwiazdkę w wiadomości.</string>
-
-    <string name="download_attachment">Pobierz załącznik</string>
 
     <string name="reply">Odpowiedz</string>
     <string name="replyAll">Odpowiedz wszystkim</string>
@@ -293,7 +294,7 @@
     <string name="inbox_starred">Oznaczone gwiazdką</string>
     <string name="inbox_sent">Wysłane</string>
     <string name="inbox_archived">Zarchiwizowane</string>
-    <string name="inbox_all_messages">Wszystkie wiadomości</string>
+    <string name="inbox_all_messages">Wszystkie</string>
     <string name="uploading_file_num" formatted="false">Wysyłanie %d z %d</string>
     <string name="page_not_found">Nie odnaleziono strony.</string>
     <string name="no_connection">Brak połączenia</string>
@@ -442,7 +443,6 @@
     <string name="deleteComment">Usuń komentarz</string>
     <string name="deleteAnnotation">Usuń adnotację</string>
     <string name="deleteCommentConfirmation">Czy na pewno chcesz usunąć ten komentarz?</string>
-    <string name="deleteHeadCommentConfirmation">Ten komentarz jest adnotacją. Usunięcie adnotacji spowoduje usunięcie wszystkich dodanych do niej odpowiedzi. Czy na pewno chcesz to zrobić?</string>
     <string name="rubric_view_long_description">Wyświetl długi opis</string>
     <string name="rubric">Rubryka</string>
     <string name="enter_custom_value">Wprowadź niestandardową wartość</string>
@@ -523,7 +523,7 @@
         <item quantity="other">%d grupy</item>
     </plurals>
     <string name="cmp_closed">Zamknięte</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">dodano do ulubionych</string>
     <string name="content_description_not_favorite">nie dodano do ulubionych</string>
@@ -532,7 +532,8 @@
     <string name="edit_course_nickname">Edytuj pseudonim kursu</string>
 
     <string name="colorPickerDialogTitle">Kolor kursu</string>
-    <string name="colorPickerDialogMessage">Ustaw to jako domyślny kolor kursu. Osobiste ustawienie koloru nie zostanie nadpisane.</string>
+    <string name="colorPickerDialogMessage">To jest twoje osobiste ustawienie koloru. Tylko ty będziesz widzieć ten kurs podczas kursu.</string>
+
     <string name="colorPickerError">W danej chwili nie można ustawić koloru kursu.</string>
 
     <string name="contentDescriptionColorCottonCandy">Różowy</string>
@@ -626,12 +627,6 @@
     <string name="quiz_details_from_to">Od %1$s do %2$s</string>
     <string name="quiz_details_after">Po %1$s</string>
     <string name="quiz_details_until">Do %1$s</string>
-    <string name="continueWithoutSavingTitle">Kontynuować bez zapisywania?</string>
-    <string name="continueWithoutSavingMessage">Czy na pewno chcesz kontynuować bez zapisywania?</string>
-    <string name="continueUnsaved">Kontynuuj</string>
-    <string name="exitWithoutSavingTitle">Wyjść bez zapisywania?</string>
-    <string name="exitWithoutSavingMessage">Czy na pewno chcesz wyjść bez zapisywania?</string>
-    <string name="exitUnsaved">Wyjdź</string>
     <string name="filterPointsMustBeSet">Wprowadź wartość.</string>
 
     <plurals name="quantityQuestions">
@@ -664,7 +659,6 @@
     <string name="discussions_replies_title">Odpowiedzi</string>
     <string name="discussions_reply">Odpowiedz</string>
     <string name="discussions_edit">Edytuj</string>
-    <string name="discussions_deleted" formatted="false">Usunięto tę odpowiedź %s</string>
     <string name="discussions_forbidden">Odpowiedzi są widoczne tylko dla tych osób, które opublikowały co najmniej jedną odpowiedź.</string>
     <string name="discussions_unknown_author">Nieznany autor</string>
     <string name="discussions_delete">Usuń dyskusję</string>
@@ -736,6 +730,8 @@
     <string name="subscribe">Subskrybuj</string>
     <string name="allowThreadedReplies">Zezwalaj na odpowiedzi złożone z wątków</string>
     <string name="usersMustPost">Użytkownicy powinni wysyłać przed ujrzeniem odpowiedzi</string>
+    <string name="allowUserComments">Zezwalaj użytkownikom na komentowanie</string>
+
     <string name="discussionTitleMustBeSet">Należy ustawić tytuł dyskusji.</string>
     <string name="discussionSuccessfullyCreated">Utworzono dyskusję.</string>
     <string name="errorCreatingDiscussion">Podczas tworzenia dyskusji wystąpił błąd. Spróbuj ponownie.</string>
@@ -784,6 +780,7 @@
     <string name="choosePhotoFromGallery">Wybierz zdjęcie z galerii</string>
     <string name="fileNotFound">Nie znaleziono pliku.</string>
     <string name="version" formatted="false">Wersja %s</string>
+    <string name="fullVersion">Wersja %s (%d)</string>
     <string name="tap_to_view_submissions_list">Stuknij, aby wyświetlić listę zgłoszeń.</string>
     <string name="assignmentDescriptionContentDescription">Opis zadania</string>
     <string name="quizDescriptionContentDescription">Opis testu</string>
@@ -908,6 +905,7 @@
 
     <string name="latePenalty">Kara za spóźnienie</string>
     <string name="finalGrade">Ocena końcowa</string>
+    <string name="moderatedGradingUnsupported">Moderowane ocenianie nie jest obecnie obsługiwane w wersji mobilnej SpeedGrader.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s pkt</item>
         <item quantity="few">-%s pkt</item>
@@ -920,4 +918,20 @@
         <item quantity="many">-%s pkt</item>
         <item quantity="other">-%s pkt</item>
     </plurals>
+    <string name="todoUnreadCount">Lista zadań – nieprzeczytane %d</string>
+    <string name="profileSettings">Ustawienia profilu</string>
+    <string name="downloadingFile">Pobieranie pliku&#8230;</string>
+    <string name="fileDownloadedSuccessfully">Pobrano plik.</string>
+    <string name="tapToView">Stuknij, aby wyświetlić</string>
+    <string name="errorDownloadingFile">Wystąpił błąd podczas pobierania pliku. Spróbuj ponownie.</string>
+
+    <string name="postTo">Opublikuj na</string>
+    <string name="allSections">Wszystkie sekcje</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">Nie udało się wczytać narzędzia LTI.</string>
+
+    <string name="downloading">Pobieranie...</string>
+
 </resources>

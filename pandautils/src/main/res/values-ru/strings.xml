@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,10 +17,15 @@
   -->
 
 <resources>
+
     <string name="chooseMedia">Выбрать медиа</string>
     <string name="takeVideo">Снять видео</string>
     <string name="noCameraOnDevice">Нет камеры</string>
 
+    <string name="takePhoto">Сделать снимок</string>
+    <string name="choosePhotoFromGallery">Выбрать фотографию из галереи</string>
+
+    <string name="utils_edit">Редактировать</string>
     <!-- NotoriousPicker/uploadService -->
     <string name="notificationTitle">Загрузка на Canvas</string>
     <string name="preparingUpload">Подготовка к загрузке</string>
@@ -189,5 +194,179 @@
     <string name="loading">Загрузка</string>
     <string name="save">Сохранить</string>
     <string name="cropInstructions">Захватите и перетащите края изображения, чтобы изменить его размер.</string>
+
+    <!--Discussions-->
+    <plurals name="utils_discussionsReplies">
+        <item quantity="one">%s Ответ</item>
+        <item quantity="few">%s ответов</item>
+        <item quantity="many">%s ответов</item>
+        <item quantity="other">%s ответов</item>
+    </plurals>
+
+    <string name="utils_discussionsDeleted" formatted="false">Удалить этот ответ %s</string>
+    <string name="utils_discussionsUnknownAuthor">Неизвестный автор</string>
+    <string name="utils_discussionsReply">Ответить</string>
+    <string name="utils_discussionsEdit">Редактировать</string>
+    <string name="utils_discussionsDeleteWarning">Вы действительно хотите удалить этот ответ?</string>
+    <string name="utils_availableToLabel">Доступно для:</string>
+    <string name="utils_availableFromLabel">Доступно с:</string>
+    <string name="utils_dueDateHeaderLabel">Срок</string>
+    <string name="utils_dueLabel">Срок выполнения:</string>
+    <string name="utils_delete">Удалить</string>
+    <string name="utils_dueDateAtTime" formatted="false">Срок выполнения %1s в %2s</string>
+    <string name="utils_noDateFiller">--</string>
+    <string name="utils_availabilityLabel">Доступность:</string>
+    <string name="utils_pinnedIcon">Иконка для закрепленного обсуждения</string>
+    <string name="utils_pinDiscussion">Закрепить Обсуждение</string>
+    <string name="utils_unpinDiscussion">Открепить Обсуждение</string>
+    <string name="utils_discussionPinned">Обсуждение закреплено</string>
+    <string name="utils_pinnedDiscussions">Прикреплен</string>
+    <string name="utils_discussionUnpinned">Дискуссии</string>
+    <string name="utils_emptyDiscussions">В данном разделе обсуждения отсутствуют.</string>
+    <string name="utils_description">Описание</string>
+    <string name="utils_allowThreadedReplies">Разрешить цепочечные ответы</string>
+    <string name="utils_usersMustPost">Студенты должны публиковать сообщения, прежде чем увидят ответы</string>
+    <string name="utils_discussionsClosed">Закрыто для комментариев</string>
+    <string name="utils_discussionsOpen">Открыть для комментариев</string>
+    <string name="utils_discussionsPin">Привязать</string>
+    <string name="utils_discussionsUnpin">Отменить привязку</string>
+    <string name="utils_discussionsOptions">Опции</string>
+    <string name="utils_discussionsDeleteTitle">Удалить дискуссию?</string>
+    <string name="utils_discussionsDelete">Удалить дискуссию</string>
+    <string name="utils_discussionsDeleteMessage">Это приведет к удалению всей дискуссии и цепочки.</string>
+    <string name="utils_discussionSentSuccess">Ответ на дискуссию успешно отправлен.</string>
+    <string name="utils_discussionUpdateSuccess">Редактирование дискуссии успешно завершено.</string>
+    <string name="utils_discussionSentEmpty">Ответ на дискуссию не может быть пустым.</string>
+    <string name="utils_discussionSentFailure">В данный момент невозможно отправить ответ на дискуссию.</string>
+    <string name="utils_createDiscussion">Новая дискуссия</string>
+    <string name="utils_editDiscussion">Редактировать дискуссию</string>
+    <string name="utils_discussionDetails">Сведения об обсуждении</string>
+    <string name="utils_discussionSuccessfullyUpdated">Дискуссия успешно обновлена.</string>
+    <string name="utils_saving">Выполняется сохранение</string>
+    <string name="utils_discussionSuccessfullyCreated">Дискуссия успешно создана.</string>
+    <string name="utils_discussionSuccessfulAttachmentNot">Вложение не может быть добавлено к этой дискуссии. Проверьте свою файловую квоту и попробуйте еще раз.</string>
+    <string name="utils_noTitle">Без названия</string>
+    <string name="utils_discussionsReplies_Title">Ответы</string>
+    <string name="utils_contentDescriptionDiscussionsOverflow">Дополнительные опции</string>
+    <string name="utils_discussionsUnreadRepliesBlank" formatted="false">%s %s %s</string>
+    <string name="utils_lastPost" formatted="false">Последнее размещение %s</string>
+    <string name="utils_postedOnDate">Опубликовано в %s</string>
+    <string name="utils_discussionPostBeforeRepliesEmptyText">Ответы видны только тем, кто опубликовал не менее одного ответа.</string>
+    <string name="utils_createAnnouncementDelayPosting">Задержка публикации</string>
+    <string name="utils_postAt">Опубликовать на</string>
+    <string name="utils_postDate">Датировать поздним числом</string>
+    <string name="utils_postTime">Время начала</string>
+    <string name="utils_editAnnouncementTitle">Редактировать объявление</string>
+    <string name="utils_createAnnouncementTitle">Новое объявление</string>
+    <string name="utils_announcementDetails">Сведения об объявлении</string>
+    <string name="utils_createAnnouncementNoDescription">Требуется описание</string>
+    <string name="utils_errorSavingAnnouncement">Произошла ошибка при попытке сохранения этой аннотации. Повторить попытку.</string>
+    <string name="utils_announcementSuccessfullyUpdated">Аннотация успешно обновлена.</string>
+    <string name="utils_announcementSuccessfullyCreated">Аннотация успешно создана.</string>
+
+    <plurals name="utils_discussionsUnread">
+        <item quantity="one">%s не прочитано</item>
+        <item quantity="few">%s не прочитано</item>
+        <item quantity="many">%s не прочитано</item>
+        <item quantity="other">%s не прочитано</item>
+    </plurals>
+
+    <plurals name="utils_addAttachment">
+        <item quantity="zero">Добавить вложение</item>
+        <item quantity="one">Добавить вложение</item>
+        <item quantity="few">Добавить вложения</item>
+        <item quantity="many">Добавить вложения</item>
+        <item quantity="other">Добавить вложения</item>
+    </plurals>
+
+
+    <!-- Assignment Override !-->
+    <string name="utils_unlockAfterDueDateError">Дата разблокирования не может быть позже даты выполнения</string>
+    <string name="utils_lockBeforeDueDateError">Дата блокировки не может быть раньше даты выполнения</string>
+    <string name="utils_lockAfterUnlockError">Дата блокирования не может быть раньше даты разблокирования</string>
+    <string name="utils_assigneeBlankError">Поле Получатель должно быть заполнено</string>
+    <string name="utils_assignTo">Назначить</string>
+    <string name="utils_availableFrom">Доступно с</string>
+    <string name="utils_availableTo">Доступно для</string>
+    <string name="utils_availableFromDate">Доступно с даты</string>
+    <string name="utils_availableFromTime">Доступно с времени</string>
+    <string name="utils_availableToDate">Доступно до даты</string>
+    <string name="utils_availableToTime">Доступно до времени</string>
+    <string name="utils_dueDate">Срок выполнения</string>
+    <string name="utils_dueTime">Время по расписанию</string>
+    <string name="utils_addNew">Добавить новое</string>
+
+    <!--Attachment Layout-->
+    <string name="utils_downloadAttachment">Загрузить вложение</string>
+    <string name="utils_removeAttachment">Удалить вложение</string>
+
+    <!--Unsaved Changes-->
+    <string name="utils_continueWithoutSavingTitle">Продолжить без сохранения?</string>
+    <string name="utils_continueWithoutSavingMessage">Вы действительно хотите продолжить без сохранения?</string>
+    <string name="utils_continueUnsaved">Продолжить</string>
+    <string name="utils_exitWithoutSavingTitle">Выйти без сохранения?</string>
+    <string name="utils_exitWithoutSavingMessage">Вы действительно хотите выйти без сохранения?</string>
+    <string name="utils_exitUnsaved">Выход</string>
+    <string name="utils_cancel">Отменить</string>
+
+    <string name="utils_contentDescriptionFiles">Иконка файла</string>
+    <string name="utils_turn_in">Включить</string>
+    <string name="utils_upload">Отправить</string>
+    <string name="utils_okay">Хорошо</string>
+    <string name="utils_loadingFilesIndeterminate">Скачивание файлов&#8230;</string>
+    <string name="utils_allowedExtensions">Допустимые расширения:&#160;</string>
+    <string name="utils_extensionNotAllowed">Выбранный тип файла не допускается.</string>
+    <string name="utils_errorUploadingFile">Произошла ошибка при отправке вашего файла. Попробуйте еще раз.</string>
+    <string name="utils_filesUploadedSuccessfully">Файлы загружены успешно.</string>
+    <string name="utils_uploadingFiles">Загрузка файлов&#8230;</string>
+    <string name="utils_uploadingFile">Загрузка файла&#8230;</string>
+    <string name="utils_noApps">На вашем устройстве не установлено приложение, способное работать с этим файлом.</string>
+    <string name="utils_errorGettingPhoto">Произошла ошибка при получении фотографии. Попробуйте еще раз.</string>
+    <string name="utils_oneOrMoreExtensionNotAllowed">Один или более файлов имеют недопустимое расширение</string>
+    <string name="utils_fileUploadNotSupported">Вы не можете загрузить эти файлы в выбранное задание.</string>
+    <string name="utils_noFilesUploaded">Вы не выбрали ни одного файла.</string>
+    <string name="utils_attachments">Вложения</string>
+    <string name="utils_uploadTo">Загрузить на </string>
+    <string name="utils_uploadToCanvas">Загрузить на Canvas</string>
+    <string name="utils_uploadMyFiles">Мои файлы</string>
+    <string name="utils_uploadCourseFiles">Файлы курса</string>
+    <string name="utils_uploadToSubmissionComment">Загрузить в комментарий к отправке</string>
+    <string name="utils_attachFile">Прикрепить файл</string>
+    <string name="utils_with">с</string>
+    <string name="utils_dotWithSpaces">  \u2022  </string>
+
+    <string name="notificationPrimaryInboxTitle">Уведомление Canvas</string>
+    <string name="notificationChannelNamePrimary">Общие уведомления Canvas</string>
+    <string name="notificationChannelDescriptionPrimary">Дополнительная настройка уведомлений осуществляется в разделе настроек уведомлений Canvas.</string>
+
+    <string name="copyLinkAddress">Копировать адрес ссылки</string>
+    <string name="copyLink">Копировать ссылку</string>
+    <string name="linkCopied">Ссылка скопирована</string>
+    <string name="link">Ссылка</string>
+    <string name="fileExists">Файл существует</string>
+    <string name="replace">Заменить</string>
+    <string name="shareLink">Поделиться ссылкой</string>
+    <string name="utils_launchExternalTool">Запуск внешнего инструмента</string>
+    <string name="utils_externalToolTitle">Внешний инструмент</string>
+    <string name="utils_placeholderTitle">Внешний инструмент</string>
+    <string name="utils_placeholderDescription">Посетите веб-страницу своей учетной записи Canvas для редактирования этого внешнего инструмента.</string>
+
+    <string name="utils_unableToViewInBrowser">Не удалось найти внешнее приложение для открытия этого инструмента LTI.</string>
+
+    <string name="utils_unsupportedFileMessage">Невозможно отобразить этот файл. Используйте расположенную ниже кнопку, чтобы открыть файл с помощью другого приложения на вашем устройстве.</string>
+    <string name="utils_openWithAnotherApp">Открыть с помощью&#8230;</string>
+    <string name="utils_couldNotPlayFormat">Этот формат медиа-формат не поддерживается</string>
+    <string name="utils_fullscreen">во весь экран</string>
+
+    <string name="utils_dataUsageWarningTitle">Предупреждение об использовании данных</string>
+    <string name="utils_dataUsageWarningMessage">Эта процедура может потребовать большого объема данных, что может привести к дополнительным тратам за перерасход трафика. Продолжить?</string>
+    <string name="utils_doNotShowMessageAgain">Больше не показывать это сообщение</string>
+
+    <string name="utils_no_data_connection">Проверьте подключение и повторите попытку.</string>
+    <string name="utils_playMedia">Воспроизвести мультимедиа</string>
+    <string name="utils_tryAgain">Попробуйте еще раз</string>
+    <string name="image_uploading">Выполняется загрузка изображения...</string>
+    <string name="image_upload_error">Ошибка при загрузке изображения</string>
+    <string name="retry">Повторить</string>
 
 </resources>

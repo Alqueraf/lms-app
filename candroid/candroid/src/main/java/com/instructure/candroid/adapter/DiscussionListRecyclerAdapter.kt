@@ -22,15 +22,21 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.instructure.candroid.R
 import com.instructure.candroid.binders.EmptyBinder
-import com.instructure.candroid.holders.*
+import com.instructure.candroid.holders.DiscussionExpandableViewHolder
+import com.instructure.candroid.holders.DiscussionListHolder
+import com.instructure.candroid.holders.EmptyViewHolder
+import com.instructure.candroid.holders.NoViewholder
 import com.instructure.candroid.interfaces.AdapterToFragmentCallback
 import com.instructure.canvasapi2.StatusCallback
 import com.instructure.canvasapi2.managers.AnnouncementManager
 import com.instructure.canvasapi2.managers.DiscussionManager
-import com.instructure.canvasapi2.models.*
+import com.instructure.canvasapi2.models.CanvasContext
+import com.instructure.canvasapi2.models.DiscussionTopicHeader
 import com.instructure.canvasapi2.utils.ApiType
 import com.instructure.canvasapi2.utils.LinkHeaders
-import com.instructure.canvasapi2.utils.weave.*
+import com.instructure.canvasapi2.utils.weave.awaitApi
+import com.instructure.canvasapi2.utils.weave.catch
+import com.instructure.canvasapi2.utils.weave.tryWeave
 import com.instructure.pandarecycler.util.GroupSortedList
 import com.instructure.pandarecycler.util.Types
 import com.instructure.pandautils.utils.ColorKeeper
@@ -75,15 +81,14 @@ open class DiscussionListRecyclerAdapter(
     }
 
     override fun onBindChildHolder(holder: RecyclerView.ViewHolder, group: String, discussionTopicHeader: DiscussionTopicHeader) {
-        context?.let { (holder as DiscussionListHolder).bind(it, discussionTopicHeader, group, ColorKeeper.getOrGenerateColor(canvasContext), isDiscussions, callback) }
+        context?.let { (holder as DiscussionListHolder).bind(it, discussionTopicHeader, ColorKeeper.getOrGenerateColor(canvasContext), isDiscussions, callback) }
     }
 
     override fun onBindHeaderHolder(holder: RecyclerView.ViewHolder, group: String, isExpanded: Boolean) {
         if (isDiscussions) {
-            (holder as DiscussionExpandableViewHolder).bind(isExpanded, isDiscussions, holder, group, {
-                discussionGroup ->
+            (holder as? DiscussionExpandableViewHolder)?.bind(isExpanded, isDiscussions, group) { discussionGroup ->
                 expandCollapseGroup(discussionGroup)
-            })
+            }
         }
     }
 

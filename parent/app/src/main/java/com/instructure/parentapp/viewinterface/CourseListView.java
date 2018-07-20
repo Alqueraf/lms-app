@@ -14,21 +14,11 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package com.instructure.parentapp.viewinterface;
 
-import android.support.annotation.NonNull;
-
-import com.instructure.canvasapi2.StatusCallback;
 import com.instructure.canvasapi2.models.Course;
 
 import instructure.androidblueprint.SyncManager;
 
-/**
- * Copyright (c) 2016 Instructure. All rights reserved.
- */
-
 public interface CourseListView extends SyncManager<Course> {
-    @NonNull String airwolfDomain();
-    @NonNull String parentId();
 }

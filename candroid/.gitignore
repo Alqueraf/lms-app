@@ -71,3 +71,6 @@ release_build/dropbox/target/maven-status/maven-compiler-plugin/testCompile/defa
 # OSS License data
 candroid/src/main/res/raw/third_party_license_metadata
 candroid/src/main/res/raw/third_party_licenses
+
+# Flank
+results/

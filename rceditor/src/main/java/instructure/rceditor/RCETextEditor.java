@@ -25,7 +25,10 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.webkit.CookieManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import jp.wasabeef.richeditor.RichEditor;
 
@@ -43,7 +46,6 @@ public class RCETextEditor extends RichEditor {
     public RCETextEditor(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-
     public void applyHtml(String contents) {
         applyHtml(contents, "");
     }

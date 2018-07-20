@@ -53,7 +53,7 @@
         android:layout_marginBottom="@dimen/med_padding"/>
 
 
-    <com.instructure.parentapp.view.CanvasWebView
+    <com.instructure.pandautils.views.CanvasWebView
         android:id="@+id/announcementWebView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -37,7 +37,7 @@ internal object NotificationPreferencesAPI {
                 @QueryMap notifications: Map<String, String>
         ): Call<NotificationPreferenceResponse>
 
-        @PUT("users/self/communication_channels/{communicationChannelId}/notification_preference_categories/{category}")
+        @PUT("users/self/communication_channels/{communicationChannelId}/notification_preferences/{category}")
         fun updatePreferenceCategory(
                 @Path("category") categoryName: String,
                 @Path("communicationChannelId") communicationChannelId: Long,

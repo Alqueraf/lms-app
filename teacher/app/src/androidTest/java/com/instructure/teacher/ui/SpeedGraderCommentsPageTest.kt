@@ -15,19 +15,20 @@
  */
 package com.instructure.teacher.ui
 
-import android.support.test.espresso.Espresso
+import com.instructure.espresso.randomString
 import com.instructure.soseedy.CommentSeed
-import com.instructure.soseedy.CourseAssignmentSubmission
-import com.instructure.soseedy.FileType.*
+import com.instructure.soseedy.FileType.TEXT
 import com.instructure.soseedy.SeededCourseAssignmentSubmissions
 import com.instructure.soseedy.SubmissionSeed
 import com.instructure.soseedy.SubmissionType.*
 import com.instructure.teacher.ui.utils.*
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class SpeedGraderCommentsPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         goToSpeedGraderCommentsPage(
                 submissions = listOf(
@@ -40,6 +41,7 @@ class SpeedGraderCommentsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysAuthorName() {
         val submissions = goToSpeedGraderCommentsPage(
                 submissions = listOf(
@@ -54,6 +56,7 @@ class SpeedGraderCommentsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysCommentText() {
         val submissions = goToSpeedGraderCommentsPage(
                 submissions = listOf(
@@ -68,6 +71,7 @@ class SpeedGraderCommentsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysCommentAttachment() {
         val submissions = goToSpeedGraderCommentsPage(
                 submissions = listOf(
@@ -82,6 +86,7 @@ class SpeedGraderCommentsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysSubmissionHistory() {
         goToSpeedGraderCommentsPage(
                 submissions = listOf(
@@ -94,6 +99,7 @@ class SpeedGraderCommentsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysSubmissionFile() {
         val submissions = goToSpeedGraderCommentsPage(
                 submissions = listOf(
@@ -108,6 +114,7 @@ class SpeedGraderCommentsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto(sequential = true)
     fun addsNewTextComment() {
         goToSpeedGraderCommentsPage(
                 submissions = listOf(
@@ -116,12 +123,13 @@ class SpeedGraderCommentsPageTest : TeacherTest() {
                                 .setAmount(1).build())
         )
 
-        val newComment = randomString(32)
+        val newComment = mockableString("new comment") { randomString(32) }
         speedGraderCommentsPage.addComment(newComment)
         speedGraderCommentsPage.assertDisplaysCommentText(newComment)
     }
 
     @Test
+    @Ditto
     fun showsNoCommentsMessage() {
         goToSpeedGraderCommentsPage(
                 submissions = listOf(

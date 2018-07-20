@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2016 - present  Instructure, Inc.
   ~
   ~     This program is free software: you can redistribute it and/or modify
@@ -16,80 +15,83 @@
   ~
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_container"
+    android:id="@+id/fragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <RelativeLayout
 
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:animateLayoutChanges="true">
+        android:animateLayoutChanges="true"
+        android:background="@color/white">
 
         <RelativeLayout
-            android:id="@+id/empty_state"
+            android:id="@+id/emptyState"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone">
+
             <ImageView
                 android:layout_width="@dimen/graph_width"
                 android:layout_height="@dimen/graph_height"
-                android:src="@drawable/graph"
+                android:layout_centerHorizontal="true"
                 android:layout_margin="32dp"
-                android:layout_centerHorizontal="true"
-                android:contentDescription=""/>
+                android:contentDescription="@string/graph"
+                android:src="@drawable/graph" />
+
             <TextView
-                android:id="@+id/no_poll_text_teacher"
+                android:id="@+id/noPollTextTeacher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_above="@+id/tapHere"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/aqua_text"
                 android:text="@string/no_poll_text_teacher"
-                android:textSize="28sp"
                 android:textAllCaps="true"
-                android:textStyle="bold"
-                android:layout_above="@+id/tap_here"/>
+                android:textColor="@color/aqua_text"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
             <TextView
-                android:id="@+id/tap_here"
+                android:id="@+id/tapHere"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:textColor="@color/light_grey_text"
-                android:text="@string/tap_here"
-                android:textSize="20sp"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="24dp"/>
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="24dp"
+                android:text="@string/tap_here"
+                android:textColor="@color/light_grey_text"
+                android:textSize="20sp" />
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/arrow"
-                android:layout_toRightOf="@+id/tap_here"
-                android:layout_alignBottom="@+id/tap_here"
-                android:layout_below="@+id/no_poll_text_teacher"
-                android:layout_marginLeft="8dp"/>
+                android:layout_below="@+id/noPollTextTeacher"
+                android:layout_alignBottom="@+id/tapHere"
+                android:layout_marginEnd="8dp"
+                android:layout_toEndOf="@+id/tapHere"
+                android:src="@drawable/arrow" />
 
         </RelativeLayout>
+
         <android.support.v4.widget.SwipeRefreshLayout
 
             android:id="@+id/swipeRefreshLayout"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarStyle="outsideOverlay"
-            >
+            android:orientation="vertical"
+            android:scrollbarStyle="outsideOverlay">
 
             <ExpandableListView
                 android:id="@+id/expandableListView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:groupIndicator="@null"
-                android:cacheColorHint="@android:color/transparent"
                 android:layout_marginLeft="32dp"
                 android:layout_marginRight="32dp"
-                android:scrollbarStyle="outsideOverlay"/>
+                android:cacheColorHint="@android:color/transparent"
+                android:groupIndicator="@null"
+                android:scrollbarStyle="outsideOverlay" />
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -97,12 +99,12 @@
             android:id="@+id/addQuestion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_size="normal"
-            android:layout_margin="16dp"
-            app:fab_colorNormal="@color/polling_aqua"
-            android:src="@drawable/ic_action_new"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"/>
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_action_new"
+            app:fab_colorNormal="@color/polling_aqua"
+            app:fab_size="normal" />
 
     </RelativeLayout>
 </FrameLayout>

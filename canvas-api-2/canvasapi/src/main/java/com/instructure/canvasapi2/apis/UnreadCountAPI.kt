@@ -4,9 +4,11 @@ import com.instructure.canvasapi2.StatusCallback
 import com.instructure.canvasapi2.builders.RestBuilder
 import com.instructure.canvasapi2.builders.RestParams
 import com.instructure.canvasapi2.models.UnreadConversationCount
+import com.instructure.canvasapi2.models.UnreadCount
 import com.instructure.canvasapi2.models.UnreadNotificationCount
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 
 internal object UnreadCountAPI {
@@ -16,6 +18,9 @@ internal object UnreadCountAPI {
 
         @GET("users/self/activity_stream/summary")
         fun getNotificationsCount(): Call<List<UnreadNotificationCount>>
+
+        @GET("users/self/observer_alerts/unread_count")
+        fun getUnreadAlertCount(@Query("student_id") studentId: Long): Call<UnreadCount>
     }
 
     fun getUnreadConversationCount(adapter: RestBuilder, params: RestParams, callback: StatusCallback<UnreadConversationCount>) {
@@ -24,6 +29,10 @@ internal object UnreadCountAPI {
 
     fun getUnreadNotificationsCount(adapter: RestBuilder, params: RestParams, callback: StatusCallback<List<UnreadNotificationCount>>) {
         callback.addCall(adapter.build(UnreadCountsInterface::class.java, params).getNotificationsCount()).enqueue(callback)
+    }
+
+    fun getUnreadAlertCount(adapter: RestBuilder, params: RestParams, studentId: Long, callback: StatusCallback<UnreadCount>) {
+        callback.addCall(adapter.build(UnreadCountsInterface::class.java, params).getUnreadAlertCount(studentId)).enqueue(callback)
     }
 
     fun getUnreadConversationsCountSynchronous(adapter: RestBuilder, params: RestParams): String? {

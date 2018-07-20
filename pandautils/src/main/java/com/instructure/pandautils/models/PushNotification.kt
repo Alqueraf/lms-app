@@ -67,8 +67,8 @@ data class PushNotification(
 
 
 
-        fun store(context: Context, push: PushNotification): Boolean {
-            val pushes = getStoredPushes(context)
+        fun store(push: PushNotification): Boolean {
+            val pushes = getStoredPushes()
             pushes.add(push)
             val json = Gson().toJson(pushes)
             val key = getPushStoreKey(push)
@@ -79,13 +79,13 @@ data class PushNotification(
             return false
         }
 
-        fun clearPushHistory(context: Context) {
-            val key = getPushStoreKey(context)
+        fun clearPushHistory() {
+            val key = getPushStoreKey()
             if (key != null) PandaPrefs.remove(key)
         }
 
-        fun getStoredPushes(context: Context): ArrayList<PushNotification> {
-            val key = getPushStoreKey(context)
+        fun getStoredPushes(): ArrayList<PushNotification> {
+            val key = getPushStoreKey()
             if (!key.isNullOrEmpty()) {
                 val json = PandaPrefs.getString(key!!, "")
                 if (!TextUtils.isEmpty(json)) {
@@ -103,7 +103,7 @@ data class PushNotification(
         }
 
 
-        private fun getPushStorePrefix(context: Context): String? {
+        private fun getPushStorePrefix(): String? {
             val user = ApiPrefs.user
             var domain = ApiPrefs.domain
 
@@ -134,8 +134,8 @@ data class PushNotification(
         }
 
 
-        private fun getPushStoreKey(context: Context): String? {
-            val prefix = getPushStorePrefix(context) ?: return null
+        private fun getPushStoreKey(): String? {
+            val prefix = getPushStorePrefix() ?: return null
             return prefix + PUSH_NOTIFICATIONS_KEY
         }
 
@@ -149,35 +149,27 @@ data class PushNotification(
          * @param push The notification which should always have a valid user id with the shard.
          * @return the users id after removal of the shard id
          */
-        private fun getUserIdFromPush(push: PushNotification): String {
-
-            try {
+        private fun getUserIdFromPush(push: PushNotification): String = try {
                 val temp = 1000000000000L
                 val userId = java.lang.Long.parseLong(push.userId)
                 val remainder = userId % temp
-                return java.lang.Long.toString(remainder)
+                remainder.toString()
             } catch (e: Exception) {
-                return ""
+                ""
             }
-
-        }
 
         /**
          * Removes the shard from a user id. It is expcted that the user id passed in has a mixed in.
          * @param userIdWithShard
          * @return
          */
-        fun getUserIdFromPush(userIdWithShard: String): String {
-
-            try {
+        fun getUserIdFromPush(userIdWithShard: String): String = try {
                 val temp = 1000000000000L
                 val userId = java.lang.Long.parseLong(userIdWithShard)
                 val remainder = userId % temp
-                return java.lang.Long.toString(remainder)
+                remainder.toString()
             } catch (e: Exception) {
-                return ""
+                ""
             }
-
-        }
     }
 }

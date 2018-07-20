@@ -21,7 +21,7 @@ import android.content.Context.ACCESSIBILITY_SERVICE
 import android.view.accessibility.AccessibilityManager
 import com.instructure.teacher.R
 
-val Context.isTablet get() = this.resources.getBoolean(R.bool.is_device_tablet)
+val Context.isTablet get() = this.resources.getBoolean(R.bool.isDeviceTablet)
 
 val Context.isTalkbackEnabled get() = {
     (getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager).isEnabled

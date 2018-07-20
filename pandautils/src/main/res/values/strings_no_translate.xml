@@ -21,5 +21,6 @@
 
     <string name="utils_mobileSupportEmailAddress" translatable="false">mobilesupport@instructure.com</string>
     <string name="utils_supportEmailAddress" translatable="false">support@instructure.com</string>
+    <string name="utils_canvas_lowercase_untranslated" translatable="false">canvas</string>
 
 </resources>

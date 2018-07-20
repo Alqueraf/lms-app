@@ -44,7 +44,7 @@ class AllCoursesPresenter : SyncPresenter<Course, AllCoursesView>(Course::class.
             return
         }
         viewCallback?.onRefreshStarted()
-        CourseManager.getCourses(forceNetwork, mFavoriteCoursesCallback)
+        CourseManager.getCoursesTeacher(forceNetwork, mFavoriteCoursesCallback)
     }
 
     override fun refresh(forceNetwork: Boolean) {
@@ -57,7 +57,7 @@ class AllCoursesPresenter : SyncPresenter<Course, AllCoursesView>(Course::class.
         override fun onResponse(response: Response<List<Course>>, linkHeaders: LinkHeaders, type: ApiType) {
             val courses = response.body() ?: return
             val validCourses = courses.filter {
-                (it.isTeacher || it.isTA || it.isDesigner) && it.isValidTerm() && it.hasActiveEnrollment()
+                (it.isTeacher || it.isTA || it.isDesigner) && it.hasActiveEnrollment()
             }
             data.addOrUpdate(validCourses)
         }

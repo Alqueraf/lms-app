@@ -145,12 +145,29 @@
     <string name="toDoNoDueDate">No due date</string>
 
     <string name="dueAt">Due at</string>
+    <string name="dueAtTime">Due at %s</string>
     <string name="toDoDue">Due</string>
+    <string name="due">Due %1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="one">%d needs grading</item>
         <item quantity="other">%d need grading</item>
     </plurals>
     <string name="myFiles">Files</string>
+    <string name="createAFolder">Create a folder</string>
+    <string name="createFolder">Create folder</string>
+    <string name="createAFile">Create a file</string>
+    <string name="createFileFolderFabContentDesc">Show create file and create folder buttons</string>
+    <string name="folderCreationError">An error occurred during folder creation.</string>
+    <string name="rename">Rename</string>
+    <string name="renameFile">Rename file</string>
+    <string name="renameFolder">Rename folder</string>
+    <string name="blankName">Name cannot be blank</string>
+    <string name="confirmDeleteFile">Are you sure you wish to delete the file \'%s\'? This action cannot be undone.</string>
+    <string name="confirmDeleteEmptyFolder">Are you sure you wish to delete the folder \'%s\'? This action cannot be undone.</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="one">Are you sure you wish to delete the folder \'%1$s\', including the %2$d item it contains? This action cannot be undone.</item>
+        <item quantity="other">Are you sure you wish to delete the folder \'%1$s\', including the %2$d items it contains? This action cannot be undone.</item>
+    </plurals>
     <string name="settings">Settings</string>
     <string name="name">Name</string>
     <string name="email">Email</string>
@@ -354,6 +371,8 @@
 	<string name="errorPostingAnnouncement">There was an error posting the announcement.</string>
 	<string name="errorPostingDiscussion">There was an error posting the discussion.</string>
 	<string name="allowThreading">Allow threaded replies</string>
+    <string name="usersMustPost">Users must post before seeing replies</string>
+    <string name="allowUserComments">Allow users to comment</string>
 	<string name="message">Message</string>
 	<string name="title">Title</string>
 
@@ -443,6 +462,7 @@
     <string name="subTypeOnlineQuiz">Online quiz</string>
 	<string name="subTypeMediaRecording">Media recording</string>
     <string name="sub_type_lti_launch">LTI launch</string>
+    <string name="subTypeDiscussionTopic">Discussion</string>
     <string name="turnInByHand">You must hand in this assignment in person</string>
 	<string name="noSubRequired">No submission required</string>
 	<string name="noTurnInOnMobile">Mobile submission unsupported</string>
@@ -572,6 +592,7 @@
     <string name="uploadMyFiles">My Files</string>
     <string name="uploadCourseFiles">Course Files</string>
 
+    <string name="uploadToSubmissionComment">Upload to submission comment</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">Changelog</string>
 
@@ -610,14 +631,6 @@
 
     <string name="notoriousSubmissionInProgress">Submitting files&#8230; Check notification bar for updates.</string>
     <string name="notoriousSubmissionSuccessful">Finished submitting file</string>
-
-    <string name="pinned_icon">Icon for pinned discussion</string>
-    <string name="pin_discussion">Pin discussion</string>
-    <string name="unpin_discussion">Unpin discussion</string>
-    <string name="discussion_pinned">Discussion pinned</string>
-    <string name="pinned_discussions">Pinned discussions</string>
-    <string name="discussion_unpinned">Discussion unpinned</string>
-    <string name="empty_discussions">There are no discussions to show in this section.</string>
 
     <string name="bio">Bio</string>
     <string name="draft">Draft</string>
@@ -844,6 +857,7 @@
     <string name="locked_mastery_paths">Locked until \"%s\" is graded</string>
     <string name="locked_icon">Locked Icon</string>
     <string name="choose_assignment_group">Choose Assignment Group</string>
+    <string name="chooseAssignmentPath">Choose assignment path</string>
     <string name="select">Select</string>
     <string name="choice_position">Choice %d</string>
     <string name="updating_module_info">Updating module information&#8230;</string>
@@ -873,13 +887,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">Launch link in external browser</string>
-    <string name="gaugeLaunchFailure">Gauge could not be loaded at this time.</string>
-
+    <string name="ltiLaunchFailure">This LTI tool could not be loaded at this time.</string>
     <string name="urlSubmission">URL submission</string>
     <string name="assignmentDeletedError">This assignment is no longer available.</string>
     <string name="homePageIdForNotifications">Recent activity</string>
     <string name="homePageIdForModules">Modules</string>
     <string name="homePageIdForAssignments">Assignments</string>
+
     <string name="homePageIdForSyllabus">Syllabus</string>
 
     <string name="contentDescriptionWidgetRefresh">Refresh widget</string>
@@ -893,9 +907,44 @@
     <string name="finalGrade">Final Grade</string>
 
     <string name="moreThan99">99+</string>
-    <string name="dot_with_spaces">  \u2022  </string>
+    <string name="max_count">99+</string>
 
     <string name="opensInWebView">Opens in webview</string>
     <string name="unsupportedTabLabel">Not supported on this device</string>
+
+    <string name="downloadingFile">Downloading</string>
+    <string name="downloadFailed">Download failed</string>
+    <string name="downloadSuccessful">Download successful</string>
+
+    <string name="full_due_date_details">Full due date details</string>
+    <string name="submissions">Submissions</string>
+    <string name="attachment">Attachment</string>
+    <string name="contentDescription_back">Go back</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="one">%s pt</item>
+        <item quantity="other">%s pts</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="one">%s point</item>
+        <item quantity="other">%s points</item>
+    </plurals>
+    <string name="capitalTo">To</string>
+
+
+    <string name="unableToViewInBrowser">We are unable to find an external app to view this LTI tool.</string>
+    <string name="commentUpload">Comment upload</string>
+    <string name="unableToUploadMediaComment">To send a media comment, send or delete your unsent text comment.</string>
+
+    <string name="frontPage">Front page</string>
+    <string name="editPage">Edit page</string>
+    <string name="description">Description</string>
+    <string name="pageSuccessfullyUpdated">Page successfully updated.</string>
+    <string name="errorSavingPage">An error occurred trying to save this page. Try again.</string>
+    <string name="pageTitleMustBeSet">Page title must be set.</string>
+    <string name="pageDetails">Page details</string>
+    <string name="saving">Saving</string>
+    <string name="confirmDeleteEvent">Are you sure you wish to delete this event?</string>
+    <string name="conferencesNotSupported">Conferences are not yet supported on mobile.</string>
 
 </resources>

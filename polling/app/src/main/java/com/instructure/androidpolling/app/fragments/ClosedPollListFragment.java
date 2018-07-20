@@ -106,7 +106,7 @@ public class ClosedPollListFragment extends PaginatedListFragment<PollSession> {
         if(courseMap.containsKey(item.getCourse_id())) {
             courseName = courseMap.get(item.getCourse_id()).getName();
         }
-        return PollRowFactory.buildRowView(layoutInflater(), courseName, pollName, convertView, getActivity(), item.getCreated_at());
+        return PollRowFactory.INSTANCE.buildRowView(layoutInflater(), courseName, pollName, convertView, getActivity(), item.getCreated_at());
     }
 
     @Override

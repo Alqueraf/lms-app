@@ -16,27 +16,27 @@
  */
 package com.instructure.teacher.ui.pages
 
+
 import android.support.test.espresso.Espresso
-import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions
 import android.support.test.espresso.contrib.PickerActions
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.widget.DatePicker
 import android.widget.TimePicker
 import com.instructure.canvasapi2.utils.DateHelper
-import com.instructure.espresso.ClickUntilMethod
-import com.instructure.espresso.WaitForViewMatcher.waitForView
+import com.instructure.espresso.*
+import com.instructure.espresso.matchers.has
+import com.instructure.espresso.matchers.hasTextInputLayoutErrorText
+import com.instructure.espresso.matchers.withIndex
+import com.instructure.espresso.page.*
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 import com.instructure.teacher.view.AssignmentOverrideView
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matchers
 import java.text.SimpleDateFormat
 import java.util.*
 
-class EditQuizDetailsPage : BasePage(), PageAssert by SimplePageAssert() {
+class EditQuizDetailsPage : BasePage() {
 
     private val quizTitleEditText by OnViewWithId(R.id.editQuizTitle)
     private val publishSwitch by WaitForViewWithId(R.id.publishSwitch)
@@ -50,17 +50,12 @@ class EditQuizDetailsPage : BasePage(), PageAssert by SimplePageAssert() {
         callOnClick(withId(R.id.menuSave))
     }
 
-    fun clickQuizTitleEditText() {
-        quizTitleEditText.scrollTo()
-        quizTitleEditText.click()
-    }
-
-    fun editQuizTitle(): String {
-        val newName = randomString()
-        quizTitleEditText.scrollTo()
+    fun editQuizTitle(newName: String) {
+        // Combination of scroll and click randomly selects the text sometimes.
+        // This opens a contextual menu and blocks the background view to receive focus and fails the test.
+        // That is why, `quizTitleEditText.scrollTo()` is not needed.    
         quizTitleEditText.replaceText(newName)
         saveQuiz()
-        return newName
     }
 
     fun clickAccessCode() {
@@ -145,12 +140,12 @@ class EditQuizDetailsPage : BasePage(), PageAssert by SimplePageAssert() {
     private fun addOverrideButton() = waitForView(allOf(withId(R.id.addOverride),
             withEffectiveVisibility(Visibility.VISIBLE)))
 
-    fun editAssignees() = waitForViewWithId(R.id.assignTo).scrollTo().click()
-    fun clickEditDueDate() = waitForViewWithId(R.id.dueDate).scrollTo().click()
-    fun clickEditDueTime() = waitForViewWithId(R.id.dueTime).scrollTo().click()
-    fun clickEditUnlockDate() = waitForViewWithId(R.id.fromDate).scrollTo().click()
-    fun clickEditUnlockTime() = waitForViewWithId(R.id.fromTime).scrollTo().click()
-    fun clickEditLockDate() = waitForViewWithId(R.id.toDate).scrollTo().click()
-    fun clickEditLockTime() = waitForViewWithId(R.id.toTime).scrollTo().click()
+    fun editAssignees() = waitScrollClick(R.id.assignTo)
+    fun clickEditDueDate() = waitScrollClick(R.id.dueDate)
+    fun clickEditDueTime() = waitScrollClick(R.id.dueTime)
+    fun clickEditUnlockDate() = waitScrollClick(R.id.fromDate)
+    fun clickEditUnlockTime() = waitScrollClick(R.id.fromTime)
+    fun clickEditLockDate() = waitScrollClick(R.id.toDate)
+    fun clickEditLockTime() = waitScrollClick(R.id.toTime)
     fun clickAddOverride() = addOverrideButton().scrollTo().click()
 }

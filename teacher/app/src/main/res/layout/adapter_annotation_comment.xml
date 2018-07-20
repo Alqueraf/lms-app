@@ -76,4 +76,15 @@
         android:paddingTop="6dp"
         tools:text="SpeedGrader has so much crap."/>
 
+    <TextView
+        style="@style/TextFont.Regular.Italic"
+        android:id="@+id/commentRemovedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:paddingTop="6dp"
+        android:textColor="@color/error"
+        tools:text="Removed 01-01-2001 by Hodor"/>
+
 </LinearLayout>

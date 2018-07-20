@@ -43,6 +43,7 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            pseudoLocalesEnabled true
         }
         release{
             minifyEnabled false
@@ -94,10 +95,6 @@ dependencies {
     implementation project(':login-api-2')
     implementation project(':libraries:croutonlibrary')
     implementation project(':libraries:jazzyviewpager')
-
-    /* Butterknife */
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
     /* Crashlytics */
     implementation(Libs.CRASHLYTICS) {

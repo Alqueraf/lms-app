@@ -22,17 +22,20 @@ import com.instructure.teacher.ui.utils.TeacherTest
 import com.instructure.teacher.ui.utils.clickProfileMenu
 import com.instructure.teacher.ui.utils.seedData
 import com.instructure.teacher.ui.utils.tokenLogin
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class NavDrawerPageTest: TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         getToNavDrawerMenu()
         navDrawerPage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun displaysNavDrawerDetails() {
         val teacher = getToNavDrawerMenu()
         navDrawerPage.assertProfileDetails(teacher)

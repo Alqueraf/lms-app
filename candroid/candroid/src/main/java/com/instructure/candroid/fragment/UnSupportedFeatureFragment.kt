@@ -24,26 +24,19 @@ import android.view.ViewGroup
 import com.instructure.candroid.R
 import com.instructure.candroid.util.Analytics
 import com.instructure.canvasapi2.models.CanvasContext
-import com.instructure.interactions.FragmentInteractions
-import com.instructure.pandautils.utils.Const
-import com.instructure.pandautils.utils.ViewStyler
-import com.instructure.pandautils.utils.setupAsBackButton
+import com.instructure.canvasapi2.models.Tab
+import com.instructure.interactions.router.Route
+import com.instructure.pandautils.utils.*
+import kotlinx.android.synthetic.main.fragment_people_details.view.*
 import kotlinx.android.synthetic.main.fragment_unsupported_feature.*
 
-open class UnSupportedFeatureFragment : ParentFragment() {
+open class UnsupportedFeatureFragment : ParentFragment() {
 
-    private var featureName: String? = null
-    private var url: String? = null
+    private var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
+    private var featureName by NullableStringArg(key = Const.FEATURE_NAME)
+    private var url by NullableStringArg(key = Const.URL)
 
-    private var placement: FragmentInteractions.Placement = FragmentInteractions.Placement.MASTER
-
-    override fun title(): String {
-        return getString(R.string.unsupported)
-    }
-
-    override fun getFragmentPlacement(): FragmentInteractions.Placement {
-        return placement
-    }
+    override fun title(): String = getString(R.string.unsupported)
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_unsupported_feature, container, false)
@@ -57,12 +50,17 @@ open class UnSupportedFeatureFragment : ParentFragment() {
     }
 
     private fun initViews() {
-
-        //Set the text
+        // Set the text
         if (featureName != null) {
             featureText.text = String.format(getString(R.string.isNotSupportedFeature), featureName)
         } else {
             featureText.text = getString(R.string.isNotSupported)
+        }
+        // Do a specific check for conferences
+        url?.let {
+            if(it.contains(Tab.CONFERENCES_ID)) {
+                featureText.text = getString(R.string.conferencesNotSupported)
+            }
         }
 
         openInBrowser.setOnClickListener {
@@ -72,45 +70,41 @@ open class UnSupportedFeatureFragment : ParentFragment() {
                 Analytics.trackUnsupportedFeature(activity, url)
             }
 
-            //the last parameter needs to be true so the webpage will try to authenticate
-            InternalWebviewFragment.loadInternalWebView(activity, navigation,
-                    InternalWebviewFragment.createBundle(canvasContext, url!!, true, true))
+            // The last parameter needs to be true so the web page will try to authenticate
+            InternalWebviewFragment.loadInternalWebView(activity,
+                    InternalWebviewFragment.makeRoute(canvasContext, url!!, true, true))
         }
 
         ViewStyler.themeButton(openInBrowser)
     }
 
-    fun setFeature(featureName: String, url: String) {
-        this.featureName = featureName
-        this.url = url
-        initViews()
-    }
-
-    override fun handleIntentExtras(extras: Bundle?) {
-        super.handleIntentExtras(extras)
-        extras?.let {
-            featureName = it.getString(Const.FEATURE_NAME)
-            url = it.getString(Const.URL)
-
-            if (it.containsKey(Const.PLACEMENT)) {
-                placement = it.getSerializable(Const.PLACEMENT) as FragmentInteractions.Placement
-            }
-        }
-    }
-
-    override fun allowBookmarking(): Boolean {
-        return false
-    }
-
     companion object {
 
         @JvmStatic
-        fun createBundle(canvasContext: CanvasContext, title: String, url: String? = null): Bundle {
-            return Bundle().apply {
+        fun makeRoute(canvasContext: CanvasContext, title: String, url: String? = null): Route {
+            val bundle = Bundle().apply {
                 putParcelable(Const.CANVAS_CONTEXT, canvasContext)
                 putString(Const.FEATURE_NAME, title)
-                if(url != null) putString(Const.URL, url)
+                putString(Const.URL, url)
             }
+            return Route(UnsupportedFeatureFragment::class.java, canvasContext, bundle)
+        }
+
+        private fun validRoute(route: Route): Boolean {
+            return route.canvasContext != null || (route.canvasContext != null && route.arguments.getString(Const.URL) != null)
+        }
+
+        @JvmStatic
+        fun newInstance(route: Route): UnsupportedFeatureFragment? {
+            // Set external route Uri as bundle URL
+            if (route.uri != null && !route.arguments.containsKey(Const.URL)) {
+                val url = route.uri.toString().replaceFirst(Regex("canvas-(courses|student)://"), "https://")
+                route.arguments.putString(Const.URL, url)
+            }
+            if (!validRoute(route)) return null
+            return UnsupportedFeatureFragment().withArgs(
+                route.arguments
+            )
         }
     }
 }

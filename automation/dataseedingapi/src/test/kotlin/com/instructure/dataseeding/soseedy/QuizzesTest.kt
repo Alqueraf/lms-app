@@ -1,18 +1,20 @@
-/*
- * Copyright (C) 2017 - present Instructure, Inc.
- *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
- */
+//
+// Copyright (C) 2018-present Instructure, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+
 
 package com.instructure.dataseeding.soseedy
 
@@ -171,5 +173,40 @@ class QuizzesTest {
             val quizzes = InProcessServer.quizClient.seedQuizzes(request)
             assertEquals(quizCount, quizzes.quizzesCount)
         }
+    }
+
+    @Test
+    fun seedQuizSubmission() {
+        val quiz = InProcessServer.quizClient.createQuiz(CreateQuizRequest.newBuilder()
+                .setCourseId(course.id)
+                .setWithDescription(true)
+                .setLockAt("")
+                .setUnlockAt("")
+                .setDueAt("")
+                .setPublished(true)
+                .setToken(teacher.token)
+                .build())
+        val incompleteRequest = SeedQuizSubmissionRequest.newBuilder()
+                .setCourseId(course.id)
+                .setQuizId(quiz.id)
+                .setStudentToken(student.token)
+                .setComplete(false)
+                .build()
+        val incompleteResponse = InProcessServer.quizClient.seedQuizSubmission(incompleteRequest)
+        assertThat(incompleteResponse, instanceOf(QuizSubmission::class.java))
+        assertTrue(incompleteResponse.id >= 1)
+        assertEquals(1, incompleteResponse.attempt)
+        val completeRequest = CompleteQuizSubmissionRequest.newBuilder()
+                .setCourseId(course.id)
+                .setQuizId(quiz.id)
+                .setSubmissionId(incompleteResponse.id)
+                .setAttempt(incompleteResponse.attempt)
+                .setValidationToken(incompleteResponse.validationToken)
+                .setStudentToken(student.token)
+                .build()
+        val submission = InProcessServer.quizClient.completeQuizSubmission(completeRequest)
+        assertThat(submission, instanceOf(QuizSubmission::class.java))
+        assertEquals(1, submission.attempt)
+        assertTrue(submission.validationToken.isNotEmpty())
     }
 }

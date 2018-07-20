@@ -41,7 +41,7 @@ class EditFavoritesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
         title.text = canvasContext.name
 
         if (canvasContext is Course) {
-            if (canvasContext.isFavorite && canvasContext.isValidTerm()) {
+            if (canvasContext.isFavorite) {
                 star.setImageDrawable(ColorUtils.colorIt(ThemePrefs.brandColor, ContextCompat.getDrawable(context, R.drawable.vd_star_filled)))
                 title.contentDescription = String.format(Locale.getDefault(), context.getString(R.string.favorited_content_description), canvasContext.name, context.getString(R.string.content_description_favorite))
             } else {

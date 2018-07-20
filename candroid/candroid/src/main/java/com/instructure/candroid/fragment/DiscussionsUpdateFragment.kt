@@ -25,12 +25,12 @@ import com.instructure.candroid.util.Const
 import com.instructure.canvasapi2.managers.DiscussionManager
 import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.DiscussionEntry
-import com.instructure.canvasapi2.models.DiscussionTopic
 import com.instructure.canvasapi2.models.post_models.DiscussionEntryPostBody
 import com.instructure.canvasapi2.utils.APIHelper
 import com.instructure.canvasapi2.utils.weave.awaitApiResponse
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.dialogs.UnsavedChangesExitDialog
 import com.instructure.pandautils.discussions.DiscussionCaching
 import com.instructure.pandautils.utils.*
@@ -40,22 +40,25 @@ import kotlinx.coroutines.experimental.Job
 
 class DiscussionsUpdateFragment : ParentFragment() {
 
+    private var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
+
+    // Weave
     private var updateDiscussionJob: Job? = null
 
-    private var discussionTopicHeaderId: Long by LongArg(default = 0L) //The topic the discussion belongs too
-    private var discussionEntry: DiscussionEntry by ParcelableArg(default = DiscussionEntry())
-    private var discussionTopic: DiscussionTopic by ParcelableArg(default = DiscussionTopic())
+    // Bundle Args
+    private var discussionTopicHeaderId: Long by LongArg(default = 0L, key = DISCUSSION_TOPIC_HEADER_ID) //The topic the discussion belongs too
+    private var discussionEntry: DiscussionEntry by ParcelableArg(default = DiscussionEntry(), key = DISCUSSION_ENTRY)
     private var attachmentRemoved: Boolean by BooleanArg(default = false)
 
+    //region Fragment Lifecycle Overrides
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return layoutInflater.inflate(R.layout.fragment_discussions_update, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            layoutInflater.inflate(R.layout.fragment_discussions_update, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -74,14 +77,19 @@ class DiscussionsUpdateFragment : ParentFragment() {
         }
     }
 
-    override fun title(): String = getString(R.string.edit)
+    override fun onDestroy() {
+        super.onDestroy()
+        updateDiscussionJob?.cancel()
+    }
+    //endregion
 
-    override fun allowBookmarking(): Boolean = false
+    //region Fragment Interaction Overrides
+    override fun title(): String = getString(R.string.edit)
 
     override fun applyTheme() {
         toolbar.title = getString(R.string.edit)
         toolbar.setupAsCloseButton {
-            if(discussionEntry.message == rceTextEditor?.html) {
+            if (discussionEntry.message == rceTextEditor?.html) {
                 activity?.onBackPressed()
             } else {
                 UnsavedChangesExitDialog.show(fragmentManager, {
@@ -93,28 +101,19 @@ class DiscussionsUpdateFragment : ParentFragment() {
         ViewStyler.themeToolbarBottomSheet(activity, isTablet, toolbar, Color.BLACK, false)
         ViewStyler.setToolbarElevationSmall(context, toolbar)
     }
+    //endregion
 
-    private val menuItemCallback: (MenuItem) -> Unit = { item ->
-        when (item.itemId) {
-            R.id.menu_save -> {
-                if(APIHelper.hasNetworkConnection()) {
-                    editMessage(rceTextEditor.html)
-                } else {
-                    Toast.makeText(context, R.string.noInternetConnectionMessage, Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    }
-
+    //region Fragment Functionality
     private fun editMessage(message: String?) {
-        if(updateDiscussionJob?.isActive == true) return
+        if (updateDiscussionJob?.isActive == true) return
 
         updateDiscussionJob = tryWeave {
             if (attachmentRemoved) discussionEntry.attachments = null
 
             val response = awaitApiResponse<DiscussionEntry> {
                 DiscussionManager.updateDiscussionEntry(canvasContext, discussionTopicHeaderId, discussionEntry.id,
-                        DiscussionEntryPostBody(message, discussionEntry.attachments), it) }
+                        DiscussionEntryPostBody(message, discussionEntry.attachments), it)
+            }
 
             if (response.code() in 200..299) {
                 //post successful
@@ -129,43 +128,50 @@ class DiscussionsUpdateFragment : ParentFragment() {
                 toast(R.string.utils_discussionSentFailure)
             }
 
-        } catch  {
+        } catch {
             //Message update failure
             toast(R.string.utils_discussionSentFailure)
+        }
+    }
+    //endregion
+
+    private val menuItemCallback: (MenuItem) -> Unit = { item ->
+        when (item.itemId) {
+            R.id.menu_save -> {
+                if (APIHelper.hasNetworkConnection()) {
+                    editMessage(rceTextEditor.html)
+                } else {
+                    Toast.makeText(context, R.string.noInternetConnectionMessage, Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
     companion object {
         private const val DISCUSSION_TOPIC_HEADER_ID = "DISCUSSION_TOPIC_HEADER_ID"
         private const val DISCUSSION_ENTRY = "DISCUSSION_ENTRY"
-        private const val DISCUSSION_TOPIC = "DISCUSSION_TOPIC"
-        private const val IS_ANNOUNCEMENT = "IS_ANNOUNCEMENT"
 
         @JvmStatic
-        fun makeBundle(
+        fun makeRoute(
+                canvasContext: CanvasContext?,
                 discussionTopicHeaderId: Long,
-                discussionEntryId: DiscussionEntry?,
-                isAnnouncement: Boolean,
-                discussionTopic: DiscussionTopic): Bundle = Bundle().apply {
+                discussionEntry: DiscussionEntry?): Route {
+            val bundle = Bundle().apply {
+                putLong(DISCUSSION_TOPIC_HEADER_ID, discussionTopicHeaderId)
+                putParcelable(DISCUSSION_ENTRY, discussionEntry)
+            }
 
-            putLong(DISCUSSION_TOPIC_HEADER_ID, discussionTopicHeaderId)
-            putParcelable(DISCUSSION_ENTRY, discussionEntryId)
-            putBoolean(IS_ANNOUNCEMENT, isAnnouncement)
-            putParcelable(DISCUSSION_TOPIC, discussionTopic)
+            return Route(DiscussionsUpdateFragment::class.java, canvasContext, bundle)
         }
 
         @JvmStatic
-        fun newInstance(canvasContext: CanvasContext, args: Bundle) = DiscussionsUpdateFragment().apply {
-            args.putParcelable(Const.CANVAS_CONTEXT, canvasContext)
-            arguments = args
-            discussionTopicHeaderId = args.getLong(DISCUSSION_TOPIC_HEADER_ID)
-            discussionEntry = args.getParcelable(DISCUSSION_ENTRY)
-            discussionTopic = args.getParcelable(DISCUSSION_TOPIC)
-        }
-    }
+        fun newInstance(route: Route) = if (validRoute(route)) {
+            DiscussionsUpdateFragment().apply {
+                arguments = route.canvasContext!!.makeBundle(route.arguments)
+            }
+        } else null
 
-    override fun onDestroy() {
-        super.onDestroy()
-        updateDiscussionJob?.cancel()
+        private fun validRoute(route: Route) = route.canvasContext != null &&
+                route.arguments.containsKey(DISCUSSION_TOPIC_HEADER_ID)
     }
 }

@@ -26,6 +26,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.instructure.annotations.AnnotationDialogs.AnnotationCommentDialog
 import com.instructure.canvasapi2.models.CanvaDocs.CanvaDocAnnotation
+import com.instructure.canvasapi2.models.DocSession
 import com.instructure.pandautils.fragments.BaseListFragment
 import com.instructure.pandautils.utils.*
 import com.instructure.teacher.R
@@ -40,10 +41,9 @@ class AnnotationCommentListFragment : BaseListFragment<
         AnnotationCommentListAdapter>(), AnnotationCommentListView {
 
     private var mAnnotationList by ParcelableArrayListArg<CanvaDocAnnotation>()
-    private var mCanvaDocId by StringArg()
-    private var mSessionId by StringArg()
     private var mAssigneeId by LongArg()
-    private var mCanvaDocsDomain by StringArg()
+    private var mDocSession by ParcelableArg<DocSession>()
+    private var mHeadAnnotationId by StringArg()
     private val mAnnotationCommentsAdapter by lazy {
         AnnotationCommentListAdapter(context, presenter, { annotation, position ->
             AnnotationCommentDialog.getInstance(fragmentManager, annotation.contents ?: "", context.getString(R.string.editComment)) { cancelled, text ->
@@ -78,7 +78,7 @@ class AnnotationCommentListFragment : BaseListFragment<
     override fun checkIfEmpty() {} // we don't display this view if its empty, so no need to check
     override fun onRefreshFinished() {}
     override fun onRefreshStarted() {}
-    override fun getPresenterFactory() = AnnotationCommentListPresenterFactory(mAnnotationList, mCanvaDocId, mSessionId, mCanvaDocsDomain, mAssigneeId)
+    override fun getPresenterFactory() = AnnotationCommentListPresenterFactory(mAnnotationList, mDocSession, mAssigneeId, mHeadAnnotationId)
 
     override fun onPresenterPrepared(presenter: AnnotationCommentListPresenter?) {
         val layoutManager = LinearLayoutManager(context)
@@ -102,15 +102,21 @@ class AnnotationCommentListFragment : BaseListFragment<
     }
 
     fun setupCommentInput() {
-        sendCommentButton.imageTintList = ViewStyler.generateColorStateList(
-                intArrayOf(-android.R.attr.state_enabled) to context.getColorCompat(R.color.defaultTextGray),
-                intArrayOf() to ThemePrefs.buttonColor
-        )
+        // We only want to enable comments if the user has write permissions or greater
+        if(!presenter.docSession.annotationMetadata.canWrite()) {
+            commentInputContainer.setVisible(false)
+        } else {
+            commentInputContainer.setVisible(true)
+            sendCommentButton.imageTintList = ViewStyler.generateColorStateList(
+                    intArrayOf(-android.R.attr.state_enabled) to context.getColorCompat(R.color.defaultTextGray),
+                    intArrayOf() to ThemePrefs.buttonColor
+            )
 
-        sendCommentButton.isEnabled = false
-        commentEditText.onTextChanged { sendCommentButton.isEnabled = it.isNotBlank() }
-        sendCommentButton.onClickWithRequireNetwork {
-            presenter.sendComment(commentEditText.text.toString())
+            sendCommentButton.isEnabled = false
+            commentEditText.onTextChanged { sendCommentButton.isEnabled = it.isNotBlank() }
+            sendCommentButton.onClickWithRequireNetwork {
+                presenter.sendComment(commentEditText.text.toString())
+            }
         }
     }
 
@@ -144,22 +150,20 @@ class AnnotationCommentListFragment : BaseListFragment<
 
     companion object {
         @JvmStatic val ANNOTATIONS = "mAnnotationList"
-        @JvmStatic val CANVADOC_ID = "mCanvaDocId"
-        @JvmStatic val SESSION_ID = "mSessionId"
         @JvmStatic val ASSIGNEE_ID = "mAssigneeId"
-        @JvmStatic val CANVADOCS_DOMAIN = "mCanvaDocsDomain"
+        @JvmStatic val DOC_SESSION = "mDocSession"
+        @JvmStatic val HEAD_ANNOTATION_ID = "mHeadAnnotationId"
 
         @JvmStatic
         fun newInstance(bundle: Bundle) = AnnotationCommentListFragment().apply { arguments = bundle }
 
         @JvmStatic
-        fun makeBundle(annotations: ArrayList<CanvaDocAnnotation>, canvaDocId: String, sessionId: String, canvaDocsDomain: String, assigneeId: Long): Bundle {
+        fun makeBundle(annotations: ArrayList<CanvaDocAnnotation>, headAnnotationId: String, docSession: DocSession, assigneeId: Long): Bundle {
             val args = Bundle()
             args.putParcelableArrayList(ANNOTATIONS, annotations)
-            args.putString(CANVADOC_ID, canvaDocId)
-            args.putString(SESSION_ID, sessionId)
             args.putLong(ASSIGNEE_ID, assigneeId)
-            args.putString(CANVADOCS_DOMAIN, canvaDocsDomain)
+            args.putParcelable(DOC_SESSION, docSession)
+            args.putString(HEAD_ANNOTATION_ID, headAnnotationId)
             return args
         }
     }

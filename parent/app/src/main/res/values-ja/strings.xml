@@ -22,7 +22,6 @@
     <string name="email">メールアドレス</string>
     <string name="emailAddress">メールアドレス</string>
     <string name="parent_email">ペアレント Eメール</string>
-    <string name="confirmPassword">パスワードを確認</string>
     <string name="firstName">名</string>
     <string name="lastName">姓</string>
     <string name="password">パスワード</string>
@@ -150,6 +149,9 @@
     <string name="or">または</string>
     <string name="canvas_login_text">Canvas にログインする</string>
 
+    <string name="privacyPolicy">プライバシーポリシー</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">利用規約</string>
     <!-- Feature Request -->
     <string name="featureSubject">Canvas Parent アプリ [Android] へのアイデア</string>
     <string name="understandRequest">次の情報は、あなたのアイデアをより良く理解するために役立ちます:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">学生の学校名を入力</string>
     <string name="findYourStudentsSchoolHint">あなたの学生の学校や地区を探す</string>
-    <string name="noGradeText">N/A</string>
+    <string name="noGradeText">成績なし</string>
     <string name="locked">ロックされています</string>
+    <string name="changeUser">ユーザーを変更する</string>
+    <string name="manageChildren">「子」を管理する</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">ナビゲーションの引き出しを開く</string>
+    <string name="navigation_drawer_close">ナビゲーションの引き出しを閉じる</string>
+    <string name="version" formatted="false">バージョン %s</string>
+    <string name="not_a_parent_title">親ではありませんか？</string>
+    <string name="not_a_parent_subtitle">私たちの他のアプリのうちの1つのほうが、もと合うかもしれません。1つタップしてPlay Storeにアクセスする。</string>
+    <string name="tryLoginAgain">再度ログインしてください</string>
+
+    <string name="legalDetails">プライバシーポリシー、利用規約、オープンソース</string>
+    <string name="assignmentGrade">課題の成績</string>
+    <string name="courseGrade">コースの成績</string>
+    <string name="courseAnnouncement">コース発表</string>
+    <string name="institutionAnnouncement">機関発表</string>
+    <string name="institutionAnnouncementUnavailable">この発表は終了しました。</string>
 </resources>

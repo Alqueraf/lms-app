@@ -57,14 +57,14 @@ class CreateGameActivity : AppCompatActivity() {
 
     private val nfcListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            val nfc = dataSnapshot.getValue(NfcAssignment::class.java) ?: return
+            val nfc = dataSnapshot.getValue(IncomingData::class.java) ?: return
             if (nfc.sideOne.isBlank() && nfc.sideTwo.isBlank()) return
             fun getUserById(userId: String): User? = App.realm.where(User::class.java).equalTo("id", userId).findFirst()
             when {
                 nfc.sideOne.isNotBlank() -> getUserById(nfc.sideOne)?.let { addUser(it, teamOneLayout) }
                 nfc.sideTwo.isNotBlank() -> getUserById(nfc.sideTwo)?.let { addUser(it, teamTwoLayout) }
             }
-            mIncomingNfcRef.setValue(NfcAssignment())
+            mIncomingNfcRef.setValue(IncomingData())
         }
 
         override fun onCancelled(databaseError: DatabaseError) { }
@@ -98,6 +98,10 @@ class CreateGameActivity : AppCompatActivity() {
         // Team changed listeners
         teamOneLayout.onTeamChanged = { onTeamChanged(TableSide.SIDE_1) }
         teamTwoLayout.onTeamChanged = { onTeamChanged(TableSide.SIDE_2) }
+
+        // Setup QR codes
+        teamOneQR.setTableSide(mTable, TableSide.SIDE_1)
+        teamTwoQR.setTableSide(mTable, TableSide.SIDE_2)
 
         // Best of selection
         bestOf = BEST_OF_DEFAULT

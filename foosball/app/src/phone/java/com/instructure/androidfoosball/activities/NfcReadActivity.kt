@@ -48,7 +48,7 @@ class NfcReadActivity : AppCompatActivity() {
     private val TAG = "FoosNFC"
 
     private val mAuth = FirebaseAuth.getInstance()
-    lateinit internal var mUser: FirebaseUser
+    internal lateinit var mUser: FirebaseUser
     private val mAuthListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
         val user = firebaseAuth.currentUser
         if (user != null) {
@@ -76,11 +76,16 @@ class NfcReadActivity : AppCompatActivity() {
 
             Log.i(TAG, "Read NFC Tag for table " + segments[0] + ", side " + segments[1])
 
-            assignTeam(segments[0], Integer.parseInt(segments[1]))
-        } catch (e: Exception) {
-            fail(e.message ?: "Unknown error parsing NFC data")
+            assignTeam(segments[0], segments[1].toIntOrNull() ?: 0)
+        } catch (e: Throwable) {
+            try {
+                val segments = intent.data.pathSegments
+                Log.i(TAG, "Read URI for table " + segments[0] + ", side " + segments[1])
+                assignTeam(segments[0], segments[1].toIntOrNull() ?: 0)
+            } catch (e: Throwable) {
+                fail(e.message ?: "Unknown error parsing NFC data")
+            }
         }
-
     }
 
     private fun assignTeam(tableId: String, side: Int) {

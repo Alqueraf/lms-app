@@ -18,13 +18,12 @@ package com.instructure.teacher.presenters
 
 import com.android.ex.chips.RecipientEntry
 import com.instructure.canvasapi2.StatusCallback
-import com.instructure.canvasapi2.managers.InboxManager
 import com.instructure.canvasapi2.managers.CourseManager
 import com.instructure.canvasapi2.managers.GroupManager
+import com.instructure.canvasapi2.managers.InboxManager
 import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.utils.ApiType
 import com.instructure.canvasapi2.utils.LinkHeaders
-import com.instructure.canvasapi2.utils.mapToRemoteFile
 import com.instructure.canvasapi2.utils.weave.inParallel
 import com.instructure.canvasapi2.utils.weave.weave
 import com.instructure.teacher.viewinterface.AddMessageView
@@ -36,7 +35,7 @@ import java.util.*
 
 class AddMessagePresenter(val conversation: Conversation?, private val mParticipants: ArrayList<BasicUser>?, private val mMessages: ArrayList<Message>?, val isReply: Boolean) : FragmentPresenter<AddMessageView>() {
 
-    private val mAttachments = ArrayList<RemoteFile>()
+    private val mAttachments = ArrayList<Attachment>()
     private var mCourse: Course? = null
 
     private var mAPICalls: Job? = null
@@ -142,24 +141,15 @@ class AddMessagePresenter(val conversation: Conversation?, private val mParticip
         }
     }
 
-    val attachments: List<RemoteFile>
+    val attachments: List<Attachment>
         get() = mAttachments
 
-    fun addRemoteFileAttachments(attachments: List<RemoteFile>) {
-        mAttachments.addAll(attachments)
-        if (viewCallback != null) {
-            viewCallback!!.refreshAttachments()
-        }
-    }
-
     fun addAttachments(attachments: List<Attachment>) {
-        attachments.forEach { mAttachments.add(it.mapToRemoteFile()) }
-        if (viewCallback != null) {
-            viewCallback!!.refreshAttachments()
-        }
+        mAttachments.addAll(attachments)
+        viewCallback?.refreshAttachments()
     }
 
-    fun removeAttachment(attachment: RemoteFile) {
+    fun removeAttachment(attachment: Attachment) {
         mAttachments.remove(attachment)
     }
 

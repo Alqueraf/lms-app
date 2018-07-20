@@ -25,6 +25,7 @@ import android.view.View;
 import com.instructure.canvasapi2.models.Course;
 import com.instructure.canvasapi2.models.ScheduleItem;
 import com.instructure.canvasapi2.models.Student;
+import com.instructure.canvasapi2.models.User;
 import com.instructure.pandarecycler.interfaces.ViewHolderHeaderClicked;
 import com.instructure.pandarecycler.util.Types;
 import com.instructure.parentapp.R;
@@ -48,14 +49,14 @@ public class CalendarWeekRecyclerAdapter extends SyncExpandableRecyclerAdapter<W
     private AdapterToFragmentCallback<ScheduleItem> mAdapterToFragmentCallback;
     private ViewHolderHeaderClicked<WeekHeaderItem> mAdapterToHeaderCallback;
     private Map<Long, Course> mCourses = new HashMap<>();
-    private Student mStudent;
+    private User mStudent;
 
 
     public CalendarWeekRecyclerAdapter(
             @NonNull Context context,
             @NonNull WeekPresenter presenter,
             @NonNull List<Course> courses,
-            @NonNull Student student,
+            @NonNull User student,
             @NonNull AdapterToFragmentCallback<ScheduleItem> callback,
             @NonNull ViewHolderHeaderClicked<WeekHeaderItem> headerCallback) {
         super(context, presenter);

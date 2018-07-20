@@ -225,6 +225,7 @@ public class ModuleItem extends CanvasModel<ModuleItem> {
         dest.writeString(this.url);
         dest.writeSerializable(this.completion_requirement);
         dest.writeSerializable(this.masteryPaths);
+        dest.writeLong(this.masteryPathsItemId);
     }
 
     private ModuleItem(Parcel in) {
@@ -238,6 +239,7 @@ public class ModuleItem extends CanvasModel<ModuleItem> {
         this.url = in.readString();
         this.completion_requirement = (CompletionRequirement) in.readSerializable();
         this.masteryPaths = (MasteryPath) in.readSerializable();
+        this.masteryPathsItemId = in.readLong();
     }
 
     public static Creator<ModuleItem> CREATOR = new Creator<ModuleItem>() {

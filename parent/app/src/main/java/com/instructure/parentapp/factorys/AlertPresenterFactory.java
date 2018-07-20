@@ -18,6 +18,7 @@
 package com.instructure.parentapp.factorys;
 
 import com.instructure.canvasapi2.models.Student;
+import com.instructure.canvasapi2.models.User;
 import com.instructure.parentapp.presenters.AlertPresenter;
 
 import instructure.androidblueprint.PresenterFactory;
@@ -28,9 +29,9 @@ import instructure.androidblueprint.PresenterFactory;
 
 public class AlertPresenterFactory implements PresenterFactory<AlertPresenter> {
 
-    private Student mStudent;
+    private User mStudent;
 
-    public AlertPresenterFactory(Student student) {
+    public AlertPresenterFactory(User student) {
         mStudent = student;
     }
 

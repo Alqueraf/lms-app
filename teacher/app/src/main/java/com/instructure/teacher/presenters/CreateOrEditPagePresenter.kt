@@ -17,6 +17,8 @@
 
 package com.instructure.teacher.presenters
 
+import android.app.Activity
+import android.net.Uri
 import com.instructure.canvasapi2.StatusCallback
 import com.instructure.canvasapi2.managers.PageManager
 import com.instructure.canvasapi2.models.CanvasContext
@@ -28,18 +30,22 @@ import com.instructure.canvasapi2.utils.weave.WeaveJob
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.pandautils.utils.MediaUploadUtils
+import com.instructure.pandautils.utils.ProfileUtils
 import com.instructure.teacher.events.PageCreatedEvent
 import com.instructure.teacher.events.PageDeletedEvent
 import com.instructure.teacher.events.PageUpdatedEvent
 import com.instructure.teacher.events.post
 import com.instructure.teacher.fragments.PageDetailsFragment
+import com.instructure.teacher.interfaces.RceMediaUploadPresenter
 import com.instructure.teacher.viewinterface.CreateOrEditPageView
 import instructure.androidblueprint.FragmentPresenter
 import retrofit2.Response
 
-class CreateOrEditPagePresenter(private val mCanvasContext: CanvasContext,
-    mPage: Page? = null) : FragmentPresenter<CreateOrEditPageView>() {
+class CreateOrEditPagePresenter(private val canvasContext: CanvasContext, mPage: Page? = null)
+    : FragmentPresenter<CreateOrEditPageView>(), RceMediaUploadPresenter {
 
+    override var rceImageUploadJob: WeaveJob? = null
     private var apiJob: WeaveJob? = null
 
     /** *True* for editing mode, *false* for creation mode */
@@ -63,11 +69,11 @@ class CreateOrEditPagePresenter(private val mCanvasContext: CanvasContext,
             if (isEditing) {
                 val postBody = PagePostBody(page.body, page.title, page.isFrontPage, page.editingRoles, page.isPublished)
 
-                val updatedPage = awaitApi<Page> { PageManager.editPage(mCanvasContext, page.url ?: "", postBody, it) }
+                val updatedPage = awaitApi<Page> { PageManager.editPage(canvasContext, page.url ?: "", postBody, it) }
                 PageUpdatedEvent(updatedPage).post()
 
             } else {
-                awaitApi<Page> { PageManager.createPage(mCanvasContext, page, it) }
+                awaitApi<Page> { PageManager.createPage(canvasContext, page, it) }
                 PageCreatedEvent(true).post()
             }
             viewCallback?.onSaveSuccess()
@@ -78,7 +84,7 @@ class CreateOrEditPagePresenter(private val mCanvasContext: CanvasContext,
     }
 
     fun deletePage(pageUrl: String) {
-        PageManager.deletePage(mCanvasContext, pageUrl, object: StatusCallback<Page>(){
+        PageManager.deletePage(canvasContext, pageUrl, object: StatusCallback<Page>(){
             override fun onResponse(response: Response<Page>, linkHeaders: LinkHeaders, type: ApiType) {
                 if(response.code() in 200..299) {
                     PageDeletedEvent(page, (PageDetailsFragment::class.java.toString() + ".onResume()")).post()
@@ -86,5 +92,13 @@ class CreateOrEditPagePresenter(private val mCanvasContext: CanvasContext,
                 }
             }
         })
+    }
+
+    override fun uploadRceImage(imageUri: Uri, activity: Activity) {
+        rceImageUploadJob = MediaUploadUtils.uploadRceImageJob(imageUri, canvasContext , activity) { text, alt -> viewCallback?.insertImageIntoRCE(text, alt) }
+    }
+
+    override fun onDestroyed() {
+        rceImageUploadJob?.cancel()
     }
 }

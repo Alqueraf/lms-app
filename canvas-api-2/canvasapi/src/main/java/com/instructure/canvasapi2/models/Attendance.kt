@@ -131,12 +131,10 @@ class Attendance() : CanvasModel<Attendance>(), Parcelable {
 
     companion object {
         @JvmField val CREATOR: Parcelable.Creator<com.instructure.canvasapi2.models.Attendance> = object : Parcelable.Creator<com.instructure.canvasapi2.models.Attendance> {
-            override fun createFromParcel(source: Parcel): com.instructure.canvasapi2.models.Attendance = Attendance(source)
+            override fun createFromParcel(source: Parcel): com.instructure.canvasapi2.models.Attendance = Attendance()
             override fun newArray(size: Int): Array<com.instructure.canvasapi2.models.Attendance?> = arrayOfNulls(size)
         }
     }
-
-    constructor(source: Parcel) : this()
 
     override fun describeContents() = 0
 

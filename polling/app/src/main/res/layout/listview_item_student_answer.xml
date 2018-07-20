@@ -18,33 +18,30 @@
   ~
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/add_answer_container"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/addAnswerContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:background="@drawable/dropshadow_nine_patch"
-    android:padding="8dp"
     android:descendantFocusability="blocksDescendants"
-    >
+    android:orientation="horizontal"
+    android:padding="8dp">
+
     <RadioButton
         android:id="@+id/correctAnswer"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:background="@drawable/canvaspollingtheme_btn_radio_holo_light"
-        android:layout_centerVertical="true"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:clickable="false"/>
-    <TextView
-        style="@style/TextAppearance.EditText"
-        android:id="@+id/answer_text"
-        android:layout_toRightOf="@+id/correctAnswerAdded"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
         android:clickable="false"
-        android:inputType="none"
-        />
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+
+    <TextView
+        android:id="@+id/answerText"
+        style="@style/TextAppearance.EditText"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:inputType="none" />
 </LinearLayout>
 

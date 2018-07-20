@@ -38,6 +38,7 @@ public class Tab extends CanvasModel<Tab> implements Parcelable {
     public static final String ASSIGNMENTS_ID = "assignments";
     public static final String DISCUSSIONS_ID = "discussions";
     public static final String PAGES_ID = "pages";
+    public static final String FRONT_PAGE_ID = "front_page";
     public static final String PEOPLE_ID = "people";
     public static final String QUIZZES_ID = "quizzes";
     public static final String FILES_ID = "files";

@@ -33,6 +33,7 @@ import com.instructure.candroid.fragment.ParentFragment
 import com.instructure.candroid.view.StudentSubmissionView
 import com.instructure.canvasapi2.managers.CanvaDocsManager
 import com.instructure.canvasapi2.models.CanvaDocs.CanvaDocAnnotation
+import com.instructure.canvasapi2.models.DocSession
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
@@ -47,10 +48,9 @@ import org.greenrobot.eventbus.EventBus
 class AnnotationCommentListFragment : ParentFragment() {
 
     private var annotations by ParcelableArrayListArg<CanvaDocAnnotation>()
-    private var canvaDocId by StringArg()
-    private var sessionId by StringArg()
     private var assigneeId by LongArg()
-    private var canvaDocDomain by StringArg()
+    private var docSession by ParcelableArg<DocSession>()
+    private var headAnnotationId by StringArg()
 
     private var recyclerAdapter: AnnotationCommentListRecyclerAdapter? = null
 
@@ -59,7 +59,7 @@ class AnnotationCommentListFragment : ParentFragment() {
     private var deleteCommentJob: Job? = null
 
     override fun title() = getString(R.string.comments)
-    override fun allowBookmarking() = false
+
     override fun applyTheme() {
         toolbar.title = title()
         toolbar.setupAsCloseButton(this)
@@ -71,7 +71,7 @@ class AnnotationCommentListFragment : ParentFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        recyclerAdapter = AnnotationCommentListRecyclerAdapter(context, { annotation, position ->
+        recyclerAdapter = AnnotationCommentListRecyclerAdapter(context, docSession, { annotation, position ->
             AnnotationCommentDialog.getInstance(fragmentManager, annotation.contents ?: "", context.getString(R.string.editComment)) { cancelled, text ->
                 if(!cancelled) {
                     annotation.contents = text
@@ -80,7 +80,7 @@ class AnnotationCommentListFragment : ParentFragment() {
             }.show(fragmentManager, AnnotationCommentDialog::class.java.simpleName)
         }, { annotation, position ->
             val builder = AlertDialog.Builder(context)
-            //we want to show a different title for the head annotation
+            //we want to show a different title for the root comment
             builder.setTitle(R.string.deleteComment)
             builder.setMessage(if(position == 0) R.string.deleteHeadCommentConfirmation else R.string.deleteCommentConfirmation)
             builder.setPositiveButton(getString(R.string.delete).toUpperCase(), { _, _ ->
@@ -109,6 +109,10 @@ class AnnotationCommentListFragment : ParentFragment() {
         sendCommentJob?.cancel()
         editCommentJob?.cancel()
         deleteCommentJob?.cancel()
+        EventBus.getDefault().post(
+                StudentSubmissionView.AnnotationCommentDeleteAcknowledged(
+                        annotations.filter { it.deleted && it.deleteAcknowledged.isNullOrEmpty() },
+                        assigneeId))
     }
 
     fun configureRecyclerView() {
@@ -120,15 +124,19 @@ class AnnotationCommentListFragment : ParentFragment() {
     }
 
     private fun setupCommentInput() {
-        sendCommentButton.imageTintList = ViewStyler.generateColorStateList(
-                intArrayOf(-android.R.attr.state_enabled) to ContextCompat.getColor(context, R.color.defaultTextGray),
-                intArrayOf() to ThemePrefs.buttonColor
-        )
+        if(!docSession.annotationMetadata.canWrite()) {
+            commentInputContainer.setVisible(false)
+        } else {
+            sendCommentButton.imageTintList = ViewStyler.generateColorStateList(
+                    intArrayOf(-android.R.attr.state_enabled) to ContextCompat.getColor(context, R.color.defaultTextGray),
+                    intArrayOf() to ThemePrefs.buttonColor
+            )
 
-        sendCommentButton.isEnabled = false
-        commentEditText.onTextChanged { sendCommentButton.isEnabled = it.isNotBlank() }
-        sendCommentButton.onClickWithRequireNetwork {
-            sendComment(commentEditText.text.toString())
+            sendCommentButton.isEnabled = false
+            commentEditText.onTextChanged { sendCommentButton.isEnabled = it.isNotBlank() }
+            sendCommentButton.onClickWithRequireNetwork {
+                sendComment(commentEditText.text.toString())
+            }
         }
     }
 
@@ -158,10 +166,10 @@ class AnnotationCommentListFragment : ParentFragment() {
         sendCommentJob = weave {
             try {
                 showSendingStatus()
-                //first we need to find the head comment
-                val headAnnotation = annotations.firstOrNull()
-                if (headAnnotation != null) {
-                    val newCommentReply = awaitApi<CanvaDocAnnotation> { CanvaDocsManager.putAnnotation(sessionId, generateAnnotationId(), createCommentReplyAnnotation(comment, headAnnotation.annotationId, canvaDocId, ApiPrefs.user?.id.toString(), headAnnotation.page), canvaDocDomain, it) }
+                //first we need to find the root comment
+                val rootComment = annotations.firstOrNull()
+                if (rootComment != null) {
+                    val newCommentReply = awaitApi<CanvaDocAnnotation> { CanvaDocsManager.putAnnotation(docSession.apiValues.sessionId, generateAnnotationId(), createCommentReplyAnnotation(comment, headAnnotationId, docSession.apiValues.documentId, ApiPrefs.user?.id.toString(), rootComment.page), docSession.apiValues.canvaDocsDomain, it) }
                     EventBus.getDefault().post(StudentSubmissionView.AnnotationCommentAdded(newCommentReply, assigneeId))
                     // The put request doesn't return this property, so we need to set it to true
                     newCommentReply.isEditable = true
@@ -179,7 +187,7 @@ class AnnotationCommentListFragment : ParentFragment() {
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     private fun editComment(annotation: CanvaDocAnnotation, position: Int) {
         editCommentJob = tryWeave {
-            awaitApi<CanvaDocAnnotation> { CanvaDocsManager.putAnnotation(sessionId, annotation.annotationId, annotation, canvaDocDomain, it) }
+            awaitApi<CanvaDocAnnotation> { CanvaDocsManager.putAnnotation(docSession.apiValues.sessionId, annotation.annotationId, annotation, docSession.apiValues.canvaDocsDomain, it) }
             EventBus.getDefault().post(StudentSubmissionView.AnnotationCommentEdited(annotation, assigneeId))
             // Update the UI
             recyclerAdapter?.add(annotation)
@@ -192,9 +200,9 @@ class AnnotationCommentListFragment : ParentFragment() {
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     private fun deleteComment(annotation: CanvaDocAnnotation, position: Int) {
         deleteCommentJob = tryWeave {
-            awaitApi<ResponseBody> { CanvaDocsManager.deleteAnnotation(sessionId, annotation.annotationId, canvaDocDomain, it) }
+            awaitApi<ResponseBody> { CanvaDocsManager.deleteAnnotation(docSession.apiValues.sessionId, annotation.annotationId, docSession.apiValues.canvaDocsDomain, it) }
             if(annotation.annotationId == annotations.firstOrNull()?.annotationId) {
-                //this is the head annotation, deleting this deletes the entire thread
+                //this is the root comment, deleting this deletes the entire thread
                 EventBus.getDefault().post(StudentSubmissionView.AnnotationCommentDeleted(annotation, true, assigneeId))
                 headAnnotationDeleted()
             } else {
@@ -213,22 +221,20 @@ class AnnotationCommentListFragment : ParentFragment() {
 
     companion object {
         @JvmStatic val ANNOTATIONS = "annotations"
-        @JvmStatic val CANVADOC_ID = "canvaDocId"
-        @JvmStatic val SESSION_ID = "sessionId"
         @JvmStatic val ASSIGNEE_ID = "assigneeId"
-        @JvmStatic val CANVADOCS_DOMAIN = "canvaDocDomain"
+        @JvmStatic val DOC_SESSION = "docSession"
+        @JvmStatic val HEAD_ANNOTATION_ID = "headAnnotationId"
 
         @JvmStatic
         fun newInstance(bundle: Bundle) = AnnotationCommentListFragment().apply { arguments = bundle }
 
         @JvmStatic
-        fun makeBundle(annotations: ArrayList<CanvaDocAnnotation>, canvaDocId: String, sessionId: String, canvaDocsDomain: String, assigneeId: Long): Bundle {
+        fun makeBundle(annotations: ArrayList<CanvaDocAnnotation>, headAnnotationId: String, docSession: DocSession, assigneeId: Long): Bundle {
             val args = Bundle()
             args.putParcelableArrayList(ANNOTATIONS, annotations)
-            args.putString(CANVADOC_ID, canvaDocId)
-            args.putString(SESSION_ID, sessionId)
             args.putLong(ASSIGNEE_ID, assigneeId)
-            args.putString(CANVADOCS_DOMAIN, canvaDocsDomain)
+            args.putParcelable(DOC_SESSION, docSession)
+            args.putString(HEAD_ANNOTATION_ID, headAnnotationId)
             return args
         }
     }

@@ -29,6 +29,9 @@ import com.instructure.canvasapi2.utils.APIHelper
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.DateHelper
 import com.instructure.canvasapi2.utils.NumberHelper
+import com.instructure.interactions.Identity
+import com.instructure.interactions.MasterDetailInteractions
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.fragments.BasePresenterFragment
 import com.instructure.pandautils.utils.*
 import com.instructure.pandautils.views.CanvasWebView
@@ -39,17 +42,16 @@ import com.instructure.teacher.events.AssignmentGradedEvent
 import com.instructure.teacher.events.QuizUpdatedEvent
 import com.instructure.teacher.events.post
 import com.instructure.teacher.factory.QuizDetailsPresenterFactory
-import com.instructure.interactions.Identity
-import com.instructure.interactions.MasterDetailInteractions
 import com.instructure.teacher.presenters.AssignmentSubmissionListPresenter.SubmissionListFilter
 import com.instructure.teacher.presenters.QuizDetailsPresenter
-import com.instructure.interactions.router.Route
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
+import com.instructure.teacher.view.QuizSubmissionGradedEvent
 import com.instructure.teacher.viewinterface.QuizDetailsView
 import kotlinx.android.synthetic.main.fragment_quiz_details.*
 import kotlinx.android.synthetic.main.view_quiz_preview_button.*
 import kotlinx.android.synthetic.main.view_submissions_donut_group.*
+import kotlinx.coroutines.experimental.Job
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -69,9 +71,16 @@ class QuizDetailsFragment : BasePresenterFragment<
 
     private var mNeedToForceNetwork = false
 
+    private var loadHtmlJob: Job? = null
+
     override fun layoutResId(): Int = R.layout.fragment_quiz_details
 
     override fun getPresenterFactory() = QuizDetailsPresenterFactory(mCourse, mQuiz)
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        loadHtmlJob?.cancel()
+    }
 
     override fun onReadySetGo(presenter: QuizDetailsPresenter) {
         if (mQuizId == 0L) {
@@ -232,8 +241,8 @@ class QuizDetailsFragment : BasePresenterFragment<
                     Quiz.SettingTypes.SHUFFLE_ANSWERS -> R.string.quiz_settings_label_shuffle_answers to getString(shuffleAnswersDisplayable())
                     Quiz.SettingTypes.TIME_LIMIT -> {
                         R.string.quiz_settings_label_time_limit to
-                                if (timeLimit == null) getString(R.string.no_time_limit)
-                                else timeLimit?.let { resources.getQuantityString(R.plurals.minutes, it, NumberHelper.formatInt(it.toLong())) }
+                                if (timeLimit == 0) getString(R.string.no_time_limit)
+                                else timeLimit.let { resources.getQuantityString(R.plurals.minutes, it, NumberHelper.formatInt(it.toLong())) }
                     }
                     Quiz.SettingTypes.MULTIPLE_ATTEMPTS -> R.string.quiz_settings_label_multiple_attempts to getString(if (allowedAttempts != 1) R.string.yes else R.string.no)
                     Quiz.SettingTypes.SCORE_TO_KEEP -> R.string.quiz_settings_label_score_to_keep to if (allowedAttempts != 1) getString(scoringPolicy) else null
@@ -317,7 +326,6 @@ class QuizDetailsFragment : BasePresenterFragment<
     private fun setupDescription(quiz: Quiz) {
         // Show "No description" layout if there is no description
         if (quiz.description.isNullOrBlank()) {
-            instructionsWebView.setGone()
             noInstructionsTextView.setVisible()
             return
         }
@@ -330,7 +338,6 @@ class QuizDetailsFragment : BasePresenterFragment<
                 super.onProgressChanged(view, newProgress)
                 if (newProgress >= 100) {
                     instructionsProgressBar?.setGone()
-                    instructionsWebView?.setVisible()
                 }
             }
         }
@@ -358,7 +365,15 @@ class QuizDetailsFragment : BasePresenterFragment<
         instructionsWebView.setBackgroundResource(android.R.color.transparent)
 
         // Load instructions
-        instructionsWebView.loadHtml(quiz.description, quiz.title)
+        if (CanvasWebView.containsLTI(quiz.description, "UTF-8")) {
+            loadHtmlJob = instructionsWebView.loadHtmlWithLTIs(context, isTablet, quiz.description, AssignmentDetailsFragment@::loadQuizHTML)
+        } else {
+            loadQuizHTML(quiz.description)
+        }
+    }
+
+    private fun loadQuizHTML(html: String) {
+        instructionsWebView.loadHtml(html, presenter.mQuiz.title)
     }
 
     private fun setupListeners(quiz: Quiz) {
@@ -438,6 +453,14 @@ class QuizDetailsFragment : BasePresenterFragment<
     fun onQuizEdited(event: QuizUpdatedEvent) {
         event.once(javaClass.simpleName) {
             if (it == presenter.mQuiz.id) mNeedToForceNetwork = true
+        }
+    }
+
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    fun onQuizGraded(event: QuizSubmissionGradedEvent) {
+        event.once(javaClass.simpleName) {
+            if (presenter.mQuiz.assignmentId == it.assignmentId) mNeedToForceNetwork = true
         }
     }
 

@@ -21,8 +21,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.support.annotation.ColorRes
 import android.support.v4.app.NotificationCompat
-import android.text.TextUtils
+import android.support.v4.content.ContextCompat
 import com.google.android.gms.gcm.GcmListenerService
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.Logger
@@ -36,6 +37,8 @@ abstract class PushExternalReceiver : GcmListenerService() {
     abstract fun getAppName(context: Context): String
     abstract fun getStartingActivityClass(): Class<out Activity>
 
+    abstract fun getAppColor(): Int
+
     override fun onMessageReceived(sender: String?, msg: Bundle?) {
         Logger.d("PushExternalReceiver onReceive()")
         if (msg != null) {
@@ -46,8 +49,8 @@ abstract class PushExternalReceiver : GcmListenerService() {
             val userId = msg.getString(PushNotification.USER_ID, "")
 
             val push = PushNotification(htmlUrl, from, alert, collapseKey, userId)
-            if (PushNotification.store(this, push)) {
-                postNotification(this, msg, getAppName(this), getStartingActivityClass())
+            if (PushNotification.store(push)) {
+                postNotification(this, msg, getAppName(this), getStartingActivityClass(), getAppColor())
             }
         }
     }
@@ -56,7 +59,7 @@ abstract class PushExternalReceiver : GcmListenerService() {
 
         const val NEW_PUSH_NOTIFICATION = "newPushNotification"
 
-        fun postNotification(context: Context, extras: Bundle?, appName: String, startingActivity: Class<out Activity>) {
+        fun postNotification(context: Context, extras: Bundle?, appName: String, startingActivity: Class<out Activity>, @ColorRes appColor: Int) {
 
             val user = ApiPrefs.user
             val userDomain = ApiPrefs.domain
@@ -73,8 +76,8 @@ abstract class PushExternalReceiver : GcmListenerService() {
                 Logger.e("HTML URL IS NULL")
             }
 
-            if (user != null && !TextUtils.isEmpty(notificationUserId)) {
-                val currentUserId = java.lang.Long.toString(user.id)
+            if (user != null && notificationUserId.isNotBlank()) {
+                val currentUserId = user.id.toString()
                 if (!notificationUserId.equals(currentUserId, ignoreCase = true)) {
                     Logger.e("USER IDS MISMATCHED")
                     return
@@ -84,12 +87,12 @@ abstract class PushExternalReceiver : GcmListenerService() {
                 return
             }
 
-            if (TextUtils.isEmpty(incomingDomain) || TextUtils.isEmpty(userDomain) || !incomingDomain.equals(userDomain, ignoreCase = true)) {
+            if (incomingDomain.isBlank() || userDomain.isBlank() || !incomingDomain.equals(userDomain, ignoreCase = true)) {
                 Logger.e("DOMAINS DID NOT MATCH")
                 return
             }
 
-            val pushes = PushNotification.getStoredPushes(context)
+            val pushes = PushNotification.getStoredPushes()
 
             if (pushes.size == 0 && extras == null) {
                 // Nothing to post, situation would occur from the BootReceiver
@@ -119,6 +122,7 @@ abstract class PushExternalReceiver : GcmListenerService() {
 
             val notification = NotificationCompat.Builder(context, channelId)
                     .setSmallIcon(R.drawable.ic_notification_canvas_logo)
+                    .setColor(ContextCompat.getColor(context, appColor))
                     .setContentTitle(appName)
                     .setContentText(getMessage(extras))
                     .setContentIntent(contentPendingIntent)
@@ -167,8 +171,8 @@ abstract class PushExternalReceiver : GcmListenerService() {
 
         private fun getHtmlUrl(extras: Bundle?): String = extras?.getString(PushNotification.HTML_URL, "") ?: ""
 
-        fun postStoredNotifications(context: Context, appName: String, startingActivity: Class<out Activity>) {
-            postNotification(context, null, appName, startingActivity)
+        fun postStoredNotifications(context: Context, appName: String, startingActivity: Class<out Activity>, @ColorRes appColor: Int) {
+            postNotification(context, null, appName, startingActivity, appColor)
         }
     }
 }

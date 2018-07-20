@@ -183,8 +183,8 @@ class SpeedGraderGradeFragment : BasePresenterFragment<SpeedGraderGradePresenter
         }
 
         val dialog = CustomizeGradeDialog.getInstance(activity.supportFragmentManager,
-                pointsPossible, grade, presenter.assignment.gradingType, presenter.assignee is GroupAssignee) { grade, isExcused ->
-            presenter.updateGrade(grade, isExcused)
+                pointsPossible, grade, presenter.assignment.gradingType, presenter.assignee is GroupAssignee) { currentGrade, isExcused ->
+            presenter.updateGrade(currentGrade, isExcused)
         }
 
         dialog.show(activity.supportFragmentManager, CustomizeGradeDialog::class.java.simpleName)

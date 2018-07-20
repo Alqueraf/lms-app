@@ -60,7 +60,7 @@ class DiscussionEntryHtmlConverter {
         val ltiButtonWidth = if(isTablet) "320px" else "100%"
         val ltiButtonMargin = if(isTablet) "0px" else "auto"
 
-        var authorName = ""
+        var authorName: String
         var date = ""
         var content = getContentHTML(discussionEntry.getMessage(""))
         val reply = formatReplyText(context, canReply)
@@ -69,7 +69,7 @@ class DiscussionEntryHtmlConverter {
         val editDivider = formatEditDividerText(canEdit)
         val deleteDivider = formatDeleteDividerText(canDelete)
         val userId: String
-        var replyButtonWrapperStyle = "display: block;"
+        val replyButtonWrapperStyle: String
         var detailsWrapperStyle = "display: block;"
         var indentDisplay1 = "display: none;"
         var indentDisplay2 = "display: none;"

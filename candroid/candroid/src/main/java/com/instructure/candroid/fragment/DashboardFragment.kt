@@ -35,6 +35,7 @@ import com.instructure.candroid.dialog.EditCourseNicknameDialog
 import com.instructure.candroid.events.CoreDataFinishedLoading
 import com.instructure.candroid.events.ShowGradesToggledEvent
 import com.instructure.candroid.interfaces.CourseAdapterToFragmentCallback
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.canvasapi2.managers.CourseNicknameManager
 import com.instructure.canvasapi2.managers.UserManager
 import com.instructure.canvasapi2.models.*
@@ -43,17 +44,18 @@ import com.instructure.canvasapi2.utils.pageview.PageView
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
-import com.instructure.interactions.FragmentInteractions
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.fragment_course_grid.*
 import kotlinx.android.synthetic.main.recycler_swipe_refresh_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import kotlinx.android.synthetic.main.fragment_course_grid.fragment_container as mRootView
 import kotlinx.android.synthetic.main.recycler_swipe_refresh_layout.listView as mRecyclerView
 
 @PageView
 class DashboardFragment : ParentFragment() {
+
+    private var canvasContext: CanvasContext? by NullableParcelableArg(key = Const.CANVAS_CONTEXT)
 
     private var mRecyclerAdapter: DashboardRecyclerAdapter? = null
 
@@ -65,8 +67,6 @@ class DashboardFragment : ParentFragment() {
             }
         }
     }
-
-    override fun getFragmentPlacement() = FragmentInteractions.Placement.MASTER
 
     override fun title(): String = if (isAdded) getString(R.string.dashboard) else ""
 
@@ -87,7 +87,7 @@ class DashboardFragment : ParentFragment() {
             }
 
             override fun onSeeAllCourses() {
-                navigation?.addFragment(createFragment(AllCoursesFragment::class.java, ParentFragment.createBundle(canvasContext)))
+                RouteMatcher.route(context, AllCoursesFragment.makeRoute())
             }
 
             override fun onRemoveAnnouncement(announcement: AccountNotification, position: Int) {
@@ -96,12 +96,12 @@ class DashboardFragment : ParentFragment() {
 
             override fun onGroupSelected(group: Group) {
                 canvasContext = group
-                navigation?.addFragment(CourseBrowserFragment.newInstance(canvasContext))
+                RouteMatcher.route(context, CourseBrowserFragment.makeRoute(group))
             }
 
             override fun onCourseSelected(course: Course) {
                 canvasContext = course
-                navigation?.addFragment(CourseBrowserFragment.newInstance(canvasContext))
+                RouteMatcher.route(context, CourseBrowserFragment.makeRoute(course))
             }
 
             @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -195,7 +195,7 @@ class DashboardFragment : ParentFragment() {
             if (!APIHelper.hasNetworkConnection()) {
                 toast(R.string.notAvailableOffline)
             } else {
-                navigation?.addFragment(EditFavoritesFragment())
+                RouteMatcher.route(context, EditFavoritesFragment.makeRoute())
             }
         }
     }
@@ -210,12 +210,10 @@ class DashboardFragment : ParentFragment() {
                 toast(R.string.notAvailableOffline)
                 return true
             }
-            navigation?.addFragment(EditFavoritesFragment())
+            RouteMatcher.route(context, EditFavoritesFragment.makeRoute())
         }
         return super.onOptionsItemSelected(item)
     }
-
-    override fun allowBookmarking() = false
 
     override fun onStart() {
         super.onStart()
@@ -242,14 +240,18 @@ class DashboardFragment : ParentFragment() {
     }
 
     override fun onDestroy() {
-        if (mRecyclerAdapter != null) mRecyclerAdapter?.cancel()
+        mRecyclerAdapter?.cancel()
         super.onDestroy()
     }
 
     companion object {
+
         @JvmStatic
-        fun newInstance(canvasContext: CanvasContext) = DashboardFragment().apply {
-            this.canvasContext = canvasContext
-        }
+        fun newInstance(route: Route) =
+                DashboardFragment().apply {
+                    arguments = route.canvasContext?.makeBundle(route.arguments) ?: route.arguments
+                }
+
+        fun makeRoute(canvasContext: CanvasContext?) = Route(DashboardFragment::class.java, canvasContext)
     }
 }

@@ -22,6 +22,7 @@
 
         <activity android:name=".RCEActivity"
             android:theme="@style/AppThemeRCE.NoActionBar"
+            android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"/>
 
     </application>

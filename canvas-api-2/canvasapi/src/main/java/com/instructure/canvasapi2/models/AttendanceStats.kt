@@ -36,12 +36,10 @@ class AttendanceStats() : Parcelable {
 
     companion object {
         @JvmField val CREATOR: Parcelable.Creator<AttendanceStats> = object : Parcelable.Creator<AttendanceStats> {
-            override fun createFromParcel(source: Parcel): AttendanceStats = AttendanceStats(source)
+            override fun createFromParcel(source: Parcel): AttendanceStats = AttendanceStats()
             override fun newArray(size: Int): Array<AttendanceStats?> = arrayOfNulls(size)
         }
     }
-
-    constructor(source: Parcel) : this()
 
     override fun describeContents() = 0
 

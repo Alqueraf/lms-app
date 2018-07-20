@@ -44,9 +44,11 @@ import com.instructure.teacher.utils.*
 import com.instructure.teacher.viewinterface.AssignmentDetailsView
 import kotlinx.android.synthetic.main.fragment_assignment_details.*
 import kotlinx.android.synthetic.main.view_submissions_donut_group.*
+import kotlinx.coroutines.experimental.Job
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.net.URLDecoder
 import java.util.*
 
 class AssignmentDetailsFragment : BasePresenterFragment<
@@ -59,6 +61,8 @@ class AssignmentDetailsFragment : BasePresenterFragment<
 
     private var mNeedToForceNetwork = false
 
+    private var loadHtmlJob: Job? = null
+
     override fun layoutResId() = R.layout.fragment_assignment_details
 
     override fun onRefreshFinished() {}
@@ -66,6 +70,11 @@ class AssignmentDetailsFragment : BasePresenterFragment<
     override fun onRefreshStarted() {
         toolbar.menu.clear()
         clearListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        loadHtmlJob?.cancel()
     }
 
     override fun onReadySetGo(presenter: AssignmentDetailsPresenter) {
@@ -217,7 +226,7 @@ class AssignmentDetailsFragment : BasePresenterFragment<
                 }
                 val ltiUrl = assignment.url.validOrNull() ?: assignment.htmlUrl
                 if(!ltiUrl.isNullOrBlank()) {
-                    val args = LTIWebViewFragment.makeLTIBundle(ltiUrl)
+                    val args = LTIWebViewFragment.makeLTIBundle(ltiUrl, assignment.name, true)
                     RouteMatcher.route(context, Route(LTIWebViewFragment::class.java, mCourse, args))
                 }
             }
@@ -230,7 +239,6 @@ class AssignmentDetailsFragment : BasePresenterFragment<
     private fun configureDescription(assignment: Assignment): Unit = with(assignment) {
         // Show "No description" layout if there is no description
         if (assignment.description.isNullOrBlank()) {
-            descriptionWebView.setGone()
             noDescriptionTextView.setVisible()
             return
         }
@@ -244,7 +252,6 @@ class AssignmentDetailsFragment : BasePresenterFragment<
                 super.onProgressChanged(view, newProgress)
                 if (newProgress >= 100) {
                     descriptionProgressBar?.setGone()
-                    descriptionWebView?.setVisible()
                 }
             }
         })
@@ -267,7 +274,21 @@ class AssignmentDetailsFragment : BasePresenterFragment<
         descriptionWebView.setBackgroundResource(android.R.color.transparent)
 
         // Load description
-        descriptionWebView.loadHtml(assignment.description, assignment.name)
+
+        //if the html has an arc lti url, we want to authenticate so the user doesn't have to login again
+        if (CanvasWebView.containsLTI(description.orEmpty(), "UTF-8")) {
+            descriptionWebView.addJavascriptInterface(JsExternalToolInterface({
+                val args = LTIWebViewFragment.makeLTIBundle(URLDecoder.decode(it, "utf-8"), context.getString(R.string.utils_externalToolTitle), true)
+                RouteMatcher.route(context, Route(LTIWebViewFragment::class.java, mCourse, args))
+            }), "accessor")
+            loadHtmlJob = descriptionWebView.loadHtmlWithLTIs(context, isTablet, description.orEmpty(), AssignmentDetailsFragment@::loadAssignmentHTML)
+        } else {
+            descriptionWebView.loadHtml(description, name)
+        }
+    }
+
+    private fun loadAssignmentHTML(html: String) {
+        descriptionWebView.loadHtml(html, mAssignment.name)
     }
 
     private fun configureSubmissionDonuts(assignment: Assignment): Unit = with(assignment) {

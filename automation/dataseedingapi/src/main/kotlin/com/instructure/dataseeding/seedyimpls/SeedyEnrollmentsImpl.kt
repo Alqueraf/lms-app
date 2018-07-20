@@ -1,18 +1,20 @@
-/*
- * Copyright (C) 2017 - present Instructure, Inc.
- *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
- */
+//
+// Copyright (C) 2018-present Instructure, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+
 package com.instructure.dataseeding.seedyimpls
 
 import com.instructure.dataseeding.InProcessServer
@@ -31,7 +33,7 @@ class SeedyEnrollmentsImpl : SeedyEnrollmentsImplBase(), Reaper by SeedyReaper {
     //region API Calls
     private fun createEnrollmentTerm() = EnrollmentTermsApi.createEnrollmentTerm()
 
-    private fun enrollUser(courseId: Long, userId: Long, enrollmentType: String) =
+    private fun enrollUser(courseId: Long, userId: Long, enrollmentType: String, associatedUserId: Long) =
             when (enrollmentType) {
                 EnrollmentTypes.STUDENT_ENROLLMENT -> {
                     EnrollmentsApi.enrollUserAsStudent(courseId, userId)
@@ -46,7 +48,7 @@ class SeedyEnrollmentsImpl : SeedyEnrollmentsImplBase(), Reaper by SeedyReaper {
                     EnrollmentsApi.enrollUserAsDesigner(courseId, userId)
                 }
                 EnrollmentTypes.OBSERVER_ENROLLMENT -> {
-                    EnrollmentsApi.enrollUserAsObserver(courseId, userId)
+                    EnrollmentsApi.enrollUserAsObserver(courseId, userId, associatedUserId)
                 }
                 else -> {
                     throw DataSeedingException("Unknown Enrollment Type: " + enrollmentType)
@@ -92,7 +94,7 @@ class SeedyEnrollmentsImpl : SeedyEnrollmentsImplBase(), Reaper by SeedyReaper {
 
     override fun enrollUserInCourse(request: EnrollUserRequest, responseObserver: StreamObserver<Enrollment>) {
         try {
-            val enrollment = enrollUser(request.courseId, request.userId, request.enrollmentType)
+            val enrollment = enrollUser(request.courseId, request.userId, request.enrollmentType, request.associatedUserId)
 
             val reply = Enrollment.newBuilder()
                     .setCourseId(enrollment.courseId)
@@ -127,11 +129,12 @@ class SeedyEnrollmentsImpl : SeedyEnrollmentsImplBase(), Reaper by SeedyReaper {
     }
 
     companion object {
-        fun seedEnrollment(courseId: Long, userId: Long, enrollmentType: String): Enrollment {
+        fun seedEnrollment(courseId: Long, userId: Long, enrollmentType: String, associatedUserId: Long = 0L): Enrollment {
             return InProcessServer.enrollmentClient.enrollUserInCourse(EnrollUserRequest.newBuilder()
                     .setCourseId(courseId)
                     .setUserId(userId)
                     .setEnrollmentType(enrollmentType)
+                    .setAssociatedUserId(associatedUserId)
                     .build())
         }
     }

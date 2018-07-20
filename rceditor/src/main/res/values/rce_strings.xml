@@ -33,6 +33,7 @@
     <string name="rce_contentDescription_insert_bullets">Insert Bullet List</string>
     <string name="rce_contentDescription_insert_numbers">Insert Numbered List</string>
     <string name="rce_contentDescription_insert_photo">Insert Photo</string>
+    <string name="rce_contentDescription_upload_photo">Upload Photo From Device</string>
     <string name="rce_contentDescription_insert_link">Insert Link</string>
     <string name="rce_contentDescription_block_quote">Block Quote</string>
 
@@ -55,6 +56,7 @@
     <string name="rce_dialogCancel">Cancel</string>
     <string name="rce_insertLink">Insert Link</string>
     <string name="rce_insertImage">Insert Image</string>
+    <string name="rce_uploadImage">Upload Image</string>
 
     <string name="rce_done">Done</string>
     <string name="rce_cancel">Cancel</string>

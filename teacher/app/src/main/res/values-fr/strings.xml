@@ -60,6 +60,10 @@
     <string name="share">Partager</string>
     <string name="share_with">Partager avec&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Ouvrir le tiroir de navigation</string>
+    <string name="navigation_drawer_close">Fermer le tiroir de navigation</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(pas de sujet)</string>
     <string name="compose_message">Composer un message</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Sélectionner des fichiers ou photos</string>
     <string name="uploading_files">Envoi des fichiers en cours&#8230;</string>
     <string name="no_attachment">(Aucune pièce jointe)</string>
-    <string name="remove_attachment">Supprimer les pièces jointes</string>
     <string name="creating_announcement">Création des annonces en cours&#8230;</string>
 
     <string name="copy_email">Copier adresse email</string>
@@ -164,8 +167,6 @@
     <string name="inbox_empty_starred_title">Aucun message partagé</string>
     <string name="inbox_empty_message">Appuyez sur le \"+\" pour créer une nouvelle conversation.</string>
     <string name="inbox_empty_starred_message">Marquez des messages d\'une étoile en appuyant sur l\'icône étoile située dans le message.</string>
-
-    <string name="download_attachment">Télécharger la pièce jointe</string>
 
     <string name="reply">Répondre</string>
     <string name="replyAll">Répondre à tous</string>
@@ -285,7 +286,7 @@
     <string name="inbox_starred">Avec un astérisque</string>
     <string name="inbox_sent">Envoyé</string>
     <string name="inbox_archived">Archivé</string>
-    <string name="inbox_all_messages">Tous les messages</string>
+    <string name="inbox_all_messages">Tous</string>
     <string name="uploading_file_num" formatted="false">Envoi %d sur %d en cours</string>
     <string name="page_not_found">Page non trouvée</string>
     <string name="no_connection">Aucune connexion</string>
@@ -434,7 +435,6 @@
     <string name="deleteComment">Supprimer le commentaire</string>
     <string name="deleteAnnotation">Supprimer annotation</string>
     <string name="deleteCommentConfirmation">Voulez-vous vraiment supprimer ce commentaire ?</string>
-    <string name="deleteHeadCommentConfirmation">Ce commentaire est une annotation Supprimer ceci entraînera également la suppression de toutes les réponses et de l’annotation. Voulez-vous vraiment  effectuer cette action ?</string>
     <string name="rubric_view_long_description">Afficher la description longue</string>
     <string name="rubric">Rubrique</string>
     <string name="enter_custom_value">Entrez une valeur personnalisée</string>
@@ -501,7 +501,7 @@
         <item quantity="other">%d groupes</item>
     </plurals>
     <string name="cmp_closed">Fermé</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">favoris</string>
     <string name="content_description_not_favorite">pas favoris</string>
@@ -510,7 +510,8 @@
     <string name="edit_course_nickname">Modifier surnom du cours</string>
 
     <string name="colorPickerDialogTitle">Couleur du cours</string>
-    <string name="colorPickerDialogMessage">Paramétrez ceci comme couleur par défaut du cours. Cela  ne remplacera pas de paramètre de couleur personnalisé.</string>
+    <string name="colorPickerDialogMessage">Voici votre paramètre de couleur personnel. Vous seul verrez cette couleur pour ce cours.</string>
+
     <string name="colorPickerError">La couleur du cours n’a pas pu être paramétrée pour le moment.</string>
 
     <string name="contentDescriptionColorCottonCandy">Rose</string>
@@ -604,12 +605,6 @@
     <string name="quiz_details_from_to">Du %1$s au %2$s</string>
     <string name="quiz_details_after">Après %1$s</string>
     <string name="quiz_details_until">Jusqu’à %1$s</string>
-    <string name="continueWithoutSavingTitle">Continuer sans enregistrer ?</string>
-    <string name="continueWithoutSavingMessage">Voulez-vous vraiment continuer sans enregistrer ?</string>
-    <string name="continueUnsaved">Continuer</string>
-    <string name="exitWithoutSavingTitle">Quitter sans enregistrer ?</string>
-    <string name="exitWithoutSavingMessage">Voulez-vous vraiment quitter sans enregistrer ?</string>
-    <string name="exitUnsaved">Sortir</string>
     <string name="filterPointsMustBeSet">Entrez une valeur.</string>
 
     <plurals name="quantityQuestions">
@@ -638,7 +633,6 @@
     <string name="discussions_replies_title">Réponses</string>
     <string name="discussions_reply">Répondre</string>
     <string name="discussions_edit">Modifier</string>
-    <string name="discussions_deleted" formatted="false">Réponse supprimée %s</string>
     <string name="discussions_forbidden">Les réponses ne sont visibles que pour ceux qui ont publié au moins une réponse.</string>
     <string name="discussions_unknown_author">Auteur inconnu</string>
     <string name="discussions_delete">Supprimer discussion</string>
@@ -710,6 +704,8 @@
     <string name="subscribe">S’inscrire</string>
     <string name="allowThreadedReplies">Autoriser les réponses thématiques</string>
     <string name="usersMustPost">Les utilisateurs doivent publier quelque chose pour voir les réponses.</string>
+    <string name="allowUserComments">Autoriser les utilisateurs à commenter</string>
+
     <string name="discussionTitleMustBeSet">Vous devez définir un titre de discussion.</string>
     <string name="discussionSuccessfullyCreated">Discussion créée avec succès.</string>
     <string name="errorCreatingDiscussion">Une erreur est survenue lors de la tentative de création de la discussion. Veuillez réessayer.</string>
@@ -758,6 +754,7 @@
     <string name="choosePhotoFromGallery">Choisir une photo depuis la Galerie</string>
     <string name="fileNotFound">Fichier non trouvé.</string>
     <string name="version" formatted="false">Version %s</string>
+    <string name="fullVersion">Version %s (%d)</string>
     <string name="tap_to_view_submissions_list">Appuyez pour voir la liste des soumissions.</string>
     <string name="assignmentDescriptionContentDescription">Description du devoir</string>
     <string name="quizDescriptionContentDescription">Description du questionnaire</string>
@@ -882,6 +879,7 @@
 
     <string name="latePenalty">Pénalité de retard</string>
     <string name="finalGrade">Note Finale</string>
+    <string name="moderatedGradingUnsupported">La notation modérée n\'est pas actuellement prise en charge dans le SpeedGrader mobile.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s pt</item>
         <item quantity="other">-%s pts</item>
@@ -890,4 +888,20 @@
         <item quantity="one">-%s point</item>
         <item quantity="other">-%s points</item>
     </plurals>
+    <string name="todoUnreadCount">À faire %d non lu</string>
+    <string name="profileSettings">Paramètres de profil</string>
+    <string name="downloadingFile">Téléchargement du fichier&#8230;</string>
+    <string name="fileDownloadedSuccessfully">Fichier téléchargé avec succès.</string>
+    <string name="tapToView">Appuyer pour afficher</string>
+    <string name="errorDownloadingFile">Une erreur s\'est produite lors du téléchargement de votre fichier. Veuillez réessayer.</string>
+
+    <string name="postTo">Publier sur</string>
+    <string name="allSections">Toutes les sections</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">Cet outil LTI n\'a pas pu être chargé pour le moment.</string>
+
+    <string name="downloading">Téléversement en cours...</string>
+
 </resources>

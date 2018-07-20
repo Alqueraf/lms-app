@@ -24,8 +24,10 @@ import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.instructure.androidfoosball.R
+import com.instructure.androidfoosball.interfaces.FragmentCallbacks
 import com.instructure.androidfoosball.models.Table
 import com.instructure.androidfoosball.models.User
 import com.instructure.androidfoosball.utils.Prefs
@@ -89,6 +91,15 @@ class TableViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                             FirebaseMessaging.getInstance().subscribeToTopic(table.pushId)
                         } else {
                             Log.e("push", "Table PushId was null cannot subscribe to topic")
+                        }
+                        (context as? FragmentCallbacks)?.mUser?.let { user ->
+                            val ref = FirebaseDatabase.getInstance().reference.child("incoming").child(table.id)
+                            ref.updateChildren(
+                                mapOf(
+                                    "tableRequestUserId" to user.id,
+                                    "tableRequestTime" to System.currentTimeMillis().toString()
+                                )
+                            )
                         }
                     }
 

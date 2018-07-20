@@ -70,7 +70,7 @@ class PassFailGradeDailog : AppCompatDialogFragment() {
         passFailSpinner.adapter = passFailAdapter
 
         //listen for checkbox
-        excusedCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+        excusedCheckBox.setOnCheckedChangeListener { _, isChecked ->
             passFailSpinner.isEnabled = !isChecked
         }
 
@@ -85,7 +85,7 @@ class PassFailGradeDailog : AppCompatDialogFragment() {
                 .setCancelable(true)
                 .setTitle(getString(R.string.customize_grade))
                 .setView(view)
-                .setPositiveButton(getString(android.R.string.ok).toUpperCase(), { dialog, which ->
+                .setPositiveButton(getString(android.R.string.ok).toUpperCase(), { _, _ ->
                     // The api needs the string "complete" or "incomplete" in English, not whatever language is currently selected
                     val complete = if (passFailSpinner.selectedItemPosition == 0) "complete" else "incomplete"
 

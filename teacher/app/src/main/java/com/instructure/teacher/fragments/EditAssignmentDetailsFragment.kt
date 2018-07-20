@@ -16,6 +16,8 @@
  */
 package com.instructure.teacher.fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -30,10 +32,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ScrollView
 import android.widget.TextView
-import com.instructure.canvasapi2.managers.AssignmentManager
-import com.instructure.canvasapi2.managers.GroupCategoriesManager
-import com.instructure.canvasapi2.managers.SectionManager
-import com.instructure.canvasapi2.managers.UserManager
+import com.instructure.canvasapi2.managers.*
 import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.models.Assignment.*
 import com.instructure.canvasapi2.models.post_models.AssignmentPostBody
@@ -51,6 +50,8 @@ import com.instructure.teacher.events.AssignmentUpdatedEvent
 import com.instructure.teacher.events.post
 import com.instructure.teacher.models.DueDateGroup
 import com.instructure.interactions.router.Route
+import com.instructure.pandautils.discussions.DiscussionUtils
+import com.instructure.pandautils.views.CanvasWebView
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
 import com.instructure.teacher.view.AssignmentOverrideView
@@ -61,32 +62,35 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
+import kotlin.collections.ArrayList
 
 class EditAssignmentDetailsFragment : BaseFragment() {
-    private val EDIT_DATE_GROUPS = "editdategroups"
 
     private var mCourse: Course by ParcelableArg(Course())
     private var mAssignment: Assignment by ParcelableArg(Assignment())
     private var mIsPublished: Boolean = true
     private var mScrollToDates: Boolean = false
     private var mDisplayGradeAs: String? = null
-    private var mDisplayGradeAsType: GRADING_TYPE = GRADING_TYPE.POINTS
+    private var mSessionAuthJob: Job? = null
+    private var placeHolderList: ArrayList<Placeholder> = ArrayList()
 
-    private val saveButton: TextView? get() = view?.findViewById<TextView>(R.id.menuSave)
+    private var rceImageUploadJob: Job? = null
 
-    val groupsMapped = hashMapOf<Long, Group>()
-    val sectionsMapped = hashMapOf<Long, Section>()
-    val studentsMapped = hashMapOf<Long, User>()
+    private val saveButton: TextView? get() = view?.findViewById(R.id.menuSave)
+
+    private val groupsMapped = hashMapOf<Long, Group>()
+    private val sectionsMapped = hashMapOf<Long, Section>()
+    private val studentsMapped = hashMapOf<Long, User>()
 
     // Keeps track of which override we were editing so we can scroll back to it when the user returns from editing assignees
     private var scrollBackToOverride: AssignmentOverrideView? = null
 
-    var mDueDateApiCalls: Job? = null
-    var mPutAssignmentCall: Job? = null
+    private var mDueDateApiCalls: Job? = null
+    private var mPutAssignmentCall: Job? = null
 
-    var mScrollHandler: Handler = Handler()
+    private var mScrollHandler: Handler = Handler()
 
-    var mScrollToRunnable: Runnable = Runnable {
+    private var mScrollToRunnable: Runnable = Runnable {
         if(isAdded) scrollView.fullScroll(ScrollView.FOCUS_DOWN)
     }
 
@@ -95,19 +99,19 @@ class EditAssignmentDetailsFragment : BaseFragment() {
     // with the changes in the copy.
     private var mEditDateGroups: MutableList<DueDateGroup> = arrayListOf()
 
-    val datePickerOnClick: (date: Date?, (Int, Int, Int) -> Unit) -> Unit = { date, callback ->
+    private val datePickerOnClick: (date: Date?, (Int, Int, Int) -> Unit) -> Unit = { date, callback ->
         DatePickerDialogFragment.getInstance(activity.supportFragmentManager, date) { year, month, dayOfMonth ->
             callback(year, month, dayOfMonth)
         }.show(activity.supportFragmentManager, DatePickerDialogFragment::class.java.simpleName)
     }
 
-    val timePickerOnClick: (date: Date?, (Int, Int) -> Unit) -> Unit = { date, callback ->
+    private val timePickerOnClick: (date: Date?, (Int, Int) -> Unit) -> Unit = { date, callback ->
         TimePickerDialogFragment.getInstance(activity.supportFragmentManager, date) { hour, min ->
             callback(hour, min)
         }.show(activity.supportFragmentManager, TimePickerDialogFragment::class.java.simpleName)
     }
 
-    val removeOverrideClick: (DueDateGroup) -> Unit = { callback ->
+    private val removeOverrideClick: (DueDateGroup) -> Unit = { callback ->
         // Show confirmation dialog
         ConfirmRemoveAssignmentOverrideDialog.show(activity.supportFragmentManager) {
             if (mEditDateGroups.contains(callback)) mEditDateGroups.remove(callback)
@@ -146,6 +150,19 @@ class EditAssignmentDetailsFragment : BaseFragment() {
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Get the image Uri
+            when (requestCode) {
+                RequestCodes.PICK_IMAGE_GALLERY -> data?.data
+                RequestCodes.CAMERA_PIC_REQUEST -> MediaUploadUtils.handleCameraPicResult(activity, null)
+                else -> null
+            }?.let { imageUri ->
+                rceImageUploadJob = MediaUploadUtils.uploadRceImageJob(imageUri, mCourse, activity) { text, alt -> descriptionEditor.insertImage(text, alt) }
+            }
+        }
     }
 
     private fun setupToolbar() {
@@ -209,12 +226,18 @@ class EditAssignmentDetailsFragment : BaseFragment() {
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     private fun setupViews() = with(mAssignment) {
 
+        descriptionEditor.hideEditorToolbar()
+        descriptionEditor.actionUploadImageCallback = { MediaUploadUtils.showPickImageDialog(this@EditAssignmentDetailsFragment) }
+
         (view as? ViewGroup)?.descendants<TextInputLayout>()?.forEach {
             it.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
         }
 
         // Assignment name
         editAssignmentName.setText(name)
+        editAssignmentName.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) descriptionEditor.hideEditorToolbar()
+        }
         // set the underline to be the brand color
         ViewStyler.themeEditText(context, editAssignmentName, ThemePrefs.brandColor)
         editAssignmentName.onTextChanged {
@@ -335,11 +358,21 @@ class EditAssignmentDetailsFragment : BaseFragment() {
         descriptionProgressBar.announceForAccessibility(getString(R.string.loading))
         descriptionProgressBar.setVisible()
         // Load description
-        descriptionEditor.setHtml(mAssignment.description,
-                getString(R.string.assignmentDescriptionContentDescription),
-                getString(R.string.rce_empty_description),
-                ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        //if the html has an arc lti url, we want to authenticate so the user doesn't have to login again
+        if (CanvasWebView.containsLTI(mAssignment.description.orEmpty(), "UTF-8")) {
+            descriptionEditor.setHtml(DiscussionUtils.createLTIPlaceHolders(context, mAssignment.description) { _, placeholder ->
+                placeHolderList.add(placeholder)
+            },
+                    getString(R.string.assignmentDescriptionContentDescription),
+                    getString(R.string.rce_empty_description),
+                    ThemePrefs.brandColor, ThemePrefs.buttonColor)
 
+        } else {
+            descriptionEditor.setHtml(mAssignment.description,
+                    getString(R.string.assignmentDescriptionContentDescription),
+                    getString(R.string.rce_empty_description),
+                    ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        }
         // when the RCE editor has focus we want the label to be darker so it matches the title's functionality
         descriptionEditor.setLabel(assignmentDescLabel, R.color.defaultTextDark, R.color.defaultTextGray)
     }
@@ -355,7 +388,7 @@ class EditAssignmentDetailsFragment : BaseFragment() {
         postData.name = editAssignmentName.text.toString()
         postData.pointsPossible = editGradePoints.text.toString().toDouble()
         postData.setGroupedDueDates(mEditDateGroups)
-        postData.description = descriptionEditor.html ?: mAssignment.description
+        postData.description = handleLTIPlaceHolders(placeHolderList, descriptionEditor.html)
         postData.notifyOfUpdate = false
         postData.gradingType = mDisplayGradeAs
 
@@ -391,7 +424,7 @@ class EditAssignmentDetailsFragment : BaseFragment() {
                 saveButton?.setGone()
                 savingProgressBar.announceForAccessibility(getString(R.string.saving))
                 savingProgressBar.setVisible()
-                mAssignment = awaitApi<Assignment> { AssignmentManager.editAssignment(mAssignment.courseId, mAssignment.id, postData, it, false) }
+                mAssignment = awaitApi { AssignmentManager.editAssignment(mAssignment.courseId, mAssignment.id, postData, it, false) }
                 AssignmentUpdatedEvent(mAssignment.id).post() // Post bus event
                 toast(R.string.successfully_updated_assignment) // let the user know the assignment was saved
                 editAssignmentName.hideKeyboard() // close the keyboard
@@ -421,16 +454,19 @@ class EditAssignmentDetailsFragment : BaseFragment() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         mDueDateApiCalls?.cancel()
         mPutAssignmentCall?.cancel()
         mScrollHandler.removeCallbacks(mScrollToRunnable)
+        mSessionAuthJob?.cancel()
+        rceImageUploadJob?.cancel()
     }
 
     companion object {
         @JvmStatic val ASSIGNMENT = "assignment"
-        @JvmStatic val SHOULD_SCROLL_TO_DATES = "shouldScrollToDates"
+        private const val SHOULD_SCROLL_TO_DATES = "shouldScrollToDates"
+        const val EDIT_DATE_GROUPS = "editDateGroups"
 
         @JvmStatic
         fun newInstance(course: Course, args: Bundle) = EditAssignmentDetailsFragment().apply {
@@ -438,7 +474,6 @@ class EditAssignmentDetailsFragment : BaseFragment() {
             mAssignment = args.getParcelable(ASSIGNMENT)
             mScrollToDates = args.getBoolean(SHOULD_SCROLL_TO_DATES, false)
         }
-
 
         @JvmStatic
         fun makeBundle(assignment: Assignment, scrollToDates: Boolean): Bundle {

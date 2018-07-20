@@ -18,13 +18,16 @@ package com.instructure.teacher.ui.pages
 import android.support.test.espresso.web.sugar.Web
 import android.support.test.espresso.web.webdriver.DriverAtoms
 import android.support.test.espresso.web.webdriver.Locator
+import com.instructure.espresso.WaitForViewWithId
+import com.instructure.espresso.assertVisible
+import com.instructure.espresso.click
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.scrollTo
+import com.instructure.espresso.page.waitForViewWithText
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
 @Suppress("unused")
-class SpeedGraderQuizSubmissionPage : BasePage(), PageAssert by SimplePageAssert() {
+class SpeedGraderQuizSubmissionPage : BasePage() {
 
     private val quizIconView by WaitForViewWithId(R.id.quizIconView, autoAssert = true)
     private val quizSubmissionLabel by WaitForViewWithId(R.id.quizSubmissionLabelView, autoAssert = true)
@@ -47,7 +50,8 @@ class SpeedGraderQuizSubmissionPage : BasePage(), PageAssert by SimplePageAssert
     }
 
     fun startReview() {
-        gradeSubmissionButton.scrollTo().click()
+        scrollTo(R.id.gradeQuizButton)
+        gradeSubmissionButton.click()
     }
 
     fun finishReview() {

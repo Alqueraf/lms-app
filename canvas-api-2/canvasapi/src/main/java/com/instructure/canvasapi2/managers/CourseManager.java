@@ -109,6 +109,53 @@ public class CourseManager extends BaseManager {
         }
     }
 
+    public static void getCoursesWithSyllabus(final boolean forceNetwork, StatusCallback<List<Course>> callback) {
+        if (isTesting() || mTesting) {
+            CourseManager_Test.getCourses(callback);
+        } else {
+            final RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withPerPageQueryParam(true)
+                    .withShouldIgnoreToken(false)
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+
+            StatusCallback<List<Course>> depaginatedCallback = new ExhaustiveListCallback<Course>(callback) {
+                @Override
+                public void getNextPage(@NonNull StatusCallback<List<Course>> callback, @NonNull String nextUrl, boolean isCached) {
+                    CourseAPI.getNextPageCourses(forceNetwork, nextUrl, adapter, callback);
+                }
+            };
+
+            adapter.setStatusCallback(depaginatedCallback);
+            CourseAPI.getFirstPageCoursesWithSyllabus(adapter, depaginatedCallback, params);
+        }
+    }
+
+    public static void getCoursesTeacher(final boolean forceNetwork, StatusCallback<List<Course>> callback) {
+        if (isTesting() || mTesting) {
+            CourseManager_Test.getCourses(callback);
+        } else {
+            final RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withPerPageQueryParam(true)
+                    .withShouldIgnoreToken(false)
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+
+            StatusCallback<List<Course>> depaginatedCallback = new ExhaustiveListCallback<Course>(callback) {
+                @Override
+                public void getNextPage(@NonNull StatusCallback<List<Course>> callback, @NonNull String nextUrl, boolean isCached) {
+                    CourseAPI.getNextPageCourses(forceNetwork, nextUrl, adapter, callback);
+                }
+            };
+
+            adapter.setStatusCallback(depaginatedCallback);
+
+            CourseAPI.getFirstPageCoursesTeacher(adapter, depaginatedCallback, params);
+        }
+    }
+
     public static void getGradingPeriodsForCourse(StatusCallback<GradingPeriodResponse> callback, long courseId, boolean forceNetwork) {
         if (isTesting() || mTesting) {
             CourseManager_Test.getGradingPeriodsForCourse(callback, courseId);
@@ -304,6 +351,21 @@ public class CourseManager extends BaseManager {
         }
     }
 
+    public static void getCoursesWithEnrollmentTypeAllStates(boolean forceNetwork, StatusCallback<List<Course>> callback, String type) {
+        if (isTesting() || mTesting) {
+            // TODO:
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withPerPageQueryParam(false)
+                    .withShouldIgnoreToken(false)
+                    .withForceReadFromNetwork(forceNetwork)
+                    .build();
+            CourseAPI.getCoursesByEnrollmentTypeAllStates(adapter, callback, params, type);
+        }
+    }
+
+
     public static void getGroupsForCourse(long courseId, StatusCallback<List<Group>> callback, final boolean forceNetwork) {
         if (isTesting() || mTesting) {
             // TODO
@@ -377,6 +439,7 @@ public class CourseManager extends BaseManager {
             RestParams params = new RestParams.Builder()
                     .withPerPageQueryParam(false)
                     .withShouldIgnoreToken(false)
+                    .withForceReadFromNetwork(true)
                     .withDomain(airwolfDomain)
                     .withAPIVersion("")
                     .build();

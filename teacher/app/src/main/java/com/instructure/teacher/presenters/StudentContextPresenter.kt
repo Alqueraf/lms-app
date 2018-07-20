@@ -98,7 +98,16 @@ class StudentContextPresenter(
         apiJob?.next()
     }
 
-    override fun refresh(forceNetwork: Boolean) {}
+    override fun refresh(forceNetwork: Boolean) {
+        if(forceNetwork) {
+            isBaseDataLoaded = false
+            allPagesLoaded = false
+            submissions.clear()
+            viewCallback?.clear()
+            apiJob?.cancel()
+        }
+        loadData(forceNetwork)
+    }
 
     override fun onDestroyed() {
         super.onDestroyed()

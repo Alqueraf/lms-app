@@ -13,7 +13,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- */    package com.instructure.candroid.holders
+ */
+package com.instructure.candroid.holders
 
 import android.animation.AnimatorInflater
 import android.animation.ObjectAnimator
@@ -26,36 +27,27 @@ import kotlinx.android.synthetic.main.viewholder_discussion_group_header.view.*
 
 class DiscussionExpandableViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    var mIsExpanded = true
+    var isExpanded = true
 
-    fun bind(isExpanded: Boolean,
-             isDiscussion: Boolean,
-             holder: DiscussionExpandableViewHolder,
-             group: String,
-             callback: (String) -> Unit) = with(itemView) {
+    fun bind(expanded: Boolean, isDiscussion: Boolean, group: String, callback: (String) -> Unit) = with(itemView) {
 
-        if(!isDiscussion) {
-            this.setVisible(false)
-        } else {
-            this.setVisible()
+        setVisible(isDiscussion)
+
+        isExpanded = expanded
+
+        groupName.text = when (group) {
+            DiscussionListRecyclerAdapter.PINNED -> context.getString(R.string.utils_pinnedDiscussions)
+            DiscussionListRecyclerAdapter.UNPINNED -> context.getString(R.string.utils_discussionUnpinned)
+            DiscussionListRecyclerAdapter.CLOSED_FOR_COMMENTS -> context.getString(R.string.closed_discussion)
+            else -> ""
         }
 
-        mIsExpanded = isExpanded
+        collapseIcon.rotation = if (expanded) 180f else 0f
 
-        var title = ""
-
-        when(group) {
-            DiscussionListRecyclerAdapter.PINNED -> title = context.getString(R.string.utils_pinnedDiscussions)
-            DiscussionListRecyclerAdapter.UNPINNED -> title = context.getString(R.string.utils_discussionUnpinned)
-            DiscussionListRecyclerAdapter.CLOSED_FOR_COMMENTS -> title = context.getString(R.string.closed_discussion)
-        }
-
-        groupName.text = title
-
-        holder.itemView.setOnClickListener {
-            val animationType = if (mIsExpanded) R.animator.rotation_from_0_to_neg90 else R.animator.rotation_from_neg90_to_0
-            mIsExpanded = !mIsExpanded
-            val flipAnimator = AnimatorInflater.loadAnimator(context, animationType) as ObjectAnimator
+        setOnClickListener {
+            val animRes = if (isExpanded) R.animator.rotation_from_neg90_to_0 else R.animator.rotation_from_0_to_neg90
+            isExpanded = !isExpanded
+            val flipAnimator = AnimatorInflater.loadAnimator(context, animRes) as ObjectAnimator
             flipAnimator.target = collapseIcon
             flipAnimator.duration = 200
             flipAnimator.start()

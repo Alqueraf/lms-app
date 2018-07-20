@@ -68,4 +68,12 @@
     <string name="ungraded_survey">Ungraded Survey</string>
     <string name="andMore">\u0020and %d more</string>
 
+    <!-- Enrollment Types -->
+    <string name="enrollmentTypeStudent">Student</string>
+    <string name="enrollmentTypeTeacher">Teacher</string>
+    <string name="enrollmentTypeObserver">Observer</string>
+    <string name="enrollmentTypeTeachingAssistant">TA</string>
+    <string name="enrollmentTypeDesigner">Designer</string>
+    <string name="enrollmentTypeUnknown">Unknown</string>
+
 </resources>

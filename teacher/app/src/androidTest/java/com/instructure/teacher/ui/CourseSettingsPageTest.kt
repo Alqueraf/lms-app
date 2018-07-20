@@ -15,15 +15,18 @@
  */
 package com.instructure.teacher.ui
 
+import com.instructure.espresso.TestRail
+import com.instructure.espresso.randomString
 import com.instructure.teacher.ui.utils.TeacherTest
-import com.instructure.teacher.ui.utils.TestRail
 import com.instructure.teacher.ui.utils.seedData
 import com.instructure.teacher.ui.utils.tokenLogin
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class CourseSettingsPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     @TestRail(ID = "C3108914")
     override fun displaysPageObjects() {
         navigateToCourseSettings()
@@ -31,15 +34,18 @@ class CourseSettingsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto(sequential = true)
     @TestRail(ID = "C3108915")
     fun editCourseName() {
         navigateToCourseSettings()
         courseSettingsPage.clickCourseName()
-        val newCourseName: String = courseSettingsPage.editCourseName()
+        val newCourseName = mockableString("new-course-name") { randomString() }
+        courseSettingsPage.editCourseName(newCourseName)
         courseSettingsPage.assertCourseNameChanged(newCourseName)
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3108916")
     fun editCourseHomePage() {
         navigateToCourseSettings()

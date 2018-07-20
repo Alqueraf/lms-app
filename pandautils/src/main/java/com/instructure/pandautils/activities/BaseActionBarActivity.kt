@@ -21,8 +21,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.MenuItem
-
 import com.instructure.pandautils.R
+import com.instructure.pandautils.utils.BundleSaver
 
 abstract class BaseActionBarActivity : AppCompatActivity() {
 
@@ -30,6 +30,7 @@ abstract class BaseActionBarActivity : AppCompatActivity() {
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        BundleSaver.restoreBundleFromDisk(savedInstanceState)
         super.onCreate(savedInstanceState)
         if (contentResId() != 0) {
             setContentView(contentResId())
@@ -41,6 +42,11 @@ abstract class BaseActionBarActivity : AppCompatActivity() {
             supportActionBar?.setDisplayHomeAsUpEnabled(showHomeAsUp())
             supportActionBar?.setDisplayShowTitleEnabled(showTitleEnabled())
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        BundleSaver.saveBundleToDisk(outState)
     }
 
     abstract fun contentResId(): Int

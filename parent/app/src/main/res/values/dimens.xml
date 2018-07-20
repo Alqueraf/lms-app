@@ -26,7 +26,7 @@
     <dimen name="distance_list_item_height">54dp</dimen>
     <dimen name="observee_avatar_size">40dp</dimen>
     <dimen name="student_details_avatar_size">64dp</dimen>
-    <dimen name="carousel_avatar_size">60dp</dimen>
+    <dimen name="spinner_avatar_size">32dp</dimen>
     <dimen name="weekBarHeight">32dp</dimen>
     <dimen name="card_elevation">2dp</dimen>
     <dimen name="calendar_week_icon_size">18dp</dimen>
@@ -46,4 +46,11 @@
     <dimen name="tablet_margin">0dp</dimen>
     <dimen name="login_margin">32dp</dimen>
     <dimen name="login_logoMargins">32dp</dimen>
+
+    <dimen name="navigationProfileAvatarSize">64dp</dimen>
+    <dimen name="navigationDrawerWidth">320dp</dimen>
+    <dimen name="profileAvatarSize">168dp</dimen>
+    <dimen name="unreadAlertMarkerSize">8dp</dimen>
+    <dimen name="alertIconSize">24dp</dimen>
+
 </resources>

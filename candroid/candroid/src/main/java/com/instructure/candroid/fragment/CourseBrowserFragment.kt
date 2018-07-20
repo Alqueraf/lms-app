@@ -28,7 +28,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.instructure.candroid.R
 import com.instructure.candroid.adapter.CourseBrowserAdapter
-import com.instructure.interactions.Navigation
+import com.instructure.candroid.router.RouteMatcher
 import com.instructure.candroid.util.Const
 import com.instructure.candroid.util.TabHelper
 import com.instructure.canvasapi2.managers.PageManager
@@ -40,44 +40,24 @@ import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
 import com.instructure.interactions.FragmentInteractions
+import com.instructure.interactions.Navigation
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.fragment_course_browser.*
 import kotlinx.android.synthetic.main.view_course_browser_header.*
 import kotlinx.coroutines.experimental.Job
-import java.util.*
 
 @PageView(url = "{canvasContext}")
 class CourseBrowserFragment : Fragment(), FragmentInteractions, AppBarLayout.OnOffsetChangedListener  {
 
     private var apiCalls: Job? = null
 
-    @Suppress("RedundantSetter")
-    override var canvasContext: CanvasContext
-        get() = arguments.getParcelable(Const.CANVAS_CONTEXT)
-        set(value) {}
+    private var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
 
     override val navigation: Navigation?
-        get() = if(activity is Navigation) activity as Navigation else null
+        get() = if (activity is Navigation) activity as Navigation else null
 
-    override val tab: Tab?
-        get() = null
-
-    override fun title(): String {
-        return canvasContext.name
-    }
-
-    override fun getFragmentPlacement(): FragmentInteractions.Placement {
-        return FragmentInteractions.Placement.MASTER
-    }
-
-    override fun getParamForBookmark(): HashMap<String, String> {
-        return HashMap()
-    }
-
-    override fun getQueryParamForBookmark(): HashMap<String, String> {
-        return HashMap()
-    }
-
+    //region Fragment Lifecycle Overrides
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_course_browser, container, false)
     }
@@ -115,31 +95,33 @@ class CourseBrowserFragment : Fragment(), FragmentInteractions, AppBarLayout.OnO
         (canvasContext as? Course)?.let { courseImage.setCourseImage(it, it.color) }
     }
 
-    override fun allowBookmarking(): Boolean {
-        return false
+    override fun onDestroyView() {
+        super.onDestroyView()
+        apiCalls?.cancel()
     }
+    //endregion
+
+    //region Fragment Interaction Overrides
 
     override fun applyTheme() {
         ViewStyler.colorToolbarIconsAndText(activity, toolbar, Color.WHITE)
         ViewStyler.setStatusBarDark(activity, canvasContext.color)
     }
 
-    companion object {
-        fun newInstance(canvasContext: CanvasContext): CourseBrowserFragment {
-            val fragment = CourseBrowserFragment()
-            fragment.arguments =  Bundle().apply {
-                putParcelable(Const.CANVAS_CONTEXT, canvasContext)
-            }
-            return fragment
-        }
-    }
+    override fun getFragment(): Fragment? = this
+
+    override fun title(): String = canvasContext.name
+    //endregion
 
     private fun loadTabs(isRefresh: Boolean = false) {
         apiCalls?.cancel()
         apiCalls = tryWeave {
-            //we don't want to list external tools that are hidden
+            swipeRefreshLayout.isRefreshing = true
+
+            // We don't want to list external tools that are hidden
             var homePageTitle: String? = null
             val isHomeAPage = TabHelper.isHomeTabAPage(canvasContext)
+
             if(isHomeAPage) {
                 val homePage = awaitApi<Page> { PageManager.getFrontPage(canvasContext, isRefresh, it) }
                 homePageTitle = homePage.title
@@ -147,28 +129,30 @@ class CourseBrowserFragment : Fragment(), FragmentInteractions, AppBarLayout.OnO
 
             val tabs = awaitApi<List<Tab>> { TabManager.getTabs(canvasContext, it, isRefresh) }.filter { !(it.isExternal && it.isHidden) }
 
-            //Finds the home tab so we can reorder them if necessary
+            // Finds the home tab so we can reorder them if necessary
             val sortedTabs = tabs.toMutableList()
             sortedTabs.sortBy { if (TabHelper.isHomeTab(it)) -1 else 1 }
 
-            courseBrowserRecyclerView.adapter = CourseBrowserAdapter(sortedTabs, canvasContext, { tab ->
-                if(isHomeAPage && TabHelper.isHomeTab(tab, canvasContext)) {
-                    //Load Pages List
-                    if(tabs.any { it.tabId == Tab.PAGES_ID }) {
-                        //Do not load the pages list if the tab is hidden or locked.
-                        navigation?.addFragment(TabHelper.getFragmentByTab(tab, canvasContext))
+            courseBrowserRecyclerView.adapter = CourseBrowserAdapter(sortedTabs, canvasContext, homePageTitle) { tab ->
+                if (isHomeAPage && TabHelper.isHomeTab(tab, canvasContext)) {
+                    // Load Pages List
+                    if (tabs.any { it.tabId == Tab.PAGES_ID }) {
+                        // Do not load the pages list if the tab is hidden or locked.
+                        RouteMatcher.route(activity, TabHelper.getRouteByTabId(tab, canvasContext))
                     }
 
-                    //If the home tab is a Page and we clicked it lets route directly there.
-                    val bundle = PageDetailsFragment.createBundle(Page.FRONT_PAGE_NAME, canvasContext)
-                    navigation?.addFragment(ParentFragment.createFragment(PageDetailsFragment::class.java, bundle), true)
+                    // If the home tab is a Page and we clicked it lets route directly there.
+                    RouteMatcher.route(activity, PageDetailsFragment.makeRoute(canvasContext, Page.FRONT_PAGE_NAME).apply { ignoreDebounce = true })
                 } else {
-                    navigation?.addFragment(TabHelper.getFragmentByTab(tab, canvasContext))
+                    val route = TabHelper.getRouteByTabId(tab, canvasContext)?.apply { ignoreDebounce = true }
+                    RouteMatcher.route(activity, route)
                 }
-            }, homePageTitle)
+            }
 
             swipeRefreshLayout.isRefreshing = false
         } catch {
+            swipeRefreshLayout.isRefreshing = false
+
             if (it is StatusCallbackError && it.response?.code() == 401) {
                 toast(R.string.unauthorized)
                 activity?.onBackPressed()
@@ -178,11 +162,6 @@ class CourseBrowserFragment : Fragment(), FragmentInteractions, AppBarLayout.OnO
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        apiCalls?.cancel()
-    }
-
     /**
      * Manages state of titles & subtitles when users scrolls
      */
@@ -190,7 +169,7 @@ class CourseBrowserFragment : Fragment(), FragmentInteractions, AppBarLayout.OnO
 
         val percentage = Math.abs(verticalOffset).div(appBarLayout?.totalScrollRange?.toFloat() ?: 1F)
 
-        if(percentage <= 0.3F) {
+        if (percentage <= 0.3F) {
             val toolbarAnimation = ObjectAnimator.ofFloat(courseBrowserHeader, View.ALPHA, courseBrowserHeader.alpha, 0F)
             val titleAnimation = ObjectAnimator.ofFloat(courseBrowserTitle, View.ALPHA, courseBrowserTitle.alpha, 1F)
             val subtitleAnimation = ObjectAnimator.ofFloat(courseBrowserSubtitle, View.ALPHA, courseBrowserSubtitle.alpha, 0.8F)
@@ -211,7 +190,7 @@ class CourseBrowserFragment : Fragment(), FragmentInteractions, AppBarLayout.OnO
             titleAnimation.start()
             subtitleAnimation.start()
 
-        } else if(percentage > 0.7F) {
+        } else if (percentage > 0.7F) {
             val toolbarAnimation = ObjectAnimator.ofFloat(courseBrowserHeader, View.ALPHA, courseBrowserHeader.alpha, 1F)
             val titleAnimation = ObjectAnimator.ofFloat(courseBrowserTitle, View.ALPHA, courseBrowserTitle.alpha, 0F)
             val subtitleAnimation = ObjectAnimator.ofFloat(courseBrowserSubtitle, View.ALPHA, courseBrowserSubtitle.alpha, 0F)
@@ -232,5 +211,16 @@ class CourseBrowserFragment : Fragment(), FragmentInteractions, AppBarLayout.OnO
             titleAnimation.start()
             subtitleAnimation.start()
         }
+    }
+
+    companion object {
+        fun newInstance(route: Route) =
+                if (validateRoute(route)) CourseBrowserFragment().apply {
+                    arguments = route.canvasContext!!.makeBundle(route.arguments)
+                } else null
+
+        private fun validateRoute(route: Route) = route.canvasContext != null
+
+        fun makeRoute(canvasContext: CanvasContext?) = Route(CourseBrowserFragment::class.java, canvasContext)
     }
 }

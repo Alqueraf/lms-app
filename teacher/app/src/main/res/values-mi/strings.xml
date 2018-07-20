@@ -60,6 +60,10 @@
     <string name="share">Tuari</string>
     <string name="share_with">Tuari me&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">tuwhera kaiutuutu whakaterenga</string>
+    <string name="navigation_drawer_close">Katia kaiutuutu whakaterenga</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(kaore he kaupapa)</string>
     <string name="compose_message">Tito karere</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Tīpako ngā konae ara ngā whkāhua</string>
     <string name="uploading_files">E tukuake ana i ngā kōnae&#8230;</string>
     <string name="no_attachment">(Kaore he Āpititanga)</string>
-    <string name="remove_attachment">Tangohia te āpitihanga</string>
     <string name="creating_announcement">Hanga Pānuitanga&#8230;</string>
 
     <string name="copy_email">Tārua  īmēra wāhitau</string>
@@ -164,8 +167,6 @@
     <string name="inbox_empty_starred_title">Kaore he karere kua whetūngia</string>
     <string name="inbox_empty_message">Pātō te \"+\" ki te hanga kōrero hou.</string>
     <string name="inbox_empty_starred_message">Whetungia ngā karere mā te patopato i te whetu  i roto i te karere</string>
-
-    <string name="download_attachment">Tikiake te apititanga</string>
 
     <string name="reply">Whakautu</string>
     <string name="replyAll">Whaautu ki te katoa</string>
@@ -285,7 +286,7 @@
     <string name="inbox_starred">Wheturangitia</string>
     <string name="inbox_sent">Kua tukuna</string>
     <string name="inbox_archived">Kua pūrangatia</string>
-    <string name="inbox_all_messages">Ngā karere katoa</string>
+    <string name="inbox_all_messages">Katoa</string>
     <string name="uploading_file_num" formatted="false">E tukuake ana %d ī %d</string>
     <string name="page_not_found">Kaore i kitea te whārangi</string>
     <string name="no_connection">Kaore he Hononga</string>
@@ -434,7 +435,6 @@
     <string name="deleteComment">Muku Kōrero</string>
     <string name="deleteAnnotation">Muku tuhipoka</string>
     <string name="deleteCommentConfirmation">E tino hiahia ana koe ki te muku i tēnei kōrero?</string>
-    <string name="deleteHeadCommentConfirmation">He tuhipoka tēnei kōrero. Ki te mukutia tēnei ka muku katoa ngā whakautu me te tuhipoka. E tino hiahia ana koe ki te mahi i tēnei?</string>
     <string name="rubric_view_long_description">Tirohia taipitopito roa</string>
     <string name="rubric">Rubric</string>
     <string name="enter_custom_value">Whakauru he uara ritenga</string>
@@ -501,7 +501,7 @@
         <item quantity="other">%d ngā rōpū</item>
     </plurals>
     <string name="cmp_closed">katia</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">makau</string>
     <string name="content_description_not_favorite">Kaore i makau</string>
@@ -510,7 +510,8 @@
     <string name="edit_course_nickname">Whakatika akoranga kārangaranga</string>
 
     <string name="colorPickerDialogTitle">Akoranga tae</string>
-    <string name="colorPickerDialogMessage">Whakatau tēnei mo te tae taunoa o te akoranga. Kaore tēnei e eke i runga i te tautuhinga tae whaiaro</string>
+    <string name="colorPickerDialogMessage">Ko tēnei tō tae tautuhinga. Ko koe anake ka kite i tēnei tae mo te akoranga</string>
+
     <string name="colorPickerError">Kaor eo taea te whakatau te tae o te akoranga i tēnei wā</string>
 
     <string name="contentDescriptionColorCottonCandy">Māwhero</string>
@@ -604,12 +605,6 @@
     <string name="quiz_details_from_to">Mai %1$s kī %2$s</string>
     <string name="quiz_details_after">Muri atur %1$s</string>
     <string name="quiz_details_until">Tae noa %1$s</string>
-    <string name="continueWithoutSavingTitle">Haere tonu kaore i te whakaora?</string>
-    <string name="continueWithoutSavingMessage">E tika ana koe ki te haere tonu kaore i te whakaora?</string>
-    <string name="continueUnsaved">haere tonu</string>
-    <string name="exitWithoutSavingTitle">Puta kaore i te whakaora?</string>
-    <string name="exitWithoutSavingMessage">E tika ana koe ki te puta kaore i te whakaora?</string>
-    <string name="exitUnsaved">Puta</string>
     <string name="filterPointsMustBeSet">Whakauru uara</string>
 
     <plurals name="quantityQuestions">
@@ -638,7 +633,6 @@
     <string name="discussions_replies_title">Ngā whakautu</string>
     <string name="discussions_reply">Whakautu</string>
     <string name="discussions_edit">Whakatika</string>
-    <string name="discussions_deleted" formatted="false">Muku tēnei whakautu %s</string>
     <string name="discussions_forbidden">E kitea anake ngā whakautu ki te hunga kua whakairi kotahi te whakautu.</string>
     <string name="discussions_unknown_author">Kaituhi Kaore Tē Mōhiotia</string>
     <string name="discussions_delete">Muku kōrerorero</string>
@@ -710,6 +704,8 @@
     <string name="subscribe">Ohauru</string>
     <string name="allowThreadedReplies">Tukua ngā whakautu kua whiria</string>
     <string name="usersMustPost">Me whakairi ngā Kaiwhakamahi i mua i te kitenga whakautu</string>
+    <string name="allowUserComments">Tukua ngā kaimahi ki te kōrero</string>
+
     <string name="discussionTitleMustBeSet">Me tau te taitara kōrero</string>
     <string name="discussionSuccessfullyCreated">Kua oti pai te hanga o te kōrerorero</string>
     <string name="errorCreatingDiscussion">He hapa i puta i te wā e hanga ana tēnei kōrerorero Tarai anō</string>
@@ -758,6 +754,7 @@
     <string name="choosePhotoFromGallery">Whirwhiri whakāhua mai i te Whare Whakairi</string>
     <string name="fileNotFound">Kaore e kitea te kōnae</string>
     <string name="version" formatted="false">Putanga %s</string>
+    <string name="fullVersion">Wāhanga %s (%d)</string>
     <string name="tap_to_view_submissions_list">Pāto ki te tiro i te whārangi tāpaetanga</string>
     <string name="assignmentDescriptionContentDescription">Whakataunga Whakaaturanga</string>
     <string name="quizDescriptionContentDescription">Quiz Whakaaturanga</string>
@@ -882,6 +879,7 @@
 
     <string name="latePenalty">Whiu tōmuri</string>
     <string name="finalGrade">Kōeke whakamutunga</string>
+    <string name="moderatedGradingUnsupported">E kore e tautokona tēnei wā māka whakaōrite i SpeedGrader pūkoro.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s pt</item>
         <item quantity="other">-%s pts</item>
@@ -890,4 +888,20 @@
         <item quantity="one">-%s koinga</item>
         <item quantity="other">-%s ngā koinga</item>
     </plurals>
+    <string name="todoUnreadCount">Hei mahi %d kaore i pānuitia</string>
+    <string name="profileSettings">Ngā Tautuhinga Kōtaha</string>
+    <string name="downloadingFile">E tikiake ake ana kōnae&#8230;</string>
+    <string name="fileDownloadedSuccessfully">I pai te tikiake i te kōnae.</string>
+    <string name="tapToView">Pātō ki te tiro</string>
+    <string name="errorDownloadingFile">He hapa i te wā e tikiake ana i te kōnae. Tēnā koa ngana anō.</string>
+
+    <string name="postTo">Whakairi kī</string>
+    <string name="allSections">Ngā Wāhanga katoa</string>
+
+    <string name="gauge">Rahi</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">Kaore i taea te uta tēnei LTI taonga i tēnei wā.</string>
+
+    <string name="downloading">E Tikiake ana ...</string>
+
 </resources>

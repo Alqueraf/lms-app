@@ -25,8 +25,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="2dp"
         android:contentDescription="@string/newMessage"
+        android:elevation="2dp"
         tools:ignore="UnusedAttribute">
 
         <ProgressBar
@@ -35,7 +35,7 @@
             android:layout_height="24dp"
             android:layout_gravity="end"
             android:layout_marginEnd="16dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -47,11 +47,11 @@
         android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/activity_root"
+            android:id="@+id/activityRoot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:contentDescription="@string/scrollInstructions">
+            android:contentDescription="@string/scrollInstructions"
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/spinnerWrapper"
@@ -65,10 +65,10 @@
                     android:id="@+id/courseSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
                     android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
-                    android:layout_centerVertical="true"/>
+                    android:minHeight="48dp" />
 
             </RelativeLayout>
 
@@ -80,8 +80,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
-                    android:background="@color/dividerColor"
-                    android:layout_alignTop="@+id/recipient"/>
+                    android:layout_alignTop="@+id/recipient"
+                    android:background="@color/dividerColor" />
 
                 <com.android.ex.chips.RecipientEditTextView
                     android:id="@+id/recipient"
@@ -89,55 +89,54 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="8dp"
-                    android:layout_toStartOf="@+id/contacts_image_button"
+                    android:layout_toStartOf="@+id/contactsImageButton"
                     android:background="@color/transparent"
                     android:gravity="center_vertical"
+                    android:hint="@string/label_to"
                     android:imeOptions="flagNoExtractUi"
                     android:minHeight="?android:attr/listPreferredItemHeight"
                     android:padding="8dp"
                     android:textColor="@color/defaultTextDark"
                     android:textColorHint="@color/defaultTextGray"
-                    android:textSize="16sp"
-                    android:hint="@string/label_to"/>
+                    android:textSize="16sp" />
 
                 <ImageView
-                    android:id="@+id/contacts_image_button"
+                    android:id="@+id/contactsImageButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignTop="@+id/recipient"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_marginTop="4dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/select_recipients"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:contentDescription="@string/select_recipients"
-                    android:layout_marginTop="4dp"
                     android:padding="16dp"
-                    app:srcCompat="@drawable/vd_add"/>
+                    app:srcCompat="@drawable/vd_add" />
 
             </RelativeLayout>
 
             <include layout="@layout/view_divider" />
 
-
             <EditText
-                style="@style/TextFont.Regular"
                 android:id="@+id/editSubject"
+                style="@style/TextFont.Regular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:background="@android:color/transparent"
                 android:ellipsize="end"
                 android:hint="@string/label_subject"
+                android:inputType="textCapSentences"
                 android:lines="1"
                 android:padding="16dp"
-                android:textSize="16sp"
-                android:inputType="textCapSentences"
                 android:textColorHint="@color/defaultTextGray"
-                android:background="@android:color/transparent"
-                android:visibility="gone"/>
+                android:textSize="16sp"
+                android:visibility="gone" />
 
             <TextView
+                android:id="@+id/subjectView"
                 style="@style/TextFont.Regular"
-                android:id="@+id/subject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -145,8 +144,8 @@
                 android:hint="@string/no_subject"
                 android:lines="1"
                 android:padding="16dp"
-                android:textSize="16sp"
-                android:textColorHint="@color/message_text_color" />
+                android:textColorHint="@color/message_text_color"
+                android:textSize="16sp" />
 
             <include layout="@layout/view_divider" />
 
@@ -161,37 +160,37 @@
                     style="@style/TextFont.Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:labelFor="@+id/sendIndividualSwitch"
-                    android:textColor="@color/defaultTextDark"
-                    android:text="@string/sendIndividualMessage"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginStart="16dp"
-                    android:layout_toStartOf="@+id/sendIndividualSwitch"/>
+                    android:layout_toStartOf="@+id/sendIndividualSwitch"
+                    android:labelFor="@+id/sendIndividualSwitch"
+                    android:text="@string/sendIndividualMessage"
+                    android:textColor="@color/defaultTextDark"
+                    android:textSize="16sp" />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/sendIndividualSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:minWidth="48dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginStart="16dp"
+                    android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
-                    android:layout_centerVertical="true"/>
+                    android:layout_marginStart="16dp"
+                    android:minHeight="48dp"
+                    android:minWidth="48dp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
-                    android:background="@color/dividerColor"
-                    android:layout_alignParentBottom="true"/>
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/dividerColor" />
 
             </RelativeLayout>
 
             <EditText
-                style="@style/TextFont.Regular"
                 android:id="@+id/message"
+                style="@style/TextFont.Regular"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -206,15 +205,15 @@
                 android:singleLine="false"
                 android:textColor="@color/defaultTextDark"
                 android:textColorHint="@color/defaultTextGray"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <com.instructure.pandautils.views.AttachmentLayout
                 android:id="@+id/attachments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
-                android:padding="16dp"
                 android:gravity="bottom"
+                android:padding="16dp"
                 app:al_previewChildCount="1"
                 app:al_spacing="12dp" />
 

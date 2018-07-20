@@ -36,7 +36,7 @@ import android.widget.Toast;
 
 import com.instructure.candroid.activity.InternalWebViewActivity;
 import com.instructure.candroid.activity.InterwebsToApplication;
-import com.instructure.candroid.util.RouterUtils;
+import com.instructure.candroid.router.RouteMatcher;
 import com.instructure.canvasapi2.utils.ApiPrefs;
 
 import java.lang.reflect.Method;
@@ -115,7 +115,7 @@ public class ViewUtils {
 
         @Override
         public void onClick(View widget) {
-            if (RouterUtils.getInternalRoute(url, ApiPrefs.getDomain()) != null) {
+            if (RouteMatcher.INSTANCE.getInternalRoute(url, ApiPrefs.getDomain()) != null) {
                 // Normally we would do the normal routing, but we need an activity for that, which we don't have. So we'll use the more generic routing for the app
                 widget.getContext().startActivity(InterwebsToApplication.Companion.createIntent(widget.getContext(), Uri.parse(url)));
             } else {

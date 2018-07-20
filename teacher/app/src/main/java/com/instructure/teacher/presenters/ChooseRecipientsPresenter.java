@@ -139,20 +139,7 @@ public class ChooseRecipientsPresenter extends SyncPresenter<Recipient, ChooseRe
 
     @Override
     public int compare(Recipient o1, Recipient o2) {
-        // Compare types, should sort by group > metagroup > person
-        int result = o1.getRecipientType().ordinal() - o2.getRecipientType().ordinal();
-
-        // Compare by name
-        if (result == 0) {
-            result = o1.getName().compareToIgnoreCase(o2.getName());
-        }
-
-        // Compare by id
-        if (result == 0) {
-            result = o1.getStringId().compareTo(o2.getStringId());
-        }
-
-        return result;
+        return -1;
     }
 
     @Override

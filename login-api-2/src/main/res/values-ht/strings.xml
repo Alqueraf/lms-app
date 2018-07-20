@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">W ap eseye konekte sou Canvas Network?</string>
     <string name="remove">Elimine</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">Degizman</string>
     <string name="userId">ID Itilizatè</string>
     <string name="domain">Domèn</string>
 
-    <string name="masqueradingUserId">Non Itilizatè pou Degize</string>
-    <string name="masqueradingUserDomain">Degize Domèn</string>
-    <string name="masqueradingBegin">Kòmanse Degizman</string>
-    <string name="masqueradingStop">Kanpe Degizman</string>
-
+    <string name="actAsUser">Aji tankou Itilizatè</string>
+    <string name="stopActAsUser">Sispann Pase pou Itilizatè</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Elimine itilizatè sa a?</string>
     <string name="removedForever">W ap gen pou konekte sou itilizatè sa a ankò pou w ka gen aksè a kontni yo.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Non</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">Tou Prè ou</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Dèyè w</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Ansyen Koneksyon</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Jwenn lekòl mwen an</string>
-    <string name="appTypeTeacher">Pwofesè</string>
-    <string name="appTypeStudent">Elèv</string>
-    <string name="appTypeParent">Paran</string>
     <string name="canvasLowerCase">canvas</string>
     <string name="whatsYourSchoolName">Kijan lekòl ou a rele?</string>
     <string name="next">Pwochen</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">Desann pou wè tout detay yo</string>
 
     <string name="masqueradeErrorUserId">Ou dwe antre yon ID itilizatè.</string>
-    <string name="masqueradeErrorDomain">Ou dwe antre yon domèn.</string>
+    <string name="masqueradeErrorDomain">Ou dwe antre yon domèn valid.</string>
     <string name="masqueradeError">Erè pandan w ap eseye degize a.</string>
+    <string name="masqueradeInfo">\"Aji tankou\" an jeneral se konekte tankou itilizatè sa a san modpas. W ap ka fè nenpòt aksyon kòmsi w te itilizatè sa a, epi lòt moun yo ap panse se itilizatè sa a ki t ap aji. Men, jounal odit yo endike ke se te ou menm ki te fè aksyon yo nan non itilizatè sa a.</string>
+    <string name="masqueradingAs">W ap aji tankou %s</string>
+    <string name="stopActingAsTitle">Sispann aji tankou...</string>
+    <string name="stopActingAsMessage">Ou pral sispann aji tankou %s epi sou kont ou.</string>
+
+    <string name="weMadeChanges">Nou te fè kèk chanjman.</string>
+    <string name="whatsNewText">Gade kisa ki nouvo</string>
 </resources>

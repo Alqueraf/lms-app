@@ -17,12 +17,15 @@
 
 package com.instructure.teacher.ui
 
+import com.instructure.espresso.TestRail
 import com.instructure.teacher.ui.utils.*
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class CoursesListPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     @TestRail(ID = "C3108898")
     override fun displaysPageObjects() {
         logIn()
@@ -30,6 +33,7 @@ class CoursesListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109494")
     fun displaysNoCoursesView() {
         logIn()
@@ -37,6 +41,7 @@ class CoursesListPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3108898")
     fun displaysCourseList() {
         val data = seedData(teachers = 1, favoriteCourses = 3)

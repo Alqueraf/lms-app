@@ -60,6 +60,10 @@
     <string name="share">Delen</string>
     <string name="share_with">Delen met&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Open navigatielade</string>
+    <string name="navigation_drawer_close">Sluit navigatielade</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(geen onderwerp)</string>
     <string name="compose_message">Bericht opstellen</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Bestanden of foto\'s selecteren</string>
     <string name="uploading_files">Bestanden aan het uploaden&#8230;</string>
     <string name="no_attachment">(Geen bijlage)</string>
-    <string name="remove_attachment">Bijlage verwijderen</string>
     <string name="creating_announcement">Aankondiging aanmaken&#8230;</string>
 
     <string name="copy_email">E-mailadres kopiëren</string>
@@ -164,8 +167,6 @@
     <string name="inbox_empty_starred_title">Geen berichten met ster</string>
     <string name="inbox_empty_message">Tik op de \"+\" om een nieuw gesprek te maken.</string>
     <string name="inbox_empty_starred_message">Geef berichten een ster door op de ster in het bericht te tikken.</string>
-
-    <string name="download_attachment">Bijlage downloaden</string>
 
     <string name="reply">Antwoord</string>
     <string name="replyAll">Allen beantwoorden</string>
@@ -285,7 +286,7 @@
     <string name="inbox_starred">Met ster</string>
     <string name="inbox_sent">Verzonden</string>
     <string name="inbox_archived">Gearchiveerd</string>
-    <string name="inbox_all_messages">Alle berichten</string>
+    <string name="inbox_all_messages">Alle(s)</string>
     <string name="uploading_file_num" formatted="false">%d van %d wordt geüpload</string>
     <string name="page_not_found">Pagina niet gevonden.</string>
     <string name="no_connection">Geen verbinding</string>
@@ -434,7 +435,6 @@
     <string name="deleteComment">Opmerking verwijderen</string>
     <string name="deleteAnnotation">Aantekening verwijderen</string>
     <string name="deleteCommentConfirmation">Weet je zeker dat je deze opmerking wilt verwijderen?</string>
-    <string name="deleteHeadCommentConfirmation">Deze opmerking is een aantekening. Als je dit verwijdert, worden alle antwoorden en de aantekening verwijderd. Weet je zeker dat je dit wilt doen?</string>
     <string name="rubric_view_long_description">Uitgebreide beschrijving bekijken</string>
     <string name="rubric">Rubriek</string>
     <string name="enter_custom_value">Voer een aangepaste waarde in</string>
@@ -501,7 +501,7 @@
         <item quantity="other">%d groepen</item>
     </plurals>
     <string name="cmp_closed">Gesloten</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">favoriet</string>
     <string name="content_description_not_favorite">niet favoriet</string>
@@ -510,7 +510,8 @@
     <string name="edit_course_nickname">Bijnaam van cursus bewerken</string>
 
     <string name="colorPickerDialogTitle">Cursuskleur</string>
-    <string name="colorPickerDialogMessage">Stel dit in als standaardkleur van de cursus. Hiermee worden geen persoonlijke kleurinstellingen overschreven.</string>
+    <string name="colorPickerDialogMessage">Dit is je persoonlijke kleurinstelling. Alleen jij kunt deze kleur voor de cursus zien.</string>
+
     <string name="colorPickerError">De cursuskleur kan op dit moment niet worden ingesteld.</string>
 
     <string name="contentDescriptionColorCottonCandy">Roze</string>
@@ -604,12 +605,6 @@
     <string name="quiz_details_from_to">Van %1$s tot %2$s</string>
     <string name="quiz_details_after">Na %1$s</string>
     <string name="quiz_details_until">Tot %1$s</string>
-    <string name="continueWithoutSavingTitle">Doorgaan zonder op te slaan?</string>
-    <string name="continueWithoutSavingMessage">Weet je zeker dat je wilt doorgaan zonder op te slaan?</string>
-    <string name="continueUnsaved">Doorgaan</string>
-    <string name="exitWithoutSavingTitle">Afsluiten zonder op te slaan?</string>
-    <string name="exitWithoutSavingMessage">Weet je zeker dat je wilt afsluiten zonder op te slaan?</string>
-    <string name="exitUnsaved">Afsluiten</string>
     <string name="filterPointsMustBeSet">Voer een waarde in.</string>
 
     <plurals name="quantityQuestions">
@@ -638,7 +633,6 @@
     <string name="discussions_replies_title">Antwoorden</string>
     <string name="discussions_reply">Antwoord</string>
     <string name="discussions_edit">Bewerken</string>
-    <string name="discussions_deleted" formatted="false">Heeft dit antwoord verwijderd %s</string>
     <string name="discussions_forbidden">Antwoorden zijn alleen zichtbaar voor degenen die minimaal één antwoord hebben geplaatst.</string>
     <string name="discussions_unknown_author">Onbekende auteur</string>
     <string name="discussions_delete">Discussie verwijderen</string>
@@ -710,6 +704,8 @@
     <string name="subscribe">Aanmelden</string>
     <string name="allowThreadedReplies">Antwoorden op antwoorden toestaan</string>
     <string name="usersMustPost">Gebruikers moeten een bericht plaatsen voordat ze antwoorden kunnen zien</string>
+    <string name="allowUserComments">Geef gebruikers de mogelijkheid om opmerkingen te geven</string>
+
     <string name="discussionTitleMustBeSet">Discussienaam moet worden ingesteld.</string>
     <string name="discussionSuccessfullyCreated">Discussie is gemaakt.</string>
     <string name="errorCreatingDiscussion">Er is een fout opgetreden bij het maken van deze discussie. Probeer het nog eens.</string>
@@ -758,6 +754,7 @@
     <string name="choosePhotoFromGallery">Kies foto uit galerij</string>
     <string name="fileNotFound">Bestand niet gevonden.</string>
     <string name="version" formatted="false">Versie %s</string>
+    <string name="fullVersion">Versie %s (%d)</string>
     <string name="tap_to_view_submissions_list">Tik om lijst met inzendingen weer te geven.</string>
     <string name="assignmentDescriptionContentDescription">Opdrachtbeschrijving</string>
     <string name="quizDescriptionContentDescription">Toetsbeschrijving</string>
@@ -882,6 +879,7 @@
 
     <string name="latePenalty">Sanctie indien te laat</string>
     <string name="finalGrade">Eindcijfer</string>
+    <string name="moderatedGradingUnsupported">Gemodereerd beoordelen wordt momenteel niet ondersteund in SpeedGrader voor mobiel.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s pt</item>
         <item quantity="other">-%s ptn</item>
@@ -890,4 +888,20 @@
         <item quantity="one">-%s punt</item>
         <item quantity="other">-%s punten</item>
     </plurals>
+    <string name="todoUnreadCount">Taken %d ongelezen</string>
+    <string name="profileSettings">Profielinstellingen</string>
+    <string name="downloadingFile">Bestand downloaden&#8230;</string>
+    <string name="fileDownloadedSuccessfully">Bestand is gedownload.</string>
+    <string name="tapToView">Tik om weer te geven</string>
+    <string name="errorDownloadingFile">Er is een fout opgetreden bij het downloaden van je bestand. Probeer het opnieuw.</string>
+
+    <string name="postTo">Plaatsen in</string>
+    <string name="allSections">Alle secties</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">Deze LTI-tool kan op dit moment niet worden geladen.</string>
+
+    <string name="downloading">Downloaden...</string>
+
 </resources>

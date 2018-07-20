@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">هل تحاول تسجيل الدخول إلى Canvas Network؟</string>
     <string name="remove">إزالة</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">إخفاء الاسم</string>
     <string name="userId">معرف المستخدم</string>
     <string name="domain">المجال</string>
 
-    <string name="masqueradingUserId">إخفاء معرف المستخدم</string>
-    <string name="masqueradingUserDomain">إخفاء المجال</string>
-    <string name="masqueradingBegin">بدأ الإخفاء</string>
-    <string name="masqueradingStop">إيقاف إخفاء الأسماء</string>
-
+    <string name="actAsUser">تصرف كمستخدم</string>
+    <string name="stopActAsUser">إيقاف التصرف كمستخدم</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">حذف هذا المستخدم؟</string>
     <string name="removedForever">سيتوجب عليك تسجيل الدخول إلى هذا المستخدم للتمتع بالوصول إلى المحتوى الخاص بهم.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">لا</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">بالقرب منك</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">خلفك تمامًا</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">عمليات تسجيل الدخول السابقة</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">ابحث عن مدرستي</string>
-    <string name="appTypeTeacher">المعلم</string>
-    <string name="appTypeStudent">طالب</string>
-    <string name="appTypeParent">ولي الأمر</string>
     <string name="canvasLowerCase">canvas</string>
     <string name="whatsYourSchoolName">ما هو اسم مدرستك؟</string>
     <string name="next">التالي</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">قم بالتمرير لرؤية كافة التفاصيل</string>
 
     <string name="masqueradeErrorUserId">يجب أن تدخل معرف مستخدم.</string>
-    <string name="masqueradeErrorDomain">يجب أن تدخل مجالاً.</string>
+    <string name="masqueradeErrorDomain">يجب عليك إدخال مجال صالح.</string>
     <string name="masqueradeError">حدث خطأ أثناء محاولة إخفاء الاسم.</string>
+    <string name="masqueradeInfo">\"تصرف كـ\" هو تسجيل الدخول كما لو كنت هذا المستخدم دون كلمة مرور. ستتمكن من اتخاذ أي إجراء كما لو كنت هذا المستخدم، ومن وجهة نظر المستخدمين الآخرين، سيبدو الأمر كما لو كان هذا المستخدم هو من قام بهذه الإجراءات. ولكن سجلات التدقيق ستسجل أنك كنت الشخص الذي قام بالإجراءات نيابةً عن هذا المستخدم.</string>
+    <string name="masqueradingAs">أنت تتصرف باعتبارك %s</string>
+    <string name="stopActingAsTitle">إيقاف التصرف باعتبارك...</string>
+    <string name="stopActingAsMessage">ستتوقف عن التصرف باعتبارك %s وستعود إلى حسابك.</string>
+
+    <string name="weMadeChanges">لقد أجرينا بعض التغييرات.</string>
+    <string name="whatsNewText">تعرف على الجديد.</string>
 </resources>

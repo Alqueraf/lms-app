@@ -22,8 +22,15 @@
     android:layout_height="match_parent"
     android:id="@+id/activity_root">
 
-    <include layout="@layout/toolbar_layout"
-        android:id="@+id/toolbar"/>
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:theme="@style/ToolBarStyle"
+        app:popupTheme="@style/ToolBarPopupStyle"
+        android:elevation="@dimen/elevation"/>
 
     <com.instructure.parentapp.view.CardifyView
         android:layout_width="match_parent"

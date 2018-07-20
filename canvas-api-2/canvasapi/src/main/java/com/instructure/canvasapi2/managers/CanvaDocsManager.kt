@@ -21,6 +21,7 @@ import com.instructure.canvasapi2.builders.RestBuilder
 import com.instructure.canvasapi2.builders.RestParams
 import com.instructure.canvasapi2.models.CanvaDocs.CanvaDocAnnotation
 import com.instructure.canvasapi2.models.CanvaDocs.CanvaDocAnnotationResponse
+import com.instructure.canvasapi2.models.DocSession
 import com.instructure.canvasapi2.utils.ApiPrefs
 import okhttp3.ResponseBody
 
@@ -28,7 +29,7 @@ object CanvaDocsManager : BaseManager() {
 
     private val mTesting = false
 
-    fun getCanvaDoc(previewUrl: String, callback: StatusCallback<ResponseBody>) {
+    fun getCanvaDoc(previewUrl: String, callback: StatusCallback<DocSession>) {
         if (BaseManager.isTesting() || mTesting) {
             //todo
         } else {

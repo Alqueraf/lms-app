@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -67,5 +67,13 @@
     <string name="graded_survey">استطلاع تم تقييم درجاته</string>
     <string name="ungraded_survey">استطلاع لم يتم تقييم درجاته</string>
     <string name="andMore"> و %d أكثر</string>
+
+    <!-- Enrollment Types -->
+    <string name="enrollmentTypeStudent">الطالب</string>
+    <string name="enrollmentTypeTeacher">المعلم</string>
+    <string name="enrollmentTypeObserver">المراقب</string>
+    <string name="enrollmentTypeTeachingAssistant">مساعد المعلم</string>
+    <string name="enrollmentTypeDesigner">المصمم</string>
+    <string name="enrollmentTypeUnknown">غير معروف</string>
 
 </resources>

@@ -16,16 +16,15 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.OnViewWithId
+import com.instructure.espresso.assertDisplayed
+import com.instructure.espresso.click
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.waitForViewWithText
 import com.instructure.soseedy.Discussion
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.OnViewWithId
-import com.instructure.teacher.ui.utils.assertDisplayed
-import com.instructure.teacher.ui.utils.click
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
-import com.instructure.teacher.ui.utils.waitForViewWithText
 
-class AnnouncementsListPage : BasePage(), PageAssert by SimplePageAssert() {
+class AnnouncementsListPage : BasePage() {
 
     private val announcementListToolbar by OnViewWithId(R.id.discussionListToolbar)
     private val announcementsFAB by OnViewWithId(R.id.createNewDiscussion)

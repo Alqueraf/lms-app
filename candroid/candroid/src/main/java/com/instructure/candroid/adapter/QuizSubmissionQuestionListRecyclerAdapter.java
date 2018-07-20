@@ -18,10 +18,11 @@
 package com.instructure.candroid.adapter;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.webkit.WebView;
@@ -39,7 +40,6 @@ import com.instructure.candroid.binders.QuizMultipleDropdownBinder;
 import com.instructure.candroid.binders.QuizNumericalBinder;
 import com.instructure.candroid.binders.QuizTextOnlyBinder;
 import com.instructure.candroid.binders.SubmitButtonBinder;
-import com.instructure.interactions.Navigation;
 import com.instructure.candroid.fragment.InternalWebviewFragment;
 import com.instructure.candroid.fragment.QuizStartFragment;
 import com.instructure.candroid.holders.QuizEssayViewHolder;
@@ -60,7 +60,7 @@ import com.instructure.candroid.interfaces.QuizPostMultipleDropdown;
 import com.instructure.candroid.interfaces.QuizPostNumerical;
 import com.instructure.candroid.interfaces.QuizSubmit;
 import com.instructure.candroid.interfaces.QuizToggleFlagState;
-import com.instructure.candroid.util.RouterUtils;
+import com.instructure.candroid.router.RouteMatcher;
 import com.instructure.canvasapi2.StatusCallback;
 import com.instructure.canvasapi2.managers.QuizManager;
 import com.instructure.canvasapi2.models.Attachment;
@@ -73,6 +73,7 @@ import com.instructure.canvasapi2.models.QuizSubmissionResponse;
 import com.instructure.canvasapi2.utils.ApiPrefs;
 import com.instructure.canvasapi2.utils.ApiType;
 import com.instructure.canvasapi2.utils.LinkHeaders;
+import com.instructure.canvasapi2.utils.Logger;
 import com.instructure.pandautils.utils.ColorKeeper;
 import com.instructure.pandautils.utils.Const;
 import com.instructure.pandautils.views.CanvasWebView;
@@ -133,7 +134,7 @@ public class QuizSubmissionQuestionListRecyclerAdapter extends BaseListRecyclerA
         embeddedWebViewCallback = new CanvasWebView.CanvasEmbeddedWebViewCallback() {
             @Override
             public void launchInternalWebViewFragment(String url) {
-                InternalWebviewFragment.Companion.loadInternalWebView((FragmentActivity)context, ((Navigation) context), InternalWebviewFragment.Companion.createBundle(canvasContext, url, false));
+                InternalWebviewFragment.Companion.loadInternalWebView(context, InternalWebviewFragment.Companion.makeRoute(canvasContext, url, false));
             }
 
             @Override
@@ -155,7 +156,7 @@ public class QuizSubmissionQuestionListRecyclerAdapter extends BaseListRecyclerA
         webViewClientCallback = new CanvasWebView.CanvasWebViewClientCallback() {
             @Override
             public void openMediaFromWebView(String mime, String url, String filename) {
-                RouterUtils.canRouteInternally(context, url, ApiPrefs.getDomain(), true);
+                RouteMatcher.canRouteInternally(getContext(), url, ApiPrefs.getDomain(), true);
             }
 
             @Override
@@ -170,12 +171,12 @@ public class QuizSubmissionQuestionListRecyclerAdapter extends BaseListRecyclerA
 
             @Override
             public void routeInternallyCallback(String url) {
-                RouterUtils.canRouteInternally(context, url, ApiPrefs.getDomain(), true);
+                RouteMatcher.canRouteInternally(getContext(), url, ApiPrefs.getDomain(), true);
             }
 
             @Override
             public boolean canRouteInternallyDelegate(String url) {
-                return RouterUtils.canRouteInternally(null, url, ApiPrefs.getDomain(), false);
+                return RouteMatcher.canRouteInternally(getContext(), url, ApiPrefs.getDomain(), false);
             }
         };
 
@@ -382,13 +383,29 @@ public class QuizSubmissionQuestionListRecyclerAdapter extends BaseListRecyclerA
         });
     }
 
-    private void addMultipleChoiceQuestion(QuizSubmissionQuestion baseItem, QuizMultiChoiceViewHolder holder, int position, int courseColor) {
+    private StatusCallback<QuizSubmissionQuestionResponse> multipleChoiceCallback = null;
+
+    private void addMultipleChoiceQuestion(final QuizSubmissionQuestion baseItem, QuizMultiChoiceViewHolder holder, int position, int courseColor) {
         addAnsweredQuestion(baseItem);
         QuizMultiChoiceBinder.bind(holder, baseItem, courseColor, position, shouldLetAnswer, getContext(), embeddedWebViewCallback, webViewClientCallback, new QuizPostMultiChoice() {
             @Override
-            public void postAnswer(final long questionId, long answerId) {
+            public void postAnswer(final long questionId, final long answerId) {
                 addAnsweredQuestion(questionId);
-                QuizManager.postQuizQuestionMultiChoice(quizSubmission, answerId, questionId, true, new StatusCallback<QuizSubmissionQuestionResponse>() {});
+                if(multipleChoiceCallback == null) {
+                    multipleChoiceCallback = new StatusCallback<QuizSubmissionQuestionResponse>() {};
+                    QuizManager.postQuizQuestionMultiChoice(quizSubmission, answerId, questionId, true, multipleChoiceCallback);
+                } else {
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            multipleChoiceCallback = new StatusCallback<QuizSubmissionQuestionResponse>() {};
+                            QuizManager.postQuizQuestionMultiChoice(quizSubmission, answerId, questionId, true, multipleChoiceCallback);
+                        }
+                    };
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(runnable, 200); // This delay is necessary to prevent multiple of the same question type from being answered simultaneously.
+                }
             }
         }, flagStateCallback);
     }

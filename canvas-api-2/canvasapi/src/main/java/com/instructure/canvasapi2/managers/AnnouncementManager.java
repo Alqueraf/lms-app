@@ -67,6 +67,7 @@ public class AnnouncementManager extends DiscussionManager {
                     AnnouncementAPI.getNextPage(nextUrl, adapter, callback, params);
                 }
             };
+
             adapter.setStatusCallback(depaginatedCallback);
             AnnouncementAPI.getFirstPageAnnouncements(canvasContext, adapter, depaginatedCallback, params);
         }

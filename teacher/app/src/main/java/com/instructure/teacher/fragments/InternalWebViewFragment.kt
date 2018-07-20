@@ -20,6 +20,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.support.v7.widget.Toolbar
 import android.view.View
 import android.webkit.WebView
 import com.instructure.canvasapi2.managers.OAuthManager
@@ -36,13 +37,14 @@ import com.instructure.pandautils.utils.*
 import com.instructure.pandautils.views.CanvasWebView
 import com.instructure.teacher.R
 import com.instructure.teacher.router.RouteMatcher
-import com.instructure.teacher.utils.isTablet
 import com.instructure.teacher.utils.setupCloseButton
 import com.instructure.teacher.utils.setupMenu
 import kotlinx.android.synthetic.main.fragment_internal_webview.*
 import kotlinx.coroutines.experimental.Job
 
 open class InternalWebViewFragment : BaseFragment() {
+
+    var toolbar: Toolbar? = null
 
     var url: String by StringArg()
     var html: String by StringArg()
@@ -53,6 +55,7 @@ open class InternalWebViewFragment : BaseFragment() {
     private var shouldLoadUrl = true
     private var mSessionAuthJob: Job? = null
     private var shouldCloseFragment = false
+    private var shouldAuthenticate: Boolean by BooleanArg()
 
     override fun layoutResId() = R.layout.fragment_internal_webview
 
@@ -83,7 +86,10 @@ open class InternalWebViewFragment : BaseFragment() {
 
     override fun onCreateView(view: View?) = Unit
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        toolbar = view?.findViewById(R.id.toolbar)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -94,7 +100,7 @@ open class InternalWebViewFragment : BaseFragment() {
             courseColor = ColorKeeper.getOrGenerateColor("course_" + courseId)
         }
 
-        toolbar.title = title.validOrNull() ?: url
+        toolbar?.title = title.validOrNull() ?: url
 
         // if we are displaying html we don't want them to view the url in a different browser
         if(!html.isValid()) {
@@ -150,19 +156,25 @@ open class InternalWebViewFragment : BaseFragment() {
         if(darkToolbar) {
             if (courseColor != -1) {
                 // Use course colors for toolbar
-                ViewStyler.themeToolbar(activity, toolbar, courseColor, Color.WHITE)
+                ViewStyler.themeToolbar(activity, toolbar!!, courseColor, Color.WHITE)
             } else {
                 // Use institution colors for toolbar
-                ViewStyler.themeToolbar(activity, toolbar, ThemePrefs.primaryColor, ThemePrefs.primaryTextColor)
+                ViewStyler.themeToolbar(activity, toolbar!!, ThemePrefs.primaryColor, ThemePrefs.primaryTextColor)
             }
         } else {
-            ViewStyler.themeToolbarBottomSheet(activity, isTablet, toolbar, Color.BLACK, false)
+            ViewStyler.themeToolbarBottomSheet(activity, isTablet, toolbar!!, Color.BLACK, false)
         }
+    }
+
+    fun getCanvasWebView(): CanvasWebView? {
+        return canvasWebView
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Logic
     ///////////////////////////////////////////////////////////////////////////
+
+    open fun handleBackPressed() = canvasWebView?.handleGoBack() ?: false
 
     fun isShouldLoadUrl(): Boolean =  shouldLoadUrl
 
@@ -179,7 +191,7 @@ open class InternalWebViewFragment : BaseFragment() {
         url = targetUrl
         if (url.isNotEmpty() && isAdded) {
             mSessionAuthJob = weave {
-                if (ApiPrefs.domain in url) {
+                if (ApiPrefs.domain in url && shouldAuthenticate) {
                     try {
                         // Get an authenticated session so the user doesn't have to log in
                         url = awaitApi<AuthenticatedSession> { OAuthManager.getAuthenticatedSession(url, it) }.sessionUrl
@@ -200,7 +212,7 @@ open class InternalWebViewFragment : BaseFragment() {
 
     fun populateWebView(content: String, title: String?) = canvasWebView.loadHtml(content, title)
 
-    fun loadHtml(baseUrl: String, data: String, mimeType: String, encoding: String, historyUrl: String) {
+    fun loadHtml(data: String, mimeType: String, encoding: String, historyUrl: String) {
         // BaseURL is set as Referer. Referer needed for some vimeo videos to play
         canvasWebView.loadDataWithBaseURL(CanvasWebView.getReferrer(), data, mimeType, encoding, historyUrl)
     }
@@ -218,11 +230,16 @@ open class InternalWebViewFragment : BaseFragment() {
     fun canGoBack() = if (!shouldCloseFragment) canvasWebView.canGoBack() else false
     fun goBack() = canvasWebView.goBack()
 
+    fun setShouldAuthenticateUponLoad(shouldAuthenticate: Boolean) {
+        this.shouldAuthenticate = shouldAuthenticate
+    }
+
     companion object {
         const val URL = "url"
         const val TITLE = "title"
         const val HTML = "html"
         const val DARK_TOOLBAR = "darkToolbar"
+        const val AUTHENTICATE = "authenticate"
 
         @JvmStatic
         fun newInstance(url: String) = InternalWebViewFragment().apply {
@@ -251,12 +268,23 @@ open class InternalWebViewFragment : BaseFragment() {
 
         @JvmStatic
         @JvmOverloads
-        fun makeBundle(url: String, title: String, darkToolbar: Boolean = false, html: String = "", toolbarColor: Int = 0): Bundle {
+        fun makeBundle(url: String, title: String, darkToolbar: Boolean = false, html: String = ""): Bundle {
             val args = Bundle()
             args.putString(URL, url)
             args.putString(TITLE, title)
             args.putString(HTML, html)
             args.putBoolean(DARK_TOOLBAR, darkToolbar)
+            return args
+        }
+
+        @JvmStatic
+        fun makeBundle(url: String, title: String, darkToolbar: Boolean = false, html: String = "", shouldAuthenticate: Boolean): Bundle {
+            val args = Bundle()
+            args.putString(URL, url)
+            args.putString(TITLE, title)
+            args.putString(HTML, html)
+            args.putBoolean(DARK_TOOLBAR, darkToolbar)
+            args.putBoolean(AUTHENTICATE, shouldAuthenticate)
             return args
         }
     }

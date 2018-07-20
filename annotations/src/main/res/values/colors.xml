@@ -17,6 +17,7 @@
   -->
 <resources>
     <color name="annotationToolbarBackground">#556572</color>
+    <color name="submenuAnnotationToolbarBackground">#FF485864</color>
 
     <!-- Annotation Colors -->
     <color name="redAnnotation">#EE0612</color>

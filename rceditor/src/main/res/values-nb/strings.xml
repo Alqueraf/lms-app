@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">Angre</string>
     <string name="rce_contentDescription_redo">Gjør om</string>
     <string name="rce_contentDescription_bold">Formater fet</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">Sett inn punktliste</string>
     <string name="rce_contentDescription_insert_numbers">Sett inn nummerert liste</string>
     <string name="rce_contentDescription_insert_photo">Sett inn bilde</string>
+    <string name="rce_contentDescription_upload_photo">Last opp bilde fra enhet</string>
     <string name="rce_contentDescription_insert_link">Sett inn lenke</string>
     <string name="rce_contentDescription_block_quote">Sitatblokk</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">Sett inn lenke</string>
     <string name="rce_insertImage">Sett inn bilde</string>
 
+    <string name="rce_uploadImage">Last opp bilde</string>
     <string name="rce_done">Ferdig</string>
     <string name="rce_cancel">Avbryt</string>
     <string name="rce_exit">Avslutt</string>

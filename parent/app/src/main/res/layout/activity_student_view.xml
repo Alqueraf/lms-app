@@ -16,81 +16,48 @@
   ~
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rootView"
-    android:fitsSystemWindows="true"
-    android:layout_marginTop="@dimen/status_bar_margin"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/navigationWrapper"
-        android:fitsSystemWindows="true"
-        android:paddingTop="@dimen/status_bar_padding"
+    <LinearLayout
+        android:id="@+id/viewStudentPage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/triangle_background"
-        android:layout_alignParentTop="true">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/carouselPager"
-            android:fitsSystemWindows="true"
-            android:layout_alignParentTop="true"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:cacheColorHint="@android:color/transparent"/>
-
-        <ImageButton
-            android:id="@+id/settings"
-            android:fitsSystemWindows="true"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:padding="@dimen/default_padding"
-            android:src="@drawable/ic_settings_white_18dp"
-            android:background="@color/transparent"
-            android:contentDescription="@string/action_settings"/>
+            app:navigationContentDescription="@string/navigation_drawer_open"
+            app:navigationIcon="@drawable/vd_hamburger"
+            tools:background="@color/blueAnnouncement"/>
 
-        <TextView
-            android:id="@+id/studentName"
-            android:importantForAccessibility="no"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/carouselPager"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textAllCaps="true"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:layout_marginRight="@dimen/med_padding"
-            android:layout_marginEnd="@dimen/med_padding"
-            android:layout_marginLeft="@dimen/med_padding"
-            android:layout_marginStart="@dimen/med_padding"/>
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/sliding_tabs"
-            android:fitsSystemWindows="true"
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:layout_below="@id/studentName"
-            app:tabBackground="@drawable/tab_background"
-            app:tabIndicatorHeight="0dp"
-            app:tabMaxWidth="0dp"
-            app:tabGravity="fill"
-            app:tabMode="fixed"/>
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
-    </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/defaultTextGray"/>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/navigationWrapper"
-        android:background="@android:color/white" />
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:elevation="0dp"
+            app:menu="@menu/bottom_bar_menu"/>
 
-</RelativeLayout>
+    </LinearLayout>
+
+    <include layout="@layout/navigation_drawer"/>
+
+</android.support.v4.widget.DrawerLayout>

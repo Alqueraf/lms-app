@@ -46,7 +46,7 @@
 
     <Button
         style="@style/ButtonCanvasTheme"
-        android:id="@+id/select_option"
+        android:id="@+id/selectButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"

@@ -24,7 +24,7 @@
     android:background="@android:color/white">
     
     <android.support.v7.widget.Toolbar
-        android:id="@+id/rce_toolbar"
+        android:id="@+id/rceToolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
         android:background="@android:color/white"
@@ -34,10 +34,10 @@
         android:elevation="2dp"/>
 
     <instructure.rceditor.RCETextEditor
-        android:id="@+id/rce_webView"
+        android:id="@+id/rcEditor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/rce_toolbar"
+        android:layout_below="@+id/rceToolbar"
         android:layout_above="@+id/rce_bottomDivider"/>
 
     <View
@@ -48,7 +48,7 @@
         android:layout_above="@+id/rce_controller"/>
 
     <FrameLayout
-        android:id="@+id/rce_colorPickerWrapper"
+        android:id="@+id/rceColorPickerWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

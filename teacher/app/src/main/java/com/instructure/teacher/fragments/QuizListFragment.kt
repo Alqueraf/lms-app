@@ -24,19 +24,20 @@ import android.view.View
 import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.Quiz
 import com.instructure.canvasapi2.utils.ApiPrefs
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.fragments.BaseExpandableSyncFragment
 import com.instructure.pandautils.utils.ColorKeeper
+import com.instructure.pandautils.utils.ParcelableArg
 import com.instructure.pandautils.utils.ViewStyler
 import com.instructure.teacher.R
 import com.instructure.teacher.adapters.QuizListAdapter
 import com.instructure.teacher.events.QuizUpdatedEvent
 import com.instructure.teacher.factory.QuizListPresenterFactory
 import com.instructure.teacher.presenters.QuizListPresenter
-import com.instructure.interactions.router.Route
 import com.instructure.teacher.router.RouteMatcher
-import com.instructure.pandautils.utils.ParcelableArg
 import com.instructure.teacher.utils.RecyclerViewUtils
 import com.instructure.teacher.utils.setupBackButton
+import com.instructure.teacher.view.QuizSubmissionGradedEvent
 import com.instructure.teacher.viewinterface.QuizListView
 import instructure.androidblueprint.PresenterFactory
 import kotlinx.android.synthetic.main.fragment_quiz_list.*
@@ -142,13 +143,19 @@ class QuizListFragment : BaseExpandableSyncFragment<
 
     @Suppress("unused")
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun onAssignmentEdited(event: QuizUpdatedEvent) {
+    fun onQuizUpdated(event: QuizUpdatedEvent) {
         event.once(javaClass.simpleName) {
             // need to set a flag here. Because we use the event bus in the fragment instead of the presenter for unit testing purposes,
             // when we come back to this fragment it will go through the life cycle events again and the cached data will immediately
             // overwrite the data from the network if we refresh the presenter from here.
             mNeedToForceNetwork = true
         }
+    }
+
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    fun onQuizGraded(event: QuizSubmissionGradedEvent) {
+        event.once(javaClass.simpleName) { mNeedToForceNetwork = true }
     }
 
     companion object {

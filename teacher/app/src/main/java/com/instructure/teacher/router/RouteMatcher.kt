@@ -40,6 +40,7 @@ import com.instructure.interactions.router.BaseRouteMatcher
 import com.instructure.interactions.router.Route
 import com.instructure.interactions.router.RouteContext
 import com.instructure.interactions.router.RouterParams
+import com.instructure.pandautils.activities.BaseViewMediaActivity
 import com.instructure.pandautils.loaders.OpenMediaAsyncTaskLoader
 import com.instructure.pandautils.utils.Const
 import com.instructure.pandautils.utils.LoaderUtils
@@ -88,7 +89,9 @@ object RouteMatcher : BaseRouteMatcher() {
         routes.add(Route(courseOrGroup("/:course_id/files/:file_id/download"), RouteContext.FILE))
         routes.add(Route(courseOrGroup("/:course_id/files/:file_id"), RouteContext.FILE))
         // Tries to get the folder or preview of file. File can be multiple folders deep (files/folder/folder1/folder2/folder3)...
-        routes.add(Route(courseOrGroup("/:course_id/files/folder/.*"), FileListFragment::class.java))
+        routes.add(Route(courseOrGroup("/:course_id/files/folder(\\/.*)*"), FileListFragment::class.java))
+        // Same as above, but if they access nested user files instead of course files
+        routes.add(Route("/files/folder(\\/.*)*", RouteContext.FILE))
 
         routes.add(Route(courseOrGroup("/:course_id/files"), FileListFragment::class.java))
 
@@ -103,7 +106,7 @@ object RouteMatcher : BaseRouteMatcher() {
     }
 
     private fun initClassMap() {
-        //Fullscreen Fragments
+        // Fullscreen Fragments
         fullscreenFragments.add(CoursesFragment::class.java)
         fullscreenFragments.add(AllCoursesFragment::class.java)
         fullscreenFragments.add(ProfileFragment::class.java)
@@ -112,7 +115,7 @@ object RouteMatcher : BaseRouteMatcher() {
         fullscreenFragments.add(LTIWebViewFragment::class.java)
         fullscreenFragments.add(SpeedGraderQuizWebViewFragment::class.java)
 
-        //Bottom Sheet Fragments
+        // Bottom Sheet Fragments
         bottomSheetFragments.add(EditAssignmentDetailsFragment::class.java)
         bottomSheetFragments.add(AssigneeListFragment::class.java)
         bottomSheetFragments.add(EditFavoritesFragment::class.java)
@@ -136,12 +139,12 @@ object RouteMatcher : BaseRouteMatcher() {
     }
 
     @JvmStatic
-    fun routeUrl(context: Context, url: String, routeContext: RouteContext) {
-        routeUrl(context, url, ApiPrefs.domain, routeContext)
+    private fun routeUrl(context: Context, url: String) {
+        routeUrl(context, url, ApiPrefs.domain)
     }
 
     @JvmStatic
-    fun routeUrl(context: Context, url: String, domain: String, routeContext: RouteContext) {
+    fun routeUrl(context: Context, url: String, domain: String) {
         /* Possible activity types we can navigate too: Unknown Link, InitActivity, Master/Detail, Fullscreen, WebView, ViewMedia */
 
         //Find the best route
@@ -153,27 +156,24 @@ object RouteMatcher : BaseRouteMatcher() {
 
     @JvmStatic
     fun route(context: Context, route: Route?) {
-
         if (route == null || route.routeContext === RouteContext.DO_NOT_ROUTE) {
-            if (route?.url != null) {
+            if (route?.uri != null) {
                 //No route, no problem
-                handleWebViewUrl(context, route.url)
+                handleWebViewUrl(context, route.uri.toString())
+
             }
         } else if (route.routeContext == RouteContext.FILE || route.primaryClass?.isAssignableFrom(FileListFragment::class.java) == true && route.queryParamsHash.containsKey(RouterParams.PREVIEW)) {
             if (route.queryParamsHash.containsKey(RouterParams.VERIFIER) && route.queryParamsHash.containsKey(RouterParams.DOWNLOAD_FRD)) {
-                if (route.url != null) {
-                    openMedia(context as FragmentActivity, route.url)
-                } else if (route.uri != null) {
-                    openMedia(context as FragmentActivity, route.uri!!.toString())
+                if (route.uri != null) {
+                    openMedia(context as FragmentActivity, route.uri.toString())
                 }
             } else {
                 if (route.queryParamsHash.containsKey(RouterParams.PREVIEW)) {
                     // This is a link for a file preview, so we need to get the file id from the preview query param
-                    handleSpecificFile(context as FragmentActivity, route.paramsHash[RouterParams.PREVIEW]
+                    handleSpecificFile(context as FragmentActivity, route.queryParamsHash[RouterParams.PREVIEW]
                             ?: "")
                 } else {
-                    handleSpecificFile(context as FragmentActivity, route.paramsHash[RouterParams.FILE_ID]
-                            ?: "")
+                    handleSpecificFile(context as FragmentActivity, route.paramsHash[RouterParams.FILE_ID] ?: "")
                 }
             }
 
@@ -181,7 +181,7 @@ object RouteMatcher : BaseRouteMatcher() {
             handleMediaRoute(context, route)
         } else if (route.routeContext === RouteContext.SPEED_GRADER) {
             handleSpeedGraderRoute(context, route)
-        } else if (context.resources.getBoolean(R.bool.is_device_tablet)) {
+        } else if (context.resources.getBoolean(R.bool.isDeviceTablet)) {
             handleTabletRoute(context, route)
         } else {
             handleFullscreenRoute(context, route)
@@ -201,7 +201,7 @@ object RouteMatcher : BaseRouteMatcher() {
         val canRoute = getInternalRoute(url!!, domain) != null
 
         if (canRoute && activity != null && routeIfPossible) {
-            routeUrl(activity, url, RouteContext.INTERNAL)
+            routeUrl(activity, url)
         }
         return canRoute
     }
@@ -261,8 +261,8 @@ object RouteMatcher : BaseRouteMatcher() {
     }
 
     private fun handleWebViewUrl(context: Context, url: String?) {
-        context.startActivity(InternalWebViewActivity.createIntent(context, url!!, "", false))
         Logger.i("RouteMatcher:handleWebViewRoute()")
+        context.startActivity(InternalWebViewActivity.createIntent(context, url!!, "", false))
     }
 
     private fun handleBottomSheetRoute(context: Context, route: Route) {
@@ -317,112 +317,63 @@ object RouteMatcher : BaseRouteMatcher() {
         return getFrag(route.primaryClass, canvasContext, route)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <Type : Fragment> getFrag(cls: Class<Type>?, canvasContext: CanvasContext?, route: Route): Type? {
         if (cls == null) return null
 
         var fragment: Fragment? = null
 
-        if (ProfileFragment::class.java.isAssignableFrom(cls)) {
-            fragment = ProfileFragment()
-        } else if (CourseBrowserFragment::class.java.isAssignableFrom(cls)) {
-            fragment = CourseBrowserFragment.newInstance((canvasContext as Course?)!!)
-        } else if (CourseBrowserEmptyFragment::class.java.isAssignableFrom(cls)) {
-            fragment = CourseBrowserEmptyFragment.newInstance((canvasContext as Course?)!!)
-        } else if (CoursesFragment::class.java.isAssignableFrom(cls)) {
-            fragment = CoursesFragment.getInstance()
-        } else if (AssignmentListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = AssignmentListFragment.getInstance(canvasContext!!, route.arguments)
-        } else if (AssignmentDetailsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = getAssignmentDetailsFragment(canvasContext, route)
-        } else if (DueDatesFragment::class.java.isAssignableFrom(cls)) {
-            fragment = DueDatesFragment.getInstance((canvasContext as Course?)!!, route.arguments)
-        } else if (AssignmentSubmissionListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = AssignmentSubmissionListFragment.newInstance((canvasContext as Course?)!!, route.arguments)
-        } else if (EditAssignmentDetailsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = EditAssignmentDetailsFragment.newInstance((canvasContext as Course?)!!, route.arguments)
-        } else if (AssigneeListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = AssigneeListFragment.newInstance(route.arguments)
-        } else if (EditFavoritesFragment::class.java.isAssignableFrom(cls)) {
-            fragment = EditFavoritesFragment.newInstance(route.arguments)
-        } else if (CourseSettingsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = CourseSettingsFragment.newInstance((canvasContext as Course?)!!)
-        } else if (QuizListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = QuizListFragment.newInstance(canvasContext!!)
-        } else if (QuizDetailsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = getQuizDetailsFragment(canvasContext, route)
-        } else if (RCEFragment::class.java.isAssignableFrom(cls)) {
-            fragment = RCEFragment.newInstance(route.arguments)
-        } else if (EditQuizDetailsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = EditQuizDetailsFragment.newInstance((canvasContext as Course?)!!, route.arguments)
-        } else if (QuizPreviewWebviewFragment::class.java.isAssignableFrom(cls)) {
-            fragment = QuizPreviewWebviewFragment.newInstance(route.arguments)
-        } else if (EditQuizDetailsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = EditQuizDetailsFragment.newInstance((canvasContext as Course?)!!, route.arguments)
-        } else if (AnnouncementListFragment::class.java.isAssignableFrom(cls)) {
-            // This needs to be above DiscussionsListFragment because it extends it
-            fragment = AnnouncementListFragment.newInstance(canvasContext!!)
-        } else if (DiscussionsListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = DiscussionsListFragment.newInstance(canvasContext!!)
-        } else if (DiscussionsDetailsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = getDiscussionDetailsFragment(canvasContext, route)
-        } else if (InboxFragment::class.java.isAssignableFrom(cls)) {
-            fragment = InboxFragment()
-        } else if (AddMessageFragment::class.java.isAssignableFrom(cls)) {
-            fragment = AddMessageFragment.newInstance(route.arguments)
-        } else if (MessageThreadFragment::class.java.isAssignableFrom(cls)) {
-            fragment = getMessageThreadFragment(route)
-        } else if (ViewPdfFragment::class.java.isAssignableFrom(cls)) {
-            fragment = ViewPdfFragment.newInstance(route.arguments)
-        } else if (ViewImageFragment::class.java.isAssignableFrom(cls)) {
-            fragment = ViewImageFragment.newInstance(route.arguments)
-        } else if (ViewMediaFragment::class.java.isAssignableFrom(cls)) {
-            fragment = ViewMediaFragment.newInstance(route.arguments)
-        } else if (ViewHtmlFragment::class.java.isAssignableFrom(cls)) {
-            fragment = ViewHtmlFragment.newInstance(route.arguments)
-        } else if (ViewUnsupportedFileFragment::class.java.isAssignableFrom(cls)) {
-            fragment = ViewUnsupportedFileFragment.newInstance(route.arguments)
-        } else if (cls.isAssignableFrom(DiscussionsReplyFragment::class.java)) {
-            fragment = DiscussionsReplyFragment.newInstance(canvasContext!!, route.arguments)
-        } else if (cls.isAssignableFrom(DiscussionsUpdateFragment::class.java)) {
-            fragment = DiscussionsUpdateFragment.newInstance(canvasContext!!, route.arguments)
-        } else if (ChooseRecipientsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = ChooseRecipientsFragment.newInstance(route.arguments)
-        } else if (SpeedGraderQuizWebViewFragment::class.java.isAssignableFrom(cls)) {
-            fragment = SpeedGraderQuizWebViewFragment.newInstance(route.arguments)
-        } else if (AnnotationCommentListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = AnnotationCommentListFragment.newInstance(route.arguments)
-        } else if (CreateDiscussionFragment::class.java.isAssignableFrom(cls)) {
-            fragment = CreateDiscussionFragment.newInstance(route.arguments)
-        } else if (CreateOrEditAnnouncementFragment::class.java.isAssignableFrom(cls)) {
-            fragment = CreateOrEditAnnouncementFragment.newInstance(route.arguments)
-        } else if (SettingsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = SettingsFragment.newInstance(route.arguments)
-        } else if (ProfileEditFragment::class.java.isAssignableFrom(cls)) {
-            fragment = ProfileEditFragment.newInstance(route.arguments)
-        } else if (LTIWebViewFragment::class.java.isAssignableFrom(cls)) {
-            fragment = LTIWebViewFragment.newInstance(route.arguments)
-        } else if (PeopleListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = PeopleListFragment.newInstance(canvasContext)
-        } else if (StudentContextFragment::class.java.isAssignableFrom(cls)) {
-            fragment = StudentContextFragment.newInstance(route.arguments)
-        } else if (AttendanceListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = AttendanceListFragment.newInstance(canvasContext!!, route.arguments)
-        } else if (FileListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = FileListFragment.newInstance(canvasContext
-                    ?: route.canvasContext!!, route.arguments)
-        } else if (PageListFragment::class.java.isAssignableFrom(cls)) {
-            fragment = PageListFragment.newInstance(canvasContext!!)
-        } else if (PageDetailsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = getPageDetailsFragment(canvasContext, route)
-        } else if (EditFileFolderFragment::class.java.isAssignableFrom(cls)) {
-            fragment = EditFileFolderFragment.newInstance(route.arguments)
-        } else if (CreateOrEditPageDetailsFragment::class.java.isAssignableFrom(cls)) {
-            fragment = CreateOrEditPageDetailsFragment.newInstance(route.arguments)
-        } else if (FullscreenInternalWebViewFragment::class.java.isAssignableFrom(cls)) {
-            fragment = FullscreenInternalWebViewFragment.newInstance(route.arguments)
-        } else if (InternalWebViewFragment::class.java.isAssignableFrom(cls)) {
-            fragment = InternalWebViewFragment.newInstance(route.arguments)
-        }//NOTE: These should remain at or near the bottom to give fragments that extend InternalWebViewFragment the chance first
+        when {
+            ProfileFragment::class.java.isAssignableFrom(cls) -> fragment = ProfileFragment()
+            CourseBrowserFragment::class.java.isAssignableFrom(cls) -> fragment = CourseBrowserFragment.newInstance((canvasContext as Course?)!!)
+            CourseBrowserEmptyFragment::class.java.isAssignableFrom(cls) -> fragment = CourseBrowserEmptyFragment.newInstance((canvasContext as Course?)!!)
+            CoursesFragment::class.java.isAssignableFrom(cls) -> fragment = CoursesFragment.getInstance()
+            AssignmentListFragment::class.java.isAssignableFrom(cls) -> fragment = AssignmentListFragment.getInstance(canvasContext!!, route.arguments)
+            AssignmentDetailsFragment::class.java.isAssignableFrom(cls) -> fragment = getAssignmentDetailsFragment(canvasContext, route)
+            DueDatesFragment::class.java.isAssignableFrom(cls) -> fragment = DueDatesFragment.getInstance((canvasContext as Course?)!!, route.arguments)
+            AssignmentSubmissionListFragment::class.java.isAssignableFrom(cls) -> fragment = AssignmentSubmissionListFragment.newInstance((canvasContext as Course?)!!, route.arguments)
+            EditAssignmentDetailsFragment::class.java.isAssignableFrom(cls) -> fragment = EditAssignmentDetailsFragment.newInstance((canvasContext as Course?)!!, route.arguments)
+            AssigneeListFragment::class.java.isAssignableFrom(cls) -> fragment = AssigneeListFragment.newInstance(route.arguments)
+            EditFavoritesFragment::class.java.isAssignableFrom(cls) -> fragment = EditFavoritesFragment.newInstance(route.arguments)
+            CourseSettingsFragment::class.java.isAssignableFrom(cls) -> fragment = CourseSettingsFragment.newInstance((canvasContext as Course?)!!)
+            QuizListFragment::class.java.isAssignableFrom(cls) -> fragment = QuizListFragment.newInstance(canvasContext!!)
+            QuizDetailsFragment::class.java.isAssignableFrom(cls) -> fragment = getQuizDetailsFragment(canvasContext, route)
+            RCEFragment::class.java.isAssignableFrom(cls) -> fragment = RCEFragment.newInstance(route.arguments)
+            EditQuizDetailsFragment::class.java.isAssignableFrom(cls) -> fragment = EditQuizDetailsFragment.newInstance((canvasContext as Course?)!!, route.arguments)
+            QuizPreviewWebviewFragment::class.java.isAssignableFrom(cls) -> fragment = QuizPreviewWebviewFragment.newInstance(route.arguments)
+            EditQuizDetailsFragment::class.java.isAssignableFrom(cls) -> fragment = EditQuizDetailsFragment.newInstance((canvasContext as Course?)!!, route.arguments)
+            AnnouncementListFragment::class.java.isAssignableFrom(cls) -> fragment = AnnouncementListFragment.newInstance(canvasContext!!) // This needs to be above DiscussionsListFragment because it extends it
+            DiscussionsListFragment::class.java.isAssignableFrom(cls) -> fragment = DiscussionsListFragment.newInstance(canvasContext!!)
+            DiscussionsDetailsFragment::class.java.isAssignableFrom(cls) -> fragment = getDiscussionDetailsFragment(canvasContext, route)
+            InboxFragment::class.java.isAssignableFrom(cls) -> fragment = InboxFragment()
+            AddMessageFragment::class.java.isAssignableFrom(cls) -> fragment = AddMessageFragment.newInstance(route.arguments)
+            MessageThreadFragment::class.java.isAssignableFrom(cls) -> fragment = getMessageThreadFragment(route)
+            ViewPdfFragment::class.java.isAssignableFrom(cls) -> fragment = ViewPdfFragment.newInstance(route.arguments)
+            ViewImageFragment::class.java.isAssignableFrom(cls) -> fragment = ViewImageFragment.newInstance(route.arguments)
+            ViewMediaFragment::class.java.isAssignableFrom(cls) -> fragment = ViewMediaFragment.newInstance(route.arguments)
+            ViewHtmlFragment::class.java.isAssignableFrom(cls) -> fragment = ViewHtmlFragment.newInstance(route.arguments)
+            ViewUnsupportedFileFragment::class.java.isAssignableFrom(cls) -> fragment = ViewUnsupportedFileFragment.newInstance(route.arguments)
+            cls.isAssignableFrom(DiscussionsReplyFragment::class.java) -> fragment = DiscussionsReplyFragment.newInstance(canvasContext!!, route.arguments)
+            cls.isAssignableFrom(DiscussionsUpdateFragment::class.java) -> fragment = DiscussionsUpdateFragment.newInstance(canvasContext!!, route.arguments)
+            ChooseRecipientsFragment::class.java.isAssignableFrom(cls) -> fragment = ChooseRecipientsFragment.newInstance(route.arguments)
+            SpeedGraderQuizWebViewFragment::class.java.isAssignableFrom(cls) -> fragment = SpeedGraderQuizWebViewFragment.newInstance(route.arguments)
+            AnnotationCommentListFragment::class.java.isAssignableFrom(cls) -> fragment = AnnotationCommentListFragment.newInstance(route.arguments)
+            CreateDiscussionFragment::class.java.isAssignableFrom(cls) -> fragment = CreateDiscussionFragment.newInstance(route.arguments)
+            CreateOrEditAnnouncementFragment::class.java.isAssignableFrom(cls) -> fragment = CreateOrEditAnnouncementFragment.newInstance(route.arguments)
+            SettingsFragment::class.java.isAssignableFrom(cls) -> fragment = SettingsFragment.newInstance(route.arguments)
+            ProfileEditFragment::class.java.isAssignableFrom(cls) -> fragment = ProfileEditFragment.newInstance(route.arguments)
+            LTIWebViewFragment::class.java.isAssignableFrom(cls) -> fragment = LTIWebViewFragment.newInstance(route.arguments)
+            PeopleListFragment::class.java.isAssignableFrom(cls) -> fragment = PeopleListFragment.newInstance(canvasContext!!)
+            StudentContextFragment::class.java.isAssignableFrom(cls) -> fragment = StudentContextFragment.newInstance(route.arguments)
+            AttendanceListFragment::class.java.isAssignableFrom(cls) -> fragment = AttendanceListFragment.newInstance(canvasContext!!, route.arguments)
+            FileListFragment::class.java.isAssignableFrom(cls) -> fragment = FileListFragment.newInstance(canvasContext ?: route.canvasContext!!, route.arguments)
+            PageListFragment::class.java.isAssignableFrom(cls) -> fragment = PageListFragment.newInstance(canvasContext!!)
+            PageDetailsFragment::class.java.isAssignableFrom(cls) -> fragment = getPageDetailsFragment(canvasContext, route)
+            EditFileFolderFragment::class.java.isAssignableFrom(cls) -> fragment = EditFileFolderFragment.newInstance(route.arguments)
+            CreateOrEditPageDetailsFragment::class.java.isAssignableFrom(cls) -> fragment = CreateOrEditPageDetailsFragment.newInstance(route.arguments)
+            FullscreenInternalWebViewFragment::class.java.isAssignableFrom(cls) -> fragment = FullscreenInternalWebViewFragment.newInstance(route.arguments)
+            InternalWebViewFragment::class.java.isAssignableFrom(cls) -> fragment = InternalWebViewFragment.newInstance(route.arguments)
+        } //NOTE: These should remain at or near the bottom to give fragments that extend InternalWebViewFragment the chance first
 
         return fragment as Type?
     }
@@ -453,7 +404,7 @@ object RouteMatcher : BaseRouteMatcher() {
             QuizDetailsFragment.newInstance(canvasContext as Course, route.arguments)
         } else {
             // Parse the route to get the quiz id
-            val quizId = route.paramsHash[RouterParams.QUIZ_ID]?.toLongOrNull()
+            val quizId = route.paramsHash[RouterParams.QUIZ_ID]?.toLongOrNull() ?: route.arguments.get(QuizDetailsFragment.QUIZ_ID) as Long?
             if (quizId != null) {
                 val args = QuizDetailsFragment.makeBundle(quizId)
                 QuizDetailsFragment.newInstance(canvasContext as Course, args)
@@ -484,9 +435,8 @@ object RouteMatcher : BaseRouteMatcher() {
                 DiscussionsDetailsFragment.newInstance(canvasContext!!, args)
             }
             else -> {
-                //parse the route to get the discussion id
-                val discussionTopicHeaderId = route.paramsHash[RouterParams.MESSAGE_ID]?.toLong()
-                        ?: 0L
+                // Parse the route to get the discussion id
+                val discussionTopicHeaderId = route.paramsHash[RouterParams.MESSAGE_ID]?.toLong() ?: 0L
                 val entryId = route.queryParamsHash[RouterParams.ENTRY_ID]?.toLong() ?: 0L
                 val args = DiscussionsDetailsFragment.makeBundle(discussionTopicHeaderId, entryId)
                 DiscussionsDetailsFragment.newInstance(canvasContext!!, args)
@@ -496,9 +446,8 @@ object RouteMatcher : BaseRouteMatcher() {
 
     @JvmStatic
     fun <Type : Fragment> getClassDisplayName(context: Context, cls: Class<Type>?): String {
-        if (cls == null) return ""
-
         return when {
+            cls == null -> return ""
             cls.isAssignableFrom(AssignmentListFragment::class.java) -> context.getString(R.string.tab_assignments)
             cls.isAssignableFrom(QuizListFragment::class.java) -> context.getString(R.string.tab_quizzes)
             cls.isAssignableFrom(DiscussionsListFragment::class.java) -> context.getString(R.string.tab_discussions)
@@ -515,7 +464,6 @@ object RouteMatcher : BaseRouteMatcher() {
                 }
 
                 override fun onLoadFinished(loader: Loader<OpenMediaAsyncTaskLoader.LoadedMedia>, loadedMedia: OpenMediaAsyncTaskLoader.LoadedMedia) {
-
                     try {
                         if (loadedMedia.isError) {
                             if (loadedMedia.errorType == OpenMediaAsyncTaskLoader.ERROR_TYPE.NO_APPS) {
@@ -529,15 +477,12 @@ object RouteMatcher : BaseRouteMatcher() {
                             RouteMatcher.route(activity, Route(ViewHtmlFragment::class.java, null, args))
                         } else if (loadedMedia.intent != null) {
                             if (loadedMedia.intent.type!!.contains("pdf") && !loadedMedia.isUseOutsideApps) {
-                                //show pdf with PSPDFkit
-                                val uri = loadedMedia.intent.data
+                                // Show pdf with PSPDFkit
                                 val args = ViewPdfFragment.newInstance((loader as OpenMediaAsyncTaskLoader).url, 0).arguments
                                 RouteMatcher.route(activity, Route(ViewPdfFragment::class.java, null, args))
-
                             } else if (loadedMedia.intent.type == "video/mp4") {
-                                val bundle = ViewMediaActivity.makeBundle(loadedMedia.intent.data!!.toString(), null, "video/mp4", loadedMedia.intent.dataString, true)
+                                val bundle = BaseViewMediaActivity.makeBundle(loadedMedia.intent.data!!.toString(), null, "video/mp4", loadedMedia.intent.dataString, true)
                                 RouteMatcher.route(activity, Route(bundle, RouteContext.MEDIA))
-
                             } else if (loadedMedia.intent.type!!.startsWith("image/")) {
                                 val args = ViewImageFragment.newInstance(loadedMedia.intent.dataString!!, loadedMedia.intent.data!!, "image/*", true, 0).arguments
                                 RouteMatcher.route(activity, Route(ViewImageFragment::class.java, null, args))
@@ -575,7 +520,6 @@ object RouteMatcher : BaseRouteMatcher() {
     }
 
     private fun handleSpecificFile(activity: FragmentActivity, fileID: String?) {
-
         val fileFolderStatusCallback = object : StatusCallback<FileFolder>() {
             override fun onResponse(response: retrofit2.Response<FileFolder>, linkHeaders: com.instructure.canvasapi2.utils.LinkHeaders, type: ApiType) {
                 super.onResponse(response, linkHeaders, type)

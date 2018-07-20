@@ -40,7 +40,7 @@ import instructure.androidblueprint.SyncPresenter;
 import instructure.androidblueprint.SyncRecyclerAdapter;
 
 public abstract class BaseSyncFragment<
-        MODEL extends CanvasComparable,
+        MODEL extends CanvasComparable<?>,
         PRESENTER extends SyncPresenter<MODEL, VIEW>,
         VIEW extends SyncManager<MODEL>,
         HOLDER extends RecyclerView.ViewHolder,

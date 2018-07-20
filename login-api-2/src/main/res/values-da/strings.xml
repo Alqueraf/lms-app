@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">Prøve du at logge ind på Canvas Network?</string>
     <string name="remove">Fjern</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">Maskér</string>
     <string name="userId">Bruger-id</string>
     <string name="domain">Domæne</string>
 
-    <string name="masqueradingUserId">Maskering af bruger-ID</string>
-    <string name="masqueradingUserDomain">Maskering af domæne</string>
-    <string name="masqueradingBegin">Begynd maskering</string>
-    <string name="masqueradingStop">Stop maskering</string>
-
+    <string name="actAsUser">Funger som bruger</string>
+    <string name="stopActAsUser">Hold op med at fungere som bruger</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Fjern denne bruger?</string>
     <string name="removedForever">Du skal logge ind på denne bruger igen for at få adgang til deres indhold.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Nej</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">Nær dig</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Lige bag dig</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Tidligere logins</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Find min skole</string>
-    <string name="appTypeTeacher">Lærer</string>
-    <string name="appTypeStudent">Studerende</string>
-    <string name="appTypeParent">Forælder</string>
     <string name="canvasLowerCase">canvas</string>
     <string name="whatsYourSchoolName">Hvad hedder din skole?</string>
     <string name="next">Næste</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">Rul for at se alle detaljer</string>
 
     <string name="masqueradeErrorUserId">Du skal indtaste et bruger-ID.</string>
-    <string name="masqueradeErrorDomain">Du skal indtaste et domæne.</string>
+    <string name="masqueradeErrorDomain">Du skal indtaste et gyldigt domæne.</string>
     <string name="masqueradeError">Fejl, da du prøvede at anvende anden brugeridentitet.</string>
+    <string name="masqueradeInfo">\"Funger som\" betyder i bund og grund, at du logger ind som denne bruger uden adgangskode. Du kan foretage dig alt, som om du var denne bruger, og for andre brugere er det lige som om, det var denne bruger, der gjorde det. Dog registrerer audit-logs, at det faktisk var dig, der udførte handlingerne på vegne af denne bruger.</string>
+    <string name="masqueradingAs">Du fungerer som %s</string>
+    <string name="stopActingAsTitle">Stop med at fungere som ...</string>
+    <string name="stopActingAsMessage">Du vil stoppe med at fungere som %s og vende tilbage til din konto.</string>
+
+    <string name="weMadeChanges">Vi har lavet nogle ændringer.</string>
+    <string name="whatsNewText">Se, hvad der er nyt</string>
 </resources>

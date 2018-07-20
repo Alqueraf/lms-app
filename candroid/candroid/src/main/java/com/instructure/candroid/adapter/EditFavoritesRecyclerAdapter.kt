@@ -17,48 +17,115 @@
 package com.instructure.candroid.adapter
 
 import android.app.Activity
+import android.graphics.Canvas
+import android.support.v7.widget.RecyclerView
 import android.view.View
-import com.instructure.candroid.holders.EditFavoritesViewHolder
+import com.instructure.candroid.holders.*
 import com.instructure.candroid.interfaces.AdapterToFragmentCallback
 import com.instructure.canvasapi2.managers.CourseManager
+import com.instructure.canvasapi2.managers.GroupManager
+import com.instructure.canvasapi2.models.CanvasComparable
 import com.instructure.canvasapi2.models.Course
+import com.instructure.canvasapi2.models.Group
 import com.instructure.canvasapi2.utils.isInvited
-import com.instructure.canvasapi2.utils.weave.WeaveJob
-import com.instructure.canvasapi2.utils.weave.awaitApi
-import com.instructure.canvasapi2.utils.weave.catch
-import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.canvasapi2.utils.weave.*
+import com.instructure.pandarecycler.util.GroupSortedList
 
 class EditFavoritesRecyclerAdapter(
         context: Activity,
-        private val mAdapterToFragmentCallback: AdapterToFragmentCallback<Course>
-) : BaseListRecyclerAdapter<Course, EditFavoritesViewHolder>(context, Course::class.java) {
+        private val mAdapterToFragmentCallback: AdapterToFragmentCallback<CanvasComparable<*>>
+) : ExpandableRecyclerAdapter<EditFavoritesRecyclerAdapter.ItemType, CanvasComparable<*>, RecyclerView.ViewHolder>(
+        context,
+        ItemType::class.java,
+        CanvasComparable::class.java
+) {
+
+    enum class ItemType {
+        COURSE_HEADER,
+        COURSE,
+        GROUP_HEADER,
+        GROUP
+    }
 
     private var mApiCalls: WeaveJob? = null
 
     init {
-        itemCallback = object : ItemComparableCallback<Course>() {
-            override fun compare(o1: Course, o2: Course) = o1.name.orEmpty().compareTo(o2.name.orEmpty())
-            override fun areContentsTheSame(oldItem: Course, newItem: Course) = false
-            override fun areItemsTheSame(item1: Course, item2: Course) = item1.contextId == item2.contextId
-            override fun getUniqueItemId(item: Course) = item.contextId.hashCode().toLong()
-        }
+        isExpandedByDefault = true
         loadData()
     }
 
-    override fun itemLayoutResId(viewType: Int): Int = EditFavoritesViewHolder.holderResId()
+    override fun createItemCallback(): GroupSortedList.ItemComparatorCallback<ItemType, CanvasComparable<*>> {
+        return object : GroupSortedList.ItemComparatorCallback<ItemType, CanvasComparable<*>> {
+            override fun compare(group: ItemType?, o1: CanvasComparable<*>?, o2: CanvasComparable<*>?) = when {
+                o1 is Course && o2 is Course -> o1.compareTo(o2)
+                o1 is Group && o2 is Group -> o1.compareTo(o2)
+                else -> -1
+            }
 
-    override fun createViewHolder(v: View, viewType: Int) = EditFavoritesViewHolder(v)
+            override fun areContentsTheSame(oldItem: CanvasComparable<*>?, newItem: CanvasComparable<*>?) = false
 
-    override fun bindHolder(model: Course, holder: EditFavoritesViewHolder, position: Int) {
-        holder.bind(context, model, mAdapterToFragmentCallback)
+            override fun areItemsTheSame(item1: CanvasComparable<*>?, item2: CanvasComparable<*>?) = when {
+                item1 is Course && item2 is Course -> item1.contextId.hashCode() == item2.contextId.hashCode()
+                item1 is Group && item2 is Group -> item1.contextId.hashCode() == item2.contextId.hashCode()
+                else -> false
+            }
+
+            override fun getUniqueItemId(item: CanvasComparable<*>?) = when (item) {
+                is Course -> item.contextId.hashCode().toLong()
+                is Group -> item.contextId.hashCode().toLong()
+                else -> -1L
+            }
+
+            override fun getChildType(group: ItemType?, item: CanvasComparable<*>?) = when (item) {
+                is Course -> ItemType.COURSE.ordinal
+                is Group -> ItemType.GROUP.ordinal
+                else -> -1
+            }
+        }
     }
+
+    override fun createGroupCallback(): GroupSortedList.GroupComparatorCallback<ItemType> {
+        return object : GroupSortedList.GroupComparatorCallback<ItemType> {
+            override fun compare(o1: ItemType, o2: ItemType) = o1.ordinal.compareTo(o2.ordinal)
+            override fun areContentsTheSame(oldGroup: ItemType, newGroup: ItemType) = oldGroup == newGroup
+            override fun areItemsTheSame(group1: ItemType, group2: ItemType) = group1 == group2
+            override fun getUniqueGroupId(group: ItemType) = group.ordinal.toLong()
+            override fun getGroupType(group: ItemType) = group.ordinal
+        }
+    }
+
+    override fun itemLayoutResId(viewType: Int): Int = when(ItemType.values()[viewType]) {
+        ItemType.COURSE_HEADER -> EditFavoritesCourseHeaderViewHolder.holderResId()
+        ItemType.COURSE -> EditFavoritesCourseViewHolder.holderResId()
+        ItemType.GROUP_HEADER -> EditFavoritesGroupHeaderViewHolder.holderResId()
+        ItemType.GROUP -> EditFavoritesGroupViewHolder.holderResId()
+    }
+
+    override fun createViewHolder(v: View, viewType: Int) = when(ItemType.values()[viewType]) {
+        ItemType.COURSE_HEADER -> EditFavoritesCourseHeaderViewHolder(v)
+        ItemType.COURSE -> EditFavoritesCourseViewHolder(v)
+        ItemType.GROUP_HEADER -> EditFavoritesGroupHeaderViewHolder(v)
+        ItemType.GROUP -> EditFavoritesGroupViewHolder(v)
+    }
+
+    override fun onBindChildHolder(holder: RecyclerView.ViewHolder, header: ItemType, item: CanvasComparable<*>) {
+        when {
+            holder is EditFavoritesCourseViewHolder && item is Course -> holder.bind(context,item, mAdapterToFragmentCallback)
+            holder is EditFavoritesGroupViewHolder && item is Group -> holder.bind(context, item, mAdapterToFragmentCallback)
+        }
+    }
+
+    override fun onBindHeaderHolder(holder: RecyclerView.ViewHolder, header: ItemType, isExpanded: Boolean) = Unit
 
     override fun loadData() {
         mApiCalls?.cancel()
         mApiCalls = tryWeave {
-            val rawCourses = awaitApi<List<Course>>{ CourseManager.getCourses(true, it) }
+            val (rawCourses, groups) = awaitApis<List<Course>,List<Group>>(
+                    { CourseManager.getCourses(true, it) },
+                    { GroupManager.getAllGroups(it,true)})
             val validCourses = rawCourses.filter { !it.isAccessRestrictedByDate && !it.isInvited() }
-            addAll(validCourses)
+            addOrUpdateAllItems(ItemType.COURSE_HEADER,validCourses)
+            addOrUpdateAllItems(ItemType.GROUP_HEADER,groups)
             notifyDataSetChanged()
             isAllPagesLoaded = true
             if (itemCount == 0) adapterToRecyclerViewCallback.setIsEmpty(true)

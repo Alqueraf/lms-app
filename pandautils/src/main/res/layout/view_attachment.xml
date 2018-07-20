@@ -22,6 +22,7 @@
     android:layout_height="@dimen/utils_attachment_view_height"
     android:foreground="?attr/selectableItemBackground">
 
+
     <ImageView
         android:id="@+id/previewImage"
         android:layout_width="match_parent"

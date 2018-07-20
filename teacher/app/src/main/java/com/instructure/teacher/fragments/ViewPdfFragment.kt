@@ -27,9 +27,10 @@ import com.instructure.teacher.R
 import com.instructure.teacher.events.FileFolderDeletedEvent
 import com.instructure.teacher.events.FileFolderUpdatedEvent
 import com.instructure.teacher.factory.ViewPdfFragmentPresenterFactory
-import com.instructure.teacher.models.EditableFile
 import com.instructure.teacher.presenters.ViewPdfFragmentPresenter
 import com.instructure.interactions.router.Route
+import com.instructure.pandautils.models.EditableFile
+import com.instructure.pandautils.utils.Utils.copyToClipboard
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
 import com.instructure.teacher.viewinterface.ViewPdfFragmentView
@@ -76,9 +77,18 @@ class ViewPdfFragment : PresenterFragment<ViewPdfFragmentPresenter, ViewPdfFragm
             }
 
             toolbar.title = it.file.displayName
-            toolbar.setupMenu(R.menu.menu_edit_generic) { _ ->
-                val args = EditFileFolderFragment.makeBundle(it.file, it.usageRights, it.licenses, it.canvasContext!!.id)
-                RouteMatcher.route(context, Route(EditFileFolderFragment::class.java, it.canvasContext, args))
+            toolbar.setupMenu(R.menu.menu_file_details) { menu ->
+                when (menu.itemId) {
+                    R.id.edit -> {
+                        val args = EditFileFolderFragment.makeBundle(it.file, it.usageRights, it.licenses, it.canvasContext!!.id)
+                        RouteMatcher.route(context, Route(EditFileFolderFragment::class.java, it.canvasContext, args))
+                    }
+                    R.id.copyLink -> {
+                        if(it.file.url != null) {
+                            copyToClipboard(context, it.file.url!!)
+                        }
+                    }
+                }
             }
         }
 

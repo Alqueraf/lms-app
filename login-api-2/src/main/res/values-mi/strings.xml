@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">E ngana ana ki te haina ki Canvas Network?</string>
     <string name="remove">Tango</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">poupou pakoko</string>
     <string name="userId">Kaiwhakamahi ID</string>
     <string name="domain">Rohe</string>
 
-    <string name="masqueradingUserId">Whakaahua ke ID Kaiwhakamahi</string>
-    <string name="masqueradingUserDomain">Whakaahua ke Rohe</string>
-    <string name="masqueradingBegin">Tīmata te whakaahua ke</string>
-    <string name="masqueradingStop">Kāti  te mahi whakaahua ke</string>
-
+    <string name="actAsUser">Mahi rite kaiwhakamahi</string>
+    <string name="stopActAsUser">Kati te mahi rite tonu i te kaiwhakamahi</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Tangohia te tenei kaiwhakamahi?</string>
     <string name="removedForever">Me haina anō koe ki tēnei kaiwhakamahi kia uru atu ki ō rātau ihirangi.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Kāo</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">tata koe</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Matau muri koutou</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Ngā takiurunga o mua</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Kimihia taku kura</string>
-    <string name="appTypeTeacher">Kaiako</string>
-    <string name="appTypeStudent">Ākonga</string>
-    <string name="appTypeParent">Matua</string>
     <string name="canvasLowerCase">kānawehi</string>
     <string name="whatsYourSchoolName">He aha te ingoa o tō kura?</string>
     <string name="next">E haere ake nei</string>
@@ -129,6 +121,12 @@
     <string name="scrollInstructions">Pānui ki te kite i ngā kōrero katoa</string>
 
     <string name="masqueradeErrorUserId">Me whakauru e koe he kaiwhakamahi id.</string>
-    <string name="masqueradeErrorDomain">Me whakauru e koe he rohe.</string>
+    <string name="masqueradeErrorDomain">Me whakauru koe i te rohe whaimana.</string>
     <string name="masqueradeError">He hapa i te wā e ngana ana whakaahua kē.</string>
+    <string name="masqueradeInfo">\"Te mahi hei\" ko te takiuru i roto i tēnei kaiwhakamahi me te kor ehe kupuhipa. Ka taea e koe te mahi i tētahi mahi me te mea ko koe tēnei kaiwhakamahi, me ētahi atu whakaaro ō ngā kaiwhakamahi, \'ka mahia ano nei ngā the kaiwhakamahi i mahi. Heoi, ka tuhia e ngā kaute tuhinga ko koe te kaihanga i ngā mahi mo tēnei kaiwhakamahi.</string>
+    <string name="masqueradingAs">Kei t emahi koe pēnei %s</string>
+    <string name="stopActingAsTitle">Kāti te mahi hei....</string>
+    <string name="stopActingAsMessage">Ka mutu tō mahi hei %s ka hoki ki tāu kaute.</string>
+    <string name="weMadeChanges">I mahia e mātou he rerekētanga iti</string>
+    <string name="whatsNewText">Tirohia ngā mea hou</string>
 </resources>

@@ -26,8 +26,9 @@ import com.instructure.pandautils.utils.*
 import com.instructure.teacher.R
 import com.instructure.teacher.events.FileFolderDeletedEvent
 import com.instructure.teacher.events.FileFolderUpdatedEvent
-import com.instructure.teacher.models.EditableFile
 import com.instructure.interactions.router.Route
+import com.instructure.pandautils.models.EditableFile
+import com.instructure.pandautils.utils.Utils.copyToClipboard
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
 import kotlinx.android.synthetic.main.fragment_internal_webview.*
@@ -79,15 +80,24 @@ class ViewHtmlFragment : InternalWebViewFragment() {
                 it.file = event.updatedFileFolder
             }
 
-            toolbar.title = it.file.displayName
-            toolbar.setupMenu(R.menu.menu_edit_generic) { _ ->
-                val args = EditFileFolderFragment.makeBundle(it.file, it.usageRights, it.licenses, it.canvasContext!!.id)
-                RouteMatcher.route(context, Route(EditFileFolderFragment::class.java, it.canvasContext, args))
+            toolbar?.title = it.file.displayName
+            toolbar?.setupMenu(R.menu.menu_file_details) { menu ->
+                when (menu.itemId) {
+                    R.id.edit -> {
+                        val args = EditFileFolderFragment.makeBundle(it.file, it.usageRights, it.licenses, it.canvasContext!!.id)
+                        RouteMatcher.route(context, Route(EditFileFolderFragment::class.java, it.canvasContext, args))
+                    }
+                    R.id.copyLink -> {
+                        if(it.file.url != null) {
+                            copyToClipboard(context, it.file.url!!)
+                        }
+                    }
+                }
             }
         }
 
         if(isTablet && mToolbarColor != 0) {
-            ViewStyler.themeToolbar(activity, toolbar, mToolbarColor, Color.WHITE)
+            ViewStyler.themeToolbar(activity, toolbar!!, mToolbarColor, Color.WHITE)
         } else {
             super.setupToolbar(courseColor)
         }

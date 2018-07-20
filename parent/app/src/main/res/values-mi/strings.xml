@@ -22,7 +22,6 @@
     <string name="email">Īmēra</string>
     <string name="emailAddress">Īmēra wāhitau</string>
     <string name="parent_email">Īmēra Matua</string>
-    <string name="confirmPassword">Tautoko kupuhipa</string>
     <string name="firstName">ingoa tuatahi</string>
     <string name="lastName">ingoa whakamutunga</string>
     <string name="password">Kupuhipa</string>
@@ -150,6 +149,9 @@
     <string name="or">rānei</string>
     <string name="canvas_login_text">Takiuru me Canvas</string>
 
+    <string name="privacyPolicy">Kaupapa Tūmataiti</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">Ngā ture o te Mahi</string>
     <!-- Feature Request -->
     <string name="featureSubject">Whakaaro mō te Taupānga Canvas Parent [Android]</string>
     <string name="understandRequest">Ka awhinatia mātou ki te mōhio i tō whakāro i ngā mōhiohio e whai ake nei:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Whakauru ingoa o te kura mo ngā ākonga</string>
     <string name="findYourStudentsSchoolHint">Kimihia tō kura rhe rānei mo ngā ākonga</string>
-    <string name="noGradeText">N/A</string>
+    <string name="noGradeText">Kaore he Kōeke</string>
     <string name="locked">Kua rakaina</string>
+    <string name="changeUser">Huri Kaiwhakamahi</string>
+    <string name="manageChildren">Whakahāere ngā tamariki</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">tuwhera kaiutuutu whakaterenga</string>
+    <string name="navigation_drawer_close">Kati kaiutuutu whakaterenga</string>
+    <string name="version" formatted="false">Putanga %s</string>
+    <string name="not_a_parent_title">Kaore i te matua?</string>
+    <string name="not_a_parent_subtitle">Ko tētahi atu o a mātou taupānga pea he pai ake te uru. Pātō kotahi ki te toro atu ki te Toa Tākaro</string>
+    <string name="tryLoginAgain">Ngana ki te takiuru anō</string>
+
+    <string name="legalDetails">Kaupapahere tūmataitinga, tikanga whakamahi, puna tuwhera</string>
+    <string name="assignmentGrade">Whakataunga Kōeke</string>
+    <string name="courseGrade">Akoranga Kōeke</string>
+    <string name="courseAnnouncement">Akoranga Pānuitanga</string>
+    <string name="institutionAnnouncement">Panuitanga o te Whare</string>
+    <string name="institutionAnnouncementUnavailable">Kua pau te wā o tēnei pānuitanga</string>
 </resources>

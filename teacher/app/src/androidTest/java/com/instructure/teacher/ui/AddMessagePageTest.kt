@@ -16,24 +16,30 @@
  */
 package com.instructure.teacher.ui
 
+import com.instructure.espresso.randomString
 import com.instructure.teacher.ui.utils.*
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class AddMessagePageTest: TeacherTest() {
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         getToReply()
         addMessagePage.assertPageObjects()
     }
 
     @Test
+    @Ditto(sequential = true)
     fun addReply() {
         getToReply()
-        addMessagePage.addReply()
+        val message = mockableString("reply message") { randomString() }
+        addMessagePage.addReply(message)
         inboxMessagePage.assertHasReply()
     }
 
     @Test
+    @Ditto
     fun displayPageObjectsNewMessage() {
         logIn()
         coursesListPage.clickInboxTab()

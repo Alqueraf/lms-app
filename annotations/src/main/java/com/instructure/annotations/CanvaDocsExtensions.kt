@@ -26,15 +26,6 @@ import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import java.io.File
 
 
-//right now this is expecting a url in the format of:
-//"/1/sessions/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjIjoxNDk1NzM1ODM2MDU2LCJkIjoicV9vdlBnTnpxVVh0MTY3UVJjUDFyYVhwMlJydEpPIiwiZSI6MTQ5NTczOTQzNiwiciI6InBkZmpzIiwiYSI6eyJjIjoiZGVmYXVsdCIsInAiOiJyZWFkd3JpdGUiLCJ1IjoiMTAwMDAwMDU4MTQ3ODkiLCJuIjoiVHJldm9yIiwiciI6IiJ9LCJpYXQiOjE0OTU3MzU4MzZ9.IKn4kV-mrseE4INa8niX8A6rMxWS9f798bFeWtUkFIA/file/file.pdf"
-fun extractSessionId(url: String) = url.substringAfter("sessions/", "").substringBefore('/', "")
-
-fun extractDocId(url: String) = url.substringAfter("documents/", "").substringBefore('/', "")
-
-fun extractCanvaDocsDomain(url: String) = url.substringBefore("/1/sessions")
-
-
 /**
  * Attempts to download a file from a URL and return the resulting [File] object. Internally this
  * uses a size-limited disk cache for quick retrieval of the most frequently-accessed files.
@@ -46,6 +37,7 @@ fun extractCanvaDocsDomain(url: String) = url.substringBefore("/1/sessions")
  * a [onUI][com.instructure.canvasapi2.utils.weave.WeaveCoroutine.onUI] block.
  * @return The file if it was successfully downloaded or retrieved from cache, or null if there was an error.
  */
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 suspend fun FileCache.awaitFileDownload(url: String, onProgressChanged: ((Float) -> Unit)? = null): File? =
         suspendCancellableCoroutine { continuation ->
 
@@ -57,7 +49,6 @@ suspend fun FileCache.awaitFileDownload(url: String, onProgressChanged: ((Float)
                 override fun onFileLoaded(fileInputStream: File?) {
                     continuation.resumeSafely(fileInputStream)
                 }
-
             })
 
             continuation.invokeOnCompletion({ if (continuation.isCancelled) task.cancel() }, true)

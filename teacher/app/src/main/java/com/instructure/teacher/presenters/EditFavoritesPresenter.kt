@@ -23,6 +23,7 @@ import com.instructure.canvasapi2.models.Course
 import com.instructure.canvasapi2.models.Favorite
 import com.instructure.canvasapi2.utils.ApiType
 import com.instructure.canvasapi2.utils.LinkHeaders
+import com.instructure.canvasapi2.utils.hasActiveEnrollment
 import com.instructure.teacher.R
 import com.instructure.teacher.events.CourseUpdatedEvent
 import com.instructure.teacher.viewinterface.CanvasContextView
@@ -37,7 +38,7 @@ class EditFavoritesPresenter(filter: (Course) -> Boolean) : SyncPresenter<Canvas
     override fun loadData(forceNetwork: Boolean) {
         if(isEmpty) {
             onRefreshStarted()
-            CourseManager.getCourses(forceNetwork, mCoursesCallback)
+            CourseManager.getCoursesTeacher(forceNetwork, mCoursesCallback)
         }
     }
 
@@ -52,7 +53,7 @@ class EditFavoritesPresenter(filter: (Course) -> Boolean) : SyncPresenter<Canvas
 
     private val mCoursesCallback = object :  StatusCallback<List<Course>>() {
         override fun onResponse(response: Response<List<Course>>, linkHeaders: LinkHeaders, type: ApiType) {
-            response.body()?.let { data.addOrUpdate(it.filter(filter)) }
+            response.body()?.let { data.addOrUpdate(it.filter(filter).filter { it.hasActiveEnrollment() }) }
         }
 
         override fun onFinished(type: ApiType) {
@@ -78,12 +79,6 @@ class EditFavoritesPresenter(filter: (Course) -> Boolean) : SyncPresenter<Canvas
 
         if (canvasContext is Course) {
             if (isFavorite) {
-                //make sure the term is still valid
-                val date: Date = Date()
-                if(canvasContext.term?.endAt?.before(date) == true) {
-                    viewCallback?.showMessage(R.string.unable_to_add_course_to_favorites)
-                    return
-                }
                 canvasContext.isFavorite = true
                 mFavoriteCallback.reset()
                 CourseManager.addCourseToFavorites(canvasContext.getId(), mFavoriteCallback, true)
@@ -101,7 +96,7 @@ class EditFavoritesPresenter(filter: (Course) -> Boolean) : SyncPresenter<Canvas
 
     //region Comparison checks - Favorites API is not returning in the default ABC order as other apis
     public override fun compare(o1: CanvasContext, o2: CanvasContext): Int {
-        return o2.name.toLowerCase(Locale.getDefault()).compareTo(o1.name.toLowerCase(Locale.getDefault()))
+        return o1.name.toLowerCase(Locale.getDefault()).compareTo(o2.name.toLowerCase(Locale.getDefault()))
     }
 
     public override fun areItemsTheSame(item1: CanvasContext, item2: CanvasContext): Boolean {

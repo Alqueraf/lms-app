@@ -56,4 +56,6 @@ public class Const {
     public static final String PROFILE_URL = "canvas.instructure.com";
     public static final String noPictureURL = "images/dotted_pic.png";
     public static final String USE_DEFAULT_DOMAIN = "useDefaultDomain";
+
+    public static final String FIND_SCHOOL_HELP_URL = "https://community.canvaslms.com/docs/DOC-10726-67952720322";
 }

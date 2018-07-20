@@ -43,7 +43,7 @@ class CoursesPresenter : SyncPresenter<Course, CoursesView>(Course::class.java) 
         override fun onResponse(response: retrofit2.Response<List<Course>>, linkHeaders: LinkHeaders, type: ApiType) {
             val courses = response.body() ?: return
             val validCourses = courses.filter {
-                it.isFavorite && it.isValidTerm() && (it.isTeacher || it.isTA || it.isDesigner) && it.hasActiveEnrollment()
+                it.isFavorite && (it.isTeacher || it.isTA || it.isDesigner) && it.hasActiveEnrollment()
             }
             data.addOrUpdate(validCourses)
         }

@@ -16,14 +16,11 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.OnViewWithId
+import com.instructure.espresso.page.BasePage
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.OnViewWithId
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
-class RCEditorPage: BasePage(), PageAssert by SimplePageAssert() {
-
-    private val toolbar by OnViewWithId(R.id.rce_toolbar)
+class RCEditorPage: BasePage() {
     private val webView by OnViewWithId(R.id.rce_webView)
     private val saveButton by OnViewWithId(R.id.rce_save)
 
@@ -36,7 +33,6 @@ class RCEditorPage: BasePage(), PageAssert by SimplePageAssert() {
     //These items may be off screen on phones, likely on screen for tablets.
     private val actionTextColor by OnViewWithId(R.id.action_txt_color, autoAssert = false)
     private val actionBulletList by OnViewWithId(R.id.action_insert_bullets, autoAssert = false)
-    private val actionInsertImage by OnViewWithId(R.id.action_insert_image, autoAssert = false)
+    private val actionUploadImage by OnViewWithId(R.id.actionUploadImage, autoAssert = false)
     private val actionInsertLink by OnViewWithId(R.id.action_insert_link, autoAssert = false)
-
 }

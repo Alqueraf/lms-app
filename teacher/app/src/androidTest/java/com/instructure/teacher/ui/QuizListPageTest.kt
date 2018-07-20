@@ -24,23 +24,27 @@ import com.instructure.teacher.ui.utils.TeacherTest
 import com.instructure.teacher.ui.utils.seedData
 import com.instructure.teacher.ui.utils.seedQuizzes
 import com.instructure.teacher.ui.utils.tokenLogin
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class QuizListPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         getToQuizzesPage()
         quizListPage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun displaysNoQuizzesView() {
         getToQuizzesPage(makeQuiz = false)
         quizListPage.assertDisplaysNoQuizzesView()
     }
 
     @Test
+    @Ditto
     fun displaysQuiz() {
         val quiz = getToQuizzesPage()
         if (quiz != null) {

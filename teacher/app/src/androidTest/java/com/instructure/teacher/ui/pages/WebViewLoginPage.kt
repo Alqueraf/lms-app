@@ -20,6 +20,7 @@ import android.support.test.espresso.web.sugar.Web
 import android.support.test.espresso.web.sugar.Web.onWebView
 import android.support.test.espresso.web.webdriver.DriverAtoms.*
 import android.support.test.espresso.web.webdriver.Locator
+import com.instructure.espresso.page.BasePage
 import com.instructure.soseedy.CanvasUser
 
 @Suppress("unused")

@@ -221,7 +221,7 @@ class DefensiveURLSpan(private val url: String) : URLSpan(url) {
 
     override fun onClick(widget: View) {
         if(RouteMatcher.getInternalRoute(url, ApiPrefs.domain) != null) {
-            RouteMatcher.routeUrl(widget.context, url, ApiPrefs.domain, RouteContext.EXTERNAL)
+            RouteMatcher.routeUrl(widget.context, url, ApiPrefs.domain)
         } else {
             val intent = InternalWebViewActivity.createIntent(widget.context, url, "", false)
             widget.context.startActivity(intent)

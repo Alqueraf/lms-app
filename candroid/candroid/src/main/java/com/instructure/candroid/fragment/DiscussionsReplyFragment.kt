@@ -16,6 +16,8 @@
  */
 package com.instructure.candroid.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
@@ -27,9 +29,11 @@ import com.instructure.canvasapi2.models.DiscussionEntry
 import com.instructure.canvasapi2.models.DiscussionParticipant
 import com.instructure.canvasapi2.utils.APIHelper
 import com.instructure.canvasapi2.utils.ApiPrefs
+import com.instructure.canvasapi2.utils.weave.StatusCallbackError
 import com.instructure.canvasapi2.utils.weave.awaitApiResponse
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.interactions.router.Route
 import com.instructure.loginapi.login.dialog.NoInternetConnectionDialog
 import com.instructure.pandautils.dialogs.UploadFilesDialog
 import com.instructure.pandautils.discussions.DiscussionCaching
@@ -43,40 +47,90 @@ import java.io.File
 
 class DiscussionsReplyFragment : ParentFragment() {
 
+    private var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
+
+    // Weave
     private var postDiscussionJob: Job? = null
+    private var rceImageUploadJob: Job? = null
 
-    private var discussionTopicHeaderId: Long by LongArg(default = 0L) //The topic the discussion belongs too
-    private var discussionEntryId: Long by LongArg(default = 0L) //The future parent of the discussion entry we are creating
+    // Bundle arguments
+    private var discussionTopicHeaderId: Long by LongArg(default = 0L, key = DISCUSSION_TOPIC_HEADER_ID) // The topic the discussion belongs to
+    private var discussionEntryId: Long by LongArg(default = 0L, key = DISCUSSION_ENTRY_ID) // The future parent of the discussion entry we are creating
+    private var canAttach: Boolean by BooleanArg(key = CAN_ATTACH)
+
     private var attachment: FileSubmitObject? = null
-    private var canAttach: Boolean by BooleanArg()
 
+    private val menuItemCallback: (MenuItem) -> Unit = { item ->
+        when (item.itemId) {
+            R.id.menu_send -> {
+                if (APIHelper.hasNetworkConnection()) {
+                    sendMessage(rceTextEditor.html)
+                } else {
+                    NoInternetConnectionDialog.show(fragmentManager)
+                }
+            }
+            R.id.menu_attachment -> {
+                if (APIHelper.hasNetworkConnection()) {
+                    val attachments = ArrayList<FileSubmitObject>()
+                    if (attachment != null) attachments.add(attachment!!)
+
+                    val bundle = UploadFilesDialog.createDiscussionsBundle(attachments)
+                    UploadFilesDialog.show(fragmentManager, bundle) { event, attachment ->
+                        if (event == UploadFilesDialog.EVENT_ON_FILE_SELECTED) {
+                            handleAttachment(attachment)
+                        }
+                    }
+                } else {
+                    NoInternetConnectionDialog.show(fragmentManager)
+                }
+            }
+        }
+    }
+
+    //region Fragment Lifecycle Overrides
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return layoutInflater.inflate(R.layout.fragment_discussions_reply, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? = layoutInflater.inflate(R.layout.fragment_discussions_reply, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rceTextEditor.setHint(R.string.rce_empty_message)
+        rceTextEditor.actionUploadImageCallback = { MediaUploadUtils.showPickImageDialog(this) }
     }
 
-    override fun title(): String {
-        return getString(R.string.reply)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        postDiscussionJob?.cancel()
+        rceImageUploadJob?.cancel()
     }
 
-    override fun allowBookmarking(): Boolean {
-        return false
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Get the image Uri
+            when (requestCode) {
+                RequestCodes.PICK_IMAGE_GALLERY -> data?.data
+                RequestCodes.CAMERA_PIC_REQUEST -> MediaUploadUtils.handleCameraPicResult(activity, null)
+                else -> null
+            }?.let { imageUri ->
+                // If the image Uri is not null, upload it
+                MediaUploadUtils.uploadRceImageJob(imageUri, canvasContext, activity) { text, alt -> rceTextEditor.insertImage(text, alt) }
+            }
+        }
     }
+
+    //endregion
+
+    //region Fragment Interaction Overrides
+    override fun title(): String = getString(R.string.reply)
 
     override fun applyTheme() {
         toolbar.title = getString(R.string.reply)
         toolbar.setupAsCloseButton(this)
-        if(canAttach) {
+        if (canAttach) {
             toolbar.setMenu(R.menu.menu_discussion_reply, menuItemCallback)
         } else {
             toolbar.setMenu(R.menu.menu_discussion_reply_no_attach, menuItemCallback)
@@ -84,38 +138,13 @@ class DiscussionsReplyFragment : ParentFragment() {
         ViewStyler.themeToolbarBottomSheet(activity, isTablet, toolbar, Color.BLACK, false)
         ViewStyler.setToolbarElevationSmall(context, toolbar)
     }
+    //endregion
 
-    private val menuItemCallback: (MenuItem) -> Unit = { item ->
-        when (item.itemId) {
-            R.id.menu_send -> {
-                if(APIHelper.hasNetworkConnection()) {
-                    sendMessage(rceTextEditor.html)
-                } else {
-                    NoInternetConnectionDialog.show(fragmentManager)
-                }
-            }
-            R.id.menu_attachment -> {
-                if(APIHelper.hasNetworkConnection()) {
-                    val attachments = ArrayList<FileSubmitObject>()
-                    if (attachment != null) attachments.add(attachment!!)
-
-                    val bundle = UploadFilesDialog.createDiscussionsBundle(attachments)
-                    UploadFilesDialog.show(fragmentManager, bundle, { event, attachment ->
-                        if(event == UploadFilesDialog.EVENT_ON_FILE_SELECTED) {
-                            handleAttachment(attachment)
-                        }
-                    })
-                } else {
-                    NoInternetConnectionDialog.show(fragmentManager)
-                }
-            }
-        }
-    }
-
+    //region Fragment Functionality
     private fun handleAttachment(file: FileSubmitObject?) {
-        if(file != null) {
+        if (file != null) {
             this@DiscussionsReplyFragment.attachment = file
-            attachments.setAttachment(file.toAttachment()) { action, _ ->
+            attachments.setPendingAttachments(listOf(file.toAttachment()), true) { action, _ ->
                 if (action == AttachmentView.AttachmentAction.REMOVE) {
                     this@DiscussionsReplyFragment.attachment = null
                 }
@@ -127,24 +156,36 @@ class DiscussionsReplyFragment : ParentFragment() {
     }
 
     private fun sendMessage(message: String?) {
-        if(postDiscussionJob?.isActive == true) return
+        if (postDiscussionJob?.isActive == true) return
+
+        // Make the progress bar visible and the other buttons not there so they can't try to re-send the message multiple times
+        toolbar.menu.findItem(R.id.menu_send).isVisible = false
+        toolbar.menu.findItem(R.id.menu_attachment)?.isVisible = false
+        savingProgressBar.announceForAccessibility(getString(R.string.sending))
+        savingProgressBar.setVisible()
 
         postDiscussionJob = tryWeave {
-            if(attachment == null) {
+            if (attachment == null) {
                 if (discussionEntryId == discussionTopicHeaderId) {
-                    messageSentResponse(awaitApiResponse<DiscussionEntry> { DiscussionManager.postToDiscussionTopic(canvasContext, discussionTopicHeaderId, message, it) })
+                    messageSentResponse(awaitApiResponse { DiscussionManager.postToDiscussionTopic(canvasContext, discussionTopicHeaderId, message, it) })
                 } else {
-                    messageSentResponse(awaitApiResponse<DiscussionEntry> { DiscussionManager.replyToDiscussionEntry(canvasContext, discussionTopicHeaderId, discussionEntryId, message, it) })
+                    messageSentResponse(awaitApiResponse { DiscussionManager.replyToDiscussionEntry(canvasContext, discussionTopicHeaderId, discussionEntryId, message, it) })
                 }
             } else {
-                if(discussionEntryId == discussionTopicHeaderId) {
-                    messageSentResponse(awaitApiResponse<DiscussionEntry> { DiscussionManager.postToDiscussionTopic(canvasContext, discussionTopicHeaderId, message, File(attachment!!.fullPath), attachment?.contentType ?: "multipart/form-data", it) })
+                if (discussionEntryId == discussionTopicHeaderId) {
+                    messageSentResponse(awaitApiResponse {
+                        DiscussionManager.postToDiscussionTopic(canvasContext, discussionTopicHeaderId, message, File(attachment!!.fullPath), attachment?.contentType
+                                ?: "multipart/form-data", it)
+                    })
                 } else {
-                    messageSentResponse(awaitApiResponse<DiscussionEntry> { DiscussionManager.replyToDiscussionEntry(canvasContext, discussionTopicHeaderId, discussionEntryId, message, File(attachment!!.fullPath), attachment?.contentType ?: "multipart/form-data", it) })
+                    messageSentResponse(awaitApiResponse {
+                        DiscussionManager.replyToDiscussionEntry(canvasContext, discussionTopicHeaderId, discussionEntryId, message, File(attachment!!.fullPath), attachment?.contentType
+                                ?: "multipart/form-data", it)
+                    })
                 }
             }
         } catch {
-            if(isAdded) toast(R.string.utils_discussionSentFailure)
+            if (isAdded && (it as StatusCallbackError).response?.code() != 400) messageFailure()
         }
     }
 
@@ -161,49 +202,59 @@ class DiscussionsReplyFragment : ParentFragment() {
                 }
             }
 
-            //post successful
-            DiscussionCaching(discussionTopicHeaderId).saveEntry(discussionEntry)// Save to cache
-            DiscussionEntryEvent(discussionEntry!!.id).postSticky()// Notify about new reply
+            // Post successful
+            DiscussionCaching(discussionTopicHeaderId).saveEntry(discussionEntry) // Save to cache
+            DiscussionEntryEvent(discussionEntry!!.id).postSticky() // Notify about new reply
             toast(R.string.utils_discussionSentSuccess)
             activity?.onBackPressed()
         } else {
-            //post failure
-            toast(R.string.utils_discussionSentFailure)
+            // Post failure
+            // 400 will be handled elsewhere. it means the quota has been reached
+            if (response.code() != 400) {
+                messageFailure()
+            }
         }
     }
+
+    private fun messageFailure() {
+        toolbar.menu.findItem(R.id.menu_send).isVisible = true
+        toolbar.menu.findItem(R.id.menu_attachment).isVisible = true
+        savingProgressBar.visibility = View.GONE
+        toast(R.string.utils_discussionSentFailure)
+    }
+    //endregion
 
     companion object {
         private const val DISCUSSION_TOPIC_HEADER_ID = "DISCUSSION_TOPIC_HEADER_ID"
         private const val DISCUSSION_ENTRY_ID = "DISCUSSION_ENTRY_ID"
-        private const val IS_ANNOUNCEMENT = "IS_ANNOUNCEMENT"
         private const val CAN_ATTACH = "CAN_ATTACH"
 
         @JvmStatic
-        fun makeBundle(
+        fun makeRoute(
+                canvasContext: CanvasContext?,
                 discussionTopicHeaderId: Long,
                 discussionEntryId: Long,
-                isAnnouncement: Boolean,
-                canAttach: Boolean): Bundle = Bundle().apply {
+                canAttach: Boolean): Route {
 
-            putLong(DISCUSSION_TOPIC_HEADER_ID, discussionTopicHeaderId)
-            putLong(DISCUSSION_ENTRY_ID, discussionEntryId)
-            putBoolean(IS_ANNOUNCEMENT, isAnnouncement)
-            putBoolean(CAN_ATTACH, canAttach)
+            val bundle = Bundle().apply {
+                putLong(DISCUSSION_TOPIC_HEADER_ID, discussionTopicHeaderId)
+                putLong(DISCUSSION_ENTRY_ID, discussionEntryId)
+                putBoolean(CAN_ATTACH, canAttach)
+            }
+
+            return Route(DiscussionsReplyFragment::class.java, canvasContext, bundle)
         }
 
         @JvmStatic
-        fun newInstance(canvasContext: CanvasContext, args: Bundle) = DiscussionsReplyFragment().apply {
-            arguments = Bundle().apply {
-                putParcelable(Const.CANVAS_CONTEXT, canvasContext)
-            }
-            discussionTopicHeaderId = args.getLong(DISCUSSION_TOPIC_HEADER_ID)
-            discussionEntryId = args.getLong(DISCUSSION_ENTRY_ID)
-            canAttach = args.getBoolean(CAN_ATTACH)
-        }
-    }
+        fun newInstance(route: Route) = if (validRoute(route)) {
+                    DiscussionsReplyFragment().apply {
+                        arguments = route.canvasContext!!.makeBundle(route.arguments)
+                    }
+                } else null
 
-    override fun onDestroy() {
-        super.onDestroy()
-        postDiscussionJob?.cancel()
+        private fun validRoute(route: Route) = route.canvasContext != null &&
+                route.arguments.containsKey(DISCUSSION_TOPIC_HEADER_ID) &&
+                route.arguments.containsKey(DISCUSSION_ENTRY_ID) &&
+                route.arguments.containsKey(CAN_ATTACH)
     }
 }

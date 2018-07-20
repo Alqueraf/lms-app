@@ -19,16 +19,22 @@ import com.instructure.dataseeding.util.ago
 import com.instructure.dataseeding.util.days
 import com.instructure.dataseeding.util.fromNow
 import com.instructure.dataseeding.util.iso8601
+import com.instructure.espresso.TestRail
+import com.instructure.espresso.ditto.Ditto
 import com.instructure.soseedy.Assignment
 import com.instructure.soseedy.SubmissionSeed
+import com.instructure.soseedy.SubmissionType
 import com.instructure.soseedy.SubmissionType.*
-import com.instructure.soseedy.*
 import com.instructure.teacher.ui.utils.*
+import okreplay.DittoResponseMod
+import okreplay.JsonObjectResponseMod
+import okreplay.JsonObjectValueMod
 import org.junit.Test
 
 class AssignmentDetailsPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109579")
     override fun displaysPageObjects() {
         getToAssignmentDetailsPage(
@@ -44,6 +50,7 @@ class AssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109579")
     fun displaysCorrectDetails() {
         val assignment = getToAssignmentDetailsPage()
@@ -51,6 +58,7 @@ class AssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109579")
     fun displaysInstructions() {
         getToAssignmentDetailsPage(withDescription = true)
@@ -58,6 +66,7 @@ class AssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134480")
     fun displaysNoInstructionsMessage() {
         getToAssignmentDetailsPage()
@@ -65,6 +74,7 @@ class AssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134481")
     fun displaysClosedAvailability() {
         getToAssignmentDetailsPage(lockAt = 7.days.ago.iso8601)
@@ -72,13 +82,17 @@ class AssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134482")
     fun displaysNoFromDate() {
-        getToAssignmentDetailsPage(lockAt = 7.days.fromNow.iso8601)
+        val lockAt = 7.days.fromNow.iso8601
+        addDittoMod(getAssignmentLockDateMod(lockAt))
+        getToAssignmentDetailsPage(lockAt = lockAt)
         assignmentDetailsPage.assertToFilledAndFromEmpty()
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134483")
     fun displaysNoToDate() {
         getToAssignmentDetailsPage(unlockAt = 7.days.ago.iso8601)
@@ -86,36 +100,42 @@ class AssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysSubmissionTypeNone() {
         getToAssignmentDetailsPage(submissionTypes = listOf(NO_TYPE))
         assignmentDetailsPage.assertSubmissionTypeNone()
     }
 
     @Test
+    @Ditto
     fun displaysSubmissionTypeOnPaper() {
         getToAssignmentDetailsPage(submissionTypes = listOf(ON_PAPER))
         assignmentDetailsPage.assertSubmissionTypeOnPaper()
     }
 
     @Test
+    @Ditto
     fun displaysSubmissionTypeOnlineTextEntry() {
         getToAssignmentDetailsPage(submissionTypes = listOf(ONLINE_TEXT_ENTRY))
         assignmentDetailsPage.assertSubmissionTypeOnlineTextEntry()
     }
 
     @Test
+    @Ditto
     fun displaysSubmissionTypeOnlineUrl() {
         getToAssignmentDetailsPage(submissionTypes = listOf(ONLINE_URL))
         assignmentDetailsPage.assertSubmissionTypeOnlineUrl()
     }
 
     @Test
+    @Ditto
     fun displaysSubmissionTypeOnlineUpload() {
         getToAssignmentDetailsPage(submissionTypes = listOf(ONLINE_UPLOAD))
         assignmentDetailsPage.assertSubmissionTypeOnlineUpload()
     }
 
     @Test
+    @Ditto
     fun displaysSubmittedDonut() {
         getToAssignmentDetailsPage(
                 submissionTypes = listOf(ONLINE_TEXT_ENTRY),
@@ -130,6 +150,7 @@ class AssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun displaysNotSubmittedDonut() {
         getToAssignmentDetailsPage(students = 1)
         assignmentDetailsPage.assertNotSubmitted()
@@ -166,10 +187,16 @@ class AssignmentDetailsPageTest : TeacherTest() {
         }
 
         tokenLogin(teacher)
-
-        coursesListPage.openCourse(course)
-        courseBrowserPage.openAssignmentsTab()
-        assignmentListPage.clickAssignment(assignment.assignmentsList[0])
+        routeTo("courses/${course.id}/assignments/${assignment.assignmentsList[0].id}")
         return assignment.assignmentsList[0]
     }
+
+    private fun getAssignmentLockDateMod(dateString: String): DittoResponseMod {
+        return JsonObjectResponseMod(
+            Regex("""(.*)/api/v1/courses/\d+/assignments/\d+\?(.*)"""),
+            JsonObjectValueMod("lock_at", dateString),
+            JsonObjectValueMod("all_dates[0]:lock_at", dateString)
+        )
+    }
+
 }

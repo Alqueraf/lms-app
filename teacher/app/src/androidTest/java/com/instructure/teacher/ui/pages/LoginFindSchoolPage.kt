@@ -1,14 +1,13 @@
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.OnViewWithId
+import com.instructure.espresso.click
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.replaceText
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.OnViewWithId
-import com.instructure.teacher.ui.utils.click
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
-import com.instructure.teacher.ui.utils.replaceText
 
 @Suppress("unused")
-class LoginFindSchoolPage: BasePage(), PageAssert by SimplePageAssert() {
+class LoginFindSchoolPage: BasePage() {
 
     private val toolbar by OnViewWithId(R.id.toolbar)
     private val whatsYourSchoolNameTextView by OnViewWithId(R.id.whatsYourSchoolName)

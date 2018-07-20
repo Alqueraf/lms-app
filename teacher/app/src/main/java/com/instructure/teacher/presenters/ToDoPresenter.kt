@@ -47,7 +47,7 @@ class ToDoPresenter : SyncPresenter<ToDo, ToDoView>(ToDo::class.java) {
             inParallel {
 
                 // Get Courses
-                await<List<Course>>({ CourseManager.getCourses(forceNetwork, it) }) {
+                await<List<Course>>({ CourseManager.getCoursesTeacher(forceNetwork, it) }) {
 
                     it.forEach { courses.put(it.id, it) }
                 }

@@ -85,7 +85,6 @@ class SGAddMediaCommentDialog : AppCompatDialogFragment() {
                     id = assignmentId
                     this.courseId = courseId
                 }
-                this.assignment = assignment
                 this.studentId = studentId
                 this.isGroup = isGroup
             }.show(fm, SGAddMediaCommentDialog::class.java.simpleName)

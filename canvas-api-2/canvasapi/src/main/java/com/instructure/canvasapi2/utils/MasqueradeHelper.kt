@@ -22,7 +22,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.webkit.CookieManager
-import android.webkit.CookieSyncManager
 import com.instructure.canvasapi2.CanvasRestAdapter
 import com.instructure.canvasapi2.StatusCallback
 import com.instructure.canvasapi2.builders.RestBuilder
@@ -103,7 +102,6 @@ object MasqueradeHelper {
 
     @Suppress("DEPRECATION")
     private fun cleanupMasquerading(context: Context) {
-        CookieSyncManager.createInstance(ContextKeeper.appContext)
         val cookieManager = CookieManager.getInstance()
         cookieManager.removeAllCookie()
 

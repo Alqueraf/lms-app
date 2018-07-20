@@ -15,19 +15,20 @@
  */
 package com.instructure.teacher.ui.pages
 
-import android.support.test.espresso.Espresso.onView
+
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.PickerActions
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.widget.DatePicker
 import android.widget.TimePicker
 import com.instructure.canvasapi2.utils.DateHelper
+import com.instructure.espresso.*
+import com.instructure.espresso.matchers.has
+import com.instructure.espresso.matchers.hasTextInputLayoutErrorText
+import com.instructure.espresso.matchers.withIndex
+import com.instructure.espresso.page.*
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 import com.instructure.teacher.view.AssignmentOverrideView
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matchers
@@ -35,8 +36,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-class EditAssignmentDetailsPage : BasePage(), PageAssert by SimplePageAssert() {
+class EditAssignmentDetailsPage : BasePage() {
 
     private val assignmentNameEditText by OnViewWithId(R.id.editAssignmentName)
     private val pointsPossibleEditText by WaitForViewWithId(R.id.editGradePoints)
@@ -55,32 +55,28 @@ class EditAssignmentDetailsPage : BasePage(), PageAssert by SimplePageAssert() {
     }
 
     fun clickPointsPossibleEditText() {
-        pointsPossibleEditText.scrollTo().click()
+        scrollTo(R.id.editGradePoints)
+        pointsPossibleEditText.click()
     }
 
-    fun editAssignmentName() : String {
-        val newName = randomString()
+    fun editAssignmentName(newName: String) {
         assignmentNameEditText.replaceText(newName)
         saveAssignment()
-        return newName
     }
 
-    fun editAssignmentPoints() : Double {
-        val newPoints = randomDouble()
+    fun editAssignmentPoints(newPoints: Double) {
         val df = DecimalFormat("#")
-
         pointsPossibleEditText.replaceText(df.format(newPoints))
         saveAssignment()
-        return newPoints
     }
 
-    fun editAssignees() = waitForViewWithId(R.id.assignTo).scrollTo().click()
-    fun clickEditDueDate() = waitForViewWithId(R.id.dueDate).scrollTo().click()
-    fun clickEditDueTime() = waitForViewWithId(R.id.dueTime).scrollTo().click()
-    fun clickEditUnlockDate() = waitForViewWithId(R.id.fromDate).scrollTo().click()
-    fun clickEditUnlockTime() = waitForViewWithId(R.id.fromTime).scrollTo().click()
-    fun clickEditLockDate() = waitForViewWithId(R.id.toDate).scrollTo().click()
-    fun clickEditLockTime() = waitForViewWithId(R.id.toTime).scrollTo().click()
+    fun editAssignees() = waitScrollClick(R.id.assignTo)
+    fun clickEditDueDate() = waitScrollClick(R.id.dueDate)
+    fun clickEditDueTime() = waitScrollClick(R.id.dueTime)
+    fun clickEditUnlockDate() = waitScrollClick(R.id.fromDate)
+    fun clickEditUnlockTime() = waitScrollClick(R.id.fromTime)
+    fun clickEditLockDate() = waitScrollClick(R.id.toDate)
+    fun clickEditLockTime() = waitScrollClick(R.id.toTime)
 
     fun clickAddOverride() = onView(allOf(withId(R.id.addOverride), withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))).scrollTo().click()
     fun removeFirstOverride() {

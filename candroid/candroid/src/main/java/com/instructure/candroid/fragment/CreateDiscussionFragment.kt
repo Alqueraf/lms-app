@@ -13,8 +13,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- */    package com.instructure.candroid.fragment
+ */
+package com.instructure.candroid.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -28,44 +31,46 @@ import com.instructure.candroid.dialog.UnsavedChangesExitDialog
 import com.instructure.candroid.events.DiscussionCreatedEvent
 import com.instructure.candroid.events.post
 import com.instructure.candroid.view.AssignmentOverrideView
-import com.instructure.canvasapi2.StatusCallback
-import com.instructure.canvasapi2.managers.*
-import com.instructure.canvasapi2.models.*
+import com.instructure.canvasapi2.managers.DiscussionManager
+import com.instructure.canvasapi2.models.CanvasContext
+import com.instructure.canvasapi2.models.DiscussionTopicHeader
 import com.instructure.canvasapi2.models.post_models.DiscussionTopicPostBody
-import com.instructure.canvasapi2.utils.*
+import com.instructure.canvasapi2.utils.NetworkUtils
 import com.instructure.canvasapi2.utils.weave.*
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.dialogs.DatePickerDialogFragment
 import com.instructure.pandautils.dialogs.TimePickerDialogFragment
-import com.instructure.pandautils.dialogs.UploadFilesDialog
 import com.instructure.pandautils.models.DueDateGroup
 import com.instructure.pandautils.models.FileSubmitObject
 import com.instructure.pandautils.utils.*
-import com.instructure.pandautils.views.AttachmentView
 import kotlinx.android.synthetic.main.fragment_create_discussion.*
 import kotlinx.coroutines.experimental.Job
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Response
 import java.io.File
 import java.util.*
 
 class CreateDiscussionFragment : ParentFragment() {
 
+    private var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
     private val sendButton: TextView? get() = view?.findViewById(R.id.menuSaveDiscussion)
     private val saveButton: TextView? get() = view?.findViewById(R.id.menuSave)
 //    private val mAttachmentButton: TextView? get() = view?.findViewById(R.id.menuAddAttachment) BLOCKED COMMS 868
 
-    private var mDiscussionTopicHeader: DiscussionTopicHeader? by NullableParcelableArg()
-    private var mAllowThreaded: Boolean by BooleanArg(false)
-    private var mUsersMustPost: Boolean by BooleanArg(false)
-    private var mDescription by NullableStringArg()
-    private var mHasLoadedDataForEdit by BooleanArg()
+    // Bundle Args
+    private var discussionTopicHeader: DiscussionTopicHeader? by NullableParcelableArg(key = DISCUSSION_TOPIC_HEADER) // Null if new discussion, not null if editing; editing not available in Student
 
-    private var mEditDateGroups: MutableList<DueDateGroup> = arrayListOf()
+    // Other state
+    private var allowThreaded: Boolean by BooleanArg(false)
+    private var usersMustPost: Boolean by BooleanArg(false)
+    private var description by NullableStringArg()
+    private var hasLoadedDataForEdit by BooleanArg()
 
-    private var mCreateDiscussionCall: Job? = null
+    private var editDateGroups: MutableList<DueDateGroup> = arrayListOf()
 
+    private var createDiscussionCall: Job? = null
+    private var rceImageJob: Job? = null
 
     /**
      * (Creation mode only) An attachment to be uploaded alongside the discussion. Note that this
@@ -75,7 +80,7 @@ class CreateDiscussionFragment : ParentFragment() {
     var attachment: FileSubmitObject? = null
 
     /** (Editing mode only) Set to *true* if the existing discussions's attachment should be removed */
-    var attachmentRemoved = false
+    private var attachmentRemoved = false
 
     private val datePickerOnClick: (date: Date?, (Int, Int, Int) -> Unit) -> Unit = { date, callback ->
         DatePickerDialogFragment.getInstance(activity.supportFragmentManager, date) { year, month, dayOfMonth ->
@@ -89,14 +94,11 @@ class CreateDiscussionFragment : ParentFragment() {
         }.show(activity.supportFragmentManager, TimePickerDialogFragment::class.java.simpleName)
     }
 
-    override fun title() = ""
-    override fun allowBookmarking() = false
-    override fun applyTheme() { setupToolbar() }
-
+    //region Fragment Lifecycle Overrides
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mDiscussionTopicHeader = arguments.getParcelable(DISCUSSION_TOPIC_HEADER)
-        setRetainInstance(this, true)
+        discussionTopicHeader = arguments.getParcelable(DISCUSSION_TOPIC_HEADER)
+        retainInstance = true
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -111,12 +113,40 @@ class CreateDiscussionFragment : ParentFragment() {
         attachmentLayout.setGone()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Get the image Uri
+            when (requestCode) {
+                RequestCodes.PICK_IMAGE_GALLERY -> data?.data
+                RequestCodes.CAMERA_PIC_REQUEST -> MediaUploadUtils.handleCameraPicResult(activity, null)
+                else -> null
+            }?.let { imageUri ->
+                // If the image Uri is not null, upload it
+                rceImageJob = MediaUploadUtils.uploadRceImageJob(imageUri, canvasContext, activity) { text, alt -> descriptionRCEView.insertImage(text, alt) }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        createDiscussionCall?.cancel()
+        rceImageJob?.cancel()
+    }
+
+    //endregion
+
+    //region Fragment Interaction Overrides
+    override fun title() = ""
+    override fun applyTheme() = setupToolbar()
+    //endregion
+
+    //region Setup
     private fun setupToolbar() {
         createDiscussionToolbar.setupAsCloseButton {
-            if(mDiscussionTopicHeader == null) {
+            if (discussionTopicHeader == null) {
                 activity?.onBackPressed()
             } else {
-                if (mDiscussionTopicHeader?.message == descriptionRCEView?.html) {
+                if (discussionTopicHeader?.message == descriptionRCEView?.html) {
                     activity?.onBackPressed()
                 } else {
                     UnsavedChangesExitDialog.show(fragmentManager, {
@@ -126,11 +156,11 @@ class CreateDiscussionFragment : ParentFragment() {
             }
         }
 
-        createDiscussionToolbar.title = if(mDiscussionTopicHeader == null) getString(R.string.utils_createDiscussion) else getString(R.string.utils_editDiscussion)
-        createDiscussionToolbar.setMenu(if (mDiscussionTopicHeader == null) R.menu.create_discussion else R.menu.menu_save_generic) { menuItem ->
+        createDiscussionToolbar.title = if (discussionTopicHeader == null) getString(R.string.utils_createDiscussion) else getString(R.string.utils_editDiscussion)
+        createDiscussionToolbar.setMenu(if (discussionTopicHeader == null) R.menu.create_discussion else R.menu.menu_save_generic) { menuItem ->
             when (menuItem.itemId) {
-                R.id.menuSaveDiscussion, R.id.menuSave -> if(NetworkUtils.isNetworkAvailable) saveDiscussion()
-                //R.id.menuAddAttachment -> if (mDiscussionTopicHeader == null) addAttachment() BLOCKED COMMS 868
+                R.id.menuSaveDiscussion, R.id.menuSave -> if (NetworkUtils.isNetworkAvailable) saveDiscussion()
+            //R.id.menuAddAttachment -> if (discussionTopicHeader == null) addAttachment() BLOCKED COMMS 868
             }
         }
         ViewStyler.themeToolbarBottomSheet(activity, isTablet, createDiscussionToolbar, Color.BLACK, false)
@@ -144,19 +174,26 @@ class CreateDiscussionFragment : ParentFragment() {
             it.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
         }
 
-        descriptionRCEView.setHtml(mDescription ?: mDiscussionTopicHeader?.message,
+        descriptionRCEView.setHtml(description ?: discussionTopicHeader?.message,
                 getString(R.string.utils_discussionDetails),
                 getString(R.string.rce_empty_description),
                 ThemePrefs.brandColor, ThemePrefs.buttonColor)
 
-        // when the RCE editor has focus we want the label to be darker so it matches the title's functionality
+        descriptionRCEView.hideEditorToolbar()
+        discussionNameTextInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) descriptionRCEView.hideEditorToolbar()
+        }
+
+        descriptionRCEView.actionUploadImageCallback = { MediaUploadUtils.showPickImageDialog(this) }
+
+        // When the RCE editor has focus we want the label to be darker so it matches the title's functionality
         descriptionRCEView.setLabel(discussionDescLabel, R.color.defaultTextDark, R.color.defaultTextGray)
 
-        if (!mHasLoadedDataForEdit) mDiscussionTopicHeader?.let {
+        if (!hasLoadedDataForEdit) discussionTopicHeader?.let {
             editDiscussionName.setText(it.title)
-            mAllowThreaded = it.type == DiscussionTopicHeader.DiscussionType.THREADED
-            mUsersMustPost = it.isRequireInitialPost
-            mHasLoadedDataForEdit = true
+            allowThreaded = it.type == DiscussionTopicHeader.DiscussionType.THREADED
+            usersMustPost = it.isRequireInitialPost
+            hasLoadedDataForEdit = true
         }
 
         ViewStyler.themeEditText(context, editDiscussionName, ThemePrefs.brandColor)
@@ -165,16 +202,16 @@ class CreateDiscussionFragment : ParentFragment() {
         setupUsersMustPostSwitch()
 //        updateAttachmentUI() BLOCKED COMMS 868
 
-        if(mEditDateGroups.isEmpty()) {
-            //if the dateGroups is empty, we want to add a due date so that we can set the available from and to fields
-            mEditDateGroups.clear()
+        if (editDateGroups.isEmpty()) {
+            // If the dateGroups is empty, we want to add a due date so that we can set the available from and to fields
+            editDateGroups.clear()
             val dueDateGroup = DueDateGroup()
-            if(mDiscussionTopicHeader != null) {
-                //populate the availability dates if we have them, the assignment is null, so this is an ungraded assignment
-                dueDateGroup.coreDates.lockDate = (mDiscussionTopicHeader as DiscussionTopicHeader).lockAt
-                dueDateGroup.coreDates.unlockDate = (mDiscussionTopicHeader as DiscussionTopicHeader).delayedPostAt
+            if (discussionTopicHeader != null) {
+                // Populate the availability dates if we have them, the assignment is null, so this is an ungraded assignment
+                dueDateGroup.coreDates.lockDate = (discussionTopicHeader as DiscussionTopicHeader).lockAt
+                dueDateGroup.coreDates.unlockDate = (discussionTopicHeader as DiscussionTopicHeader).delayedPostAt
             }
-            mEditDateGroups.add(dueDateGroup)
+            editDateGroups.add(dueDateGroup)
         }
 
         setupOverrides()
@@ -186,14 +223,14 @@ class CreateDiscussionFragment : ParentFragment() {
         overrideContainer.removeAllViews()
 
         // Load in overrides
-        mEditDateGroups.forEachIndexed { index, dueDateGroup ->
+        editDateGroups.forEachIndexed { index, dueDateGroup ->
             val assignees = ArrayList<String>()
             val v = AssignmentOverrideView(activity)
 
             v.toAndFromDatesOnly()
 
-            v.setupOverride(index, dueDateGroup, mEditDateGroups.size > 1, assignees, datePickerOnClick, timePickerOnClick, {
-                if (mEditDateGroups.contains(it)) mEditDateGroups.remove(it)
+            v.setupOverride(index, dueDateGroup, editDateGroups.size > 1, assignees, datePickerOnClick, timePickerOnClick, {
+                if (editDateGroups.contains(it)) editDateGroups.remove(it)
                 setupOverrides()
             }) { }
 
@@ -201,36 +238,36 @@ class CreateDiscussionFragment : ParentFragment() {
         }
     }
 
-    private fun setupAllowThreadedSwitch()  {
+    private fun setupAllowThreadedSwitch() {
 
         threadedSwitch.applyTheme()
 
-        threadedSwitch.isChecked = mAllowThreaded
+        threadedSwitch.isChecked = allowThreaded
 
-        threadedSwitch.setOnCheckedChangeListener { _, isChecked -> mAllowThreaded = isChecked }
+        threadedSwitch.setOnCheckedChangeListener { _, isChecked -> allowThreaded = isChecked }
     }
 
-    private fun setupUsersMustPostSwitch()  {
+    private fun setupUsersMustPostSwitch() {
 
         usersMustPostSwitch.applyTheme()
 
-        usersMustPostSwitch.isChecked = mUsersMustPost
+        usersMustPostSwitch.isChecked = usersMustPost
 
-        usersMustPostSwitch.setOnCheckedChangeListener { _, isChecked -> mUsersMustPost = isChecked }
+        usersMustPostSwitch.setOnCheckedChangeListener { _, isChecked -> usersMustPost = isChecked }
     }
 
     private fun setupDelete() {
         // TODO - For now we set it to be gone, in the future we will revisit after COMMS-868
         deleteWrapper.setGone()
         /*
-        deleteWrapper.setVisible(mDiscussionTopicHeader != null)
+        deleteWrapper.setVisible(discussionTopicHeader != null)
         deleteWrapper.onClickWithRequireNetwork {
             AlertDialog.Builder(context)
                     .setTitle(R.string.discussionsDeleteTitle)
                     .setMessage(R.string.discussionsDeleteMessage)
                     .setPositiveButton(R.string.delete) { _, _ ->
-                        if(mDiscussionTopicHeader != null) {
-                            deleteDiscussionTopicHeader(mDiscussionTopicHeader!!.id)
+                        if(discussionTopicHeader != null) {
+                            deleteDiscussionTopicHeader(discussionTopicHeader!!.id)
                         }
                     }
                     .setNegativeButton(R.string.cancel) { _, _ -> }
@@ -238,81 +275,41 @@ class CreateDiscussionFragment : ParentFragment() {
         }
         */
     }
+    //endregion
 
-
-    /* Blocked COMMS 868
-    private fun updateAttachmentUI() {
-        updateAttachmentButton()
-        attachmentLayout.clearAttachmentViews()
-
-        // Show attachment waiting to upload (if any)
-        attachment?.let { attachment ->
-            val attachmentView = AttachmentView(context)
-            attachmentView.setPendingAttachment(attachment.toAttachment(), true) { action, _ ->
-                if (action == AttachmentView.AttachmentAction.REMOVE) {
-                    this@CreateDiscussionFragment.attachment = null
-                    updateAttachmentButton()
-                }
-            }
-            attachmentLayout.addView(attachmentView)
-        }
-
-        // Show existing attachment (if any)
-        mDiscussionTopicHeader?.attachments?.firstOrNull()?.let {
-            val attachmentView = AttachmentView(context)
-            attachmentView.setPendingRemoteFile(it, true) { action, attachment ->
-                if (action == AttachmentView.AttachmentAction.REMOVE) {
-                    this@CreateDiscussionFragment.attachmentRemoved = true
-                    mDiscussionTopicHeader?.attachments?.remove(attachment)
-                }
-            }
-            attachmentLayout.addView(attachmentView)
-        }
-    }
-    */
-
-    /* blocked COMMS 868
-    private fun updateAttachmentButton(show: Boolean = true) {
-        val quantity = if(attachment == null) 0 else 1
-        mAttachmentButton?.text = resources.getQuantityString(R.plurals.utils_addAttachment, quantity, quantity)
-        // Only show if (1) we're in creation mode and (2) we don't already have an attachment
-        mAttachmentButton?.setVisible(show && mDiscussionTopicHeader == null && attachment == null)
-    }
-    */
-
+    //region Functionality
     private fun saveDiscussion() {
-
-        if(mDiscussionTopicHeader != null) {
+        if (discussionTopicHeader != null) {
             val postData = DiscussionTopicPostBody()
-            //discussion title isn't required
-            if(editDiscussionName.text.isEmpty()) {
+            // Discussion title isn't required
+            if (editDiscussionName.text.isEmpty()) {
                 postData.title = getString(R.string.utils_noTitle)
             } else {
                 postData.title = editDiscussionName.text?.toString() ?: getString(R.string.utils_noTitle)
             }
             postData.message = descriptionRCEView.html
-            postData.discussionType = if (mAllowThreaded) DiscussionTopicHeader.DiscussionType.THREADED.toString().toLowerCase() else DiscussionTopicHeader.DiscussionType.SIDE_COMMENT.toString().toLowerCase()
-            postData.requireInitialPost = mUsersMustPost
+            postData.discussionType = if (allowThreaded) DiscussionTopicHeader.DiscussionType.THREADED.toString().toLowerCase() else DiscussionTopicHeader.DiscussionType.SIDE_COMMENT.toString().toLowerCase()
+            postData.requireInitialPost = usersMustPost
 
-            editDiscussion((mDiscussionTopicHeader as DiscussionTopicHeader).id, postData)
+            editDiscussion((discussionTopicHeader as DiscussionTopicHeader).id, postData)
         } else {
             val discussionTopicHeader = DiscussionTopicHeader()
 
-            if(editDiscussionName.text.isEmpty()) {
+            if (editDiscussionName.text.isEmpty()) {
                 discussionTopicHeader.title = getString(R.string.utils_noTitle)
             } else {
                 discussionTopicHeader.title = editDiscussionName.text.toString()
             }
             discussionTopicHeader.message = descriptionRCEView.html
-            discussionTopicHeader.type = if (mAllowThreaded) DiscussionTopicHeader.DiscussionType.THREADED else DiscussionTopicHeader.DiscussionType.SIDE_COMMENT
-            discussionTopicHeader.isRequireInitialPost = mUsersMustPost
+            discussionTopicHeader.type = if (allowThreaded) DiscussionTopicHeader.DiscussionType.THREADED else DiscussionTopicHeader.DiscussionType.SIDE_COMMENT
+            discussionTopicHeader.isRequireInitialPost = usersMustPost
 
-            if(mEditDateGroups[0].coreDates.unlockDate != null) {
-                discussionTopicHeader.setDelayedPostAtDate(mEditDateGroups[0].coreDates.unlockDate)
+            if (editDateGroups[0].coreDates.unlockDate != null) {
+                discussionTopicHeader.setDelayedPostAtDate(editDateGroups[0].coreDates.unlockDate)
             }
 
-            if(mEditDateGroups[0].coreDates.lockDate != null) {
-                discussionTopicHeader.setLockAtDate(mEditDateGroups[0].coreDates.lockDate)
+            if (editDateGroups[0].coreDates.lockDate != null) {
+                discussionTopicHeader.setLockAtDate(editDateGroups[0].coreDates.lockDate)
             }
 
             saveDiscussion(discussionTopicHeader)
@@ -323,7 +320,7 @@ class CreateDiscussionFragment : ParentFragment() {
     private fun saveDiscussion(discussionTopicHeader: DiscussionTopicHeader) {
         startSavingDiscussion()
         @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-        mCreateDiscussionCall = tryWeave {
+        createDiscussionCall = tryWeave {
             var filePart: MultipartBody.Part? = null
             attachment?.let {
                 val file = File(it.fullPath)
@@ -334,9 +331,9 @@ class CreateDiscussionFragment : ParentFragment() {
             discussionSavedSuccessfully(null)
 
         } catch {
-            if(it is StatusCallbackError) {
+            if (it is StatusCallbackError) {
                 val statusCode = it.response?.code()
-                if(statusCode == 500) { //Quota has been reached. Likely the discussion as indeed created.
+                if (statusCode == 500) { // Quota has been reached. Likely the discussion as indeed created.
                     errorSavingDiscussionAttachment()
                 } else {
                     errorSavingDiscussion()
@@ -348,7 +345,7 @@ class CreateDiscussionFragment : ParentFragment() {
     private fun editDiscussion(topicId: Long, discussionTopicPostBody: DiscussionTopicPostBody) {
         startSavingDiscussion()
         @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-        mCreateDiscussionCall = weave {
+        createDiscussionCall = weave {
             try {
                 if (attachmentRemoved) discussionTopicPostBody.removeAttachment = ""
                 val discussionTopic = awaitApi<DiscussionTopicHeader> { DiscussionManager.editDiscussionTopic(canvasContext, topicId, discussionTopicPostBody, it) }
@@ -360,16 +357,18 @@ class CreateDiscussionFragment : ParentFragment() {
         }
     }
 
+    /* Revisit after COMMS-868
     private fun deleteDiscussionTopicHeader(discussionTopicHeaderId: Long) {
-        DiscussionManager.deleteDiscussionTopicHeader(canvasContext, discussionTopicHeaderId, object: StatusCallback<Void>(){
+        DiscussionManager.deleteDiscussionTopicHeader(canvasContext, discussionTopicHeaderId, object : StatusCallback<Void>() {
             override fun onResponse(response: Response<Void>, linkHeaders: LinkHeaders, type: ApiType) {
-                if(response.code() in 200..299) {
+                if (response.code() in 200..299) {
 //                    DiscussionTopicHeaderDeletedEvent(discussionTopicHeaderId, (DiscussionsDetailsFragment::class.java.toString() + ".onResume()")).post() // Todo -re-add after COMSS-868
-                    discussionDeletedSuccessfully(discussionTopicHeaderId)
+                    discussionDeletedSuccessfully()
                 }
             }
         })
     }
+    */
 
     private fun startSavingDiscussion() {
         sendButton?.setGone()
@@ -390,27 +389,68 @@ class CreateDiscussionFragment : ParentFragment() {
 
     private fun errorSavingDiscussionAttachment() {
         toast(R.string.utils_discussionSuccessfulAttachmentNot)
-        editDiscussionName.hideKeyboard() // close the keyboard
+        editDiscussionName.hideKeyboard() // Close the keyboard
         navigation?.popCurrentFragment()
     }
 
     private fun discussionSavedSuccessfully(discussionTopic: DiscussionTopicHeader?) {
-        if(discussionTopic == null) {
+        if (discussionTopic == null) {
             DiscussionCreatedEvent(true).post() // Post bus event
-            toast(R.string.utils_discussionSuccessfullyCreated) // let the user know the discussion was saved
+            toast(R.string.utils_discussionSuccessfullyCreated) // Let the user know the discussion was saved
         } else {
 //            discussionTopic.assignment = getAssignment()
 //            DiscussionUpdatedEvent(discussionTopic).post() TODO - re-add after COMMS-868
             toast(R.string.utils_discussionSuccessfullyUpdated)
         }
 
-        editDiscussionName.hideKeyboard() // close the keyboard
+        editDiscussionName.hideKeyboard() // Close the keyboard
         navigation?.popCurrentFragment()
     }
 
-    fun discussionDeletedSuccessfully(discussionTopicHeaderId: Long) {
+    /* Uncomment after COMMS 868
+    fun discussionDeletedSuccessfully() {
         activity?.onBackPressed()
+    } */
+
+    /* Blocked COMMS 868
+    private fun updateAttachmentUI() {
+        updateAttachmentButton()
+        attachmentLayout.clearAttachmentViews()
+
+        // Show attachment waiting to upload (if any)
+        attachment?.let { attachment ->
+            val attachmentView = AttachmentView(context)
+            attachmentView.setPendingAttachment(attachment.toAttachment(), true) { action, _ ->
+                if (action == AttachmentView.AttachmentAction.REMOVE) {
+                    this@CreateDiscussionFragment.attachment = null
+                    updateAttachmentButton()
+                }
+            }
+            attachmentLayout.addView(attachmentView)
+        }
+
+        // Show existing attachment (if any)
+        discussionTopicHeader?.attachments?.firstOrNull()?.let {
+            val attachmentView = AttachmentView(context)
+            attachmentView.setPendingRemoteFile(it, true) { action, attachment ->
+                if (action == AttachmentView.AttachmentAction.REMOVE) {
+                    this@CreateDiscussionFragment.attachmentRemoved = true
+                    discussionTopicHeader?.attachments?.remove(attachment)
+                }
+            }
+            attachmentLayout.addView(attachmentView)
+        }
     }
+    */
+
+    /* blocked COMMS 868
+    private fun updateAttachmentButton(show: Boolean = true) {
+        val quantity = if(attachment == null) 0 else 1
+        mAttachmentButton?.text = resources.getQuantityString(R.plurals.utils_addAttachment, quantity, quantity)
+        // Only show if (1) we're in creation mode and (2) we don't already have an attachment
+        mAttachmentButton?.setVisible(show && discussionTopicHeader == null && attachment == null)
+    }
+    */
 
     /* Blocked COMMS 868
     private fun addAttachment() {
@@ -423,22 +463,28 @@ class CreateDiscussionFragment : ParentFragment() {
         })
     }
     */
+    //endregion
 
     companion object {
-        @JvmStatic private val DISCUSSION_TOPIC_HEADER = "discussion_topic_header"
+        @JvmStatic
+        private val DISCUSSION_TOPIC_HEADER = "discussion_topic_header"
 
         @JvmStatic
-        fun makeBundle(canvasContext: CanvasContext, discussionTopicHeader: DiscussionTopicHeader) : Bundle {
-            return ParentFragment.createBundle(canvasContext).apply {
+        fun makeRoute(canvasContext: CanvasContext, discussionTopicHeader: DiscussionTopicHeader? = null): Route {
+            val bundle = Bundle().apply {
                 putParcelable(DISCUSSION_TOPIC_HEADER, discussionTopicHeader)
             }
+
+            return Route(CreateDiscussionFragment::class.java, canvasContext, bundle)
         }
 
         @JvmStatic
-        fun newInstance(args: Bundle) = CreateDiscussionFragment().apply {
-            arguments = args
-            mDiscussionTopicHeader = args.getParcelable(DISCUSSION_TOPIC_HEADER)
-        }
-    }
+        fun newInstance(route: Route) = if (validRoute(route)) {
+            CreateDiscussionFragment().apply {
+                arguments = route.canvasContext!!.makeBundle(route.arguments)
+            }
+        } else null
 
+        private fun validRoute(route: Route) = route.canvasContext != null
+    }
 }

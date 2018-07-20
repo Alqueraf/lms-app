@@ -86,6 +86,28 @@
     <color name="comment_bubble_outgoing">#178FDF</color>
     <color name="comment_bubble_incoming">#F5F5F5</color>
 
+    <!-- Annotation Colors -->
+    <color name="redAnnotation">#EE0612</color>
+    <color name="orangeAnnotation">#FC5E13</color>
+    <color name="yellowAnnotation">#FCB900</color>
+    <color name="brownAnnotation">#8D6437</color>
+    <color name="greenAnnotation">#00AC18</color>
+    <color name="darkBlueAnnotation">#234C9F</color>
+    <color name="blueAnnotation">#008EE2</color>
+    <color name="pinkAnnotation">#C31FA8</color>
+    <color name="purpleAnnotation">#741865</color>
+    <color name="darkGrayAnnotation">#363636</color>
+
+    <!-- Annotation Colors -->
+    <color name="redHighlightAnnotation">#FF9999</color>
+    <color name="orangeHighlightAnnotation">#FFC166</color>
+    <color name="yellowHighlightAnnotation">#FCE680</color>
+    <color name="greenHighlightAnnotation">#99EBA4</color>
+    <color name="blueHighlightAnnotation">#80D0FF</color>
+    <color name="pinkHighlightAnnotation">#FFB9F1</color>
+    <color name="transparentWhite">#88FFFFFF</color>
+    <color name="annotationToolbarBackground">#556572</color>
+
     <color name="discussion_liking">#8b969e</color>
     <color name="profileBorderColor">#d8dcdf</color>
     <color name="mediaOverlayBackground">#AA000000</color>

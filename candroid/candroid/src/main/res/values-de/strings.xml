@@ -145,12 +145,29 @@
     <string name="toDoNoDueDate">Kein Abgabetermin</string>
 
     <string name="dueAt">Fällig am</string>
+    <string name="dueAtTime">Fällig um %s</string>
     <string name="toDoDue">Fällig</string>
+    <string name="due">Fällig am %1$s</string>
     <plurals name="to_do_needs_grading">
         <item quantity="one">%d muss benotet werden.</item>
         <item quantity="other">%d müssen benotet werden.</item>
     </plurals>
     <string name="myFiles">Dateien</string>
+    <string name="createAFolder">Einen Ordner anlegen</string>
+    <string name="createFolder">Ordner anlegen</string>
+    <string name="createAFile">Eine Datei erstellen</string>
+    <string name="createFileFolderFabContentDesc">Schaltflächen „Datei erstellen“ und „Ordner anlegen“ anzeigen</string>
+    <string name="folderCreationError">Fehler beim Anlegen eines Ordners.</string>
+    <string name="rename">Umbenennen</string>
+    <string name="renameFile">Datei umbenennen</string>
+    <string name="renameFolder">Ordner umbenennen</string>
+    <string name="blankName">Der Name darf nicht leer sein.</string>
+    <string name="confirmDeleteFile">Möchten Sie die Datei \'%s\' wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="confirmDeleteEmptyFolder">Möchten Sie den Ordner \'%s\' wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="one">Möchten Sie den Ordner \'%1$s\', einschließlich des %2$d-Objekts, das er enthält, wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.</item>
+        <item quantity="other">Möchten Sie den Ordner \'%1$s\', einschließlich der darin enthaltenen %2$d-Objekte wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.</item>
+    </plurals>
     <string name="settings">Einstellungen</string>
     <string name="name">Name</string>
     <string name="email">E-Mail</string>
@@ -354,6 +371,8 @@
 	<string name="errorPostingAnnouncement">Beim Posten der Ankündigung ist ein Fehler aufgetreten.</string>
 	<string name="errorPostingDiscussion">Beim Posten der Diskussion ist ein Fehler aufgetreten.</string>
 	<string name="allowThreading">Antworten-Threads erlauben</string>
+    <string name="usersMustPost">Benutzer müssen gepostet haben, bevor sie Antworten sehen können.</string>
+    <string name="allowUserComments">Benutzern Kommentare erlauben</string>
 	<string name="message">Nachricht</string>
 	<string name="title">Titel</string>
 
@@ -443,6 +462,7 @@
     <string name="subTypeOnlineQuiz">Online-Quiz</string>
 	<string name="subTypeMediaRecording">Medienaufzeichnung</string>
     <string name="sub_type_lti_launch">LTI-Start</string>
+    <string name="subTypeDiscussionTopic">Diskussion</string>
     <string name="turnInByHand">Diese Aufgabe müssen Sie persönlich abgeben</string>
 	<string name="noSubRequired">Keine Einreichung erforderlich</string>
 	<string name="noTurnInOnMobile">Mobile Einreichung nicht unterstützt</string>
@@ -572,6 +592,7 @@
     <string name="uploadMyFiles">Meine Dateien</string>
     <string name="uploadCourseFiles">Kursdateien</string>
 
+    <string name="uploadToSubmissionComment">Hochladen zum Sendekommentar</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">Änderungsprotokoll</string>
 
@@ -610,14 +631,6 @@
 
     <string name="notoriousSubmissionInProgress">Dateien werden abgeschickt&#8230;. Prüfen Sie den Benachrichtigungsbalken auf Aktualisierungen.</string>
     <string name="notoriousSubmissionSuccessful">Abschicken der Datei abgeschlossen</string>
-
-    <string name="pinned_icon">Symbol für angeheftete Diskussion</string>
-    <string name="pin_discussion">Diskussion anheften</string>
-    <string name="unpin_discussion">Diskussion abhängen</string>
-    <string name="discussion_pinned">Diskussion angeheftet</string>
-    <string name="pinned_discussions">Angeheftete Diskussionen</string>
-    <string name="discussion_unpinned">Diskussion abgehängt</string>
-    <string name="empty_discussions">Es sind keine Diskussionen zum Anzeigen in diesem Kursabschnitt vorhanden.</string>
 
     <string name="bio">Biografie</string>
     <string name="draft">Entwurf</string>
@@ -844,6 +857,7 @@
     <string name="locked_mastery_paths">Bis \"%s\" gesperrter wird benotet.</string>
     <string name="locked_icon">Gesperrtes Symbol</string>
     <string name="choose_assignment_group">Aufgabengruppe wählen</string>
+    <string name="chooseAssignmentPath">Aufgabenpfad wählen</string>
     <string name="select">Auswählen</string>
     <string name="choice_position">Wahl %d</string>
     <string name="updating_module_info">Aktualisiert Modulinformationen&#8230;</string>
@@ -873,13 +887,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">Link in einem externen Browser öffnen</string>
-    <string name="gaugeLaunchFailure">Gauge konnte zu diesem Zeitpunkt nicht geladen werden.</string>
-
+    <string name="ltiLaunchFailure">Dieses LTI-Tool konnte zu diesem Zeitpunkt nicht geladen werden.</string>
     <string name="urlSubmission">URL-Abgabe</string>
     <string name="assignmentDeletedError">Diese Aufgabe ist nicht mehr verfügbar.</string>
     <string name="homePageIdForNotifications">Aktuelle Aktivität</string>
     <string name="homePageIdForModules">Module</string>
     <string name="homePageIdForAssignments">Aufgaben</string>
+
     <string name="homePageIdForSyllabus">Kursplan</string>
 
     <string name="contentDescriptionWidgetRefresh">Widget aktualisieren</string>
@@ -893,9 +907,44 @@
     <string name="finalGrade">Gesamtnote</string>
 
     <string name="moreThan99">über 99</string>
-    <string name="dot_with_spaces">  \u2022  </string>
+    <string name="max_count">über 99</string>
 
     <string name="opensInWebView">In Webview öffnen</string>
     <string name="unsupportedTabLabel">Wird auf diesem Gerät nicht unterstützt</string>
+
+    <string name="downloadingFile">Wird heruntergeladen</string>
+    <string name="downloadFailed">Download fehlgeschlagen</string>
+    <string name="downloadSuccessful">Download erfolgreich</string>
+
+    <string name="full_due_date_details">Vollständige Details zum Abgabedatum</string>
+    <string name="submissions">Übermittlungen</string>
+    <string name="attachment">Anhang</string>
+    <string name="contentDescription_back">Zurück</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="one">%s Pkt.</item>
+        <item quantity="other">%s Pkte.</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="one">%s Punkt</item>
+        <item quantity="other">%s Punkte</item>
+    </plurals>
+    <string name="capitalTo">An</string>
+
+
+    <string name="unableToViewInBrowser">Wir konnten keine externe Anwendung zum Anzeigen dieses LTI-Tools finden.</string>
+    <string name="commentUpload">Hochladen des Kommentars</string>
+    <string name="unableToUploadMediaComment">Um einen Medienkommentar zu senden, senden oder löschen Sie Ihren nicht gesendeten Textkommentar.</string>
+
+    <string name="frontPage">Frontseite</string>
+    <string name="editPage">Seite bearbeiten</string>
+    <string name="description">Beschreibung</string>
+    <string name="pageSuccessfullyUpdated">Die Seite wurde aktualisiert.</string>
+    <string name="errorSavingPage">Fehler beim Speichern dieser Seite. Versuchen Sie es erneut.</string>
+    <string name="pageTitleMustBeSet">Ein Seitentitel muss eingestellt werden.</string>
+    <string name="pageDetails">Seitendetails</string>
+    <string name="saving">Wird gespeichert</string>
+    <string name="confirmDeleteEvent">Möchten Sie dieses Event wirklich löschen?</string>
+    <string name="conferencesNotSupported">Konferenzen werden auf Mobilgeräten noch nicht unterstützt.</string>
 
 </resources>

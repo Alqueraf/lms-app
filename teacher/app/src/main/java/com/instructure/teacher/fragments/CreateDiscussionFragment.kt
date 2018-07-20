@@ -16,6 +16,8 @@
  */
 package com.instructure.teacher.fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -34,24 +36,26 @@ import com.instructure.canvasapi2.models.post_models.AssignmentPostBody
 import com.instructure.canvasapi2.models.post_models.DiscussionTopicPostBody
 import com.instructure.canvasapi2.utils.APIHelper
 import com.instructure.canvasapi2.utils.NumberHelper
+import com.instructure.interactions.Identity
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.dialogs.DatePickerDialogFragment
 import com.instructure.pandautils.dialogs.TimePickerDialogFragment
 import com.instructure.pandautils.dialogs.UnsavedChangesExitDialog
 import com.instructure.pandautils.dialogs.UploadFilesDialog
+import com.instructure.pandautils.discussions.DiscussionUtils
 import com.instructure.pandautils.fragments.BasePresenterFragment
 import com.instructure.pandautils.utils.*
 import com.instructure.pandautils.views.AttachmentView
+import com.instructure.pandautils.views.CanvasWebView
 import com.instructure.teacher.R
-import com.instructure.teacher.dialog.*
+import com.instructure.teacher.dialog.ConfirmRemoveAssignmentOverrideDialog
 import com.instructure.teacher.events.AssigneesUpdatedEvent
 import com.instructure.teacher.events.DiscussionCreatedEvent
 import com.instructure.teacher.events.DiscussionUpdatedEvent
 import com.instructure.teacher.events.post
 import com.instructure.teacher.factory.CreateDiscussionPresenterFactory
-import com.instructure.interactions.Identity
 import com.instructure.teacher.models.DueDateGroup
 import com.instructure.teacher.presenters.CreateDiscussionPresenter
-import com.instructure.interactions.router.Route
 import com.instructure.teacher.router.RouteMatcher
 import com.instructure.teacher.utils.*
 import com.instructure.teacher.view.AssignmentOverrideView
@@ -79,11 +83,14 @@ class CreateDiscussionFragment : BasePresenterFragment<
     private var mIsSubscribed: Boolean by BooleanArg(true)
     private var mAllowThreaded: Boolean by BooleanArg(false)
     private var mUsersMustPost: Boolean by BooleanArg(false)
+    private var mHasLoadedDataForEdit by BooleanArg()
     private var mDisplayGradeAs: String? by NullableStringArg()
     private var mDescription by NullableStringArg()
+
     private var mScrollToDates: Boolean = false
-    private var mHasLoadedDataForEdit by BooleanArg()
     private var mRCEHasFocus = false
+
+    private var placeHolderList: ArrayList<Placeholder> = ArrayList()
 
     //region Graded Discussion variables
 
@@ -126,7 +133,6 @@ class CreateDiscussionFragment : BasePresenterFragment<
         }
     }
 
-
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
@@ -158,6 +164,21 @@ class CreateDiscussionFragment : BasePresenterFragment<
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Get the image Uri
+            when (requestCode) {
+                RequestCodes.PICK_IMAGE_GALLERY -> data?.data
+                RequestCodes.CAMERA_PIC_REQUEST -> MediaUploadUtils.handleCameraPicResult(activity, null)
+                else -> null
+            }?.let { imageUri ->
+                presenter.uploadRceImage(imageUri, activity)
+            }
+        }
+    }
+
+    override fun insertImageIntoRCE(text: String, alt: String) = descriptionRCEView.insertImage(text, alt)
+
     override fun onReadySetGo(presenter: CreateDiscussionPresenter?) {
         //if we already have something in the edit date groups we already have the full assignment and don't need to get it again.
         if(mAssignment != null && mEditDateGroups.size == 0) {
@@ -180,7 +201,6 @@ class CreateDiscussionFragment : BasePresenterFragment<
     override fun layoutResId(): Int = R.layout.fragment_create_discussion
 
     override fun updateDueDateGroups(groups: HashMap<Long, Group>, sections: HashMap<Long, Section>, students: HashMap<Long, User>) {
-
         groupsMapped += groups
         sectionsMapped += sections
         studentsMapped += students
@@ -233,8 +253,10 @@ class CreateDiscussionFragment : BasePresenterFragment<
                 R.id.menuAddAttachment -> if (mDiscussionTopicHeader == null) addAttachment()
             }
         }
+
         ViewStyler.themeToolbarBottomSheet(activity, isTablet, toolbar, Color.BLACK, false)
         ViewStyler.setToolbarElevationSmall(context, toolbar)
+
         sendButton?.setTextColor(ThemePrefs.buttonColor)
         saveButton?.setTextColor(ThemePrefs.buttonColor)
     }
@@ -244,22 +266,32 @@ class CreateDiscussionFragment : BasePresenterFragment<
             it.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
         }
 
-        descriptionRCEView.setHtml(mDescription ?: mDiscussionTopicHeader?.message,
-                getString(R.string.discussion_details),
-                getString(R.string.rce_empty_description),
-                ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        if(CanvasWebView.containsLTI(mDescription ?: mDiscussionTopicHeader?.message ?: "", "UTF-8")) {
+            descriptionRCEView.setHtml(DiscussionUtils.createLTIPlaceHolders(context, mDescription ?: mDiscussionTopicHeader?.message ?: "") { _, placeholder ->
+                placeHolderList.add(placeholder)
+            },
+                    getString(R.string.discussion_details),
+                    getString(R.string.rce_empty_description),
+                    ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        } else {
+            descriptionRCEView.setHtml(mDescription ?: mDiscussionTopicHeader?.message,
+                    getString(R.string.discussion_details),
+                    getString(R.string.rce_empty_description),
+                    ThemePrefs.brandColor, ThemePrefs.buttonColor)
+        }
 
-        // when the RCE editor has focus we want the label to be darker so it matches the title's functionality
+        // When the RCE editor has focus we want the label to be darker so it matches the title's functionality
         descriptionRCEView.setLabel(discussionDescLabel, R.color.defaultTextDark, R.color.defaultTextGray)
 
-        if (!mHasLoadedDataForEdit) mDiscussionTopicHeader?.let {
-            editDiscussionName.setText(it.title)
-            mIsPublished = it.isPublished
-            mAllowThreaded = it.type == DiscussionTopicHeader.DiscussionType.THREADED
-            mUsersMustPost = it.isRequireInitialPost
-            mIsSubscribed = it.isSubscribed
-            mHasLoadedDataForEdit = true
-        }
+        if (!mHasLoadedDataForEdit)
+            mDiscussionTopicHeader?.let {
+                editDiscussionName.setText(it.title)
+                mIsPublished = it.isPublished
+                mAllowThreaded = it.type == DiscussionTopicHeader.DiscussionType.THREADED
+                mUsersMustPost = it.isRequireInitialPost
+                mIsSubscribed = it.isSubscribed
+                mHasLoadedDataForEdit = true
+            }
 
         ViewStyler.themeEditText(context, editDiscussionName, ThemePrefs.brandColor)
         ViewStyler.themeEditText(context, editGradePoints, ThemePrefs.brandColor)
@@ -272,17 +304,21 @@ class CreateDiscussionFragment : BasePresenterFragment<
 
         if(presenter.getAssignment() == null) {
             if(mEditDateGroups.isEmpty()) {
-                //if the dateGroups is empty, we want to add a due date so that we can set the available from and to fields
+                // If the dateGroups is empty, we want to add a due date so that we can set the available from and to fields
                 mEditDateGroups.clear()
+
                 val dueDateGroup = DueDateGroup()
+
                 if(mDiscussionTopicHeader != null) {
-                    //populate the availability dates if we have them, the assignment is null, so this is an ungraded assignment
+                    // Populate the availability dates if we have them, the assignment is null, so this is an ungraded assignment
                     dueDateGroup.coreDates.lockDate = (mDiscussionTopicHeader as DiscussionTopicHeader).lockAt
                     dueDateGroup.coreDates.unlockDate = (mDiscussionTopicHeader as DiscussionTopicHeader).delayedPostAt
                 }
+
                 mEditDateGroups.add(dueDateGroup)
             }
-            //make the graded things gone, we can't create a graded discussion
+
+            //Make the graded things gone, we can't create a graded discussion
             gradeWrapper.setGone()
             addOverride.setGone()
             subscribeWrapper.setGone()
@@ -315,48 +351,53 @@ class CreateDiscussionFragment : BasePresenterFragment<
         }
         setupOverrides()
         setupDelete()
+
+        descriptionRCEView.hideEditorToolbar()
+        descriptionRCEView.actionUploadImageCallback = { MediaUploadUtils.showPickImageDialog(this) }
+
+        editDiscussionName.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) descriptionRCEView.hideEditorToolbar()
+        }
     }
 
     private fun setupPublishSwitch()  {
-        //if a student has submitted something, we can't let the teacher unpublish the discussion
+        // If a student has submitted something, we can't let the teacher unpublish the discussion
         if (presenter.getAssignment()?.isUnpublishable == true) {
             publishWrapper.setGone()
             mIsPublished = true
             return
         }
+
         // Publish status
-        publishSwitch.applyTheme()
-
-        publishSwitch.isChecked = mIsPublished
-
-        publishSwitch.setOnCheckedChangeListener { _, isChecked -> mIsPublished = isChecked }
+        with(publishSwitch) {
+            applyTheme()
+            isChecked = mIsPublished
+            setOnCheckedChangeListener { _, isChecked -> mIsPublished = isChecked }
+        }
     }
 
     private fun setupSubscribeSwitch()  {
-
-        subscribeSwitch.applyTheme()
-
-        subscribeSwitch.isChecked = mIsSubscribed
-
-        subscribeSwitch.setOnCheckedChangeListener { _, isChecked -> mIsSubscribed = isChecked }
+        with(subscribeSwitch) {
+            applyTheme()
+            isChecked = mIsSubscribed
+            setOnCheckedChangeListener { _, isChecked -> mIsSubscribed = isChecked }
+        }
     }
 
     private fun setupAllowThreadedSwitch()  {
-
-        threadedSwitch.applyTheme()
-
-        threadedSwitch.isChecked = mAllowThreaded
-
-        threadedSwitch.setOnCheckedChangeListener { _, isChecked -> mAllowThreaded = isChecked }
+        with (threadedSwitch) {
+            applyTheme()
+            isChecked = mAllowThreaded
+            setOnCheckedChangeListener { _, isChecked -> mAllowThreaded = isChecked }
+        }
     }
 
     private fun setupUsersMustPostSwitch()  {
-
-        usersMustPostSwitch.applyTheme()
-
-        usersMustPostSwitch.isChecked = mUsersMustPost
-
-        usersMustPostSwitch.setOnCheckedChangeListener { _, isChecked -> mUsersMustPost = isChecked }
+        with(usersMustPostSwitch) {
+            applyTheme()
+            isChecked = mUsersMustPost
+            setOnCheckedChangeListener { _, isChecked -> mUsersMustPost = isChecked }
+        }
     }
 
     private fun setupOverrides() {
@@ -369,7 +410,6 @@ class CreateDiscussionFragment : BasePresenterFragment<
                 val v = AssignmentOverrideView(activity)
 
                 v.toAndFromDatesOnly()
-
                 v.setupOverride(index, dueDateGroup, mEditDateGroups.size > 1, assignees, datePickerOnClick, timePickerOnClick, {
                     if (mEditDateGroups.contains(it)) mEditDateGroups.remove(it)
                     setupOverrides()
@@ -377,9 +417,7 @@ class CreateDiscussionFragment : BasePresenterFragment<
 
                 overrideContainer.addView(v)
             }
-
         } else {
-
             // Load in overrides
             if(groupsMapped.isNotEmpty() || sectionsMapped.isNotEmpty() || studentsMapped.isNotEmpty()) {
                 mEditDateGroups.forEachIndexed { index, dueDateGroup ->
@@ -388,6 +426,7 @@ class CreateDiscussionFragment : BasePresenterFragment<
                     if (dueDateGroup.isEveryone) {
                         assignees += getString(if (mEditDateGroups.any { it.hasOverrideAssignees }) R.string.everyone_else else R.string.everyone)
                     }
+
                     dueDateGroup.groupIds.forEach { assignees.add(groupsMapped[it]?.name!!) }
                     dueDateGroup.sectionIds.forEach { assignees.add(sectionsMapped[it]?.name!!) }
                     dueDateGroup.studentIds.forEach { assignees.add(studentsMapped[it]?.name!!) }
@@ -431,7 +470,7 @@ class CreateDiscussionFragment : BasePresenterFragment<
 
         displayGradeAsSpinner.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if(view == null) return
+                view ?: return
                 when((view as TextView).text.toString()) {
                     getString(R.string.points) -> mDisplayGradeAs = Assignment.POINTS_TYPE
                     getString(R.string.gpa_scale) -> mDisplayGradeAs = Assignment.GPA_SCALE_TYPE
@@ -474,6 +513,7 @@ class CreateDiscussionFragment : BasePresenterFragment<
                     updateAttachmentButton()
                 }
             }
+
             attachmentLayout.addView(attachmentView)
         }
 
@@ -486,6 +526,7 @@ class CreateDiscussionFragment : BasePresenterFragment<
                     mDiscussionTopicHeader?.attachments?.remove(attachment)
                 }
             }
+
             attachmentLayout.addView(attachmentView)
         }
     }
@@ -522,28 +563,28 @@ class CreateDiscussionFragment : BasePresenterFragment<
     override fun discussionSavedSuccessfully(discussionTopic: DiscussionTopicHeader?) {
         if(discussionTopic == null) {
             DiscussionCreatedEvent(true).post() // Post bus event
-            toast(R.string.discussionSuccessfullyCreated) // let the user know the discussion was saved
+            toast(R.string.discussionSuccessfullyCreated) // Let the user know the discussion was saved
         } else {
             discussionTopic.assignment = presenter.getAssignment()
             DiscussionUpdatedEvent(discussionTopic).post()
             toast(R.string.discussionSuccessfullyUpdated)
         }
 
-        editDiscussionName.hideKeyboard() // close the keyboard
-        activity.onBackPressed() // close this fragment
+        editDiscussionName.hideKeyboard() // Close the keyboard
+        activity.onBackPressed() // Close this fragment
     }
 
     private fun saveDiscussion() {
-
         if(mDiscussionTopicHeader != null) {
             val postData = DiscussionTopicPostBody()
-            //discussion title isn't required
+
+            // Discussion title isn't required
             if(editDiscussionName.text.isEmpty()) {
                 postData.title = getString(R.string.no_title)
             } else {
                 postData.title = editDiscussionName.text?.toString() ?: getString(R.string.no_title)
             }
-            postData.message = descriptionRCEView.html
+            postData.message = handleLTIPlaceHolders(placeHolderList, descriptionRCEView.html)
             postData.published = mIsPublished
             postData.discussionType = if (mAllowThreaded) DiscussionTopicHeader.DiscussionType.THREADED.toString().toLowerCase() else DiscussionTopicHeader.DiscussionType.SIDE_COMMENT.toString().toLowerCase()
             postData.requireInitialPost = mUsersMustPost
@@ -569,13 +610,14 @@ class CreateDiscussionFragment : BasePresenterFragment<
             } else {
                 discussionTopicHeader.title = editDiscussionName.text.toString()
             }
+
             discussionTopicHeader.message = descriptionRCEView.html
             discussionTopicHeader.isPublished = mIsPublished
             discussionTopicHeader.isSubscribed = mIsSubscribed
             discussionTopicHeader.type = if (mAllowThreaded) DiscussionTopicHeader.DiscussionType.THREADED else DiscussionTopicHeader.DiscussionType.SIDE_COMMENT
             discussionTopicHeader.isRequireInitialPost = mUsersMustPost
 
-            //if the assignment is null, that means we're creating/editing a discussion. When we do this we initialize mEditDateGroups with an empty DueDateGroup
+            // If the assignment is null, that means we're creating/editing a discussion. When we do this we initialize mEditDateGroups with an empty DueDateGroup
             if (presenter.getAssignment() == null) {
                 discussionTopicHeader.setDelayedPostAtDate(mEditDateGroups[0].coreDates.unlockDate)
                 discussionTopicHeader.setLockAtDate(mEditDateGroups[0].coreDates.lockDate)
@@ -602,7 +644,7 @@ class CreateDiscussionFragment : BasePresenterFragment<
         event.once(javaClass.simpleName) { dates ->
             mEditDateGroups = dates.toMutableList()
             setupOverrides()
-            //remove it so when we go to another assignment or discussion it won't show up there too
+            // Remove it so when we go to another assignment or discussion it won't show up there too
             EventBus.getDefault().removeStickyEvent(event)
         }
     }
@@ -616,41 +658,40 @@ class CreateDiscussionFragment : BasePresenterFragment<
         @JvmStatic private val SHOULD_SCROLL_TO_DATES = "shouldScrollToDates"
 
         @JvmStatic
-        fun newInstance(args: Bundle) = CreateDiscussionFragment().apply {
-            if(args.containsKey(CANVAS_CONTEXT)) {
-                mCanvasContext = args.getParcelable(CANVAS_CONTEXT)
-            }
-            if(args.containsKey(DISCUSSION_TOPIC_HEADER)) {
-                mDiscussionTopicHeader = args.getParcelable(DISCUSSION_TOPIC_HEADER)
-                mAssignment = mDiscussionTopicHeader?.assignment
-            }
-            if(args.containsKey(SHOULD_SCROLL_TO_DATES)) {
-                mScrollToDates = args.getBoolean(SHOULD_SCROLL_TO_DATES)
-            }
-        }
+        fun newInstance(args: Bundle) =
+                CreateDiscussionFragment().apply {
+                    if (args.containsKey(CANVAS_CONTEXT)) {
+                        mCanvasContext = args.getParcelable(CANVAS_CONTEXT)
+                    }
+                    if (args.containsKey(DISCUSSION_TOPIC_HEADER)) {
+                        mDiscussionTopicHeader = args.getParcelable(DISCUSSION_TOPIC_HEADER)
+                        mAssignment = mDiscussionTopicHeader?.assignment
+                    }
+                    if (args.containsKey(SHOULD_SCROLL_TO_DATES)) {
+                        mScrollToDates = args.getBoolean(SHOULD_SCROLL_TO_DATES)
+                    }
+                }
 
         @JvmStatic
-        fun makeBundle(canvasContext: CanvasContext) : Bundle {
-            return Bundle().apply {
-                putParcelable(CANVAS_CONTEXT, canvasContext)
-            }
-        }
+        fun makeBundle(canvasContext: CanvasContext): Bundle =
+                Bundle().apply {
+                    putParcelable(CANVAS_CONTEXT, canvasContext)
+                }
 
         @JvmStatic
-        fun makeBundle(canvasContext: CanvasContext, discussionTopicHeader: DiscussionTopicHeader) : Bundle {
-            return Bundle().apply {
-                putParcelable(CANVAS_CONTEXT, canvasContext)
-                putParcelable(DISCUSSION_TOPIC_HEADER, discussionTopicHeader)
-            }
-        }
+        fun makeBundle(canvasContext: CanvasContext, discussionTopicHeader: DiscussionTopicHeader): Bundle =
+                Bundle().apply {
+                    putParcelable(CANVAS_CONTEXT, canvasContext)
+                    putParcelable(DISCUSSION_TOPIC_HEADER, discussionTopicHeader)
+                }
+
 
         @JvmStatic
-        fun makeBundle(canvasContext: CanvasContext, discussionTopicHeader: DiscussionTopicHeader, shouldScrollToDates: Boolean) : Bundle {
-            return Bundle().apply {
-                putParcelable(CANVAS_CONTEXT, canvasContext)
-                putParcelable(DISCUSSION_TOPIC_HEADER, discussionTopicHeader)
-                putBoolean(SHOULD_SCROLL_TO_DATES, shouldScrollToDates)
-            }
-        }
+        fun makeBundle(canvasContext: CanvasContext, discussionTopicHeader: DiscussionTopicHeader, shouldScrollToDates: Boolean): Bundle =
+                Bundle().apply {
+                    putParcelable(CANVAS_CONTEXT, canvasContext)
+                    putParcelable(DISCUSSION_TOPIC_HEADER, discussionTopicHeader)
+                    putBoolean(SHOULD_SCROLL_TO_DATES, shouldScrollToDates)
+                }
     }
 }

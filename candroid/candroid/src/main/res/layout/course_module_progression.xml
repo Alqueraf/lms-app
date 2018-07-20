@@ -16,14 +16,14 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.instructure.candroid.view.ViewPagerNonSwipeable
-        android:id="@+id/pager"
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/markDoneWrapper" />
@@ -81,7 +81,7 @@
     <RelativeLayout
         android:id="@+id/bottomBarModule"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="?android:attr/actionBarSize"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:clickable="true"
@@ -100,16 +100,17 @@
                 android:id="@+id/moduleNameIcon"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                app:srcCompat="@drawable/vd_lock"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="8dp"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                app:srcCompat="@drawable/vd_lock"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/moduleName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="2"
@@ -117,14 +118,13 @@
                 android:singleLine="false"
                 android:textColor="@color/canvasTextDark"
                 android:textSize="14sp"
-                tools:text="Hello Papa, Hello Mama"
-                android:layout_gravity="center_vertical"/>
+                tools:text="Hello Papa, Hello Mama" />
 
         </LinearLayout>
 
         <Button
             android:id="@+id/prev_item"
-            android:layout_width="?attr/actionBarSize"
+            android:layout_width="?android:attr/actionBarSize"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
@@ -132,7 +132,7 @@
 
         <Button
             android:id="@+id/next_item"
-            android:layout_width="?attr/actionBarSize"
+            android:layout_width="?android:attr/actionBarSize"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"

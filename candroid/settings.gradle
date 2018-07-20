@@ -1,5 +1,6 @@
 include ':candroid'
 include ':blueprint'
+include ':dataseedingapi'
 include ':login-api-2'
 include ':pandautils'
 include ':recyclerview'
@@ -11,6 +12,7 @@ include ':annotations'
 include ':rceditor'
 include ':interactions'
 
+project(':dataseedingapi').projectDir = new File(rootProject.projectDir, '/../automation/dataseedingapi')
 project(':espresso').projectDir = new File(rootProject.projectDir, '/../automation/espresso')
 project(':login-api-2').projectDir = new File(rootProject.projectDir, '/../login-api-2')
 project(':recyclerview').projectDir = new File(rootProject.projectDir, '/../recyclerview')

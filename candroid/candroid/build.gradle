@@ -15,16 +15,26 @@
  *
  */
 
+
+import com.instructure.android.buildtools.transform.MasqueradeUITransformer
+import com.instructure.android.buildtools.transform.PageViewTransformer
+import com.instructure.android.buildtools.transform.ProjectTransformer
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.oss.licenses.plugin'
+apply plugin: 'okreplay'
 
 configurations {
     all*.exclude group: 'commons-logging', module: 'commons-logging'
     all*.exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+}
+
+androidExtensions {
+    experimental = true
 }
 
 android {
@@ -35,13 +45,14 @@ android {
         applicationId "com.instructure.candroid"
         minSdkVersion Versions.MIN_SDK
         targetSdkVersion Versions.TARGET_SDK
-        versionCode = 178
-        versionName = '6.1.0'
+        versionCode = 181
+        versionName = '6.2.1'
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
         testInstrumentationRunner 'com.instructure.espresso.InstructureRunner'
         testInstrumentationRunnerArguments disableAnalytics: 'true'
+        buildConfigField "boolean", "IS_TESTING", "false"
 
         /* Add private data */
         buildConfigField "String", "PSPDFKIT_LICENSE_KEY", "\"$pspdfkitLicenseKey\""
@@ -87,6 +98,7 @@ android {
             buildConfigField 'boolean', 'IS_DEBUG', 'true'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             ext.enableCrashlytics = false
+            pseudoLocalesEnabled true
         }
 
         release {
@@ -107,6 +119,7 @@ android {
         }
 
         qa {
+            buildConfigField "boolean", "IS_TESTING", "true"
             dimension 'default'
         }
 
@@ -149,9 +162,13 @@ android {
         javaMaxHeapSize '4g'
     }
 
-    def transform = new MasqueradeUIInjector(android, 'com.instructure.candroid.activity.NavigationActivity.class')
-    registerTransform(transform)
-    registerTransform(new PageViewInjector(android))
+    registerTransform(
+            new ProjectTransformer(
+                    android,
+                    new MasqueradeUITransformer('com.instructure.candroid.activity.NavigationActivity.class'),
+                    new PageViewTransformer()
+            )
+    )
 }
 
 repositories {
@@ -171,6 +188,12 @@ dependencies {
 
     /* Android Test Dependencies */
     androidTestImplementation project(path: ':espresso')
+    androidTestImplementation project(':dataseedingapi')
+
+    /* OkHttp Idling Resource */
+    implementation('com.jakewharton.espresso:okhttp3-idling-resource:1.0.0') {
+        exclude module: 'espresso-idling-resource'
+    }
 
     /* Unit Test Dependencies */
     testImplementation Libs.JUNIT
@@ -187,12 +210,10 @@ dependencies {
     /* Google Play Services */
     implementation Libs.PLAY_SERVICES_OSS_LICENSES
 
-    /* HTML parser */
-    implementation 'org.jsoup:jsoup:1.7.2'
-
     /* Media Handling */
     implementation 'com.makeramen:roundedimageview:2.3.0'
-    implementation 'com.google.android.exoplayer:exoplayer:r2.1.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
 
     /* Google API Client */
     implementation 'com.google.api-client:google-api-client-android:1.18.0-rc'
@@ -208,9 +229,10 @@ dependencies {
     implementation Libs.SUPPORT_RECYCLERVIEW
     implementation Libs.PLAY_SERVICES_ANALYTICS
     implementation Libs.PLAY_SERVICES
+    implementation Libs.SUPPORT_PALETTE
 
     /* Job Scheduler */
-    compile 'com.firebase:firebase-jobdispatcher:0.8.5'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
 }
 
 apply plugin: 'com.google.gms.google-services'

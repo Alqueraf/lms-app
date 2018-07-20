@@ -17,15 +17,23 @@
 package com.instructure.teacher.ui
 
 import com.instructure.canvasapi2.utils.NumberHelper
+import com.instructure.espresso.TestRail
+import com.instructure.espresso.randomDouble
+import com.instructure.espresso.randomString
 import com.instructure.soseedy.Assignment
 import com.instructure.soseedy.SubmissionType
-import com.instructure.teacher.R.id.*
-import com.instructure.teacher.ui.utils.*
+import com.instructure.teacher.R
+import com.instructure.teacher.ui.utils.TeacherTest
+import com.instructure.teacher.ui.utils.seedAssignments
+import com.instructure.teacher.ui.utils.seedData
+import com.instructure.teacher.ui.utils.tokenLogin
+import com.instructure.espresso.ditto.Ditto
 import org.junit.Test
 
 class EditAssignmentDetailsPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     @TestRail(ID = "C3109580")
     override fun displaysPageObjects() {
         getToEditAssignmentDetailsPage()
@@ -33,73 +41,84 @@ class EditAssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto(sequential = true)
     @TestRail(ID = "C3134126")
     fun editAssignmentName() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickAssignmentNameEditText()
-        val newAssignmentName: String = editAssignmentDetailsPage.editAssignmentName()
+        val newAssignmentName = mockableString("new-assignment-name") { randomString() }
+        editAssignmentDetailsPage.editAssignmentName(newAssignmentName)
         assignmentDetailsPage.assertAssignmentNameChanged(newAssignmentName)
     }
 
     @Test
+    @Ditto
     @TestRail(ID = "C3134126")
     fun editAssignmentPoints() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickPointsPossibleEditText()
-        val newPoints: Double = editAssignmentDetailsPage.editAssignmentPoints()
+        val newPoints = mockableDouble("edit-assignment-points") { randomDouble() }
+        editAssignmentDetailsPage.editAssignmentPoints(newPoints)
         val stringPoints = NumberHelper.formatDecimal(newPoints, 1, true)
         assignmentDetailsPage.assertAssignmentPointsChanged(stringPoints)
     }
 
     @Test
+    @Ditto
     fun editDueDate() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickEditDueDate()
         editAssignmentDetailsPage.editDate(2017, 1, 1)
-        editAssignmentDetailsPage.assertDateChanged(2017, 0, 1, dueDate)
+        editAssignmentDetailsPage.assertDateChanged(2017, 0, 1, R.id.dueDate)
     }
 
     @Test
+    @Ditto
     fun editDueTime() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickEditDueTime()
         editAssignmentDetailsPage.editTime(1, 30)
-        editAssignmentDetailsPage.assertTimeChanged(1, 30, dueTime)
+        editAssignmentDetailsPage.assertTimeChanged(1, 30, R.id.dueTime)
     }
 
     @Test
+    @Ditto
     fun editUnlockDate() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickEditUnlockDate()
         editAssignmentDetailsPage.editDate(2017, 1, 1)
-        editAssignmentDetailsPage.assertDateChanged(2017, 0, 1, fromDate)
+        editAssignmentDetailsPage.assertDateChanged(2017, 0, 1, R.id.fromDate)
     }
 
     @Test
+    @Ditto
     fun editUnlockTime() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickEditUnlockTime()
         editAssignmentDetailsPage.editTime(1, 30)
-        editAssignmentDetailsPage.assertTimeChanged(1, 30, fromTime)
+        editAssignmentDetailsPage.assertTimeChanged(1, 30, R.id.fromTime)
     }
 
     @Test
+    @Ditto
     fun editLockDate() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickEditLockDate()
         editAssignmentDetailsPage.editDate(2017, 1, 1)
-        editAssignmentDetailsPage.assertDateChanged(2017, 0, 1, toDate)
+        editAssignmentDetailsPage.assertDateChanged(2017, 0, 1, R.id.toDate)
     }
 
     @Test
+    @Ditto
     fun editLockTime() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickEditLockTime()
         editAssignmentDetailsPage.editTime(1, 30)
-        editAssignmentDetailsPage.assertTimeChanged(1, 30, toTime)
+        editAssignmentDetailsPage.assertTimeChanged(1, 30, R.id.toTime)
     }
 
     @Test
+    @Ditto
     fun addOverride() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickAddOverride()
@@ -108,6 +127,7 @@ class EditAssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun removeOverride() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickAddOverride()
@@ -118,6 +138,7 @@ class EditAssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun dueDateBeforeUnlockDateError() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickEditDueDate()
@@ -129,6 +150,7 @@ class EditAssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun dueDateAfterLockDateError() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickEditDueDate()
@@ -140,6 +162,7 @@ class EditAssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun unlockDateAfterLockDateError() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickEditUnlockDate()
@@ -151,6 +174,7 @@ class EditAssignmentDetailsPageTest : TeacherTest() {
     }
 
     @Test
+    @Ditto
     fun noAssigneesError() {
         getToEditAssignmentDetailsPage()
         editAssignmentDetailsPage.clickAddOverride()

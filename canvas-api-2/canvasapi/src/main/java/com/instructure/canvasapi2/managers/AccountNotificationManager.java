@@ -97,4 +97,18 @@ public class AccountNotificationManager extends BaseManager {
         }
     }
 
+    public static void getAccountNotification(long accountNotificationId, StatusCallback<AccountNotification> callback, boolean forceNetwork) {
+        if (isTesting() || mTesting) {
+            // TODO
+        } else {
+            RestBuilder adapter = new RestBuilder(callback);
+            RestParams params = new RestParams.Builder()
+                    .withForceReadFromNetwork(forceNetwork)
+                    .withPerPageQueryParam(true)
+                    .build();
+
+            AccountNotificationAPI.getAccountNotification(accountNotificationId, adapter, params, callback);
+        }
+    }
+
 }

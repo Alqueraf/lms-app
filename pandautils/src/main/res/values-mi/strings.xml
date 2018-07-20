@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,10 +17,15 @@
   -->
 
 <resources>
+
     <string name="chooseMedia">Kōwhiri pāpāho</string>
     <string name="takeVideo">Tangohia ataata</string>
     <string name="noCameraOnDevice">No Kāmera</string>
 
+    <string name="takePhoto">Tangohia Photo</string>
+    <string name="choosePhotoFromGallery">Kōwhiri Whakaahua Mai i te Taiwhanga</string>
+
+    <string name="utils_edit">Whakatika</string>
     <!-- NotoriousPicker/uploadService -->
     <string name="notificationTitle">Tukuatu ki Canvas</string>
     <string name="preparingUpload">Teuteu tukunga</string>
@@ -189,5 +194,174 @@
     <string name="loading">Uta ana</string>
     <string name="save">Tiaki</string>
     <string name="cropInstructions">Kini me te tō hei whakarereke i te pakoko.</string>
+
+    <!--Discussions-->
+    <plurals name="utils_discussionsReplies">
+        <item quantity="one">%s Whakautu</item>
+        <item quantity="other">%s Ngā whakautu</item>
+    </plurals>
+
+    <string name="utils_discussionsDeleted" formatted="false">Muku tēnei whakautu %s</string>
+    <string name="utils_discussionsUnknownAuthor">Kaituhi Kaore Tē Mōhiotia</string>
+    <string name="utils_discussionsReply">Whakautu</string>
+    <string name="utils_discussionsEdit">Whakatika</string>
+    <string name="utils_discussionsDeleteWarning">E tino hiahia ana koe ki te muku i tēnei whakautu?</string>
+    <string name="utils_availableToLabel">E watea ana kī</string>
+    <string name="utils_availableFromLabel">E wātea mai ana:</string>
+    <string name="utils_dueDateHeaderLabel">e tika ana</string>
+    <string name="utils_dueLabel">E tika ana:</string>
+    <string name="utils_delete">Muku</string>
+    <string name="utils_dueDateAtTime" formatted="false">Te rā e tika ana %1s ī %2s</string>
+    <string name="utils_noDateFiller">--</string>
+    <string name="utils_availabilityLabel">Wāteatanga</string>
+    <string name="utils_pinnedIcon">Ata mo te kōrero pinea</string>
+    <string name="utils_pinDiscussion">Pine Kōrerorero</string>
+    <string name="utils_unpinDiscussion">Pine wetea Kōrerorero</string>
+    <string name="utils_discussionPinned">Kōrerorero kua pinea</string>
+    <string name="utils_pinnedDiscussions">Kua pinea</string>
+    <string name="utils_discussionUnpinned">Kōrerorero</string>
+    <string name="utils_emptyDiscussions">Karekau he kōrero ki te whakātu i roto i tēnei wāhanga.</string>
+    <string name="utils_description">Whakāhuatanga</string>
+    <string name="utils_allowThreadedReplies">Tukua ngā whakautu kua whiria</string>
+    <string name="utils_usersMustPost">Me whakairi ngā ākonga i mua i te kitenga i ngā whakautu</string>
+    <string name="utils_discussionsClosed">Kua kati mo ngā kōrero</string>
+    <string name="utils_discussionsOpen">Kei te tūwhera mo ngā korero</string>
+    <string name="utils_discussionsPin">Pine</string>
+    <string name="utils_discussionsUnpin">Wetea te pine</string>
+    <string name="utils_discussionsOptions">Ngā kōwhiringa</string>
+    <string name="utils_discussionsDeleteTitle">Muku kōrerorero?</string>
+    <string name="utils_discussionsDelete">Muku kōrerorero</string>
+    <string name="utils_discussionsDeleteMessage">Ka mukua te kōrerorero katoa me te aho.</string>
+    <string name="utils_discussionSentSuccess">I oti pai te whakautu kōrero</string>
+    <string name="utils_discussionUpdateSuccess">I oti pai te whakatika kōrero</string>
+    <string name="utils_discussionSentEmpty">Kaore e whakapiako te kōrero whakautu</string>
+    <string name="utils_discussionSentFailure">Kaore i taea te tuku te kōrero whakautu i tēnei wā.</string>
+    <string name="utils_createDiscussion">Kōrero hou</string>
+    <string name="utils_editDiscussion">Whakatika kōrerorero</string>
+    <string name="utils_discussionDetails">Taipitoito kōrero</string>
+    <string name="utils_discussionSuccessfullyUpdated">I oti pai te whakahou ana i te kōrerorero</string>
+    <string name="utils_saving">E tiaki ana</string>
+    <string name="utils_discussionSuccessfullyCreated">Kua oti pai te hanga o te kōrerorero</string>
+    <string name="utils_discussionSuccessfulAttachmentNot">Kaore i taea te tāpiri te āpitihanga ki tēnei kōrerorero. Tēnā  koa āta tītiro ki tō tautuhinga kōnae me te ngana anō.</string>
+    <string name="utils_noTitle">kaore he taitara</string>
+    <string name="utils_discussionsReplies_Title">Ngā whakautu</string>
+    <string name="utils_contentDescriptionDiscussionsOverflow">Kōwhiringa atu</string>
+    <string name="utils_discussionsUnreadRepliesBlank" formatted="false">%s %s %s</string>
+    <string name="utils_lastPost" formatted="false">Te tuhinga mutunga %s</string>
+    <string name="utils_postedOnDate">I whakairitia ī %s</string>
+    <string name="utils_discussionPostBeforeRepliesEmptyText">E kitea anake ngā whakautu ki te hunga kua whakairi kotahi te whakautu.</string>
+    <string name="utils_createAnnouncementDelayPosting">Whakaroa te whakairi</string>
+    <string name="utils_postAt">Whakairi kI</string>
+    <string name="utils_postDate">Rā Whakairi</string>
+    <string name="utils_postTime">Whakairi te Wā</string>
+    <string name="utils_editAnnouncementTitle">Whakatika Pānuitanga</string>
+    <string name="utils_createAnnouncementTitle">Pānui hou</string>
+    <string name="utils_announcementDetails">Ngā Taipitopito Pānui</string>
+    <string name="utils_createAnnouncementNoDescription">He whakāturanga kei te hiahiatia</string>
+    <string name="utils_errorSavingAnnouncement">He hapa i puta i te wā e whakaora ana i tēnei pānuitanga Ngana anō</string>
+    <string name="utils_announcementSuccessfullyUpdated">I oti pai te whakahou i tēnei pānuitanga</string>
+    <string name="utils_announcementSuccessfullyCreated">I oti pai te hanga i te pānuitanga</string>
+
+    <plurals name="utils_discussionsUnread">
+        <item quantity="one">%s Kaore i pānuitia</item>
+        <item quantity="other">%s Kaore i pānuitia</item>
+    </plurals>
+
+    <plurals name="utils_addAttachment">
+        <item quantity="zero">Tāpiri Āpitihanga</item>
+        <item quantity="one">Tāpiri Āpitihanga</item>
+        <item quantity="other">Tāpiri ngā Apititanga</item>
+    </plurals>
+
+
+    <!-- Assignment Override !-->
+    <string name="utils_unlockAfterDueDateError">E kore e taea e wetekina i te rā i muri i te rā tika</string>
+    <string name="utils_lockBeforeDueDateError">E kore e taea e Maukati te rā i mua i te rā e tika ana</string>
+    <string name="utils_lockAfterUnlockError">E kore e taea e Maukati te rā i mua i te rā e wetekina ana</string>
+    <string name="utils_assigneeBlankError">Kaore e taea kia pāta te kaitautapa</string>
+    <string name="utils_assignTo">Tautapa kī</string>
+    <string name="utils_availableFrom">E wātea Mai ana</string>
+    <string name="utils_availableTo">E wātea ana kī</string>
+    <string name="utils_availableFromDate">Wātea Mai Rā</string>
+    <string name="utils_availableFromTime">Wātea mai te wā</string>
+    <string name="utils_availableToDate">Wāte ki te Rā</string>
+    <string name="utils_availableToTime">Wātea ki te Wā</string>
+    <string name="utils_dueDate">Rā tika</string>
+    <string name="utils_dueTime">Wā tika</string>
+    <string name="utils_addNew">Tāpiri Hou</string>
+
+    <!--Attachment Layout-->
+    <string name="utils_downloadAttachment">Tikiake te apititanga</string>
+    <string name="utils_removeAttachment">Tangohia te āpitihanga</string>
+
+    <!--Unsaved Changes-->
+    <string name="utils_continueWithoutSavingTitle">Haere tonu kaore i te whakaora?</string>
+    <string name="utils_continueWithoutSavingMessage">E tika ana koe ki te haere tonu kaore i te whakaora?</string>
+    <string name="utils_continueUnsaved">haere tonu</string>
+    <string name="utils_exitWithoutSavingTitle">Puta kaore i te whakaora?</string>
+    <string name="utils_exitWithoutSavingMessage">E tika ana koe ki te puta kaore i te whakaora?</string>
+    <string name="utils_exitUnsaved">Puta</string>
+    <string name="utils_cancel">Whakakore</string>
+
+    <string name="utils_contentDescriptionFiles">Tohu kōnae</string>
+    <string name="utils_turn_in">tahuri i roto i</string>
+    <string name="utils_upload">Tukuake</string>
+    <string name="utils_okay">Pai</string>
+    <string name="utils_loadingFilesIndeterminate">E uta ana i ngā kōnae&#8230;</string>
+    <string name="utils_allowedExtensions">Whakāe ngā whakawhitinga:&#160;</string>
+    <string name="utils_extensionNotAllowed">Kaore e whakaaetia te momo kōnae i tīpakohia.</string>
+    <string name="utils_errorUploadingFile">He hapa i puta i te wā e tukuake ana i tō kōnae Tēnā koa ngana anō.</string>
+    <string name="utils_filesUploadedSuccessfully">Kōnae tukuake pai.</string>
+    <string name="utils_uploadingFiles">E tukuake ana i ngā kōnae&#8230;</string>
+    <string name="utils_uploadingFile">E tukuake ana kōnae&#8230;</string>
+    <string name="utils_noApps">Kaore ngā tono i tō taputapu e whakauruhia ki te whakamahi  i tēnei kōnae.</string>
+    <string name="utils_errorGettingPhoto">He hapa i te wā e tiki ana i te whakāhua Tēnā koa ngana anō.</string>
+    <string name="utils_oneOrMoreExtensionNotAllowed">Kotahi, neke atu rānei ngā kōnae he toronga kōnae e kore e whakaaetia</string>
+    <string name="utils_fileUploadNotSupported">Kaore e taea e koe te tuku i nga kōnae ki te whakataunga kua tohua.</string>
+    <string name="utils_noFilesUploaded">Kaore i tīpakotia e koe he kōnae.</string>
+    <string name="utils_attachments">Ngā āpitihanga</string>
+    <string name="utils_uploadTo">Tukuatu kī </string>
+    <string name="utils_uploadToCanvas">Tukuatu ki Canvas</string>
+    <string name="utils_uploadMyFiles">Aku kōnae</string>
+    <string name="utils_uploadCourseFiles">Ngā Kōnae akoranga</string>
+    <string name="utils_uploadToSubmissionComment">Tukuake kī Tukunga Kōrero</string>
+    <string name="utils_attachFile">Tāpiri he kōnae</string>
+    <string name="utils_with">ki</string>
+    <string name="utils_dotWithSpaces">  \u2022  </string>
+
+    <string name="notificationPrimaryInboxTitle">Canvas Whakamohiotanga</string>
+    <string name="notificationChannelNamePrimary">Ngā  Canvas Whānui Whakamōhiotanga</string>
+    <string name="notificationChannelDescriptionPrimary">Ka taea te whakahohe i ētahi atu whakamōhiotanga i roto i te wāhanga Canvas Whakamōhio Hiahiatanga.</string>
+
+
+    <string name="copyLinkAddress">Tārua wāhitau hono</string>
+    <string name="copyLink">Tārua hononga</string>
+    <string name="linkCopied">Kua tāruatia te hono</string>
+    <string name="link">Hono</string>
+    <string name="fileExists">Kua pute te Kōnae</string>
+    <string name="replace">Whakakapi</string>
+    <string name="shareLink">Tuari hono</string>
+    <string name="utils_launchExternalTool">Whakarewa Taputapu Waho</string>
+    <string name="utils_externalToolTitle">Taputapu o waho</string>
+    <string name="utils_placeholderTitle">Taputapu o waho</string>
+    <string name="utils_placeholderDescription">Tirohia tō pūkete tukutuku Canvas hei whakatika i tēnei taputapu o waho.</string>
+
+    <string name="utils_unableToViewInBrowser">Kaore e taea e mātou te kimi i tētahi taupānga waho ki te titro ki tēnei taputapu LTI.</string>
+
+    <string name="utils_unsupportedFileMessage">Kaore tēnei kōnae e whakātutia Mahia te pātene i raro ki te huaki i te kōnae me tētahi atu taupanga i runga i tō pūrere.</string>
+    <string name="utils_openWithAnotherApp">Huaki me.....</string>
+    <string name="utils_couldNotPlayFormat">Kaore te āhua o tēnei pāpāho e tatutokotia.</string>
+    <string name="utils_fullscreen">mata katoa</string>
+
+    <string name="utils_dataUsageWarningTitle">Raraunga whakamahinga whakatūpato</string>
+    <string name="utils_dataUsageWarningMessage">Ka pau pea e tēnei mahi nui te raraunga, me te marietia pea nui atu ngā utu. E hiahia ana koe ki te haere tonu?</string>
+    <string name="utils_doNotShowMessageAgain">Kaua e whakātu i tēneu karere anō</string>
+
+    <string name="utils_no_data_connection">Tēnā tirohia tō hononga raraunga, me te tarai anō.</string>
+    <string name="utils_playMedia">Pāpāho tākaro</string>
+    <string name="utils_tryAgain">Tarai anō</string>
+    <string name="image_uploading">Whakāturanga e tukuake ana</string>
+    <string name="image_upload_error">Whakāturanga Tukuake Hapa</string>
+    <string name="retry">Ngana anō</string>
 
 </resources>

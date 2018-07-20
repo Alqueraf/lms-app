@@ -31,6 +31,9 @@ import retrofit2.http.Url;
 
 public class SectionAPI {
 
+    // For section specific announcements; the api takes either 'all' or null when targeting all sections, we're using 'all'
+    public static String ALL_SECTIONS = "all";
+
     interface SectionsInterface {
 
         @GET("courses/{courseId}/sections?include[]=total_students")

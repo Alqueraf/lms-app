@@ -16,6 +16,7 @@
  */
 package com.instructure.teacher.ui
 
+import com.instructure.espresso.ditto.Ditto
 import com.instructure.soseedy.SeededData
 import com.instructure.teacher.ui.utils.TeacherTest
 import com.instructure.teacher.ui.utils.announcements
@@ -26,19 +27,22 @@ import org.junit.Test
 class AnnouncementsListPageTest : TeacherTest() {
 
     @Test
+    @Ditto
     override fun displaysPageObjects() {
         getToAnnouncementsListPage()
         announcementsListPage.assertPageObjects()
     }
 
     @Test
+    @Ditto
     fun assertHasAnnouncement() {
-        val announcement = getToAnnouncementsListPage().announcements[0]
+        val announcement = getToAnnouncementsListPage().announcements.first()
         announcementsListPage.assertHasAnnouncement(announcement)
     }
 
     // FIXME: This should probably just be part of the page objects
     @Test
+    @Ditto
     fun assertDisplaysFloatingActionButton() {
         getToAnnouncementsListPage()
 //        val discussion = Data.getNextDiscussion()

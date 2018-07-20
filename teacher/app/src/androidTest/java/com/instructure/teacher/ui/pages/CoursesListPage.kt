@@ -20,16 +20,17 @@ package com.instructure.teacher.ui.pages
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.contrib.RecyclerViewActions
-import android.support.test.espresso.matcher.ViewMatchers.*
+import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.v7.widget.RecyclerView
+import com.instructure.espresso.*
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.callOnClick
 import com.instructure.soseedy.Course
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
+import com.instructure.teacher.ui.utils.WaitForToolbarTitle
 
 @Suppress("unused")
-class CoursesListPage : BasePage(), PageAssert by SimplePageAssert() {
+class CoursesListPage : BasePage() {
 
     private val toolbarTitle by WaitForToolbarTitle(R.string.courses)
 

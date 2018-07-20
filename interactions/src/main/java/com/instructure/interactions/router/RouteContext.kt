@@ -17,5 +17,5 @@ package com.instructure.interactions.router
 
 /* Information to understand what the route should do */
 enum class RouteContext {
-    INTERNAL, FILE, LTI, MEDIA, SPEED_GRADER, EXTERNAL, DO_NOT_ROUTE, UNKNOWN
+    INTERNAL, FILE, LTI, MEDIA, SPEED_GRADER, EXTERNAL, DO_NOT_ROUTE, UNKNOWN, NOTIFICATION_PREFERENCES
 }

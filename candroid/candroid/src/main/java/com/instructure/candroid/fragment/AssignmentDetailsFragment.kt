@@ -29,25 +29,25 @@ import android.view.animation.AnimationUtils
 import android.webkit.WebView
 import android.widget.TextView
 import com.instructure.candroid.R
-import com.instructure.interactions.Navigation
+import com.instructure.candroid.router.RouteMatcher
+import com.instructure.candroid.util.Const
 import com.instructure.candroid.util.LockInfoHTMLHelper
-import com.instructure.candroid.util.Param
-import com.instructure.candroid.util.RouterUtils
 import com.instructure.candroid.view.ViewUtils
 import com.instructure.canvasapi2.models.Assignment
+import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.DateHelper
-import com.instructure.interactions.FragmentInteractions
 import com.instructure.canvasapi2.utils.pageview.BeforePageView
 import com.instructure.canvasapi2.utils.pageview.PageView
 import com.instructure.canvasapi2.utils.pageview.PageViewUrlParam
 import com.instructure.canvasapi2.utils.pageview.PageViewUrlQuery
-import com.instructure.pandautils.utils.NullableParcelableArg
-import com.instructure.pandautils.utils.OnBackStackChangedEvent
-import com.instructure.pandautils.utils.getModuleItemId
+import com.instructure.interactions.bookmarks.Bookmarkable
+import com.instructure.interactions.router.Route
+import com.instructure.interactions.router.RouterParams
+import com.instructure.pandautils.utils.*
 import com.instructure.pandautils.views.CanvasWebView
-import kotlinx.android.synthetic.main.fragment_assignment_details.*
 import kotlinx.android.synthetic.main.assignment_details_header.*
+import kotlinx.android.synthetic.main.fragment_assignment_details.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -56,80 +56,15 @@ import java.util.*
 @PageView(url = "{canvasContext}/assignments/{assignmentId}")
 class AssignmentDetailsFragment : ParentFragment() {
 
-    // keep assignment logic within populateAssignmentDetails method, otherwise assignment could be null
-    private var assignment by NullableParcelableArg<Assignment>()
+    // Bundle Args
+    private var canvasContext: CanvasContext by ParcelableArg(key = Const.CANVAS_CONTEXT)
 
-    @PageViewUrlParam("assignmentId")
-    private fun getAssignmentId() = assignment?.id ?: 0
+    // Keep assignment logic within populateAssignmentDetails method, otherwise assignment could be null
+    private var assignment: Assignment? = null
 
-    @PageViewUrlQuery("module_item_id")
-    private fun pageViewModuleItemId() = getModuleItemId()
-
-    override fun getFragmentPlacement(): FragmentInteractions.Placement {
-        return FragmentInteractions.Placement.DETAIL
-    }
-
-    override fun title(): String {
-        return if (assignment != null) assignment!!.name else getString(R.string.assignments)
-    }
-
-    /**
-     * @param assignment The assignment
-     * @param isWithinAnotherCallback See note above
-     * @param isCached See note above
-     */
-    @BeforePageView
-    fun setAssignment(assignment: Assignment, isWithinAnotherCallback: Boolean, isCached: Boolean) {
-        this.assignment = assignment
-        populateAssignmentDetails(assignment, isWithinAnotherCallback, isCached)
-    }
-
-    fun updateSubmissionDate(submissionDate: Date?) {
-        var submitDate = getString(R.string.assignmentLastSubmission) + ": " + getString(R.string.assignmentNoSubmission)
-        if (submissionDate != null) {
-            submitDate = DateHelper.createPrefixedDateTimeString(context, R.string.assignmentLastSubmission, submissionDate)
-        }
-        textViewSubmissionDate.text = submitDate
-    }
-
-    override fun onPause() {
-        super.onPause()
-        canvasWebView.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        canvasWebView.onResume()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this);
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onBackStackChangedEvent(event: OnBackStackChangedEvent) {
-        event.get { clazz ->
-            if (clazz?.isAssignableFrom(AssignmentDetailsFragment::class.java) == true) {
-                canvasWebView.onResume()
-            } else {
-                canvasWebView.onPause()
-            }
-        }
-    }
-
-    override fun handleBackPressed(): Boolean {
-        return canvasWebView.handleGoBack()
-    }
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return layoutInflater.inflate(R.layout.fragment_assignment_details, container, false)
-    }
+    //region Fragment Lifecycle Overrides
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            layoutInflater.inflate(R.layout.fragment_assignment_details, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -137,7 +72,50 @@ class AssignmentDetailsFragment : ParentFragment() {
         setListeners()
     }
 
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
+    override fun onResume() {
+        super.onResume()
+        canvasWebView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        canvasWebView.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this);
+    }
+    //endregion
+
+    //region Fragment Interaction Overrides
+    override fun title(): String = if (assignment != null) assignment!!.name else getString(R.string.assignments)
+
     override fun applyTheme() {}
+
+    //endregion
+
+    override fun handleBackPressed(): Boolean = canvasWebView.handleGoBack()
+
+    //endregion
+
+    //region Setup
+
+    @BeforePageView
+    fun setupAssignment(assignment: Assignment) {
+        this.assignment = assignment
+        populateAssignmentDetails(this.assignment)
+    }
+    /**
+     * @param assignment The assignment
+     * @param isWithinAnotherCallback See note above
+     * @param isCached See note above
+     */
 
     private fun setListeners() {
         notificationTextDismiss.setOnClickListener {
@@ -157,7 +135,7 @@ class AssignmentDetailsFragment : ParentFragment() {
 
         canvasWebView.canvasWebViewClientCallback = object : CanvasWebView.CanvasWebViewClientCallback {
             override fun openMediaFromWebView(mime: String, url: String, filename: String) {
-                openMedia(mime, url, filename)
+                openMedia(mime, url, filename, canvasContext)
             }
 
             override fun onPageFinishedCallback(webView: WebView, url: String) {}
@@ -165,44 +143,30 @@ class AssignmentDetailsFragment : ParentFragment() {
             override fun onPageStartedCallback(webView: WebView, url: String) {}
 
             override fun canRouteInternallyDelegate(url: String): Boolean {
-                return RouterUtils.canRouteInternally(null, url, ApiPrefs.domain, false)
+                return RouteMatcher.canRouteInternally(activity, url, ApiPrefs.domain, false)
             }
 
             override fun routeInternallyCallback(url: String) {
-                RouterUtils.canRouteInternally(activity, url, ApiPrefs.domain, true)
+                RouteMatcher.canRouteInternally(activity, url, ApiPrefs.domain, true)
             }
         }
 
         canvasWebView.canvasEmbeddedWebViewCallback = object : CanvasWebView.CanvasEmbeddedWebViewCallback {
             override fun launchInternalWebViewFragment(url: String) {
-                InternalWebviewFragment.loadInternalWebView(activity, activity as Navigation, InternalWebviewFragment.createBundle(canvasContext, url, false))
+                InternalWebviewFragment.loadInternalWebView(activity, InternalWebviewFragment.makeRoute(canvasContext, url, false))
             }
 
-            override fun shouldLaunchInternalWebViewFragment(url: String): Boolean {
-                return true
-            }
+            override fun shouldLaunchInternalWebViewFragment(url: String): Boolean = true
         }
     }
-
-    override fun getParamForBookmark(): HashMap<String, String> {
-        if (assignment == null) {
-            return super.getParamForBookmark()
-        }
-        val map = super.getParamForBookmark()
-        map.put(Param.ASSIGNMENT_ID, java.lang.Long.toString(assignment!!.id))
-        return map
-    }
-
 
     /**
      * Updates each view with its corresponding assignment data.
      * @param assignment
      */
-    private fun populateAssignmentDetails(assignment: Assignment?, isWithinAnotherCallback: Boolean, isCached: Boolean) {
-        //Make sure we have all of the data.
-        if (assignment == null) {
-            return
-        }
+    private fun populateAssignmentDetails(assignment: Assignment?) {
+        // Make sure we have all of the data.
+        assignment ?: return
 
         textViewAssignmentTitle.text = assignment.name
 
@@ -226,12 +190,12 @@ class AssignmentDetailsFragment : ParentFragment() {
                 updateSubmissionDate(assignment.submission.submittedAt)
             }
         }
-        pointsPossible.text = "" + assignment.pointsPossible
+        pointsPossible.text = "${assignment.pointsPossible}"
 
         populateWebView(assignment)
 
-        //This check is to prevent the context from becoming null when assignment items are
-        //clicked rapidly in the notification list.
+        // This check is to prevent the context from becoming null when assignment items are
+        // clicked rapidly in the notification list.
         if (context != null) {
             if (assignment.gradingType != null) {
                 gradingType!!.text = Assignment.gradingTypeToPrettyPrintString(assignment.gradingType, context)
@@ -246,7 +210,7 @@ class AssignmentDetailsFragment : ParentFragment() {
             }
 
 
-            //Make sure there are no children views
+            // Make sure there are no children views
             onlineSubmissionTypes.removeAllViews()
 
             if (assignmentTurnInType == Assignment.TURN_IN_TYPE.ONLINE) {
@@ -264,14 +228,14 @@ class AssignmentDetailsFragment : ParentFragment() {
 
     private fun populateWebView(assignment: Assignment) {
         var description: String?
-        if (assignment.isLocked) {
-            description = LockInfoHTMLHelper.getLockedInfoHTML(assignment.lockInfo, activity, R.string.lockedAssignmentDesc, R.string.lockedAssignmentDescLine2)
+        description = if (assignment.isLocked) {
+            LockInfoHTMLHelper.getLockedInfoHTML(assignment.lockInfo, activity, R.string.lockedAssignmentDesc, R.string.lockedAssignmentDescLine2)
         } else if (assignment.lockAt != null && assignment.lockAt!!.before(Calendar.getInstance(Locale.getDefault()).time)) {
-            //if an assignment has an available from and until field and it has expired (the current date is after "until" it will have a lock explanation,
-            //but no lock info because it isn't locked as part of a module
-            description = assignment.lockExplanation
+            // If an assignment has an available from and until field and it has expired (the current date is after "until" it will have a lock explanation,
+            // but no lock info because it isn't locked as part of a module
+            assignment.lockExplanation
         } else {
-            description = assignment.description
+            assignment.description
         }
 
         if (description == null || description == "null" || description == "") {
@@ -280,18 +244,16 @@ class AssignmentDetailsFragment : ParentFragment() {
         canvasWebView.formatHTML(description, assignment.name)
     }
 
-    fun setAssignmentWithNotification(assignment: Assignment?, message: String?, isWithinAnotherCallback: Boolean, isCached: Boolean) {
-        var message = message
-        if (assignment == null) {
-            return
-        }
+    fun setAssignmentWithNotification(assignment: Assignment?, msg: String?) {
+        assignment ?: return
+
+        var message = msg
 
         if (message != null) {
             message = message.trim { it <= ' ' }
         }
 
         if (!TextUtils.isEmpty(message)) {
-
             // get rid of "________________________________________ You received this email..." text
             val index = message!!.indexOf("________________________________________")
             if (index > 0) {
@@ -300,20 +262,56 @@ class AssignmentDetailsFragment : ParentFragment() {
 
             notificationText.text = message.trim { it <= ' ' }
             notificationText.movementMethod = LinkMovementMethod.getInstance()
-            notificationText.visibility = View.VISIBLE
-            notificationTextContainer.visibility = View.VISIBLE
+            notificationText.setVisible()
+            notificationTextContainer.setVisible()
         }
     }
+    //endregion
 
-    override fun allowBookmarking(): Boolean {
-        return false
+    //region Functionality
+    fun updateSubmissionDate(submissionDate: Date?) {
+        var submitDate = getString(R.string.assignmentLastSubmission) + ": " + getString(R.string.assignmentNoSubmission)
+        if (submissionDate != null) {
+            submitDate = DateHelper.createPrefixedDateTimeString(context, R.string.assignmentLastSubmission, submissionDate)
+        }
+        textViewSubmissionDate.text = submitDate
     }
+    //endregion
+
+    //region Bus Events
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onBackStackChangedEvent(event: OnBackStackChangedEvent) {
+        event.get { clazz ->
+            if (clazz?.isAssignableFrom(AssignmentDetailsFragment::class.java) == true) {
+                canvasWebView.onResume()
+            } else {
+                canvasWebView.onPause()
+            }
+        }
+    }
+    //endregion
+
+    @PageViewUrlParam("assignmentId")
+    private fun getAssignmentId() = assignment?.id ?: 0
+
+    @PageViewUrlQuery("module_item_id")
+    private fun pageViewModuleItemId() = getModuleItemId()
 
     companion object {
-
-
-
         val tabTitle: Int
             get() = R.string.assignmentTabDetails
+
+        fun makeRoute(canvasContext: CanvasContext): Route = Route(null, canvasContext, Bundle())
+
+        fun newInstance(route: Route) = if (validRoute(route)) {
+            AssignmentDetailsFragment().apply {
+                arguments = route.canvasContext!!.makeBundle(route.arguments)
+                canvasContext = route.canvasContext!!
+            }
+        } else null
+
+        private fun validRoute(route: Route) = route.canvasContext != null
+
     }
 }

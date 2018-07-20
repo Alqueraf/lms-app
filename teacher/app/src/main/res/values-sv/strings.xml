@@ -60,6 +60,10 @@
     <string name="share">Dela</string>
     <string name="share_with">Dela med&#8230;</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Öppna navigeringsmeny</string>
+    <string name="navigation_drawer_close">Stäng navigeringsmeny</string>
+
     <!-- Compose Message -->
     <string name="no_subject">(Inga föremål)</string>
     <string name="compose_message">Skriv meddelande</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">Välj filer eller foton</string>
     <string name="uploading_files">Laddar upp filer&#8230;</string>
     <string name="no_attachment">(Ingen bilaga)</string>
-    <string name="remove_attachment">Ta bort bilaga</string>
     <string name="creating_announcement">Skapa meddelande&#8230;</string>
 
     <string name="copy_email">Kopierar e-postadress</string>
@@ -164,8 +167,6 @@
     <string name="inbox_empty_starred_title">Inga stjärnmärkta meddelanden</string>
     <string name="inbox_empty_message">Tryck på \"+\" för att skapa en ny konversation.</string>
     <string name="inbox_empty_starred_message">Stjärnmärk meddelanden genom att trycka på stjärnan i meddelandet.</string>
-
-    <string name="download_attachment">Ladda ner bilagor</string>
 
     <string name="reply">Svara</string>
     <string name="replyAll">Svara alla</string>
@@ -285,7 +286,7 @@
     <string name="inbox_starred">Stjärnmärkt</string>
     <string name="inbox_sent">Skickat</string>
     <string name="inbox_archived">Arkiverad</string>
-    <string name="inbox_all_messages">Alla meddelanden</string>
+    <string name="inbox_all_messages">Alla</string>
     <string name="uploading_file_num" formatted="false">Uppladdning %d av %d</string>
     <string name="page_not_found">Sidan hittades inte.</string>
     <string name="no_connection">Ingen anslutning</string>
@@ -434,7 +435,6 @@
     <string name="deleteComment">Ta bort kommentar</string>
     <string name="deleteAnnotation">Ta bort meddelande</string>
     <string name="deleteCommentConfirmation">Är du säker på att du vill ta bort den här kommentaren?</string>
-    <string name="deleteHeadCommentConfirmation">Den här kommentaren är ett meddelande.Att ta bort det här raderar alla svar och meddelanden.Är du säker på att du vill göra detta?</string>
     <string name="rubric_view_long_description">Visa lång beskrivning</string>
     <string name="rubric">Matris</string>
     <string name="enter_custom_value">Ange ett anpassat värde</string>
@@ -501,7 +501,7 @@
         <item quantity="other">%d grupper</item>
     </plurals>
     <string name="cmp_closed">Stängda</string>
-    <string name="dot_with_spaces">  \u0022  </string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">favorit</string>
     <string name="content_description_not_favorite">Inte favorit</string>
@@ -510,7 +510,8 @@
     <string name="edit_course_nickname">Redigera smeknamn för kurs</string>
 
     <string name="colorPickerDialogTitle">Kursfärg</string>
-    <string name="colorPickerDialogMessage">Ställ in detta för standardfärgen av kursen.Detta skriver inte över en personlig färginställning.</string>
+    <string name="colorPickerDialogMessage">Detta är din personliga färg-inställning. Endast du kommer att se denna färgen för kursen.</string>
+
     <string name="colorPickerError">Kursens färg kunde inte ställas in just nu.</string>
 
     <string name="contentDescriptionColorCottonCandy">Rosa</string>
@@ -604,12 +605,6 @@
     <string name="quiz_details_from_to">Från %1$s till %2$s</string>
     <string name="quiz_details_after">Efter %1$s</string>
     <string name="quiz_details_until">Tills %1$s</string>
-    <string name="continueWithoutSavingTitle">Fortsätta utan att spara?</string>
-    <string name="continueWithoutSavingMessage">Är du säker på att du vill fortsätta utan att spara?</string>
-    <string name="continueUnsaved">Fortsätt</string>
-    <string name="exitWithoutSavingTitle">Avsluta utan att spara?</string>
-    <string name="exitWithoutSavingMessage">Är du säker på att du vill fortsätta utan att spara?</string>
-    <string name="exitUnsaved">Gå ur</string>
     <string name="filterPointsMustBeSet">Ange ett värde.</string>
 
     <plurals name="quantityQuestions">
@@ -638,7 +633,6 @@
     <string name="discussions_replies_title">Svar</string>
     <string name="discussions_reply">Svara</string>
     <string name="discussions_edit">Redigera</string>
-    <string name="discussions_deleted" formatted="false">Raderat detta svar %s</string>
     <string name="discussions_forbidden">Svar är endast synliga för de som har skrivit minst ett svar.</string>
     <string name="discussions_unknown_author">Okänd författare</string>
     <string name="discussions_delete">Ta bort diskussion</string>
@@ -709,6 +703,8 @@
     <string name="subscribe">Prenumerera</string>
     <string name="allowThreadedReplies">Tillåt svar i trådar</string>
     <string name="usersMustPost">Användare måste skriva ett inlägg innan de kan se svaren</string>
+    <string name="allowUserComments">Tillåt användare att kommentera</string>
+
     <string name="discussionTitleMustBeSet">Diskussionstiteln måste ställas in.</string>
     <string name="discussionSuccessfullyCreated">Diskussionen skapades.</string>
     <string name="errorCreatingDiscussion">Ett fel uppstod vid försök att skapa denna diskussion.Försök igen.</string>
@@ -757,6 +753,7 @@
     <string name="choosePhotoFromGallery">Välj foto från galleri</string>
     <string name="fileNotFound">Filen hittades inte.</string>
     <string name="version" formatted="false">Version %s</string>
+    <string name="fullVersion">Version %s (%d)</string>
     <string name="tap_to_view_submissions_list">Tryck för att visa inlämningslista.</string>
     <string name="assignmentDescriptionContentDescription">Uppgiftsbeskrivning</string>
     <string name="quizDescriptionContentDescription">Quiz beskrivning</string>
@@ -880,6 +877,7 @@
     <string name="filterSubmissionsLowercase">Filtrera inlämningar</string>
     <string name="latePenalty">Förseningsbestraffning</string>
     <string name="finalGrade">Slutbetyg</string>
+    <string name="moderatedGradingUnsupported">Modererade betyg stöds inte för närvarande i mobil SpeedGrader.</string>
     <plurals name="latePolicyPenalty">
         <item quantity="one">-%s poäng</item>
         <item quantity="other">-%s poäng</item>
@@ -888,4 +886,19 @@
         <item quantity="one">-%s poäng</item>
         <item quantity="other">-%s poäng</item>
     </plurals>
+    <string name="todoUnreadCount">Att göra%d oläst</string>
+    <string name="profileSettings">Profil-inställningar</string>
+    <string name="downloadingFile">Hämtar fil&#8230;</string>
+    <string name="fileDownloadedSuccessfully">Filen hämtades.</string>
+    <string name="tapToView">Tryck för att se</string>
+    <string name="errorDownloadingFile">Ett fel uppstod vid hämtning av filen. Vänligen försök igen.</string>
+    <string name="postTo">Publicera till</string>
+    <string name="allSections">Alla sektioner</string>
+
+    <string name="gauge">Mätare</string>
+    <string name="arc">Cirkelbåge</string>
+    <string name="ltiLaunchFailure">Det här LTI-verktyget kunde inte laddas just nu.</string>
+
+    <string name="downloading">Laddar ner...</string>
+
 </resources>

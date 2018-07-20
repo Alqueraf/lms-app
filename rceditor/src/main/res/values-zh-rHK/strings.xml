@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,6 +17,7 @@
   -->
 
 <resources>
+
     <string name="rce_contentDescription_undo">撤銷</string>
     <string name="rce_contentDescription_redo">重做</string>
     <string name="rce_contentDescription_bold">粗體格式</string>
@@ -33,6 +34,7 @@
     <string name="rce_contentDescription_insert_bullets">插入符號列表</string>
     <string name="rce_contentDescription_insert_numbers">插入數字列表</string>
     <string name="rce_contentDescription_insert_photo">插入相片</string>
+    <string name="rce_contentDescription_upload_photo">從裝置上載照片</string>
     <string name="rce_contentDescription_insert_link">插入連結</string>
     <string name="rce_contentDescription_block_quote">塊引用</string>
 
@@ -56,6 +58,7 @@
     <string name="rce_insertLink">插入連結</string>
     <string name="rce_insertImage">插入圖像</string>
 
+    <string name="rce_uploadImage">上傳影像</string>
     <string name="rce_done">已完成</string>
     <string name="rce_cancel">取消</string>
     <string name="rce_exit">退出</string>

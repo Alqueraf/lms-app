@@ -286,7 +286,7 @@
     <string name="inbox_starred">Starred</string>
     <string name="inbox_sent">Sent</string>
     <string name="inbox_archived">Archived</string>
-    <string name="inbox_all_messages">All Messages</string>
+    <string name="inbox_all_messages">All</string>
     <string name="uploading_file_num" formatted="false">Uploading %d of %d</string>
     <string name="page_not_found">Page not found.</string>
     <string name="no_connection">No Connection</string>
@@ -511,7 +511,7 @@
     <string name="edit_course_nickname">Edit Course Nickname</string>
 
     <string name="colorPickerDialogTitle">Course Color</string>
-    <string name="colorPickerDialogMessage">Set this for the default color of the course. This won\'t override a personal color setting.</string>
+    <string name="colorPickerDialogMessage">This is your personal color setting. Only you will see this color for the course.</string>
     <string name="colorPickerError">The course color could not be set at this time.</string>
 
     <string name="contentDescriptionColorCottonCandy">Pink</string>
@@ -704,6 +704,7 @@
     <string name="subscribe">Subscribe</string>
     <string name="allowThreadedReplies">Allow threaded replies</string>
     <string name="usersMustPost">Users must post before seeing replies</string>
+    <string name="allowUserComments">Allow users to comment</string>
     <string name="discussionTitleMustBeSet">Discussion title must be set.</string>
     <string name="discussionSuccessfullyCreated">Discussion successfully created.</string>
     <string name="errorCreatingDiscussion">An error occurred trying to create this discussion. Try again.</string>
@@ -891,5 +892,13 @@
     <string name="fileDownloadedSuccessfully">File downloaded successfully.</string>
     <string name="tapToView">Tap to view</string>
     <string name="errorDownloadingFile">An error occurred downloading your file. Please try again.</string>
-    
+
+    <string name="postTo">Post To</string>
+    <string name="allSections">All Sections</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">This LTI tool could not be loaded at this time.</string>
+    <string name="downloading">Downloading...</string>
+
 </resources>

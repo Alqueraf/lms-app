@@ -145,6 +145,7 @@
     <string name="toDoNoDueDate">No Due Date</string>
 
     <string name="dueAt">Due at</string>
+    <string name="dueAtTime">Due at %s</string>
     <string name="toDoDue">Due</string>
     <string name="due">Due %1$s</string>
     <plurals name="to_do_needs_grading">
@@ -371,6 +372,8 @@
 	<string name="errorPostingAnnouncement">There was an error posting the announcement.</string>
 	<string name="errorPostingDiscussion">There was an error posting the discussion.</string>
 	<string name="allowThreading">Allow Threaded Replies</string>
+    <string name="usersMustPost">Users must post before seeing replies</string>
+    <string name="allowUserComments">Allow users to comment</string>
 	<string name="message">Message</string>
 	<string name="title">Title</string>
 	
@@ -460,6 +463,7 @@
     <string name="subTypeOnlineQuiz">Online Quiz</string>
 	<string name="subTypeMediaRecording">Media Recording</string>
     <string name="sub_type_lti_launch">LTI Launch</string>
+    <string name="subTypeDiscussionTopic">Discussion</string>
     <string name="turnInByHand">You must turn this assignment in by hand</string>
 	<string name="noSubRequired">No submission required</string>
 	<string name="noTurnInOnMobile">Mobile submission unsupported</string>
@@ -610,6 +614,7 @@
     <string name="preferred_land_page">Landing Page</string>
     <string name="could_not_route_course">Could not find the course enrollment.</string>
     <string name="could_not_route_group">Could not find the group enrollment.</string>
+    <string name="could_not_route_unknown">An unexpected error occurred.</string>
     <string name="could_not_route_locked">This page is hidden or locked and cannot be accessed.</string>
 
     <string name="close">Close</string>
@@ -854,6 +859,7 @@
     <string name="locked_mastery_paths">Locked until \"%s\" is graded</string>
     <string name="locked_icon">Locked Icon</string>
     <string name="choose_assignment_group">Choose Assignment Group</string>
+    <string name="chooseAssignmentPath">Choose Assignment Path</string>
     <string name="select">Select</string>
     <string name="choice_position">Choice %d</string>
     <string name="updating_module_info">Updating module information&#8230;</string>
@@ -884,7 +890,7 @@
     </array>
 
     <string name="launch_link_in_external_browser">Launch link in external browser</string>
-    <string name="gaugeLaunchFailure">Gauge could not be loaded at this time.</string>
+    <string name="ltiLaunchFailure">This LTI tool could not be loaded at this time.</string>
     <string name="urlSubmission">URL Submission</string>
 
     <string name="assignmentDeletedError">This assignment is no longer available.</string>
@@ -909,6 +915,10 @@
     <string name="opensInWebView">Opens in webview</string>
     <string name="unsupportedTabLabel">Not supported on this device</string>
 
+    <string name="downloadingFile">Downloading</string>
+    <string name="downloadFailed">Download failed</string>
+    <string name="downloadSuccessful">Download successful</string>
+
     <string name="full_due_date_details">Full due date details</string>
     <string name="submissions">Submissions</string>
     <string name="attachment">Attachment</string>
@@ -923,7 +933,9 @@
         <item quantity="other">%s points</item>
     </plurals>
     <string name="capitalTo">To</string>
+
     <string name="unableToViewInBrowser">We are unable to find an external app to view this LTI tool.</string>
+
     <string name="commentUpload">Comment Upload</string>
     <string name="unableToUploadMediaComment">To send a media comment, send or delete your unsent text comment.</string>
 
@@ -935,5 +947,7 @@
     <string name="pageTitleMustBeSet">Page title must be set.</string>
     <string name="pageDetails">Page Details</string>
     <string name="saving">Saving</string>
+    <string name="confirmDeleteEvent">Are you sure you wish to delete this event?</string>
+    <string name="conferencesNotSupported">Conferences are not yet supported on mobile.</string>
 
 </resources>

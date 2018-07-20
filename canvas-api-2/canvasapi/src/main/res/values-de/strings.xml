@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -67,5 +67,13 @@
     <string name="graded_survey">Benotete Befragung</string>
     <string name="ungraded_survey">Unbenotete Befragung</string>
     <string name="andMore"> und %d mehr</string>
+
+    <!-- Enrollment Types -->
+    <string name="enrollmentTypeStudent">Student</string>
+    <string name="enrollmentTypeTeacher">Dozent</string>
+    <string name="enrollmentTypeObserver">Beobachter</string>
+    <string name="enrollmentTypeTeachingAssistant">Lehrassistent</string>
+    <string name="enrollmentTypeDesigner">Designer</string>
+    <string name="enrollmentTypeUnknown">Unbekannt</string>
 
 </resources>

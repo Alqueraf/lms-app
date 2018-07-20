@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -67,5 +67,13 @@
     <string name="graded_survey">Rangahau kua mākahia</string>
     <string name="ungraded_survey">Rangahau kāore anō i makahia</string>
     <string name="andMore"> me %d nui atu</string>
+
+    <!-- Enrollment Types -->
+    <string name="enrollmentTypeStudent">Ākonga</string>
+    <string name="enrollmentTypeTeacher">Kaiako</string>
+    <string name="enrollmentTypeObserver">Kaimatakitaki</string>
+    <string name="enrollmentTypeTeachingAssistant">TA</string>
+    <string name="enrollmentTypeDesigner">Kaitātai</string>
+    <string name="enrollmentTypeUnknown">Kaore e mōhiotia</string>
 
 </resources>

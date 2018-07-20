@@ -79,18 +79,18 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile Libs.JUNIT
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation Libs.JUNIT
 
     /* Kotlin */
     implementation Libs.KOTLIN_STD_LIB
 
     /* Support libs */
-    compile Libs.SUPPORT_APPCOMPAT
-    compile Libs.SUPPORT_DESIGN
-    compile Libs.SUPPORT_ANNOTATION
-    compile Libs.SUPPORT_V13
-    compile Libs.SUPPORT_VECTOR
+    implementation Libs.SUPPORT_APPCOMPAT
+    implementation Libs.SUPPORT_DESIGN
+    implementation Libs.SUPPORT_ANNOTATION
+    implementation Libs.SUPPORT_V13
+    implementation Libs.SUPPORT_VECTOR
 
-    compile 'jp.wasabeef:richeditor-android:1.2.2'
+    implementation 'jp.wasabeef:richeditor-android:1.2.2'
 }

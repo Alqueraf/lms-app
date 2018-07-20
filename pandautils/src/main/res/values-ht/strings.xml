@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,10 +17,15 @@
   -->
 
 <resources>
+
     <string name="chooseMedia">Chwazi Medya</string>
     <string name="takeVideo">Anrejistre Videyo</string>
     <string name="noCameraOnDevice">Pa gen Kamera</string>
 
+    <string name="takePhoto">Fè Foto</string>
+    <string name="choosePhotoFromGallery">Chwazi Foto nan Galri</string>
+
+    <string name="utils_edit">Modifye</string>
     <!-- NotoriousPicker/uploadService -->
     <string name="notificationTitle">Transfere nan Canvas</string>
     <string name="preparingUpload">Preparasyon Transfè</string>
@@ -189,5 +194,173 @@
     <string name="loading">Chajman</string>
     <string name="save">Anrejistre</string>
     <string name="cropInstructions">Pense epi deplase pou ajiste imaj la.</string>
+
+    <!--Discussions-->
+    <plurals name="utils_discussionsReplies">
+        <item quantity="one">%s Reponn</item>
+        <item quantity="other">%s Repons</item>
+    </plurals>
+
+    <string name="utils_discussionsDeleted" formatted="false">Efase repons sa a %s</string>
+    <string name="utils_discussionsUnknownAuthor">Otè Enkoni</string>
+    <string name="utils_discussionsReply">Reponn</string>
+    <string name="utils_discussionsEdit">Modifye</string>
+    <string name="utils_discussionsDeleteWarning">Ou kwè vrèman ou vle efase kòmantè sa a?</string>
+    <string name="utils_availableToLabel">Disponib pou:</string>
+    <string name="utils_availableFromLabel">Disponib depi:</string>
+    <string name="utils_dueDateHeaderLabel">Delè</string>
+    <string name="utils_dueLabel">Delè:</string>
+    <string name="utils_delete">Efase</string>
+    <string name="utils_dueDateAtTime" formatted="false">Delè %1s a %2s</string>
+    <string name="utils_noDateFiller">--</string>
+    <string name="utils_availabilityLabel">Disponibilite:</string>
+    <string name="utils_pinnedIcon">Ikòn diskisyon fikse</string>
+    <string name="utils_pinDiscussion">Fikse Diskisyon</string>
+    <string name="utils_unpinDiscussion">Diskisyon non Fikse</string>
+    <string name="utils_discussionPinned">Diskisyon Fikse</string>
+    <string name="utils_pinnedDiscussions">Make</string>
+    <string name="utils_discussionUnpinned">Diskisyon</string>
+    <string name="utils_emptyDiscussions">Pa gen diskisyon pou afiche nan seksyon sa a.</string>
+    <string name="utils_description">Deskripsyon</string>
+    <string name="utils_allowThreadedReplies">Otorize repons filte</string>
+    <string name="utils_usersMustPost">Elèv yo dwe poste anvan yo wè repons yo</string>
+    <string name="utils_discussionsClosed">Fèmen pou Kòmantè</string>
+    <string name="utils_discussionsOpen">Ouvri pou Kòmantè</string>
+    <string name="utils_discussionsPin">Tache</string>
+    <string name="utils_discussionsUnpin">Detache</string>
+    <string name="utils_discussionsOptions">Opsyon</string>
+    <string name="utils_discussionsDeleteTitle">Efase Diskisyon?</string>
+    <string name="utils_discussionsDelete">Efase Diskisyon</string>
+    <string name="utils_discussionsDeleteMessage">Sa ap efase tout diskisyon ak fil yo.</string>
+    <string name="utils_discussionSentSuccess">Repons diskisyon sa a reyisi.</string>
+    <string name="utils_discussionUpdateSuccess">Modifikasyon diskisyon an reyisi.</string>
+    <string name="utils_discussionSentEmpty">Repons diskisyon an pa dwe vid.</string>
+    <string name="utils_discussionSentFailure">Repons diskisyon an pa t kapab ale nan moman an.</string>
+    <string name="utils_createDiscussion">Nouvo Diskisyon</string>
+    <string name="utils_editDiscussion">Modifye Diskisyon</string>
+    <string name="utils_discussionDetails">Detay Diskisyon</string>
+    <string name="utils_discussionSuccessfullyUpdated">Diskisyon aktyalize kòrèkteman.</string>
+    <string name="utils_saving">Anrejistreman</string>
+    <string name="utils_discussionSuccessfullyCreated">Diskisyon kreye kòrèkteman.</string>
+    <string name="utils_discussionSuccessfulAttachmentNot">Atachman an paka ajoute nan diskisyon sa a. Tanpri verifye quota dosye w epi eseye ankò.</string>
+    <string name="utils_noTitle">Pa gen Tit</string>
+    <string name="utils_discussionsReplies_Title">Repons</string>
+    <string name="utils_contentDescriptionDiscussionsOverflow">Plis opsyon</string>
+    <string name="utils_discussionsUnreadRepliesBlank" formatted="false">%s %s %s</string>
+    <string name="utils_lastPost" formatted="false">Dènye piblikasyon %s</string>
+    <string name="utils_postedOnDate">Poste le %s</string>
+    <string name="utils_discussionPostBeforeRepliesEmptyText">Sèlman moun ki poste yon repons pou pi piti k ap ka wè repons yo.</string>
+    <string name="utils_createAnnouncementDelayPosting">Retade Piblikasyon</string>
+    <string name="utils_postAt">Poste A</string>
+    <string name="utils_postDate">Dat Piblikasyon</string>
+    <string name="utils_postTime">Piblikasyon Lè</string>
+    <string name="utils_editAnnouncementTitle">Modifye Anons</string>
+    <string name="utils_createAnnouncementTitle">Nouvo Anons</string>
+    <string name="utils_announcementDetails">Detay Anons</string>
+    <string name="utils_createAnnouncementNoDescription">Yon deskripsyon obligatwa</string>
+    <string name="utils_errorSavingAnnouncement">Gen yon erè ki fèt pandan w ap eseye anrejistre anons sa a. Eseye ankò.</string>
+    <string name="utils_announcementSuccessfullyUpdated">Anons aktyalize kòrèkteman.</string>
+    <string name="utils_announcementSuccessfullyCreated">Anons kreye kòrèkteman.</string>
+
+    <plurals name="utils_discussionsUnread">
+        <item quantity="one">%s Poko li</item>
+        <item quantity="other">%s Poko li</item>
+    </plurals>
+
+    <plurals name="utils_addAttachment">
+        <item quantity="zero">Ajoute Atachman</item>
+        <item quantity="one">Ajoute Atachman</item>
+        <item quantity="other">Ajoute Atachman</item>
+    </plurals>
+
+
+    <!-- Assignment Override !-->
+    <string name="utils_unlockAfterDueDateError">Dat deblokaj la pa kapab aprè delè a</string>
+    <string name="utils_lockBeforeDueDateError">Dat blokaj la pa dwe anvan delè a</string>
+    <string name="utils_lockAfterUnlockError">Dat blokaj la pa dwe anvan dat deblokaj la</string>
+    <string name="utils_assigneeBlankError">Sesyonè a pa dwe vid</string>
+    <string name="utils_assignTo">Asiyen A</string>
+    <string name="utils_availableFrom">Disponib Depi</string>
+    <string name="utils_availableTo">Disponib Pou:</string>
+    <string name="utils_availableFromDate">Disponib Depi Dat</string>
+    <string name="utils_availableFromTime">Disponib Depi A</string>
+    <string name="utils_availableToDate">Disponib Jiska Dat</string>
+    <string name="utils_availableToTime">Disponib Jiska</string>
+    <string name="utils_dueDate">Delè</string>
+    <string name="utils_dueTime">Delè</string>
+    <string name="utils_addNew">Ajoute Nouvo</string>
+
+    <!--Attachment Layout-->
+    <string name="utils_downloadAttachment">Telechaje Atachman</string>
+    <string name="utils_removeAttachment">Retire atachman</string>
+
+    <!--Unsaved Changes-->
+    <string name="utils_continueWithoutSavingTitle">Kontinye san sovgade?</string>
+    <string name="utils_continueWithoutSavingMessage">Se tout bon ou ta renmen kontinye san w pa sovgade?</string>
+    <string name="utils_continueUnsaved">Kontinye</string>
+    <string name="utils_exitWithoutSavingTitle">Soti san sovgade?</string>
+    <string name="utils_exitWithoutSavingMessage">Se tout bon ou ta renmen soti san w pa sovgade?</string>
+    <string name="utils_exitUnsaved">Soti</string>
+    <string name="utils_cancel">Anile</string>
+
+    <string name="utils_contentDescriptionFiles">Ikòn fichye</string>
+    <string name="utils_turn_in">Aktive</string>
+    <string name="utils_upload">Chajman</string>
+    <string name="utils_okay">OK</string>
+    <string name="utils_loadingFilesIndeterminate">Chajman Fichye&#8230;</string>
+    <string name="utils_allowedExtensions">Ekstansyon otorize:&#160;</string>
+    <string name="utils_extensionNotAllowed">Tip fichye ou seleksyone a pa otorize.</string>
+    <string name="utils_errorUploadingFile">Yon erè fèt pandan chajman fichye ou a. Tanpri eseye ankò.</string>
+    <string name="utils_filesUploadedSuccessfully">Transfè Fichye yo fèt kòrèkteman.</string>
+    <string name="utils_uploadingFiles">Chajman fichye&#8230;</string>
+    <string name="utils_uploadingFile">Chajman fichye&#8230;</string>
+    <string name="utils_noApps">Aparèy ou a pa gen okenn aplikasyon sou li ki ka ouvri fichye sa a.</string>
+    <string name="utils_errorGettingPhoto">Gen yon erè ki fèt pandan w ap eseye jwenn foto a. Tanpri eseye ankò.</string>
+    <string name="utils_oneOrMoreExtensionNotAllowed">Yonn oswa plizyè fichye gen yon ekstansyon ki pa otorize</string>
+    <string name="utils_fileUploadNotSupported">Ou paka soumèt fichye nan sesyon ki seleksyone a.</string>
+    <string name="utils_noFilesUploaded">Ou pa seleksyone okenn fichye.</string>
+    <string name="utils_attachments">Atachman</string>
+    <string name="utils_uploadTo">Transfere nan </string>
+    <string name="utils_uploadToCanvas">Transfere nan Canvas</string>
+    <string name="utils_uploadMyFiles">Fichye Mwen</string>
+    <string name="utils_uploadCourseFiles">Fichye Kou</string>
+    <string name="utils_uploadToSubmissionComment">Soumèt nan Kòmantè Soumisyon</string>
+    <string name="utils_attachFile">Ajoute yon fichye</string>
+    <string name="utils_with">avèk</string>
+    <string name="utils_dotWithSpaces">  \u2022  </string>
+
+    <string name="notificationPrimaryInboxTitle">Avètisman Canvas</string>
+    <string name="notificationChannelNamePrimary">Avètisman Jeneral Canvas</string>
+    <string name="notificationChannelDescriptionPrimary">Plis konfigirasyon avètisman posib nan seksyon Preferans Avètisman Canvas la.</string>
+
+    <string name="copyLinkAddress">Kopye lyen</string>
+    <string name="copyLink">Kopye Lyen</string>
+    <string name="linkCopied">Lyen kopye</string>
+    <string name="link">Lyen</string>
+    <string name="fileExists">Fichye Egziste</string>
+    <string name="replace">Ranplase</string>
+    <string name="shareLink">Pataje lyen</string>
+    <string name="utils_launchExternalTool">Lanse Zouti Eksteryè</string>
+    <string name="utils_externalToolTitle">Zouti Ekstèn</string>
+    <string name="utils_placeholderTitle">Zouti Ekstèn</string>
+    <string name="utils_placeholderDescription">Vizite kont Canvas ou a pou modifye zouti ekstèn sa a.</string>
+
+    <string name="utils_unableToViewInBrowser">Nou pa an mezi pou nou jwenn yon app ekstèn pou afiche zouti LTI sa a.</string>
+
+    <string name="utils_unsupportedFileMessage">Fichye sa a paka afiche Itilize bouton pi ba a pou ouvri fichye a ak yon lòt app sou aparèy ou a.</string>
+    <string name="utils_openWithAnotherApp">Ouvri avèk...</string>
+    <string name="utils_couldNotPlayFormat">fòma medya sa a  pa sipòte</string>
+    <string name="utils_fullscreen">plen ekran</string>
+
+    <string name="utils_dataUsageWarningTitle">Avètisman Itilizasyon Done</string>
+    <string name="utils_dataUsageWarningMessage">Aksyon sa a ka konsome anpil entènèt, li ka menm fè w peye frè adisyonèl. Èske w vle kontinye?</string>
+    <string name="utils_doNotShowMessageAgain">Pa afiche mesaj sa a ankò</string>
+
+    <string name="utils_no_data_connection">Tanpri verifye koneksyon entènèt ou a epi eseye ankò.</string>
+    <string name="utils_playMedia">Jwe medya</string>
+    <string name="utils_tryAgain">Eseye ankò</string>
+    <string name="image_uploading">Transfè Imaj...</string>
+    <string name="image_upload_error">Erè Transfè Imaj</string>
+    <string name="retry">Re eseye</string>
 
 </resources>

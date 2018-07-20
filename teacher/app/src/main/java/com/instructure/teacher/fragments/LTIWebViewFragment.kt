@@ -19,20 +19,24 @@ package com.instructure.teacher.fragments
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Html
 import android.text.SpannedString
-import android.text.TextUtils
+import android.view.View
 import android.widget.Toast
+import com.instructure.canvasapi2.managers.OAuthManager
 import com.instructure.canvasapi2.managers.SubmissionManager
+import com.instructure.canvasapi2.models.AuthenticatedSession
+import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.LTITool
 import com.instructure.canvasapi2.models.Tab
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.HttpHelper
+import com.instructure.canvasapi2.utils.Logger
 import com.instructure.canvasapi2.utils.weave.awaitApi
 import com.instructure.canvasapi2.utils.weave.catch
 import com.instructure.canvasapi2.utils.weave.tryWeave
+import com.instructure.canvasapi2.utils.weave.weave
 import com.instructure.pandautils.utils.BooleanArg
 import com.instructure.pandautils.utils.NullableParcelableArg
 import com.instructure.pandautils.utils.PermissionUtils
@@ -50,6 +54,10 @@ class LTIWebViewFragment : InternalWebViewFragment() {
     var ltiTab: Tab? by NullableParcelableArg()
     var sessionLessLaunch: Boolean by BooleanArg()
     var skipReload: Boolean = false
+    var hideToolbar: Boolean by BooleanArg()
+    private var externalUrlToLoad: String? = null
+
+    private var ltiUrlLaunchJob: Job? = null
     private var sessionAuthJob: Job? = null
 
 
@@ -78,16 +86,24 @@ class LTIWebViewFragment : InternalWebViewFragment() {
             } else {
                 sessionAuthJob = tryWeave {
                     if (ApiPrefs.domain in ltiUrl) {
-                        // Get an authenticated session so the user doesn't have to log in
-                        val result = awaitApi<LTITool> { SubmissionManager.getLtiFromAuthenticationUrl(ltiUrl, it, true) }.url
+                        // If we have an externalUrlToLoad they've already been authenticated
+                        if(externalUrlToLoad != null && sessionLessLaunch && !ltiUrl.contains("api/v1/")) {
+                            getSessionlessLtiUrl(ApiPrefs.fullDomain + "/api/v1/accounts/self/external_tools/sessionless_launch?url=" + ltiUrl, true)
+                        } else {
+                            // Get an authenticated session so the user doesn't have to log in
+                            val result = awaitApi<LTITool> { SubmissionManager.getLtiFromAuthenticationUrl(ltiUrl, it, true) }.url
 
-                        launchIntent(result)
+                            launchIntent(result)
+                        }
+
                     }
                 } catch  {
                     Toast.makeText(this@LTIWebViewFragment.context, R.string.no_apps, Toast.LENGTH_SHORT).show()
                 }
             }
         }
+
+        toolbar?.visibility = if(hideToolbar) View.GONE else View.VISIBLE
     }
 
     override fun onResume() {
@@ -98,41 +114,44 @@ class LTIWebViewFragment : InternalWebViewFragment() {
             skipReload = false
             return
         }
+
         try {
-            if (ltiTab == null) {
-                if (url.isNotBlank()) {
-                    //modify the url
-                    if (url.startsWith("canvas-courses://")) {
-                        url = url.replaceFirst("canvas-courses".toRegex(), ApiPrefs.protocol)
-                    }
-                    val uri = Uri.parse(url).buildUpon()
-                            .appendQueryParameter("display", "borderless")
-                            .appendQueryParameter("platform", "android")
-                            .build()
-                    if (sessionLessLaunch) {
-                        val sessionless_launch = ApiPrefs.fullDomain +
-                                "/api/v1/accounts/self/external_tools/sessionless_launch?url=" + url
-                        GetSessionlessLtiURL().execute(sessionless_launch)
-                    } else {
-                        loadUrl(uri.toString())
-                    }
-                } else if(ltiUrl.isNotBlank()) {
-                    GetSessionlessLtiURL().execute(ltiUrl)
-                } else {
-                    val spannedString = SpannedString(getString(R.string.errorOccurred))
-                    loadHtml(Html.toHtml(spannedString))
-                }
+            if(ltiTab != null) {
+                getLtiUrl(ltiTab)
             } else {
-                GetLtiURL().execute(ltiTab)
+                if (ltiUrl.isNotBlank()) {
+                    //modify the url
+                    if (ltiUrl.startsWith("canvas-courses://")) {
+                        ltiUrl = ltiUrl.replaceFirst("canvas-courses".toRegex(), ApiPrefs.protocol)
+                    }
+                    if (ltiUrl.startsWith("canvas-teacher://")) {
+                        ltiUrl = ltiUrl.replaceFirst("canvas-teacher".toRegex(), ApiPrefs.protocol)
+                    }
+
+                    if (sessionLessLaunch) {
+                        if (ltiUrl.contains("api/v1/")) {
+                            getSessionlessLtiUrl(ltiUrl, false)
+                        } else {
+                            getSessionlessLtiUrl(ApiPrefs.fullDomain + "/api/v1/accounts/self/external_tools/sessionless_launch?url=" + ltiUrl, false)
+                        }
+                    } else {
+                        externalUrlToLoad = ltiUrl
+
+                        loadUrl(Uri.parse(ltiUrl).buildUpon()
+                                .appendQueryParameter("display", "borderless")
+                                .appendQueryParameter("platform", "android")
+                                .build()
+                                .toString())
+                    }
+                } else if (ltiUrl.isNotBlank()) {
+                    getSessionlessLtiUrl(ltiUrl, false)
+                } else {
+                    loadDisplayError()
+                }
             }
         } catch (e: Exception) {
             //if it gets here we're in trouble and won't know what the tab is, so just display an error message
-            val spannedString = SpannedString(getString(R.string.errorOccurred))
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                loadHtml(Html.toHtml(spannedString, Html.FROM_HTML_MODE_LEGACY))
-            } else {
-                loadHtml(Html.toHtml(spannedString))
-            }
+            loadDisplayError()
         }
 
         canvasWebView?.setCanvasWebChromeClientShowFilePickerCallback(object : CanvasWebView.VideoPickerCallback {
@@ -149,6 +168,69 @@ class LTIWebViewFragment : InternalWebViewFragment() {
                 }
             }
         })
+    }
+
+    private fun getLtiUrl(ltiTab: Tab?) {
+        if(ltiTab == null) {
+            loadDisplayError()
+            return
+        }
+
+        ltiUrlLaunchJob = weave {
+            var result: String? = null
+            inBackground {
+                result = getLTIUrlForTab(this@LTIWebViewFragment.context, ltiTab)
+            }
+
+            if(result != null) {
+                val uri = Uri.parse(result).buildUpon()
+                        .appendQueryParameter("display", "borderless")
+                        .appendQueryParameter("platform", "android")
+                        .build()
+                externalUrlToLoad = uri.toString()
+                loadUrl(uri.toString())
+            } else {
+                //error
+                loadDisplayError()
+            }
+        }
+    }
+
+    private fun getSessionlessLtiUrl(ltiUrl: String, loadExternally: Boolean) {
+        ltiUrlLaunchJob = weave {
+            var result: String? = null
+            inBackground {
+                result = getLTIUrl(this@LTIWebViewFragment.context, ltiUrl)
+            }
+
+            if(result != null) {
+                val uri = Uri.parse(result).buildUpon()
+                        .appendQueryParameter("display", "borderless")
+                        .appendQueryParameter("platform", "android")
+                        .build()
+                // Set the sessionless url here in case the user wants to use an external browser
+                externalUrlToLoad = uri.toString()
+
+                if(loadExternally) {
+                    launchIntent(uri.toString())
+                } else {
+                    loadUrl(uri.toString())
+                }
+            } else {
+                //error
+                loadDisplayError()
+            }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun loadDisplayError() {
+        val spannedString = SpannedString(getString(R.string.errorOccurred))
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            loadHtml(Html.toHtml(spannedString, Html.FROM_HTML_MODE_LEGACY))
+        } else {
+            loadHtml(Html.toHtml(spannedString))
+        }
     }
 
     override fun onHandleBackPressed(): Boolean {
@@ -185,12 +267,14 @@ class LTIWebViewFragment : InternalWebViewFragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         sessionAuthJob?.cancel()
+        ltiUrlLaunchJob?.cancel()
     }
 
     private fun launchIntent(result: String?) {
+        Logger.d("result url: "  + result)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(result))
         // Make sure we can handle the intent
         if (intent.resolveActivity(this@LTIWebViewFragment.context.packageManager) != null) {
@@ -202,54 +286,6 @@ class LTIWebViewFragment : InternalWebViewFragment() {
 
     private fun requestFilePermissions() {
         requestPermissions(PermissionUtils.makeArray(PermissionUtils.WRITE_EXTERNAL_STORAGE, PermissionUtils.CAMERA), PermissionUtils.PERMISSION_REQUEST_CODE)
-    }
-
-    private inner class GetLtiURL : AsyncTask<Tab, Void, String?>() {
-
-        override fun doInBackground(vararg params: Tab): String? {
-            return getLTIUrlForTab(context, params[0])
-        }
-
-        override fun onPostExecute(result: String?) {
-            if (activity == null || result == null) {
-                return
-            }
-
-            //make sure we have a non null url before we add parameters
-            if (!TextUtils.isEmpty(result)) {
-                val uri = Uri.parse(result).buildUpon()
-                        .appendQueryParameter("display", "borderless")
-                        .appendQueryParameter("platform", "android")
-                        .build()
-                loadUrl(uri.toString())
-            } else {
-                loadUrl(result)
-            }
-        }
-    }
-
-    private inner class GetSessionlessLtiURL : AsyncTask<String, Void, String?>() {
-
-        override fun doInBackground(vararg params: String): String? {
-            return getLTIUrl(context, params[0])
-        }
-
-        override fun onPostExecute(result: String?) {
-            if (activity == null || result == null) {
-                return
-            }
-
-            //make sure we have a non null url before we add parameters
-            if (!TextUtils.isEmpty(result)) {
-                val uri = Uri.parse(result).buildUpon()
-                        .appendQueryParameter("display", "borderless")
-                        .appendQueryParameter("platform", "android")
-                        .build()
-                loadUrl(uri.toString())
-            } else {
-                loadUrl(result)
-            }
-        }
     }
 
     private fun getLTIUrlForTab(context: Context, tab: Tab): String? {
@@ -271,9 +307,10 @@ class LTIWebViewFragment : InternalWebViewFragment() {
     }
 
     companion object {
-        const val LTI_URL = "lti_url"
-        const val TAB = "tab"
-        const val SESSION_LESS = "session_less"
+        private const val LTI_URL = "lti_url"
+        private const val TAB = "tab"
+        private const val SESSION_LESS = "session_less"
+        private const val HIDE_TOOLBAR = "hideToolbar"
 
         @JvmStatic
         fun makeLTIBundle(ltiUrl: String): Bundle {
@@ -306,7 +343,20 @@ class LTIWebViewFragment : InternalWebViewFragment() {
             if(args.containsKey(TAB)) {
                 ltiTab = args.getParcelable(TAB)
             }
+            hideToolbar = args.getBoolean(HIDE_TOOLBAR, false)
+            setShouldAuthenticateUponLoad(args.getBoolean(AUTHENTICATE, false))
             setShouldLoadUrl(false)
+        }
+
+        @JvmStatic
+        fun makeBundle(canvasContext: CanvasContext, url: String, title: String, sessionLessLaunch: Boolean, hideToolbar: Boolean): Bundle {
+            val extras = createBundle(canvasContext)
+            extras.putBoolean(AUTHENTICATE, false)
+            extras.putString(LTI_URL, url)
+            extras.putBoolean(HIDE_TOOLBAR, hideToolbar)
+            extras.putBoolean(SESSION_LESS, sessionLessLaunch)
+            extras.putString(TITLE, title)
+            return extras
         }
     }
 }

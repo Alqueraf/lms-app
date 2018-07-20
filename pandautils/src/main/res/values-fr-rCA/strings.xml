@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -17,10 +17,15 @@
   -->
 
 <resources>
+
     <string name="chooseMedia">Choisir un média</string>
     <string name="takeVideo">Enregistrer une vidéo</string>
     <string name="noCameraOnDevice">Aucune caméra</string>
 
+    <string name="takePhoto">Prendre une photo</string>
+    <string name="choosePhotoFromGallery">Choisir une photo dans la galerie</string>
+
+    <string name="utils_edit">Modifier</string>
     <!-- NotoriousPicker/uploadService -->
     <string name="notificationTitle">Téléversement sur Canvas</string>
     <string name="preparingUpload">Téléversement en préparation</string>
@@ -189,5 +194,173 @@
     <string name="loading">Chargement en cours&#8230;</string>
     <string name="save">Enregistrer</string>
     <string name="cropInstructions">Pincez et faites glisser pour ajuster l\'image.</string>
+
+    <!--Discussions-->
+    <plurals name="utils_discussionsReplies">
+        <item quantity="one">%s Réponse</item>
+        <item quantity="other">%s Réponses</item>
+    </plurals>
+
+    <string name="utils_discussionsDeleted" formatted="false">Supprimé cette réponse %s</string>
+    <string name="utils_discussionsUnknownAuthor">Auteur inconnu</string>
+    <string name="utils_discussionsReply">Répondre</string>
+    <string name="utils_discussionsEdit">Modifier</string>
+    <string name="utils_discussionsDeleteWarning">Voulez-vous vraiment supprimer cette réponse?</string>
+    <string name="utils_availableToLabel">Disponible pour :</string>
+    <string name="utils_availableFromLabel">Disponible sur :</string>
+    <string name="utils_dueDateHeaderLabel">Dû</string>
+    <string name="utils_dueLabel">Échéance :</string>
+    <string name="utils_delete">Supprimer</string>
+    <string name="utils_dueDateAtTime" formatted="false">Dû le %1s à %2s</string>
+    <string name="utils_noDateFiller">--</string>
+    <string name="utils_availabilityLabel">Disponibilité :</string>
+    <string name="utils_pinnedIcon">Icône de discussion épinglée</string>
+    <string name="utils_pinDiscussion">Épingler la discussion</string>
+    <string name="utils_unpinDiscussion">Ôter l\'épingle de la discussion</string>
+    <string name="utils_discussionPinned">La discussion est épinglée</string>
+    <string name="utils_pinnedDiscussions">Épinglé</string>
+    <string name="utils_discussionUnpinned">Discussions</string>
+    <string name="utils_emptyDiscussions">Il n\'y a aucune discussion à afficher dans cette section.</string>
+    <string name="utils_description">Description</string>
+    <string name="utils_allowThreadedReplies">Autoriser les réponses thématiques</string>
+    <string name="utils_usersMustPost">Les étudiants doivent publier quelque chose pour voir les réponses.</string>
+    <string name="utils_discussionsClosed">N\'accepte plus de commentaires</string>
+    <string name="utils_discussionsOpen">Ouvrir aux commentaires</string>
+    <string name="utils_discussionsPin">Épingler</string>
+    <string name="utils_discussionsUnpin">Détacher</string>
+    <string name="utils_discussionsOptions">Options</string>
+    <string name="utils_discussionsDeleteTitle">Supprimer la discussion?</string>
+    <string name="utils_discussionsDelete">Supprimer la discussion</string>
+    <string name="utils_discussionsDeleteMessage">Cette opération va supprimer l\'ensemble de la discussion et du fil de discussion.</string>
+    <string name="utils_discussionSentSuccess">Réponse à la discussion effectuée avec succès.</string>
+    <string name="utils_discussionUpdateSuccess">La discussion a été modifiée avec succès.</string>
+    <string name="utils_discussionSentEmpty">La réponse à la discussion ne peut être vide.</string>
+    <string name="utils_discussionSentFailure">La réponse à la discussion n\'a pas pu être envoyée à ce moment.</string>
+    <string name="utils_createDiscussion">Nouvelle discussion</string>
+    <string name="utils_editDiscussion">Modifier la discussion</string>
+    <string name="utils_discussionDetails">Détails de la discussion</string>
+    <string name="utils_discussionSuccessfullyUpdated">La discussion a été mise à jour avec succès.</string>
+    <string name="utils_saving">Sauvegarde en cours</string>
+    <string name="utils_discussionSuccessfullyCreated">Discussion créée avec succès.</string>
+    <string name="utils_discussionSuccessfulAttachmentNot">La pièce jointe ne peut être ajoutée à cette discussion. Veuillez vérifier votre quota des fichiers et réessayer.</string>
+    <string name="utils_noTitle">Sans titre</string>
+    <string name="utils_discussionsReplies_Title">Réponses</string>
+    <string name="utils_contentDescriptionDiscussionsOverflow">Plus d’options</string>
+    <string name="utils_discussionsUnreadRepliesBlank" formatted="false">%s %s %s</string>
+    <string name="utils_lastPost" formatted="false">Dernière publication : %s</string>
+    <string name="utils_postedOnDate">Publié le %s</string>
+    <string name="utils_discussionPostBeforeRepliesEmptyText">Les réponses ne sont visibles que pour ceux qui ont publié au moins une réponse.</string>
+    <string name="utils_createAnnouncementDelayPosting">Retarder la publication</string>
+    <string name="utils_postAt">Publié à</string>
+    <string name="utils_postDate">Date de publication</string>
+    <string name="utils_postTime">Heure de publication</string>
+    <string name="utils_editAnnouncementTitle">Modifier l’annonce</string>
+    <string name="utils_createAnnouncementTitle">Nouvelle annonce</string>
+    <string name="utils_announcementDetails">Détails de l’annonce</string>
+    <string name="utils_createAnnouncementNoDescription">Description obligatoire</string>
+    <string name="utils_errorSavingAnnouncement">Une erreur s\'est produite en essayant d’enregistrer cette annonce. Réessayez.</string>
+    <string name="utils_announcementSuccessfullyUpdated">Annonce mise à jour avec succès.</string>
+    <string name="utils_announcementSuccessfullyCreated">Annonce créée avec succès.</string>
+
+    <plurals name="utils_discussionsUnread">
+        <item quantity="one">%s Non lu</item>
+        <item quantity="other">%s Non lu</item>
+    </plurals>
+
+    <plurals name="utils_addAttachment">
+        <item quantity="zero">Ajouter une pièce jointe</item>
+        <item quantity="one">Ajouter une pièce jointe</item>
+        <item quantity="other">Ajouter une pièce jointe</item>
+    </plurals>
+
+
+    <!-- Assignment Override !-->
+    <string name="utils_unlockAfterDueDateError">La date de déverrouillage ne peut pas être postérieure à la date d’échéance.</string>
+    <string name="utils_lockBeforeDueDateError">La date de verrouillage ne peut pas être antérieure à la date d’échéance.</string>
+    <string name="utils_lockAfterUnlockError">La date de verrouillage ne peut pas être antérieure à la date de déverrouillage.</string>
+    <string name="utils_assigneeBlankError">L’assigné ne peut être vide</string>
+    <string name="utils_assignTo">Attribuer à</string>
+    <string name="utils_availableFrom">Disponible depuis</string>
+    <string name="utils_availableTo">Disponible pour</string>
+    <string name="utils_availableFromDate">Disponible à partir de la date</string>
+    <string name="utils_availableFromTime">Disponible à partir de l’heure</string>
+    <string name="utils_availableToDate">Disponible la date</string>
+    <string name="utils_availableToTime">Disponible à l’heure</string>
+    <string name="utils_dueDate">Date d\'échéance</string>
+    <string name="utils_dueTime">Heure prévue</string>
+    <string name="utils_addNew">Ajouter nouveau</string>
+
+    <!--Attachment Layout-->
+    <string name="utils_downloadAttachment">Télécharger les pièces jointes</string>
+    <string name="utils_removeAttachment">Supprimer les pièces jointes</string>
+
+    <!--Unsaved Changes-->
+    <string name="utils_continueWithoutSavingTitle">Continuer sans enregistrer?</string>
+    <string name="utils_continueWithoutSavingMessage">Êtes-vous certain de vouloir continuer sans enregistrer?</string>
+    <string name="utils_continueUnsaved">Continuer</string>
+    <string name="utils_exitWithoutSavingTitle">Quitter sans enregistrer?</string>
+    <string name="utils_exitWithoutSavingMessage">Êtes-vous certain de vouloir quitter sans enregistrer?</string>
+    <string name="utils_exitUnsaved">Quitter</string>
+    <string name="utils_cancel">Annuler</string>
+
+    <string name="utils_contentDescriptionFiles">Icône de fichier</string>
+    <string name="utils_turn_in">Rendre</string>
+    <string name="utils_upload">Téléversement</string>
+    <string name="utils_okay">D\'accord</string>
+    <string name="utils_loadingFilesIndeterminate">Chargement des fichiers&#8230;</string>
+    <string name="utils_allowedExtensions">Extensions autorisées :&#160;</string>
+    <string name="utils_extensionNotAllowed">Le type de fichier sélectionné n\'est pas autorisé.</string>
+    <string name="utils_errorUploadingFile">Une erreur s\'est produite pendant le téléversement de votre fichier. Veuillez réessayer.</string>
+    <string name="utils_filesUploadedSuccessfully">Fichiers téléversés avec succès.</string>
+    <string name="utils_uploadingFiles">Téléversement de fichiers&#8230;</string>
+    <string name="utils_uploadingFile">Téléversement du fichier&#8230;</string>
+    <string name="utils_noApps">Votre dispositif ne dispose pas des applications qui peuvent traiter ce fichier.</string>
+    <string name="utils_errorGettingPhoto">Une erreur est survenue lors de l’extraction de la photo. Veuillez réessayer.</string>
+    <string name="utils_oneOrMoreExtensionNotAllowed">Un ou plusieurs fichiers possèdent une extension de fichier qui n\'est pas autorisée</string>
+    <string name="utils_fileUploadNotSupported">Vous ne pouvez téléverser de fichiers pour la tâche sélectionnée.</string>
+    <string name="utils_noFilesUploaded">Vous n\'avez sélectionné aucun fichier.</string>
+    <string name="utils_attachments">Pièces jointes</string>
+    <string name="utils_uploadTo">Téléverser sur </string>
+    <string name="utils_uploadToCanvas">Téléversement sur Canvas</string>
+    <string name="utils_uploadMyFiles">Mes fichiers</string>
+    <string name="utils_uploadCourseFiles">Fichiers du cours</string>
+    <string name="utils_uploadToSubmissionComment">Téléverser au commentaire de soumission</string>
+    <string name="utils_attachFile">Joindre un fichier</string>
+    <string name="utils_with">avec</string>
+    <string name="utils_dotWithSpaces">  \u2022  </string>
+
+    <string name="notificationPrimaryInboxTitle">Notification de Canvas</string>
+    <string name="notificationChannelNamePrimary">Notifications générales de Canvas</string>
+    <string name="notificationChannelDescriptionPrimary">D\'autres configurations de notifications peuvent être effectuées dans la section Préférences de notification de Canvas.</string>
+
+    <string name="copyLinkAddress">Copier l’adresse du lien</string>
+    <string name="copyLink">Copier le lien</string>
+    <string name="linkCopied">Lien copié</string>
+    <string name="link">Lien</string>
+    <string name="fileExists">Le fichier existe</string>
+    <string name="replace">Remplacer</string>
+    <string name="shareLink">Partager le lien</string>
+    <string name="utils_launchExternalTool">Lancer l\'outil externe</string>
+    <string name="utils_externalToolTitle">Outil externe</string>
+    <string name="utils_placeholderTitle">Outil externe</string>
+    <string name="utils_placeholderDescription">Visitez votre compte Web Canvas pour modifier cet outil externe.</string>
+
+    <string name="utils_unableToViewInBrowser">Nous n\'arrivons pas à trouver une application externe pour voit cet outil LTI.</string>
+
+    <string name="utils_unsupportedFileMessage">Impossible d’afficher ce fichier. Utiliser le bouton ci-dessous pour ouvrir le fichier avec une autre application sur votre appareil.</string>
+    <string name="utils_openWithAnotherApp">Ouvrir avec&#8230;</string>
+    <string name="utils_couldNotPlayFormat">Ce support média n\'est pas pris en charge</string>
+    <string name="utils_fullscreen">plein écran</string>
+
+    <string name="utils_dataUsageWarningTitle">Avertissement concernant l\'utilisation des données</string>
+    <string name="utils_dataUsageWarningMessage">Cette action peut consommer une grande quantité de données, imputant potentiellement des frais de dépassement de données. Souhaitez-vous continuer?</string>
+    <string name="utils_doNotShowMessageAgain">Ne plus afficher ce message de nouveau</string>
+
+    <string name="utils_no_data_connection">Veuillez vérifier votre connexion de données et réessayer.</string>
+    <string name="utils_playMedia">Lire les fichiers multimédias</string>
+    <string name="utils_tryAgain">Essayez de nouveau</string>
+    <string name="image_uploading">Téléversement d’image(s) en cours...</string>
+    <string name="image_upload_error">Erreur de téléversement d’image</string>
+    <string name="retry">Réessayer</string>
 
 </resources>

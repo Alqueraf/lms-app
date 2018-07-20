@@ -22,7 +22,6 @@
     <string name="email">Email</string>
     <string name="emailAddress">Endereço de email</string>
     <string name="parent_email">Email dos Pais</string>
-    <string name="confirmPassword">Confirmar palavra passe</string>
     <string name="firstName">Primeiro nome</string>
     <string name="lastName">Último nome</string>
     <string name="password">Palavra passe</string>
@@ -150,6 +149,9 @@
     <string name="or">ou</string>
     <string name="canvas_login_text">Iniciar sessão no Canvas</string>
 
+    <string name="privacyPolicy">Política de Privacidade</string>
+    <string name="EULA">EULA</string>
+    <string name="termsOfUse">Termos de uso</string>
     <!-- Feature Request -->
     <string name="featureSubject">Ideia para a App Canvas Parent [Android]</string>
     <string name="understandRequest">A seguinte informação vai ajudar-nos a compreender melhora sua ideia:</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">Insira o nome da escola do aluno</string>
     <string name="findYourStudentsSchoolHint">Encontre a escola ou distrito do seu aluno</string>
-    <string name="noGradeText">N/D</string>
+    <string name="noGradeText">Sem classificação</string>
     <string name="locked">Bloqueado</string>
+    <string name="changeUser">Mudar utilizador</string>
+    <string name="manageChildren">Gerir crianças</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Abrir gaveta de navegação</string>
+    <string name="navigation_drawer_close">Fechar gaveta de navegação</string>
+    <string name="version" formatted="false">Versão %s</string>
+    <string name="not_a_parent_title">Não é um pai?</string>
+    <string name="not_a_parent_subtitle">Uma das nossas outras aplicações pode ser um ajuste melhor. Toque em um para visitar a App Store.</string>
+    <string name="tryLoginAgain">Tente fazer login novamente</string>
+
+    <string name="legalDetails">Política de privacidade, termos de uso, código aberto</string>
+    <string name="assignmentGrade">Classificação de atribuição</string>
+    <string name="courseGrade">Classificação da disciplina</string>
+    <string name="courseAnnouncement">Anúncio da disciplina</string>
+    <string name="institutionAnnouncement">Anúncio da Instituição</string>
+    <string name="institutionAnnouncementUnavailable">Este anúncio expirou.</string>
 </resources>

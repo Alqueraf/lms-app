@@ -85,7 +85,7 @@ public class FragmentManagerActivity extends BaseActivity {
                 logoutAsyncTask.execute();
                 break;
             case R.id.action_switch_to_student:
-                startActivity(PollListActivity.createIntent(this));
+                startActivity(PollListActivity.Companion.createIntent(this));
         }
         return super.onOptionsItemSelected(item);
     }

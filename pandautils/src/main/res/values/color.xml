@@ -207,4 +207,6 @@
     <color name="utils_attachmentColorAudio">#4452a6</color>
     <color name="utils_attachmentColorMisc">#00bcd5</color>
 
+    <color name="utils_mediaOverlayBackground">#AA000000</color>
+
 </resources>

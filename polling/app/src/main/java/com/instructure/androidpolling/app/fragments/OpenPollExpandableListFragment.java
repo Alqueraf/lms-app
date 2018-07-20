@@ -107,12 +107,12 @@ public class OpenPollExpandableListFragment extends PaginatedExpandableListFragm
         if(courseMap.containsKey(item.getCourse_id())) {
             courseName = courseMap.get(item.getCourse_id()).getName();
         }
-        return PollRowFactory.buildRowView(layoutInflater(), courseName, pollName, convertView, getActivity(), item.getCreated_at());
+        return PollRowFactory.INSTANCE.buildRowView(layoutInflater(), courseName, pollName, convertView, getActivity(), item.getCreated_at());
     }
 
     @Override
     public View getGroupViewForItem(String groupItem, View convertView, int groupPosition, boolean isExpanded) {
-        return PollRowFactory.buildGroupView(layoutInflater(), groupItem, convertView);
+        return PollRowFactory.INSTANCE.buildGroupView(layoutInflater(), groupItem, convertView);
     }
 
     @Override

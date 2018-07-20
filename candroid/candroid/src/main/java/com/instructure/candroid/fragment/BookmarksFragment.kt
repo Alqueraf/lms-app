@@ -41,28 +41,21 @@ import com.instructure.candroid.util.ShortcutUtils
 import com.instructure.canvasapi2.StatusCallback
 import com.instructure.canvasapi2.managers.BookmarkManager
 import com.instructure.canvasapi2.models.Bookmark
+import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.utils.ApiType
 import com.instructure.canvasapi2.utils.LinkHeaders
-import com.instructure.interactions.FragmentInteractions
-import com.instructure.pandarecycler.PandaRecyclerView
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.fragment_bookmarks_fragment.*
+import kotlinx.android.synthetic.main.recycler_swipe_refresh_layout.*
 import kotlin.properties.Delegates
 
 class BookmarksFragment : ParentFragment() {
 
     private var bookmarkSelectedCallback: (Bookmark) -> Unit by Delegates.notNull()
+    private var recyclerAdapter: BookmarkRecyclerAdapter? = null
 
-    override fun getFragmentPlacement(): FragmentInteractions.Placement {
-        return FragmentInteractions.Placement.FULLSCREEN
-    }
-
-    override fun title(): String {
-        return getString(R.string.bookmarks)
-    }
-
-    private var mRecyclerAdapter: BookmarkRecyclerAdapter? = null
-
+    //region Fragment Lifecycle Overrides
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.LightStatusBarDialog)
@@ -70,18 +63,57 @@ class BookmarksFragment : ParentFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_bookmarks_fragment, container, false)
-        val recyclerView = rootView?.findViewById<View>(R.id.listView) as PandaRecyclerView
-        configureRecyclerAdapter()
-        configureRecyclerView(rootView, context, mRecyclerAdapter, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView, R.string.no_bookmarks)
-        recyclerView.addItemDecoration(DividerDecoration(context))
-        recyclerView.isSelectionEnabled = false
         return rootView
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        configureRecyclerView()
+        applyTheme()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (!isTablet) {
+            dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        }
+    }
+    //endregions
+
+    //region Fragment Interaction Overrides
+    override fun applyTheme() {
+        when (activity) {
+            is BookmarkShortcutActivity -> {
+                toolbar.title = getString(R.string.bookmarkShortcut)
+                toolbar.setupAsCloseButton { activity?.finish() }
+            }
+            else -> {
+                title()
+                toolbar.setupAsBackButton(this)
+            }
+        }
+
+        ViewStyler.themeToolbar(activity, toolbar, Color.WHITE, Color.BLACK, false)
+    }
+
+    override fun title(): String = getString(R.string.bookmarks)
+
+    //endregion
+
+    //region Configuration
+
+    private fun configureRecyclerView() {
+        configureRecyclerAdapter()
+        configureRecyclerView(view!!, context, recyclerAdapter!!, R.id.swipeRefreshLayout, R.id.emptyPandaView, R.id.listView, R.string.no_bookmarks)
+        listView.addItemDecoration(DividerDecoration(context))
+        listView.isSelectionEnabled = false
+    }
+
     private fun configureRecyclerAdapter() {
-        if (mRecyclerAdapter == null) {
+        if (recyclerAdapter == null) {
             val isShortcutActivity = activity is BookmarkShortcutActivity
-            mRecyclerAdapter = BookmarkRecyclerAdapter(context, isShortcutActivity, object : BookmarkAdapterToFragmentCallback<Bookmark> {
+            recyclerAdapter = BookmarkRecyclerAdapter(context, isShortcutActivity, object : BookmarkAdapterToFragmentCallback<Bookmark> {
                 override fun onRowClicked(bookmark: Bookmark, position: Int, isOpenDetail: Boolean) {
                     bookmarkSelectedCallback(bookmark)
                     dismiss()
@@ -92,26 +124,26 @@ class BookmarksFragment : ParentFragment() {
                 }
 
                 override fun onOverflowClicked(bookmark: Bookmark, position: Int, v: View) {
-                    //Log to GA
+                    // Log to GA
                     val popup = PopupMenu(context, v)
-                    //This is not done via menu-v26 because support for adding shortcuts in this way may not be supported by the Launcher.
-                    val menuId = if(isShortcutAddingSupported()) R.menu.bookmark_add_shortcut_edit_delete else R.menu.bookmark_edit_delete
+                    // This is not done via menu-v26 because support for adding shortcuts in this way may not be supported by the Launcher.
+                    val menuId = if (isShortcutAddingSupported()) R.menu.bookmark_add_shortcut_edit_delete else R.menu.bookmark_edit_delete
                     popup.menuInflater.inflate(menuId, popup.menu)
 
                     popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { menuItem ->
                         when (menuItem.itemId) {
                             R.id.menu_add_to_homescreen -> {
-                                Analytics.trackButtonPressed(activity, "Bookmark shortcut creation", null)
+                                Analytics.trackButtonPressed(activity, "Bookmarker shortcut creation", null)
                                 ShortcutUtils.generateShortcut(context, bookmark)
                                 return@OnMenuItemClickListener true
                             }
                             R.id.menu_edit -> {
-                                //Log to GA
+                                // Log to GA
                                 editBookmark(bookmark)
                                 return@OnMenuItemClickListener true
                             }
                             R.id.menu_delete -> {
-                                //Log to GA
+                                // Log to GA
                                 deleteBookmark(bookmark)
                                 return@OnMenuItemClickListener true
                             }
@@ -124,23 +156,9 @@ class BookmarksFragment : ParentFragment() {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        applyTheme()
-    }
+    //endregion
 
-    override fun applyTheme() {
-        val isShortcutActivity = activity is BookmarkShortcutActivity
-        if(isShortcutActivity) toolbar.title = getString(R.string.bookmarkShortcut) else title()
-        if(isShortcutActivity) toolbar.setupAsCloseButton { activity?.finish() }
-        else toolbar.setupAsBackButton(this)
-        ViewStyler.themeToolbar(activity, toolbar, Color.WHITE, Color.BLACK, false)
-    }
-
-    override fun allowBookmarking(): Boolean {
-        return false
-    }
-
+    //region Functionality Methods
     @TargetApi(Build.VERSION_CODES.O)
     private fun isShortcutAddingSupported(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -164,11 +182,11 @@ class BookmarksFragment : ParentFragment() {
                 bookmarkCopy.name = text
                 BookmarkManager.updateBookmark(bookmarkCopy, object : StatusCallback<Bookmark>() {
                     override fun onResponse(response: retrofit2.Response<Bookmark>, linkHeaders: LinkHeaders, type: ApiType) {
-                        if (response.code() == 200 && apiCheck()) {
+                        if (response.code() == 200 && isAdded) {
                             CacheControlFlags.forceRefreshBookmarks = true
                             val newBookmark = response.body()
                             newBookmark?.courseId = bookmark.courseId
-                            mRecyclerAdapter?.add(newBookmark)
+                            recyclerAdapter?.add(newBookmark)
                             showToast(R.string.bookmarkUpdated)
                         }
                     }
@@ -205,15 +223,15 @@ class BookmarksFragment : ParentFragment() {
         builder.setPositiveButton(android.R.string.yes, { _, _ ->
             BookmarkManager.deleteBookmark(bookmark.id, object : StatusCallback<Bookmark>() {
                 override fun onResponse(response: retrofit2.Response<Bookmark>, linkHeaders: LinkHeaders, type: ApiType) {
-                    if (apiCheck() && response.code() == 200) {
+                    if (isAdded && response.code() == 200) {
                         CacheControlFlags.forceRefreshBookmarks = true
-                        mRecyclerAdapter?.remove(bookmark)
+                        recyclerAdapter?.remove(bookmark)
                         showToast(R.string.bookmarkDeleted)
                     }
                 }
 
                 override fun onFinished(type: ApiType) {
-                    mRecyclerAdapter?.onCallbackFinished()
+                    recyclerAdapter?.onCallbackFinished()
                 }
             })
         })
@@ -223,21 +241,19 @@ class BookmarksFragment : ParentFragment() {
         dialog.show()
     }
 
-    override fun onStart() {
-        super.onStart()
-        if(!isTablet) {
-            dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        }
-    }
+    //endregion
 
     companion object {
-        fun newInstance(callback: (Bookmark) -> Unit) : BookmarksFragment {
-            val fragment = BookmarksFragment()
-            fragment.apply {
-                bookmarkSelectedCallback = callback
-            }
-            return fragment
-        }
+
+        fun makeRoute(canvasContext: CanvasContext?) = Route(BookmarksFragment::class.java, canvasContext)
+
+        fun newInstance(route: Route, callback: (Bookmark) -> Unit): BookmarksFragment? =
+                if (validateRoute(route)) {
+                    BookmarksFragment().apply {
+                        bookmarkSelectedCallback = callback
+                    }
+                } else null
+
+        private fun validateRoute(route: Route) = route.canvasContext != null
     }
 }

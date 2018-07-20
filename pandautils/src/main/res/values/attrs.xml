@@ -63,4 +63,9 @@
         <attr name="nestedIcon" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="ColorPickerIcon">
+        <attr name="circle" format="reference"/>
+        <attr name="checkMark" format="reference"/>
+    </declare-styleable>
+
 </resources>

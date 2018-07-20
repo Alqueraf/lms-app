@@ -88,8 +88,8 @@ public class RCEInsertDialog extends AppCompatDialogFragment {
         final int highlightColor = RCEUtils.increaseAlpha(themeColor);
         final ColorStateList colorStateList = RCEUtils.makeEditTextColorStateList(Color.BLACK, themeColor);
 
-        mAltEditText = (AppCompatEditText) root.findViewById(R.id.altEditText);
-        mUrlEditText = (AppCompatEditText) root.findViewById(R.id.urlEditText);
+        mAltEditText = root.findViewById(R.id.altEditText);
+        mUrlEditText = root.findViewById(R.id.urlEditText);
 
         mAltEditText.setHighlightColor(highlightColor);
         mUrlEditText.setHighlightColor(highlightColor);

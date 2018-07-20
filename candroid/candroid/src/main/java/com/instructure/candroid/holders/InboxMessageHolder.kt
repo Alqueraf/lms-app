@@ -24,10 +24,12 @@ import android.widget.TextView
 import com.instructure.candroid.R
 import com.instructure.candroid.interfaces.MessageAdapterCallback
 import com.instructure.candroid.view.ViewUtils
+import com.instructure.canvasapi2.models.Attachment
 import com.instructure.canvasapi2.models.BasicUser
 import com.instructure.canvasapi2.models.Conversation
 import com.instructure.canvasapi2.models.Message
 import com.instructure.canvasapi2.utils.APIHelper
+import com.instructure.canvasapi2.utils.asAttachment
 import com.instructure.pandautils.utils.*
 import kotlinx.android.synthetic.main.viewholder_message.view.*
 import java.text.SimpleDateFormat
@@ -45,7 +47,7 @@ class InboxMessageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         // Set author info
         if (author != null) {
-            authorName.text = getAuthorTitle(author.id, conversation)
+            authorName.text = getAuthorTitle(author.id, conversation, message)
             ProfileUtils.loadAvatarForUser(authorAvatar, author)
             authorAvatar.setupAvatarA11y(author.name)
             authorAvatar.onClick { callback.onAvatarClicked(author) }
@@ -57,13 +59,10 @@ class InboxMessageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         // Set attachments
-        if (message.attachments == null || message.attachments.isEmpty()) {
-            attachmentContainer.visibility = View.GONE
-        } else {
-            attachmentContainer.visibility = View.VISIBLE
-            attachmentContainer.setAttachments(message.attachments) { action, attachment ->
-                callback.onAttachmentClicked(action, attachment)
-            }
+        val attachments: MutableList<Attachment> = message.attachments?.toMutableList() ?: mutableListOf()
+        message.mediaComment?.let { attachments.add(it.asAttachment()) }
+        attachmentContainer.setVisible(attachments.isNotEmpty()).setAttachments(attachments) { action, attachment ->
+            callback.onAttachmentClicked(action, attachment)
         }
 
         // Set body
@@ -104,7 +103,7 @@ class InboxMessageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         Locale.getDefault()
     )
 
-    private fun getAuthorTitle(myUserId: Long, conversation: Conversation): String {
+    private fun getAuthorTitle(myUserId: Long, conversation: Conversation, message: Message): String {
         // We don't want to filter by the messages participating user ids because they don't always contain the correct information
         val users = conversation.participants
 
@@ -114,10 +113,12 @@ class InboxMessageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             users.add(0, it)
         }
 
+
+
         return when (users.size) {
             0 -> ""
             1, 2 -> users.joinToString { it.name }
-            else -> "${users[0].name}, +${users.lastIndex}"
+            else -> "${users[0].name}, +${message.participatingUserIds.size - 1}"
         }
     }
 

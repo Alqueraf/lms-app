@@ -19,6 +19,8 @@ import android.webkit.URLUtil
 import com.instructure.canvasapi2.builders.RestBuilder
 import com.instructure.canvasapi2.models.CanvasTheme
 import com.instructure.canvasapi2.models.User
+import com.instructure.canvasapi2.utils.pageview.PageViewUtils
+import com.instructure.canvasapi2.utils.pageview.PandataInfo
 import java.io.File
 
 /** Preference file name **/
@@ -55,7 +57,7 @@ object ApiPrefs : PrefManager(PREFERENCE_FILE_NAME) {
 
     /* Masquerading Prefs */
     @JvmStatic
-    var canMasquerade by NBooleanPref()
+    var canBecomeUser by NBooleanPref()
     @JvmStatic
     var isMasquerading by BooleanPref()
     @JvmStatic
@@ -109,6 +111,8 @@ object ApiPrefs : PrefManager(PREFERENCE_FILE_NAME) {
                 else -> "$protocol://$notoriousDomain"
             }
 
+    var pandataInfo by GsonPref(PandataInfo::class.java)
+
     @JvmStatic
     var airwolfDomain by StringPref("", "airwolf_domain")
 
@@ -121,6 +125,9 @@ object ApiPrefs : PrefManager(PREFERENCE_FILE_NAME) {
     fun clearAllData(): Boolean {
         // Clear preferences
         clearPrefs()
+
+        // Clear PageView session ID
+        PageViewUtils.session.clear()
 
         // Clear http cache
         RestBuilder.clearCacheDirectory()

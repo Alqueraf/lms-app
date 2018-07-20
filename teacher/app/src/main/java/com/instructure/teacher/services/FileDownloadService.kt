@@ -88,9 +88,7 @@ class FileDownloadService @JvmOverloads constructor(name: String = FileUploadSer
                 return
             }
             if (route.queryParamsHash.containsKey(RouterParams.VERIFIER) && route.queryParamsHash.containsKey(RouterParams.DOWNLOAD_FRD)) {
-                if (route.url != null) {
-                    downloadFile(this, route.url.toString(), getFilename(route.url.toString()))
-                } else if (route.uri != null) {
+                if (route.uri != null) {
                     downloadFile(this, route.uri.toString(), getFilename(route.uri.toString()))
                 }
             } else {
@@ -125,7 +123,7 @@ class FileDownloadService @JvmOverloads constructor(name: String = FileUploadSer
     private fun getFilename(url: String) : String {
         val hc = URL(url).openConnection() as HttpURLConnection
         val connection = HttpHelper.redirectURL(hc)
-        var filename = ""
+        var filename : String
         // parse filename from Content-Disposition header which is a response field that is normally used to set the file name
         val headerField = connection.getHeaderField("Content-Disposition")
         if (headerField != null) {
@@ -158,6 +156,7 @@ class FileDownloadService @JvmOverloads constructor(name: String = FileUploadSer
         return attachmentFile
     }
 
+    @Suppress("DEPRECATION")
     @Throws(Exception::class)
     private fun writeAttachmentsDirectoryFromURL(url2: String, toWriteTo: File): Boolean {
         //create the new connection
@@ -173,7 +172,7 @@ class FileDownloadService @JvmOverloads constructor(name: String = FileUploadSer
         //this will be used to write the downloaded uri into the file we created
         val name = toWriteTo.name
         toWriteTo.parentFile.mkdirs()
-        var fileOutput: FileOutputStream? = null
+        val fileOutput: FileOutputStream?
         //if there is an external cache, we want to write to that
         if (applicationContext.externalCacheDir != null) {
             fileOutput = FileOutputStream(toWriteTo)
@@ -188,7 +187,7 @@ class FileDownloadService @JvmOverloads constructor(name: String = FileUploadSer
 
             //create a buffer...
             val buffer = ByteArray(1024)
-            var bufferLength = 0 //used to store a temporary size of the buffer
+            var bufferLength : Int //used to store a temporary size of the buffer
 
             //now, read through the input buffer and write the contents to the file
             while (true) {

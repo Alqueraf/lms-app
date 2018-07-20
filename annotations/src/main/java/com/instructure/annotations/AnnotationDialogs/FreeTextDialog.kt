@@ -38,19 +38,21 @@ class FreeTextDialog : AppCompatDialogFragment() {
         retainInstance = true
     }
 
-    private var mFreeTextCallback: (cancelled: Boolean, text: String) -> Unit by Delegates.notNull()
+    private var mFreeTextCallback: (cancelled: Boolean, isEditing: Boolean, text: String) -> Unit by Delegates.notNull()
     private var mCurrentText = ""
+    private var isEditing: Boolean = false
 
     @Suppress("unused")
     private fun FreeTextDialog() { }
 
     companion object {
         @JvmStatic
-        fun getInstance(manager: FragmentManager, currentText: String = "", callback: (Boolean, String) -> Unit) : FreeTextDialog {
+        fun getInstance(manager: FragmentManager, isEditing: Boolean, currentText: String = "", callback: (Boolean, Boolean, String) -> Unit) : FreeTextDialog {
             manager.dismissExisting<FreeTextDialog>()
             val dialog = FreeTextDialog()
             dialog.mFreeTextCallback = callback
             dialog.mCurrentText = currentText
+            dialog.isEditing = isEditing
             return dialog
         }
     }
@@ -67,10 +69,10 @@ class FreeTextDialog : AppCompatDialogFragment() {
                 .setTitle(context.getString(R.string.inputText))
                 .setView(view)
                 .setPositiveButton(activity.getString(android.R.string.ok), { _, _ ->
-                    mFreeTextCallback(false, freeTextEditText.text.toString())
+                    mFreeTextCallback(false, isEditing, freeTextEditText.text.toString())
                 })
                 .setNegativeButton(activity.getString(R.string.cancel), { _, _ ->
-                    mFreeTextCallback(true, "")
+                    mFreeTextCallback(true, isEditing,"")
 
                 })
                 .create()

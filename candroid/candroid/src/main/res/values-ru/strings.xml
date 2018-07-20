@@ -145,7 +145,9 @@
     <string name="toDoNoDueDate">Срок выполнения не задан</string>
 
     <string name="dueAt">Срок выполнения</string>
+    <string name="dueAtTime">Срок выполнения в %s</string>
     <string name="toDoDue">Срок</string>
+    <string name="due">Срок %1$s</string>
     <plurals name="to_do_needs_grading">
       <item quantity="one">%d требует оценки</item>
       <item quantity="few">%d требуют оценки</item>
@@ -153,6 +155,23 @@
       <item quantity="other">%d требуют оценки</item>
     </plurals>
     <string name="myFiles">Файлы</string>
+    <string name="createAFolder">Создать папку</string>
+    <string name="createFolder">Создать папку</string>
+    <string name="createAFile">Создать файл</string>
+    <string name="createFileFolderFabContentDesc">Показать кнопки создания файла и создания папки</string>
+    <string name="folderCreationError">При создании папки произошла ошибка.</string>
+    <string name="rename">Переименовать</string>
+    <string name="renameFile">Переименовать файл</string>
+    <string name="renameFolder">Переименовать папку</string>
+    <string name="blankName">Необходимо указать имя</string>
+    <string name="confirmDeleteFile">Вы действительно хотите удалить файл \'%s\'? Это действие невозможно отменить.</string>
+    <string name="confirmDeleteEmptyFolder">Вы действительно хотите удалить папку \'%s\'? Это действие невозможно отменить.</string>
+    <plurals name="confirmDeleteFolder">
+        <item quantity="one">Вы действительно хотите удалить папку \'%1$s\', включая находящийся в ней элемент %2$d? Это действие невозможно отменить.</item>
+        <item quantity="few">Вы действительно хотите удалить папку \'%1$s\', включая находящиеся в ней элементы %2$d? Это действие невозможно отменить.</item>
+        <item quantity="many">Вы действительно хотите удалить папку \'%1$s\', включая находящиеся в ней элементы %2$d? Это действие невозможно отменить.</item>
+        <item quantity="other">Вы действительно хотите удалить папку \'%1$s\', включая находящиеся в ней элементы %2$d? Это действие невозможно отменить.</item>
+    </plurals>
     <string name="settings">Настройки</string>
     <string name="name">Имя</string>
     <string name="email">Адрес электронной почты</string>
@@ -362,6 +381,8 @@
 	<string name="errorPostingAnnouncement">Возникла ошибка при публикации объявления.</string>
 	<string name="errorPostingDiscussion">Возникла ошибка при публикации обсуждения.</string>
 	<string name="allowThreading">Разрешить ответы с деревом сообщений</string>
+    <string name="usersMustPost">Пользователи должны публиковать сообщения, прежде чем увидят ответы</string>
+    <string name="allowUserComments">Разрешить пользователям комментирование</string>
 	<string name="message">Сообщение</string>
 	<string name="title">Заголовок</string>
 
@@ -451,6 +472,7 @@
     <string name="subTypeOnlineQuiz">Онлайн тест</string>
 	<string name="subTypeMediaRecording">Запись на носитель</string>
     <string name="sub_type_lti_launch">Пуск LTI</string>
+    <string name="subTypeDiscussionTopic">Обсуждение</string>
     <string name="turnInByHand">Вы должны вернуть это задание лично</string>
 	<string name="noSubRequired">Отправка выполненной работы не требуется</string>
 	<string name="noTurnInOnMobile">Мобильная отправка выполненной работы не поддерживается</string>
@@ -580,6 +602,7 @@
     <string name="uploadMyFiles">Мои файлы</string>
     <string name="uploadCourseFiles">Файлы курса</string>
 
+    <string name="uploadToSubmissionComment">Загрузить в комментарий к отправке</string>
     <!-- ChangeLog Dialog-->
     <string name="changelog">Список изменений</string>
 
@@ -618,14 +641,6 @@
 
     <string name="notoriousSubmissionInProgress">Отправка файлов &#8230; Проверьте панель уведомлений на наличие обновлений.</string>
     <string name="notoriousSubmissionSuccessful">Отправка файлов выполнена</string>
-
-    <string name="pinned_icon">Иконка для закрепленного обсуждения</string>
-    <string name="pin_discussion">Закрепить Обсуждение</string>
-    <string name="unpin_discussion">Открепить Обсуждение</string>
-    <string name="discussion_pinned">Обсуждение закреплено</string>
-    <string name="pinned_discussions">Прикрепленные обсуждения</string>
-    <string name="discussion_unpinned">Обсуждение откреплено</string>
-    <string name="empty_discussions">В данном разделе обсуждения отсутствуют.</string>
 
     <string name="bio">Биография</string>
     <string name="draft">Черновик</string>
@@ -856,6 +871,7 @@
     <string name="locked_mastery_paths">Заблокировано до оценки \"%s\"</string>
     <string name="locked_icon">Заблокированная пиктограмма</string>
     <string name="choose_assignment_group">Выбрать группу заданий</string>
+    <string name="chooseAssignmentPath">Выберите путь задания</string>
     <string name="select">Выбрать</string>
     <string name="choice_position">Выбор %d</string>
     <string name="updating_module_info">Обновление информации о модуле&#8230;</string>
@@ -885,13 +901,13 @@
     </array>
 
     <string name="launch_link_in_external_browser">Перейдите по ссылке во внешнем браузере</string>
-    <string name="gaugeLaunchFailure">Gauge невозможно загрузить в данный момент.</string>
-
+    <string name="ltiLaunchFailure">В данный момент загрузка этого LTI невозможна.</string>
     <string name="urlSubmission">Отправка на URL</string>
     <string name="assignmentDeletedError">Это задание более недоступно.</string>
     <string name="homePageIdForNotifications">Недавно выполненные действия</string>
     <string name="homePageIdForModules">Модули</string>
     <string name="homePageIdForAssignments">Задания</string>
+
     <string name="homePageIdForSyllabus">Содержание курса</string>
 
     <string name="contentDescriptionWidgetRefresh">Обновить виджет</string>
@@ -905,9 +921,48 @@
     <string name="finalGrade">Итоговая оценка</string>
 
     <string name="moreThan99">99+</string>
-    <string name="dot_with_spaces">  \u2022  </string>
+    <string name="max_count">99+</string>
 
     <string name="opensInWebView">Открывается в веб-представлении</string>
     <string name="unsupportedTabLabel">Не поддерживается на этом устройстве</string>
+
+    <string name="downloadingFile">Скачивание</string>
+    <string name="downloadFailed">Сбой скачивания</string>
+    <string name="downloadSuccessful">Скачивание завершено</string>
+
+    <string name="full_due_date_details">Полная информация о сроке выполнения</string>
+    <string name="submissions">Отправки</string>
+    <string name="attachment">Вложение</string>
+    <string name="contentDescription_back">Вернуться назад</string>
+
+    <plurals name="quantityPointsAbbreviated">
+        <item quantity="one">%s баллов</item>
+        <item quantity="few">%s баллов</item>
+        <item quantity="many">%s баллов</item>
+        <item quantity="other">%s баллов</item>
+    </plurals>
+    <plurals name="quantityPointsFull">
+        <item quantity="one">%s балл</item>
+        <item quantity="few">%s баллов</item>
+        <item quantity="many">%s баллов</item>
+        <item quantity="other">%s баллов</item>
+    </plurals>
+    <string name="capitalTo">Кому</string>
+
+
+    <string name="unableToViewInBrowser">Не удалось найти внешнее приложение для открытия этого инструмента LTI.</string>
+    <string name="commentUpload">Загрузка комментария</string>
+    <string name="unableToUploadMediaComment">Для отправки мультимедийного комментария отправьте или удалите свой неотправленный текстовый комментарий.</string>
+
+    <string name="frontPage">Первая страница</string>
+    <string name="editPage">Редактировать страницу</string>
+    <string name="description">Описание</string>
+    <string name="pageSuccessfullyUpdated">Страница успешно обновлена.</string>
+    <string name="errorSavingPage">Произошла ошибка при попытке сохранения этой страницы. Повторить попытку.</string>
+    <string name="pageTitleMustBeSet">Необходимо задать заголовок страницы.</string>
+    <string name="pageDetails">Данные страницы</string>
+    <string name="saving">Выполняется сохранение</string>
+    <string name="confirmDeleteEvent">Вы действительно хотите удалить это событие?</string>
+    <string name="conferencesNotSupported">Конференции еще не поддерживаются на мобильных устройствах.</string>
 
 </resources>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">Пытаетесь войти в Canvas Network?</string>
     <string name="remove">Удалить</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">Подмена</string>
     <string name="userId">Идентификатор пользователя</string>
     <string name="domain">Домен</string>
 
-    <string name="masqueradingUserId">Подмена ID пользователя</string>
-    <string name="masqueradingUserDomain">Подмена домена</string>
-    <string name="masqueradingBegin">Начать подмену</string>
-    <string name="masqueradingStop">Остановить подмену</string>
-
+    <string name="actAsUser">Действовать как пользователь</string>
+    <string name="stopActAsUser">Перестать действовать как пользователь</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Удалить пользователя?</string>
     <string name="removedForever">Вам необходимо повторно войти в систему с учетными данными этого пользователя, чтобы получить доступ к контенту.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Нет</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">Рядом с вами</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Сразу за вами</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Предыдущие идентификаторы</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Найти мою школу</string>
-    <string name="appTypeTeacher">Преподаватель</string>
-    <string name="appTypeStudent">Студент</string>
-    <string name="appTypeParent">Родитель</string>
     <string name="canvasLowerCase">canvas</string>
     <string name="whatsYourSchoolName">Как называется ваше учебное заведение?</string>
     <string name="next">Далее</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">Прокрутить, чтобы просмотреть все детали</string>
 
     <string name="masqueradeErrorUserId">Вам необходимо ввести идентификатор пользователя.</string>
-    <string name="masqueradeErrorDomain">Вам необходимо указать домен.</string>
+    <string name="masqueradeErrorDomain">Необходимо указать действительный домен.</string>
     <string name="masqueradeError">Ошибка при попытке подмены.</string>
+    <string name="masqueradeInfo">\"Действовать как\" является по существу входом в систему в качестве этого пользователя без пароля. Вы сможете выполнять любые действия, как будто вы являетесь этим пользователем, и с точки зрения других пользователей это будет выглядеть так, как будто именно этот пользователь выполнил это действие. Тем не менее, в контрольных журналах записывается информация от том, что именно вы выполняли указанные действия от имени этого пользователя.</string>
+    <string name="masqueradingAs">Вы действуете как %s</string>
+    <string name="stopActingAsTitle">Прекратить действовать как...</string>
+    <string name="stopActingAsMessage">Вы прекратите действовать как %s и вернетесь в свою учетную запись.</string>
+
+    <string name="weMadeChanges">Мы добавили несколько изменений.</string>
+    <string name="whatsNewText">Посмотрите, что нового</string>
 </resources>

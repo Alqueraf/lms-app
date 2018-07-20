@@ -29,9 +29,10 @@ import com.instructure.canvasapi2.models.AssignmentGroup
 import com.instructure.canvasapi2.models.CanvasContext
 import com.instructure.canvasapi2.models.GradingPeriod
 import com.instructure.canvasapi2.utils.ApiPrefs
+import com.instructure.interactions.router.Route
 import com.instructure.pandautils.fragments.BaseExpandableSyncFragment
-import com.instructure.pandautils.utils.ParcelableArg
 import com.instructure.pandautils.utils.ColorKeeper
+import com.instructure.pandautils.utils.ParcelableArg
 import com.instructure.pandautils.utils.ThemePrefs
 import com.instructure.pandautils.utils.ViewStyler
 import com.instructure.teacher.BuildConfig
@@ -40,9 +41,11 @@ import com.instructure.teacher.adapters.AssignmentAdapter
 import com.instructure.teacher.events.AssignmentUpdatedEvent
 import com.instructure.teacher.factory.AssignmentListPresenterFactory
 import com.instructure.teacher.presenters.AssignmentListPresenter
-import com.instructure.interactions.router.Route
 import com.instructure.teacher.router.RouteMatcher
-import com.instructure.teacher.utils.*
+import com.instructure.teacher.utils.RecyclerViewUtils
+import com.instructure.teacher.utils.setHeaderVisibilityListener
+import com.instructure.teacher.utils.setupBackButton
+import com.instructure.teacher.utils.setupMenu
 import com.instructure.teacher.viewinterface.AssignmentListView
 import instructure.androidblueprint.PresenterFactory
 import kotlinx.android.synthetic.main.fragment_assignment_list.*

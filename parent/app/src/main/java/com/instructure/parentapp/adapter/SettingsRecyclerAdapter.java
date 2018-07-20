@@ -21,6 +21,7 @@ import android.content.Context;
 import android.view.View;
 
 import com.instructure.canvasapi2.models.Student;
+import com.instructure.canvasapi2.models.User;
 import com.instructure.parentapp.binders.SettingsBinder;
 import com.instructure.parentapp.holders.SettingsViewHolder;
 import com.instructure.parentapp.interfaces.AdapterToFragmentCallback;
@@ -32,17 +33,17 @@ import instructure.androidblueprint.SyncRecyclerAdapter;
  * Copyright (c) 2016 Instructure. All rights reserved.
  */
 
-public class SettingsRecyclerAdapter extends SyncRecyclerAdapter<Student, SettingsViewHolder> {
+public class SettingsRecyclerAdapter extends SyncRecyclerAdapter<User, SettingsViewHolder> {
 
-    private AdapterToFragmentCallback<Student> mAdapterToFragmentCallback;
+    private AdapterToFragmentCallback<User> mAdapterToFragmentCallback;
 
-    public SettingsRecyclerAdapter(Context context, SyncPresenter presenter, AdapterToFragmentCallback<Student> adapterToFragmentCallback) {
+    public SettingsRecyclerAdapter(Context context, SyncPresenter presenter, AdapterToFragmentCallback<User> adapterToFragmentCallback) {
         super(context, presenter);
         mAdapterToFragmentCallback = adapterToFragmentCallback;
     }
 
     @Override
-    public void bindHolder(Student student, SettingsViewHolder holder, int position) {
+    public void bindHolder(User student, SettingsViewHolder holder, int position) {
         SettingsBinder.bind(getContext(), holder, student, mAdapterToFragmentCallback);
     }
 

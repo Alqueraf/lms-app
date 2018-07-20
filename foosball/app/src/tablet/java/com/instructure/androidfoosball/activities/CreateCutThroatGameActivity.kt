@@ -59,14 +59,14 @@ class CreateCutThroatGameActivity : AppCompatActivity() {
 
     private val nfcListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            val nfc = dataSnapshot.getValue(NfcAssignment::class.java) ?: return
+            val nfc = dataSnapshot.getValue(IncomingData::class.java) ?: return
             if (nfc.sideOne.isBlank() && nfc.sideTwo.isBlank()) return
             fun getUserById(userId: String): User? = App.realm.where(User::class.java).equalTo("id", userId).findFirst()
             when {
                 nfc.sideOne.isNotBlank() -> getUserById(nfc.sideOne)?.let { addUser(it) }
                 nfc.sideTwo.isNotBlank() -> getUserById(nfc.sideTwo)?.let { addUser(it) }
             }
-            mIncomingNfcRef.setValue(NfcAssignment())
+            mIncomingNfcRef.setValue(IncomingData())
         }
 
         override fun onCancelled(databaseError: DatabaseError) { }
@@ -109,6 +109,9 @@ class CreateCutThroatGameActivity : AppCompatActivity() {
 
         // Start game
         startGameButton.onClick { createGame() }
+
+        // Setup QR code
+        qrCode.setTableSide(mTable, TableSide.SIDE_1)
     }
 
     private fun updateDurationRange() {

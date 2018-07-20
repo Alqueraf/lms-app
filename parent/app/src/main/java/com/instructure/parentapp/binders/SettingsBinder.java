@@ -21,6 +21,7 @@ import android.content.Context;
 import android.view.View;
 
 import com.instructure.canvasapi2.models.Student;
+import com.instructure.canvasapi2.models.User;
 import com.instructure.pandautils.utils.Utils;
 import com.instructure.parentapp.BuildConfig;
 import com.instructure.parentapp.R;
@@ -33,13 +34,13 @@ public class SettingsBinder extends BaseBinder {
     public static void bind(
             final Context context,
             final SettingsViewHolder holder,
-            final Student student,
-            final AdapterToFragmentCallback<Student> adapterToFragmentCallback) {
+            final User student,
+            final AdapterToFragmentCallback<User> adapterToFragmentCallback) {
 
-        holder.name.setText(student.getStudentName());
+        holder.name.setText(student.getShortName());
         Utils.testSafeContentDescription(holder.name,
                 String.format(context.getString(R.string.name_text_content_desc), holder.getAdapterPosition()),
-                student.getStudentName(),
+                student.getShortName(),
                 BuildConfig.IS_TESTING);
 
         Picasso.with(context).load(student.getAvatarUrl()).placeholder(R.drawable.ic_cv_user).error(R.drawable.ic_cv_user).fit().into(holder.avatar);

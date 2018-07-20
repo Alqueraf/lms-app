@@ -71,7 +71,9 @@ class AssignmentOverrideView @JvmOverloads constructor(
      * @param removeOverrideClickListener Listener for when the 'Remove' button is clicked; Returns true if we should show the 'Remove' button, false otherwise
      * @param assigneeClickListener Listener for when assignees has changed
      */
+    @Suppress("UNUSED_PARAMETER")
     fun setupOverride(
+            //index is used just for UI testing
             index: Int,
             dueDateGroup: DueDateGroup,
             showRemove: Boolean,

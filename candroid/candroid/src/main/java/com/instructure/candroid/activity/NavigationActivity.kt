@@ -14,12 +14,9 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 @file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
-
 package com.instructure.candroid.activity
 
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -30,7 +27,6 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.internal.BottomNavigationItemView
@@ -39,7 +35,6 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.MenuItemCompat
@@ -58,25 +53,33 @@ import com.instructure.candroid.events.CoreDataFinishedLoading
 import com.instructure.candroid.events.ShowGradesToggledEvent
 import com.instructure.candroid.events.UserUpdatedEvent
 import com.instructure.candroid.fragment.*
-import com.instructure.candroid.model.PushNotification
+import com.instructure.candroid.router.RouteMatcher
+import com.instructure.candroid.router.RouteResolver
 import com.instructure.candroid.tasks.LogoutAsyncTask
 import com.instructure.candroid.tasks.SwitchUsersAsyncTask
-import com.instructure.candroid.util.*
-import com.instructure.canvasapi2.models.CanvasContext
-import com.instructure.canvasapi2.models.LaunchDefinition
-import com.instructure.canvasapi2.models.User
+import com.instructure.candroid.util.Analytics
+import com.instructure.candroid.util.AppShortcutManager
+import com.instructure.candroid.util.StudentPrefs
+import com.instructure.canvasapi2.managers.CourseManager
+import com.instructure.canvasapi2.managers.GroupManager
+import com.instructure.canvasapi2.models.*
 import com.instructure.canvasapi2.utils.APIHelper
 import com.instructure.canvasapi2.utils.ApiPrefs
 import com.instructure.canvasapi2.utils.Logger
 import com.instructure.canvasapi2.utils.MasqueradeHelper
-import com.instructure.canvasapi2.utils.weave.weave
+import com.instructure.canvasapi2.utils.weave.*
 import com.instructure.interactions.FragmentInteractions
+import com.instructure.interactions.FullScreenInteractions
 import com.instructure.interactions.Navigation
+import com.instructure.interactions.router.Route
+import com.instructure.interactions.router.RouteContext
+import com.instructure.interactions.router.RouteType
+import com.instructure.interactions.router.RouterParams
 import com.instructure.loginapi.login.dialog.MasqueradingDialog
 import com.instructure.pandautils.dialogs.UploadFilesDialog
+import com.instructure.pandautils.models.PushNotification
 import com.instructure.pandautils.receivers.PushExternalReceiver
 import com.instructure.pandautils.utils.*
-import com.instructure.pandautils.utils.Const
 import com.instructure.pandautils.utils.Const.LANGUAGES_PENDING_INTENT_ID
 import com.instructure.pandautils.utils.Const.LANGUAGES_PENDING_INTENT_KEY
 import kotlinx.android.synthetic.main.activity_navigation.*
@@ -88,17 +91,16 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.OnMasqueradingSet {
+class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.OnMasqueradingSet, FullScreenInteractions {
 
+    private var routeJob: WeaveJob? = null
     private var debounceJob: Job? = null
     private var drawerItemSelectedJob: Job? = null
     private var mDrawerToggle: ActionBarDrawerToggle? = null
 
     //endregion
 
-    override fun contentResId(): Int {
-        return R.layout.activity_navigation
-    }
+    override fun contentResId(): Int = R.layout.activity_navigation
 
     private val isDrawerOpen: Boolean
         get() = !(drawerLayout == null || navigationDrawer == null) && drawerLayout.isDrawerOpen(navigationDrawer)
@@ -109,19 +111,19 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
             delay(250)
             when (v.id) {
                 R.id.navigationDrawerItem_files -> {
-                    val user = ApiPrefs.user
-                    if (user != null) {
-                        val bundle = FileListFragment.createBundle(0, CanvasContext.currentUserContext(user))
-                        addFragment(FragUtils.getFrag(FileListFragment::class.java, bundle))
-                    }
+                    ApiPrefs.user?.let { handleRoute(FileListFragment.makeRoute(it)) }
                 }
-                R.id.navigationDrawerItem_gauge -> {
+                R.id.navigationDrawerItem_gauge, R.id.navigationDrawerItem_arc -> {
                     val launchDefinition = v.tag as? LaunchDefinition
-                    if (launchDefinition != null) startActivity(GaugeActivity.createIntent(this@NavigationActivity, launchDefinition))
+                    if (launchDefinition != null) startActivity(LTIActivity.createIntent(this@NavigationActivity, launchDefinition))
                 }
-                R.id.navigationDrawerItem_bookmarks -> addFragment(BookmarksFragment.newInstance {
-                    RouterUtils.routeUrl(this@NavigationActivity, it.url, true)
-                }, true)
+                R.id.navigationDrawerItem_bookmarks -> {
+                    val route = BookmarksFragment.makeRoute(ApiPrefs.user)
+                    addFragment(
+                            BookmarksFragment.newInstance(route) {
+                                RouteMatcher.routeUrl(this@NavigationActivity, it.url)
+                            }, route)
+                }
                 R.id.navigationDrawerItem_changeUser -> SwitchUsersAsyncTask().execute()
                 R.id.navigationDrawerItem_logout -> {
                     AlertDialog.Builder(this@NavigationActivity)
@@ -159,7 +161,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         Handler().post {
             (currentFragment as? FragmentInteractions)?.let {
                 it.applyTheme()
-                setBottomBarItemSelected(it as Fragment, it)
+                setBottomBarItemSelected(it as Fragment)
             }
         }
     }
@@ -223,6 +225,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         super.onDestroy()
         debounceJob?.cancel()
         drawerItemSelectedJob?.cancel()
+        routeJob?.cancel()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -231,14 +234,15 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         if (requestCode == UploadFilesDialog.CAMERA_PIC_REQUEST ||
             requestCode == UploadFilesDialog.PICK_FILE_FROM_DEVICE ||
             requestCode == UploadFilesDialog.PICK_IMAGE_GALLERY) {
-            //File Dialog Fragment will not be notified of onActivityResult(), alert manually
+            // UploadFilesFragment will not be notified of onActivityResult(), alert manually
             OnActivityResults(ActivityResult(requestCode, resultCode, data), null).postSticky()
         }
     }
 
     override fun loadLandingPage(clearBackStack: Boolean) {
         if(clearBackStack) clearBackStack(DashboardFragment::class.java)
-        addFragment(FragUtils.getFrag(DashboardFragment::class.java))
+        val dashboardRoute = DashboardFragment.makeRoute(ApiPrefs.user)
+        addFragment(DashboardFragment.newInstance(dashboardRoute), dashboardRoute)
 
         if (intent.extras?.containsKey(AppShortcutManager.APP_SHORTCUT_PLACEMENT) == true) {
             // Launch to the app shortcut placement
@@ -249,50 +253,48 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
 
             when (placement) {
                 AppShortcutManager.APP_SHORTCUT_BOOKMARKS -> {
-                    addFragment(BookmarksFragment.newInstance { RouterUtils.routeUrl(this, it.url, true) },true)
+                    val route = BookmarksFragment.makeRoute(ApiPrefs.user)
+                    addFragment(BookmarksFragment.newInstance(route) { RouteMatcher.routeUrl(this, it.url) }, route)
                 }
                 AppShortcutManager.APP_SHORTCUT_CALENDAR -> {
-                    addFragment(FragUtils.getFrag(CalendarListViewFragment::class.java), true)
+                    val route = CalendarListViewFragment.makeRoute()
+                    addFragment(CalendarListViewFragment.newInstance(route), route)
                 }
                 AppShortcutManager.APP_SHORTCUT_TODO -> {
-                    addFragment(FragUtils.getFrag(ToDoListFragment::class.java), true)
+                    val route = ToDoListFragment.makeRoute(ApiPrefs.user!!)
+                    addFragment(ToDoListFragment.newInstance(route), route)
                 }
                 AppShortcutManager.APP_SHORTCUT_NOTIFICATIONS -> {
-                    addFragment(FragUtils.getFrag(NotificationListFragment::class.java), true)
+                    val route = NotificationListFragment.makeRoute(ApiPrefs.user!!)
+                    addFragment(NotificationListFragment.newInstance(route), route)
                 }
                 AppShortcutManager.APP_SHORTCUT_INBOX -> {
-                    addFragment(FragUtils.getFrag(InboxFragment::class.java), true)
-                }
-                else -> {
-                    addFragment(FragUtils.getFrag(DashboardFragment::class.java), true)
+                    val route = InboxFragment.makeRoute()
+                    addFragment(InboxFragment.newInstance(route), route)
                 }
             }
         }
     }
 
-    override fun showHomeAsUp(): Boolean {
-        return false
-    }
+    override fun showHomeAsUp(): Boolean = false
 
-    override fun showTitleEnabled(): Boolean {
-        return true
-    }
+    override fun showTitleEnabled(): Boolean = true
 
     override fun onUpPressed() {}
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        //Switching languages will trigger this, so we check for our Pending intent id
+        // Switching languages will trigger this, so we check for our Pending intent id
         if (intent.hasExtra(LANGUAGES_PENDING_INTENT_KEY) && intent.getIntExtra(LANGUAGES_PENDING_INTENT_KEY, 0) != LANGUAGES_PENDING_INTENT_ID) {
             handlePushNotification(hasUnreadPushNotification(intent.extras))
         }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        //Setup the actionbar but make sure we call super last so the fragments can override it as needed.
+        // Setup the actionbar but make sure we call super last so the fragments can override it as needed.
         mDrawerToggle?.onConfigurationChanged(newConfig)
         super.onConfigurationChanged(newConfig)
-    }
+}
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -341,6 +343,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         //Navigation items
         navigationDrawerItem_files.setOnClickListener(mNavigationDrawerItemClickListener)
         navigationDrawerItem_gauge.setOnClickListener(mNavigationDrawerItemClickListener)
+        navigationDrawerItem_arc.setOnClickListener(mNavigationDrawerItemClickListener)
         navigationDrawerItem_bookmarks.setOnClickListener(mNavigationDrawerItemClickListener)
         navigationDrawerItem_changeUser.setOnClickListener(mNavigationDrawerItemClickListener)
         navigationDrawerItem_logout.setOnClickListener(mNavigationDrawerItemClickListener)
@@ -394,7 +397,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
 
         ViewStyler.themeToolbar(this, toolbar, ThemePrefs.primaryColor, ThemePrefs.primaryTextColor)
 
-        navigationDrawerItem_startMasquerading.setVisible(!ApiPrefs.isMasquerading && ApiPrefs.canMasquerade == true)
+        navigationDrawerItem_startMasquerading.setVisible(!ApiPrefs.isMasquerading && ApiPrefs.canBecomeUser == true)
         navigationDrawerItem_stopMasquerading.setVisible(ApiPrefs.isMasquerading)
     }
 
@@ -414,17 +417,32 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(errorCode: CanvasErrorCode?) {
+        if (errorCode != null && errorCode.code == 400) {
+            Toast.makeText(context, getString(R.string.fileQuotaExceeded), Toast.LENGTH_SHORT).show()
+        }
+    }
     //endregion
 
     //region Bottom Bar Navigation
 
     private val bottomBarItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item: MenuItem ->
         when (item.itemId) {
-            R.id.bottomNavigationCourses -> addFragment(FragUtils.getFrag(DashboardFragment::class.java))
-            R.id.bottomNavigationCalendar -> addFragment(FragUtils.getFrag(CalendarListViewFragment::class.java))
-            R.id.bottomNavigationToDo -> addFragment(FragUtils.getFrag(ToDoListFragment::class.java))
-            R.id.bottomNavigationNotifications -> addFragment(FragUtils.getFrag(NotificationListFragment::class.java))
-            R.id.bottomNavigationInbox -> addFragment(FragUtils.getFrag(InboxFragment::class.java))
+            R.id.bottomNavigationCourses -> handleRoute(Route(DashboardFragment::class.java, ApiPrefs.user))
+            R.id.bottomNavigationCalendar -> handleRoute(CalendarListViewFragment.makeRoute())
+            R.id.bottomNavigationToDo -> {
+                val route = ToDoListFragment.makeRoute(ApiPrefs.user!!)
+                addFragment(ToDoListFragment.newInstance(route), route)
+            }
+            R.id.bottomNavigationNotifications ->{
+                val route = NotificationListFragment.makeRoute(ApiPrefs.user!!)
+                addFragment(NotificationListFragment.newInstance(route), route)
+            }
+            R.id.bottomNavigationInbox -> {
+                val route = InboxFragment.makeRoute()
+                addFragment(InboxFragment.newInstance(route), route)
+            }
         }
         true
     }
@@ -446,11 +464,20 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
 
         if(!abortReselect) {
             when (item.itemId) {
-                R.id.bottomNavigationCourses -> addFragment(FragUtils.getFrag(DashboardFragment::class.java))
-                R.id.bottomNavigationCalendar -> addFragment(FragUtils.getFrag(CalendarListViewFragment::class.java))
-                R.id.bottomNavigationToDo -> addFragment(FragUtils.getFrag(ToDoListFragment::class.java))
-                R.id.bottomNavigationNotifications -> addFragment(FragUtils.getFrag(NotificationListFragment::class.java))
-                R.id.bottomNavigationInbox -> addFragment(FragUtils.getFrag(InboxFragment::class.java))
+                R.id.bottomNavigationCourses -> handleRoute(Route(DashboardFragment::class.java, ApiPrefs.user))
+                R.id.bottomNavigationCalendar -> handleRoute(CalendarListViewFragment.makeRoute())
+                R.id.bottomNavigationToDo -> {
+                    val route = ToDoListFragment.makeRoute(ApiPrefs.user!!)
+                    addFragment(ToDoListFragment.newInstance(route), route)
+                }
+                R.id.bottomNavigationNotifications -> {
+                    val route = NotificationListFragment.makeRoute(ApiPrefs.user!!)
+                    addFragment(NotificationListFragment.newInstance(route), route)
+                }
+                R.id.bottomNavigationInbox -> {
+                    val route = InboxFragment.makeRoute()
+                    addFragment(InboxFragment.newInstance(route), route)
+                }
             }
         }
     }
@@ -477,7 +504,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         /* Manually apply content description on each MenuItem since BottomNavigationView won't
         automatically set it from either the title or content description specified in the menu xml */
         loop@ bottomBar.menu.items.forEach {
-            var title = if (it.itemId == itemId) getString(R.string.selected) + " " + it.title else it.title
+            val title = if (it.itemId == itemId) getString(R.string.selected) + " " + it.title else it.title
             // skip inbox, we set it with the unread count even if there are no new messages
             if(it.itemId != R.id.bottomNavigationInbox) {
                 MenuItemCompat.setContentDescription(it, title)
@@ -488,7 +515,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
     /**
      * Determines which tab is highlighted in the bottom navigation bar.
      */
-    private fun setBottomBarItemSelected(fragment: Fragment, interactions: FragmentInteractions) {
+    private fun setBottomBarItemSelected(fragment: Fragment) {
         when(fragment) {
             //Calendar
             is CalendarListViewFragment -> setBottomBarItemSelected(R.id.bottomNavigationCalendar)
@@ -497,8 +524,8 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
             is ToDoListFragment -> setBottomBarItemSelected(R.id.bottomNavigationToDo)
             //Notifications
             is NotificationListFragment-> {
-                setBottomBarItemSelected(if(interactions.canvasContext.isCourseOrGroup) R.id.bottomNavigationCourses
-                                         else R.id.bottomNavigationNotifications)
+                setBottomBarItemSelected(if(fragment.isCourseOrGroup()) R.id.bottomNavigationCourses
+                else R.id.bottomNavigationNotifications)
             }
             //Inbox
             is InboxFragment,
@@ -554,110 +581,100 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         }
     }
 
-    override fun <F> addFragment(fragment: F) where F : Fragment, F : FragmentInteractions {
-        addFragment(fragment, false)
+    override fun handleRoute(route: Route) {
+        if(routeJob?.isActive == true) return
+
+        routeJob = tryWeave {
+            if(route.routeContext == RouteContext.EXTERNAL) showLoadingIndicator()
+
+            // When statements not being used, for some reason they are breaking with the Route enum types.
+            if(route.canvasContext == null) {
+                val contextId = Route.extractCourseId(route)
+                if (contextId != 0L) {
+                    when {
+                        RouteContext.FILE == route.routeContext -> {
+                            if (route.queryParamsHash.containsKey(RouterParams.VERIFIER) && route.queryParamsHash.containsKey(RouterParams.DOWNLOAD_FRD)) {
+                                if(route.uri != null) openMedia(CanvasContext.getGenericContext(CanvasContext.Type.COURSE, contextId, ""), route.uri.toString())
+                            }
+                            route.paramsHash[RouterParams.FILE_ID]?.let { handleSpecificFile(contextId, it) }
+
+                            if(route.canvasContext != null) addFragment(RouteResolver.getFragment(route), route)
+                        }
+                        RouteContext.LTI == route.routeContext -> {
+                            val contextType = route.getContextType()
+                            when (contextType) {
+                                CanvasContext.Type.COURSE -> {
+                                    route.canvasContext = awaitApi<Course> { CourseManager.getCourse(contextId, it, false) }
+                                    if(route.canvasContext == null) showMessage(getString(R.string.could_not_route_course))
+                                }
+                                CanvasContext.Type.GROUP -> {
+                                    route.canvasContext = awaitApi<Group> { GroupManager.getDetailedGroup(contextId, it, false) }
+                                    if(route.canvasContext == null) showMessage(getString(R.string.could_not_route_group))
+                                }
+                                CanvasContext.Type.USER -> route.canvasContext = ApiPrefs.user
+                                else -> showMessage(getString(R.string.could_not_route_unknown))
+                            }
+
+                            route.canvasContext?.let {
+                                val ltiRoute = LTIWebViewFragment.makeRoute(it, route.uri.toString())
+                                RouteMatcher.route(this@NavigationActivity, ltiRoute)
+                            }
+                        }
+                        RouteContext.NOTIFICATION_PREFERENCES == route.routeContext -> {
+                            Analytics.trackAppFlow(this@NavigationActivity, NotificationPreferencesActivity::class.java)
+                            startActivity(Intent(this@NavigationActivity, NotificationPreferencesActivity::class.java))
+                        }
+                        else -> {
+                            //fetch the CanvasContext
+                            val contextType = route.getContextType()
+                            when (contextType) {
+                                CanvasContext.Type.COURSE -> {
+                                    route.canvasContext = awaitApi<Course> { CourseManager.getCourse(contextId, it, false) }
+                                    if(route.canvasContext == null) showMessage(getString(R.string.could_not_route_course))
+                                }
+                                CanvasContext.Type.GROUP -> {
+                                    route.canvasContext = awaitApi<Group> { GroupManager.getDetailedGroup(contextId, it, false) }
+                                    if(route.canvasContext == null) showMessage(getString(R.string.could_not_route_group))
+                                }
+                                CanvasContext.Type.USER -> route.canvasContext = ApiPrefs.user
+                                else -> showMessage(getString(R.string.could_not_route_unknown))
+                            }
+
+                            if(route.canvasContext != null) addFragment(RouteResolver.getFragment(route), route)
+                        }
+                    }
+                } else {
+                    // Some routes have no CanvasContext
+                    addFragment(RouteResolver.getFragment(route), route)
+                }
+            } else {
+                addFragment(RouteResolver.getFragment(route), route)
+            }
+
+            hideLoadingIndicator()
+        } catch {
+            hideLoadingIndicator()
+            Logger.e("Could not route: ${it.message}")
+        }
     }
 
-    override fun <F> addFragment(fragment: F, ignoreDebounce: Boolean) where F : Fragment, F : FragmentInteractions {
-        addFragment(fragment, R.anim.fade_in_quick, R.anim.fade_out_quick, null, null, ignoreDebounce)
-    }
-
-    override fun <F> addFragment(fragment: F, inAnimation: Int, outAnimation: Int) where F : Fragment, F : FragmentInteractions {
-        addFragment(fragment, inAnimation, outAnimation, null, null, false)
-    }
-
-    override fun <F> addFragment(fragment: F, transitionId: Int, sharedElement: View?) where F : Fragment, F : FragmentInteractions {
-        addFragment(fragment, R.anim.fade_in_quick, R.anim.fade_out_quick, transitionId, sharedElement, false)
-    }
-
-    private fun <F> addFragment(fragment: F,
-            inAnimation: Int, outAnimation: Int,
-            transitionId: Int?, sharedElement: View?,
-            ignoreDebounce: Boolean) where F : Fragment, F : FragmentInteractions {
-
-        if (!ignoreDebounce && debounceJob?.isActive == true) {
-            Logger.e("FAILED TO addFragmentToSomething. Too many fragment transactions...")
+    private fun addFragment(fragment: Fragment?, route: Route) {
+        if (fragment == null) {
+            Logger.e("NavigationActivity:addFragment() - Could not route null Fragment.")
             return
         }
 
-        debounceJob = weave { delay(200) }
+        val ft = supportFragmentManager.beginTransaction()
 
-        try {
-
-            val placement = fragment.getFragmentPlacement()
-
-            val ft = supportFragmentManager.beginTransaction()
-            setSharedElement(ft, sharedElement)
-            when (placement) {
-                FragmentInteractions.Placement.MASTER -> {
-                    //Check if the fragment is from the navigation drawer and if it's already on top.
-
-                    //If the navigation drawer is open...
-                    //AND
-                    //The current fragment is NOT a course fragment
-                    //AND
-                    //if the current fragment is the same as the fragment behind added
-
-                    val currentFragment = supportFragmentManager.findFragmentById(R.id.fullscreen) as? FragmentInteractions?
-                    if (isDrawerOpen &&
-                            currentFragment != null &&
-                            !currentFragment.canvasContext.isCourseOrGroup &&
-                            currentFragment::class.java.isAssignableFrom(fragment::class.java)) {
-                        closeNavigationDrawer()
-                        return
-                    }
-
-                    ft.setCustomAnimations(inAnimation, outAnimation)
-                    if(currentFragment is Fragment) {
-                        ft.hide(currentFragment)
-                    }
-                    ft.add(R.id.fullscreen, fragment, fragment::class.java.name)
-                    ft.addToBackStack(fragment::class.java.name)
-                    ft.commitAllowingStateLoss()
-                }
-                FragmentInteractions.Placement.DETAIL -> {
-                    ft.setCustomAnimations(inAnimation, outAnimation)
-                    if(currentFragment is Fragment) {
-                        ft.hide(currentFragment)
-                    }
-                    ft.add(R.id.fullscreen, fragment, fragment::class.java.name)
-                    ft.addToBackStack(fragment::class.java.name)
-                    ft.commitAllowingStateLoss()
-                }
-                FragmentInteractions.Placement.DIALOG -> {
-                    if(fragment is DialogFragment) {
-                        if(isTablet) {
-                            ft.addToBackStack(fragment::class.java.name)
-                            (fragment as DialogFragment).show(ft, fragment::class.java.name)
-                        } else {
-                            ft.setCustomAnimations(inAnimation, outAnimation)
-                            if(currentFragment is Fragment) {
-                                ft.hide(currentFragment)
-                            }
-                            ft.add(R.id.fullscreen, fragment, fragment::class.java.name)
-                            ft.addToBackStack(fragment::class.java.name)
-                            ft.commitAllowingStateLoss()
-                        }
-                    }
-                }
-                FragmentInteractions.Placement.FULLSCREEN -> {
-                    if(fragment is DialogFragment) {
-                        ft.addToBackStack(fragment::class.java.name)
-                        (fragment as DialogFragment).show(ft, fragment::class.java.name)
-                    }
-                }
-            }
-            //Tracks the flow of screens in Google Analytics
-            Analytics.trackAppFlow(this@NavigationActivity, fragment::class.java)
-        } catch (e: IllegalStateException) {
-            Logger.e("Could not commit fragment transaction: " + e)
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun setSharedElement(ft: FragmentTransaction, sharedElement: View?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && sharedElement != null) {
-            ft.addSharedElement(sharedElement, sharedElement.transitionName)
+        if (RouteType.DIALOG == route.routeType && fragment is DialogFragment && isTablet) {
+            ft.addToBackStack(fragment::class.java.name)
+            fragment.show(ft, fragment::class.java.name)
+        } else {
+            ft.setCustomAnimations(R.anim.fade_in_quick, R.anim.fade_out_quick)
+            if(currentFragment is Fragment) ft.hide(currentFragment)
+            ft.add(R.id.fullscreen, fragment, fragment::class.java.name)
+            ft.addToBackStack(fragment::class.java.name)
+            ft.commitAllowingStateLoss()
         }
     }
 
@@ -672,7 +689,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         }
 
         if (supportFragmentManager.backStackEntryCount == 1) {
-            //Exits if we only have one fragment
+            // Exits if we only have one fragment
             finish()
             return
         }
@@ -705,9 +722,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         return null
     }
 
-    override fun getCurrentFragment(): Fragment? {
-        return supportFragmentManager.findFragmentById(R.id.fullscreen)
-    }
+    override fun getCurrentFragment(): Fragment? = supportFragmentManager.findFragmentById(R.id.fullscreen)
 
     private fun clearBackStack(cls: Class<*>?) {
         val fragment = topFragment
@@ -717,7 +732,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         try {
             supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         } catch (e: Exception) {
-            Logger.e("NavigationActivity: clearBackStack() - Unable to clear backstack. " + e)
+            Logger.e("NavigationActivity: clearBackStack() - Unable to clear backstack. $e")
         }
     }
 
@@ -725,20 +740,14 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
 
     //region Routing
 
-    override fun routeFragment(fragment: ParentFragment) {
-        addFragment(fragment, true)
-    }
-
-    override fun existingFragmentCount(): Int {
-        return supportFragmentManager.backStackEntryCount
-    }
+    override fun existingFragmentCount(): Int = supportFragmentManager.backStackEntryCount
 
     override fun showLoadingIndicator() {
-        loadingRoute.visibility = View.VISIBLE
+        loadingRoute.setVisible()
     }
 
     override fun hideLoadingIndicator() {
-        loadingRoute.visibility = View.GONE
+        loadingRoute.setGone()
     }
 
     //endregion
@@ -756,8 +765,8 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
 
                 val htmlUrl = extras.getString(PushNotification.HTML_URL, "")
 
-                if (!RouterUtils.canRouteInternally(this, htmlUrl, ApiPrefs.domain, true)) {
-                    routeFragment(FragUtils.getFrag(NotificationListFragment::class.java))
+                if (!RouteMatcher.canRouteInternally(this, htmlUrl, ApiPrefs.domain, true) && ApiPrefs.user != null) {
+                    RouteMatcher.route(this, NotificationListFragment.makeRoute(ApiPrefs.user!!))
                 }
             }
         }
@@ -770,15 +779,22 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
 
     private fun setPushNotificationAsRead() {
         intent.putExtra(PushExternalReceiver.NEW_PUSH_NOTIFICATION, false)
-        PushNotification.clearPushHistory(applicationContext)
+        PushNotification.clearPushHistory()
     }
 
     //endregion
 
-    override fun gotLaunchDefinitions(launchDefinition: LaunchDefinition?) {
+    override fun gotLaunchDefinitions(launchDefinitions: List<LaunchDefinition>?) {
+        val arcLaunchDefinition = launchDefinitions?.firstOrNull { it.domain == LaunchDefinition._ARC_DOMAIN }
+        val gaugeLaunchDefinition = launchDefinitions?.firstOrNull { it.domain == LaunchDefinition._GAUGE_DOMAIN }
+
+        val arc = findViewById<View>(R.id.navigationDrawerItem_arc)
+        arc.visibility = if (arcLaunchDefinition != null) View.VISIBLE else View.GONE
+        arc.tag = arcLaunchDefinition
+
         val gauge = findViewById<View>(R.id.navigationDrawerItem_gauge)
-        gauge.visibility = if (launchDefinition != null) View.VISIBLE else View.GONE
-        gauge.tag = launchDefinition
+        gauge.visibility = if (gaugeLaunchDefinition != null) View.VISIBLE else View.GONE
+        gauge.tag = gaugeLaunchDefinition
     }
 
     override fun updateCalendarStartDay() {
@@ -787,11 +803,12 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
         if (fragment != null) {
             supportFragmentManager.beginTransaction().remove(fragment).commit()
         }
-        addFragment(FragUtils.getFrag(CalendarListViewFragment::class.java))
+        val route = CalendarListViewFragment.makeRoute()
+        addFragment(CalendarListViewFragment.newInstance(route), route)
     }
 
     override fun addBookmark() {
-        val dialog = BookmarkCreationDialog.newInstance(this, topFragment as? FragmentInteractions, peekingFragment as? FragmentInteractions)
+        val dialog = BookmarkCreationDialog.newInstance(this, topFragment, peekingFragment)
         dialog?.show(supportFragmentManager, BookmarkCreationDialog::class.java.simpleName)
     }
 
@@ -837,7 +854,7 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
                         .inflate(R.layout.unread_count, bottomBar, false)
                 (badge as TextView).text = unreadCountDisplay
 
-                ColorUtils.colorIt(resources.getColor(R.color.electricBlueBadge), badge.background)
+                ColorUtils.colorIt(ContextCompat.getColor(context, R.color.electricBlueBadge), badge.background)
                 addView(badge)
             }
         }
@@ -846,6 +863,10 @@ class NavigationActivity : BaseRouterActivity(), Navigation, MasqueradingDialog.
     companion object {
         fun createIntent(context: Context): Intent {
             return Intent(context, NavigationActivity::class.java)
+        }
+
+        fun createIntent(context: Context, route: Route): Intent {
+            return Intent(context, NavigationActivity::class.java).apply { putExtra(Route.ROUTE, route) }
         }
 
         fun createIntent(context: Context, extras: Bundle): Intent {

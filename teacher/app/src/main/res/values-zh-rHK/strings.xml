@@ -60,6 +60,10 @@
     <string name="share">分享</string>
     <string name="share_with">分享給：</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">打開導航檔案夾</string>
+    <string name="navigation_drawer_close">關閉導航檔案夾</string>
+
     <!-- Compose Message -->
     <string name="no_subject">（無主題）</string>
     <string name="compose_message">編輯訊息</string>
@@ -142,7 +146,6 @@
     <string name="select_files_or_photos">選擇檔案或照片</string>
     <string name="uploading_files">檔案上傳中&#8230;&#8230;</string>
     <string name="no_attachment">（無附件）</string>
-    <string name="remove_attachment">刪除附件</string>
     <string name="creating_announcement">創建通告中&#8230;</string>
 
     <string name="copy_email">複製電郵地址</string>
@@ -162,8 +165,6 @@
     <string name="inbox_empty_starred_title">無已加星號訊息</string>
     <string name="inbox_empty_message">按下 \"+\" 創建新交談。</string>
     <string name="inbox_empty_starred_message">點按星號標記訊息</string>
-
-    <string name="download_attachment">下載附件</string>
 
     <string name="reply">回覆</string>
     <string name="replyAll">全部回覆</string>
@@ -281,7 +282,7 @@
     <string name="inbox_starred">已加星號</string>
     <string name="inbox_sent">已發送</string>
     <string name="inbox_archived">已存檔</string>
-    <string name="inbox_all_messages">所有訊息</string>
+    <string name="inbox_all_messages">全部</string>
     <string name="uploading_file_num" formatted="false">正在上傳第 %d / %d 個檔案</string>
     <string name="page_not_found">無法找到該頁。</string>
     <string name="no_connection">無連接</string>
@@ -430,7 +431,6 @@
     <string name="deleteComment">刪除評論</string>
     <string name="deleteAnnotation">刪除註釋</string>
     <string name="deleteCommentConfirmation">您是否確定要刪除此評論？</string>
-    <string name="deleteHeadCommentConfirmation">本評論為一項註釋。刪除此評論會一併刪除所有回覆和註釋。是否確定要這樣做？</string>
     <string name="rubric_view_long_description">查看完整說明</string>
     <string name="rubric">題目</string>
     <string name="enter_custom_value">輸入自訂數值</string>
@@ -490,7 +490,7 @@
         <item quantity="other">%d 個群組</item>
     </plurals>
     <string name="cmp_closed">已關閉</string>
-    <string name="dot_with_spaces">  \u0022</string>
+    <string name="dot_with_spaces">  \u2022  </string>
     <string name="favorited_content_description" formatted="false">%s %s</string>
     <string name="content_description_favorite">我的最愛</string>
     <string name="content_description_not_favorite">並非最愛</string>
@@ -499,7 +499,8 @@
     <string name="edit_course_nickname">編輯課程暱稱</string>
 
     <string name="colorPickerDialogTitle">課程顏色</string>
-    <string name="colorPickerDialogMessage">將此設定為課程的預設顏色。這不會覆蓋個人顏色設定。</string>
+    <string name="colorPickerDialogMessage">這是您的個人顏色設定。只有您會看見本課程顏色。</string>
+
     <string name="colorPickerError">無法設定課程顏色。</string>
 
     <string name="contentDescriptionColorCottonCandy">粉色</string>
@@ -593,12 +594,6 @@
     <string name="quiz_details_from_to">自 %1$s 至 %2$s</string>
     <string name="quiz_details_after">在 %1$s 之後</string>
     <string name="quiz_details_until">直到 %1$s</string>
-    <string name="continueWithoutSavingTitle">繼續操作而不儲存？</string>
-    <string name="continueWithoutSavingMessage">您確定要繼續操作而不儲存嗎？</string>
-    <string name="continueUnsaved">繼續</string>
-    <string name="exitWithoutSavingTitle">退出而不儲存？</string>
-    <string name="exitWithoutSavingMessage">您確定要退出而不儲存嗎？</string>
-    <string name="exitUnsaved">退出</string>
     <string name="filterPointsMustBeSet">輸入數值。</string>
 
     <plurals name="quantityQuestions">
@@ -625,7 +620,6 @@
     <string name="discussions_replies_title">回覆</string>
     <string name="discussions_reply">回覆</string>
     <string name="discussions_edit">編輯</string>
-    <string name="discussions_deleted" formatted="false">已刪除此回覆 %s</string>
     <string name="discussions_forbidden">只有曾發送一個或以上回覆的才能查閱回覆。</string>
     <string name="discussions_unknown_author">未知作者</string>
     <string name="discussions_delete">刪除討論區</string>
@@ -697,6 +691,8 @@
     <string name="subscribe">訂閱</string>
     <string name="allowThreadedReplies">允許執行緒回復</string>
     <string name="usersMustPost">使用者必須發佈，然後才能看到回復</string>
+    <string name="allowUserComments">允許使用者評論</string>
+
     <string name="discussionTitleMustBeSet">必須設定討論區標題。</string>
     <string name="discussionSuccessfullyCreated">已成功創建討論區。</string>
     <string name="errorCreatingDiscussion">嘗試創建討論區時發生錯誤。請再試一次。</string>
@@ -745,6 +741,7 @@
     <string name="choosePhotoFromGallery">從圖片庫選取照片</string>
     <string name="fileNotFound">無法找到檔案。</string>
     <string name="version" formatted="false">版本 %s</string>
+    <string name="fullVersion">版本 %s (%d)</string>
     <string name="tap_to_view_submissions_list">輕點以檢視提交件清單。</string>
     <string name="assignmentDescriptionContentDescription">作業描述</string>
     <string name="quizDescriptionContentDescription">測驗描述</string>
@@ -869,10 +866,27 @@
 
     <string name="latePenalty">逾期懲罰</string>
     <string name="finalGrade">最終評分</string>
+    <string name="moderatedGradingUnsupported">流動快速評分器現未支援綜合評分。</string>
     <plurals name="latePolicyPenalty">
         <item quantity="other">-%s 分</item>
     </plurals>
     <plurals name="latePolicyPenaltyFull">
         <item quantity="other">-%s 分</item>
     </plurals>
+    <string name="todoUnreadCount">待辦 %d 未讀</string>
+    <string name="profileSettings">個人檔案設定</string>
+    <string name="downloadingFile">下載檔案&#8230;</string>
+    <string name="fileDownloadedSuccessfully">檔案已成功下載。</string>
+    <string name="tapToView">點擊檢視</string>
+    <string name="errorDownloadingFile">下載檔案時發生錯誤。請重試。</string>
+
+    <string name="postTo">發佈至</string>
+    <string name="allSections">所有章節</string>
+
+    <string name="gauge">Gauge</string>
+    <string name="arc">Arc</string>
+    <string name="ltiLaunchFailure">現時無法載入此 LTI 工具。</string>
+
+    <string name="downloading">正在下載...</string>
+
 </resources>

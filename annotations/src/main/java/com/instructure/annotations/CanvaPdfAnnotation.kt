@@ -30,3 +30,5 @@ class CanvaFreeTextAnnotation(info: CanvaPdfAnnotation, contents: String) : Free
 
 class CanvaNoteAnnotation(info: CanvaPdfAnnotation, iconName: String, contents: String ) : NoteAnnotation(info.page, info.rect ?: RectF(), contents, iconName), PSCanvaInterface by info
 
+class CanvaStampAnnotation(info: CanvaPdfAnnotation) : StampAnnotation(info.page, info.rect ?: RectF(), StampType.APPROVED), PSCanvaInterface by info
+

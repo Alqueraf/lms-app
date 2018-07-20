@@ -15,12 +15,11 @@
  */
 package com.instructure.teacher.ui.pages
 
+import com.instructure.espresso.WaitForViewWithId
+import com.instructure.espresso.page.BasePage
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.WaitForViewWithId
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 
-class NotATeacherPage : BasePage(), PageAssert by SimplePageAssert() {
+class NotATeacherPage : BasePage() {
 
     private val notATeacherTitle by WaitForViewWithId(R.id.not_a_teacher_header, autoAssert = true)
     private val explanation by WaitForViewWithId(R.id.explanation)

@@ -51,10 +51,6 @@ class AccountPreferencesFragment : ParentFragment() {
         }
     }
 
-    override fun allowBookmarking(): Boolean = false
-
-    override fun getFragmentPlacement() = FragmentInteractions.Placement.DETAIL
-
     override fun title(): String = getString(R.string.accountPreferences)
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -147,5 +143,11 @@ class AccountPreferencesFragment : ParentFragment() {
         val mgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent)
         System.exit(0)
+    }
+
+    companion object {
+        fun newInstance(): AccountPreferencesFragment {
+            return AccountPreferencesFragment()
+        }
     }
 }

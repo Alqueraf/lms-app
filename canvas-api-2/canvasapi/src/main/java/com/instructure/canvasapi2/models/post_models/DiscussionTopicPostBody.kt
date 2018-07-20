@@ -46,14 +46,22 @@ class DiscussionTopicPostBody {
     @SerializedName("remove_attachment")
     var removeAttachment: String? = null
 
+    @SerializedName("specific_sections")
+    var specificSections: String? = null
+
+    @SerializedName("locked")
+    var isLocked: Boolean? = null
+
     companion object {
         @JvmStatic
         fun fromAnnouncement(announcement: DiscussionTopicHeader, shouldRemoveAttachment: Boolean) = DiscussionTopicPostBody().apply {
             title = announcement.title
             message = announcement.message
-            requireInitialPost = announcement.isRequireInitialPost
+            isLocked = announcement.isLocked
+            requireInitialPost = !announcement.isLocked && announcement.isRequireInitialPost
             delayedPostAt = announcement.delayedPostAt?.let { APIHelper.dateToString(it) } ?: ""
             if (shouldRemoveAttachment) removeAttachment = ""
+            specificSections = if (!announcement.specificSections.isNullOrBlank()) announcement.specificSections else null
         }
     }
 }

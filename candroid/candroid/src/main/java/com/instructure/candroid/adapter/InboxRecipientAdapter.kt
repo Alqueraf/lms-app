@@ -19,6 +19,7 @@ import android.content.Context
 import android.view.View
 import com.instructure.candroid.R
 import com.instructure.candroid.holders.RecipientViewHolder
+import com.instructure.candroid.interfaces.AdapterToFragmentCallback
 import com.instructure.canvasapi2.managers.CourseManager
 import com.instructure.canvasapi2.managers.RecipientManager
 import com.instructure.canvasapi2.models.CanvasContext
@@ -30,10 +31,11 @@ import com.instructure.pandautils.utils.toast
 import java.util.*
 
 
-class InboxRecipientAdapter(
+open class InboxRecipientAdapter(
     context: Context,
     private val canvasContext: CanvasContext,
-    private val selectedRecipients: HashSet<Recipient>
+    private val selectedRecipients: HashSet<Recipient>,
+    private val adapterToFragmentCallback: AdapterToFragmentCallback<Recipient>
 ) : BaseListRecyclerAdapter<Recipient, RecipientViewHolder>(context, Recipient::class.java) {
 
     private data class StackEntry(val recipientGroup: Recipient)
@@ -155,10 +157,12 @@ class InboxRecipientAdapter(
                 onComplete {
                     setNextUrl(null)
                     adapterToRecyclerViewCallback.setIsEmpty(size() == 0)
+                    adapterToFragmentCallback.onRefreshFinished()
                 }
             }
         } catch {
             it.cause?.printStackTrace()
+            adapterToFragmentCallback.onRefreshFinished()
         }
     }
 

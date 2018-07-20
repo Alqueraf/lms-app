@@ -111,7 +111,7 @@ class NotoriousUploadService : IntentService(NotoriousUploadService::class.java.
     private fun createNotificationChannel(channelId: String) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
-        //Prevents recreation of notification channel if it exists.
+        // Prevents recreation of notification channel if it exists.
         val channelList = notificationManager.notificationChannels
         for (channel in channelList) {
             if (channelId == channel.id) {

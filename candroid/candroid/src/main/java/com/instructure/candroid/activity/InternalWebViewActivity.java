@@ -29,8 +29,9 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.instructure.candroid.R;
 import com.instructure.candroid.fragment.InternalWebviewFragment;
-import com.instructure.candroid.util.FragUtils;
+
 import com.instructure.canvasapi2.models.CanvasContext;
+import com.instructure.interactions.router.Route;
 import com.instructure.pandautils.activities.BaseActionBarActivity;
 import com.instructure.pandautils.utils.ColorKeeper;
 import com.instructure.pandautils.utils.Const;
@@ -69,8 +70,8 @@ public class InternalWebViewActivity extends BaseActionBarActivity {
                     }
                 }
             }
-            InternalWebviewFragment fragment = FragUtils.getFrag(InternalWebviewFragment.class, bundle);
 
+            InternalWebviewFragment fragment = InternalWebviewFragment.Companion.newInstance(InternalWebviewFragment.Companion.makeRoute(bundle));
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.container, fragment, InternalWebviewFragment.class.getName());
             ft.commitAllowingStateLoss();
@@ -99,7 +100,7 @@ public class InternalWebViewActivity extends BaseActionBarActivity {
 
     public static Intent createIntent(Context context, String url, String title, boolean authenticate) {
         // Assumes no canvasContext
-        Bundle extras = InternalWebviewFragment.Companion.createBundle(CanvasContext.emptyCourseContext(), url, title, authenticate);
+        Bundle extras = InternalWebViewActivity.createBundle(CanvasContext.emptyCourseContext(), url, title, authenticate);
 
         Intent intent = new Intent(context, InternalWebViewActivity.class);
         intent.putExtra(Const.EXTRAS, extras);
@@ -107,9 +108,13 @@ public class InternalWebViewActivity extends BaseActionBarActivity {
         return intent;
     }
 
+    public static Intent createIntent(Context context, Route route, String title, Boolean authenticate) {
+        return createIntent(context, route.getUri().toString(), title, authenticate);
+    }
+
     public static Intent createIntent(Context context, String url, String html, String title, boolean authenticate) {
         // Assumes no canvasContext
-        Bundle extras = InternalWebviewFragment.Companion.createBundle(CanvasContext.emptyCourseContext(), url, title, authenticate, html);
+        Bundle extras = InternalWebViewActivity.createBundle(CanvasContext.emptyCourseContext(), url, title, authenticate, html);
 
         Intent intent = new Intent(context, InternalWebViewActivity.class);
         intent.putExtra(Const.EXTRAS, extras);
@@ -118,7 +123,7 @@ public class InternalWebViewActivity extends BaseActionBarActivity {
     }
 
     public static Intent createIntent(Context context, CanvasContext canvasContext, String url, boolean authenticate) {
-        Bundle extras = InternalWebviewFragment.Companion.createBundle(canvasContext, url, authenticate);
+        Bundle extras = InternalWebViewActivity.createBundle(canvasContext, url, authenticate);
         Intent intent = new Intent(context, InternalWebViewActivity.class);
         intent.putExtra(Const.EXTRAS, extras);
         return intent;
@@ -156,5 +161,35 @@ public class InternalWebViewActivity extends BaseActionBarActivity {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && statusBarColor != Integer.MAX_VALUE) {
             getWindow().setStatusBarColor(statusBarColor);
         }
+    }
+
+    private static Bundle createBundle(CanvasContext canvasContext) {
+        Bundle extras = new Bundle();
+        extras.putParcelable(Const.CANVAS_CONTEXT, canvasContext);
+        return extras;
+    }
+
+    public static Bundle createBundle(CanvasContext canvasContext, String url, String title, Boolean authenticate) {
+        Bundle extras = createBundle(canvasContext);
+        extras.putString(Const.INTERNAL_URL, url);
+        extras.putBoolean(Const.AUTHENTICATE, authenticate);
+        extras.putString(Const.ACTION_BAR_TITLE, title);
+        return extras;
+    }
+
+    public static Bundle createBundle(CanvasContext canvasContext, String url, String title, Boolean authenticate, String html) {
+        Bundle extras = createBundle(canvasContext);
+        extras.putString(Const.INTERNAL_URL, url);
+        extras.putBoolean(Const.AUTHENTICATE, authenticate);
+        extras.putString(Const.ACTION_BAR_TITLE, title);
+        extras.putString(Const.HTML, html);
+        return extras;
+    }
+
+    public static Bundle createBundle(CanvasContext canvasContext, String url, Boolean authenticate) {
+        Bundle extras = createBundle(canvasContext);
+        extras.putString(Const.INTERNAL_URL, url);
+        extras.putBoolean(Const.AUTHENTICATE, authenticate);
+        return extras;
     }
 }

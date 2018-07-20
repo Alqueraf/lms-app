@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2017 - present Instructure, Inc.
   ~
@@ -34,15 +34,11 @@
     <string name="signIntoCanvasNetwork">Vous essayez de vous connecter au Canvas Network?</string>
     <string name="remove">Retirer</string>
     <string name="exampleURLSimple">myschool.instructure.com</string>
-    <string name="masquerade">Personnification d’identité</string>
     <string name="userId">ID utilisateur</string>
     <string name="domain">Domaine</string>
 
-    <string name="masqueradingUserId">Identifiant d\'utilisateur de personnification</string>
-    <string name="masqueradingUserDomain">Domaine de personnification</string>
-    <string name="masqueradingBegin">Commencer la personnification d’identité</string>
-    <string name="masqueradingStop">Arrêter la personnification d’identité</string>
-
+    <string name="actAsUser">Agir en tant qu\'utilisateur</string>
+    <string name="stopActAsUser">Arrêter d\'agir en tant qu\'utilisateur</string>
     <!--Multiple User Sign in -->
     <string name="removeUser">Retirer cet utilisateur?</string>
     <string name="removedForever">Vous devrez ouvrir une session de nouveau pour cet utilisateur afin d’accéder son contenu.</string>
@@ -67,7 +63,6 @@
     <string name="logout_no">Non</string>
 
     <!--Smart Login-->
-
     <string name="loginNearYou">Proche de vous</string>
     <string name="loginCanvasNetwork">Canvas Network</string>
     <string name="loginRightBehindYou">Juste derrière vous</string>
@@ -111,9 +106,6 @@
     <string name="previousLoginTitle">Connexions précédentes</string>
     <string name="canvasNetworks">Canvas Network</string>
     <string name="findMySchool">Trouver mon école</string>
-    <string name="appTypeTeacher">Instructeur</string>
-    <string name="appTypeStudent">Étudiant</string>
-    <string name="appTypeParent">Parent</string>
     <string name="canvasLowerCase">Canvas</string>
     <string name="whatsYourSchoolName">Quel est le nom de votre école?</string>
     <string name="next">Suivant</string>
@@ -129,6 +121,13 @@
     <string name="scrollInstructions">Faites défiler pour voir tous les détails</string>
 
     <string name="masqueradeErrorUserId">Vous devez saisir un ID d’utilisateur.</string>
-    <string name="masqueradeErrorDomain">Vous devez saisir un nom de domaine.</string>
+    <string name="masqueradeErrorDomain">Vous devez saisir un nom de domaine valide.</string>
     <string name="masqueradeError">Erreur lors de tentative de personnification.</string>
+    <string name="masqueradeInfo">« Agir en tant que » (Act as) est essentiellement ouvrir une session en tant que cet utilisateur sans mot de passe. Vous serez en mesure de prendre toute action comme si vous étiez cet utilisateur, et du point de vue des autres utilisateurs, ce sera comme si cet utilisateur aurait effectué ces actions. Toutefois, le journal d\'événements a identifié que vous étiez celui qui a effectué les actions au nom de cet étudiant.</string>
+    <string name="masqueradingAs">Vous agissez en tant que %s</string>
+    <string name="stopActingAsTitle">Cesser d\'agir comme...</string>
+    <string name="stopActingAsMessage">Vous allez arrêter d’agir comme %s et retournerez à votre compte.</string>
+
+    <string name="weMadeChanges">Nous avons fait quelques changements.</string>
+    <string name="whatsNewText">Regardez ce qu\'il y a de nouveau</string>
 </resources>

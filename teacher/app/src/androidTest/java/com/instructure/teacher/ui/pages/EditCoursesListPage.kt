@@ -21,15 +21,19 @@ import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.withContentDescription
 import android.support.test.espresso.matcher.ViewMatchers.withText
+import com.instructure.espresso.RecyclerViewItemCountAssertion
+import com.instructure.espresso.WaitForViewWithId
+import com.instructure.espresso.assertDisplayed
+import com.instructure.espresso.click
+import com.instructure.espresso.page.BasePage
+import com.instructure.espresso.page.onViewWithText
+import com.instructure.espresso.page.waitForViewWithText
 import com.instructure.soseedy.Course
 import com.instructure.teacher.R
-import com.instructure.teacher.ui.utils.*
-import com.instructure.teacher.ui.utils.pageAssert.PageAssert
-import com.instructure.teacher.ui.utils.pageAssert.SimplePageAssert
 import java.util.*
 
 @Suppress("unused")
-class EditCoursesListPage : BasePage(), PageAssert by SimplePageAssert() {
+class EditCoursesListPage : BasePage() {
 
     private val favoritesRecyclerView by WaitForViewWithId(R.id.favoritesRecyclerView)
 

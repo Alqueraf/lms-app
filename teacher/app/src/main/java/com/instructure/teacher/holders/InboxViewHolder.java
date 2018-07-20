@@ -34,15 +34,15 @@ public class InboxViewHolder extends RecyclerView.ViewHolder {
 
     public InboxViewHolder(View itemView) {
         super(itemView);
-        subject = (TextView) itemView.findViewById(R.id.subject);
-        message = (TextView) itemView.findViewById(R.id.message);
-        userName = (TextView) itemView.findViewById(R.id.userName);
-        date = (TextView) itemView.findViewById(R.id.date);
-        star = (ImageView) itemView.findViewById(R.id.star);
-        attachment = (ImageView) itemView.findViewById(R.id.attachment);
-        avatar1 = (CircleImageView) itemView.findViewById(R.id.avatar1);
-        avatar2 = (CircleImageView) itemView.findViewById(R.id.avatar2);
-        unreadMark = (ImageView) itemView.findViewById(R.id.unreadMark);
+        subject = itemView.findViewById(R.id.subject);
+        message = itemView.findViewById(R.id.message);
+        userName = itemView.findViewById(R.id.userName);
+        date = itemView.findViewById(R.id.date);
+        star = itemView.findViewById(R.id.star);
+        attachment = itemView.findViewById(R.id.attachment);
+        avatar1 = itemView.findViewById(R.id.avatar1);
+        avatar2 = itemView.findViewById(R.id.avatar2);
+        unreadMark = itemView.findViewById(R.id.unreadMark);
     }
 
     public static int holderResId() { return R.layout.adapter_inbox; }

@@ -22,13 +22,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion GLOBAL_COMPILE_SDK
-    buildToolsVersion GLOBAL_BUILD_TOOLS_VERSION
+    compileSdkVersion Versions.COMPILE_SDK
+    buildToolsVersion Versions.BUILD_TOOLS
 
     defaultConfig {
         applicationId "com.instructure.androidfoosball"
-        minSdkVersion GLOBAL_MIN_SDK
-        targetSdkVersion GLOBAL_TARGET_SDK
+        minSdkVersion Versions.MIN_SDK
+        targetSdkVersion Versions.TARGET_SDK
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
     }
@@ -48,6 +48,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api project(':wearutils')
-    implementation ("com.android.support:cardview-v7:$GLOBAL_SUPPORT_LIBRARY_VERSION")
-    implementation ("com.android.support:support-v4:$GLOBAL_SUPPORT_LIBRARY_VERSION")
+    implementation Libs.SUPPORT_CARDVIEW
+    implementation Libs.SUPPORT_V4
 }

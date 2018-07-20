@@ -23,6 +23,7 @@ import com.instructure.canvasapi2.StatusCallback;
 import com.instructure.canvasapi2.builders.RestBuilder;
 import com.instructure.canvasapi2.builders.RestParams;
 import com.instructure.canvasapi2.models.Alert;
+import com.instructure.canvasapi2.models.ObserverAlert;
 
 import java.util.List;
 
@@ -32,11 +33,15 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Url;
 
 
 public class AlertAPI {
+
+    public static final String ALERT_DISMISSED = "dismissed";
+    public static final String ALERT_READ = "read";
 
     public static final String AIRWOLF_DOMAIN_AMERICA = "https://airwolf-iad-prod.instructure.com";
     public static final String AIRWOLF_DOMAIN_DUBLIN = "https://airwolf-dub-prod.instructure.com";
@@ -65,6 +70,15 @@ public class AlertAPI {
         @FormUrlEncoded
         @POST("alert/{parentId}/{alertId}")
         Call<ResponseBody> markAlertAsDismissed(@Path("parentId") String parentId, @Path("alertId") String alertId, @Field("dismissed") String isDismissed);
+
+        @GET("users/self/observer_alerts/{studentId}")
+        Call<List<ObserverAlert>> getObserverAlertsForStudent(@Path("studentId") long studentId);
+
+        @GET
+        Call<List<ObserverAlert>> nextObservers(@Url String nextUrl);
+
+        @PUT("users/self/observer_alerts/{alertId}/{workflowState}")
+        Call<ObserverAlert> updateObserverAlert(@Path("alertId") long alertId, @Path("workflowState") String workflowState);
     }
 
     //region Alert API
@@ -105,6 +119,32 @@ public class AlertAPI {
 
         callback.addCall(adapter.build(AlertInterface.class, params)
                 .markAlertAsDismissed(parentId, alertId, "true")).enqueue(callback);
+    }
+
+    public static void getObserverAlerts(
+            long studentId,
+            @NonNull RestBuilder adapter,
+            @NonNull StatusCallback<List<ObserverAlert>> callback,
+            @NonNull RestParams params) {
+
+        if(StatusCallback.isFirstPage(callback.getLinkHeaders())) {
+            callback.addCall(adapter.build(AlertInterface.class, params)
+                    .getObserverAlertsForStudent(studentId)).enqueue(callback);
+        } else if(StatusCallback.moreCallsExist(callback.getLinkHeaders()) && callback.getLinkHeaders() != null) {
+            callback.addCall(adapter.build(AlertInterface.class, params)
+                    .nextObservers(callback.getLinkHeaders().nextUrl)).enqueue(callback);
+        }
+    }
+
+    public static void updateObserverAlert(
+            @NonNull long alertId,
+            @NonNull String workflowState, // currently either read or dismissed
+            @NonNull RestBuilder adapter,
+            @NonNull StatusCallback<ObserverAlert> callback,
+            @NonNull RestParams params) {
+
+        callback.addCall(adapter.build(AlertInterface.class, params)
+                .updateObserverAlert(alertId, workflowState)).enqueue(callback);
     }
 
     //endregion

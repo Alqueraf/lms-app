@@ -90,7 +90,7 @@ public class StartingActivity extends BaseActivity {
                 startActivity(FragmentManagerActivity.createIntent(getApplicationContext()));
             }
             else {
-                startActivity(PollListActivity.createIntent(getApplicationContext()));
+                startActivity(PollListActivity.Companion.createIntent(getApplicationContext()));
             }
             finish();
             return;
@@ -99,7 +99,7 @@ public class StartingActivity extends BaseActivity {
             startActivity(FragmentManagerActivity.createIntent(getApplicationContext()));
         }
         else {
-            startActivity(PollListActivity.createIntent(getApplicationContext()));
+            startActivity(PollListActivity.Companion.createIntent(getApplicationContext()));
         }
         finish();
     }

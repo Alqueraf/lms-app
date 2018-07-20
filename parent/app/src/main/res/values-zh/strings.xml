@@ -22,7 +22,6 @@
     <string name="email">电子邮件</string>
     <string name="emailAddress">电子邮件地址</string>
     <string name="parent_email">家长电邮</string>
-    <string name="confirmPassword">确认密码</string>
     <string name="firstName">名字</string>
     <string name="lastName">姓氏</string>
     <string name="password">密码</string>
@@ -150,6 +149,9 @@
     <string name="or">或</string>
     <string name="canvas_login_text">用 Canvas 登录</string>
 
+    <string name="privacyPolicy">隐私政策</string>
+    <string name="EULA">最终用户许可协议</string>
+    <string name="termsOfUse">使用条款</string>
     <!-- Feature Request -->
     <string name="featureSubject">构想 Canvas 的[安卓版本]</string>
     <string name="understandRequest">下面的信息将帮助我们更好地了解您的想法：</string>
@@ -200,6 +202,22 @@
 
     <string name="whatsYourStudentsSchoolName">输入学生的学校名称</string>
     <string name="findYourStudentsSchoolHint">查找学生的学校或学区</string>
-    <string name="noGradeText">不适用</string>
+    <string name="noGradeText">没有评分</string>
     <string name="locked">已锁定</string>
+    <string name="changeUser">更改用户</string>
+    <string name="manageChildren">管理儿童</string>
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">打开抽屉式导航栏</string>
+    <string name="navigation_drawer_close">关闭抽屉式导航栏</string>
+    <string name="version" formatted="false">版本%s</string>
+    <string name="not_a_parent_title">不是家长？</string>
+    <string name="not_a_parent_subtitle">我们的其他应用可能更合适。单击可访问 Play Store。</string>
+    <string name="tryLoginAgain">再次尝试登录</string>
+
+    <string name="legalDetails">隐私政策、使用条款、开放源</string>
+    <string name="assignmentGrade">作业评分</string>
+    <string name="courseGrade">课程评分</string>
+    <string name="courseAnnouncement">课程公告</string>
+    <string name="institutionAnnouncement">机构公告</string>
+    <string name="institutionAnnouncementUnavailable">此公告已过期。</string>
 </resources>

@@ -28,12 +28,12 @@ import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.instructure.pandautils.utils.*
 import com.instructure.teacher.R
 import com.instructure.teacher.activities.ViewMediaActivity
-import com.instructure.teacher.dialog.MobileDataWarningDialog
-import com.instructure.teacher.interfaces.ShareableFile
 import com.instructure.interactions.router.Route
 import com.instructure.interactions.router.RouteContext
+import com.instructure.pandautils.activities.BaseViewMediaActivity
+import com.instructure.pandautils.dialogs.MobileDataWarningDialog
+import com.instructure.pandautils.interfaces.ShareableFile
 import com.instructure.teacher.router.RouteMatcher
-import com.instructure.teacher.utils.*
 import com.instructure.teacher.view.MediaContent
 import kotlinx.android.synthetic.main.exo_playback_control_view.*
 import kotlinx.android.synthetic.main.fragment_speed_grader_media.*
@@ -75,7 +75,7 @@ class ViewMediaFragment : Fragment(), ShareableFile {
 
         fullscreenButton.onClick {
             mExoAgent.flagForResume()
-            val bundle = ViewMediaActivity.makeBundle(mUri.toString(), mThumbnailUrl, mContentType, mDisplayName, false)
+            val bundle = BaseViewMediaActivity.makeBundle(mUri.toString(), mThumbnailUrl, mContentType, mDisplayName, false)
             RouteMatcher.route(context, Route(bundle, RouteContext.MEDIA))
         }
     }

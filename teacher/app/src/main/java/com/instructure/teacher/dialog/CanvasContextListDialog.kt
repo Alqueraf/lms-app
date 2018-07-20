@@ -61,16 +61,14 @@ class CanvasContextListDialog : AppCompatDialogFragment() {
         }
     }
 
-
-    fun updateCanvasContexts(courses: ArrayList<Course>, groups: ArrayList<Group>) {
+    private fun updateCanvasContexts(courses: ArrayList<Course>, groups: ArrayList<Group>) {
         recyclerView?.adapter = CanvasContextDialogAdapter(this, getCanvasContextList(context, courses, groups), mSelectedCallback)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = View.inflate(ContextThemeWrapper(activity, 0), R.layout.dialog_canvas_context_list, null)
-        recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-
 
         val dialog = AlertDialog.Builder(activity)
                 .setCancelable(true)
@@ -92,7 +90,7 @@ class CanvasContextListDialog : AppCompatDialogFragment() {
                 var groups: ArrayList<Group> = ArrayList()
                 inParallel {
                     // Get Courses
-                    await<List<Course>>({ CourseManager.getCourses(forceNetwork, it) }) {
+                    await<List<Course>>({ CourseManager.getCoursesTeacher(forceNetwork, it) }) {
                         courses = it as ArrayList<Course>
                     }
 
@@ -111,7 +109,7 @@ class CanvasContextListDialog : AppCompatDialogFragment() {
         }
     }
 
-    fun getCanvasContextList(context: Context, courses: List<Course>, groups: List<Group>): ArrayList<CanvasContext> {
+    private fun getCanvasContextList(context: Context, courses: List<Course>, groups: List<Group>): ArrayList<CanvasContext> {
         val canvasContexts = ArrayList<CanvasContext>()
 
         if(courses.isNotEmpty()) {

@@ -68,11 +68,20 @@ public class CourseAPI {
         @GET("courses?include[]=term&include[]=total_scores&include[]=license&include[]=is_public&include[]=needs_grading_count&include[]=permissions&include[]=favorites&include[]=current_grading_period_scores&include[]=course_image&include[]=sections&state[]=completed&state[]=available")
         Call<List<Course>> getFirstPageCourses();
 
+        @GET("courses?include[]=term&include[]=syllabus_body&include[]=total_scores&include[]=license&include[]=is_public&include[]=needs_grading_count&include[]=permissions&include[]=favorites&include[]=current_grading_period_scores&include[]=course_image&include[]=sections&state[]=completed&state[]=available&include[]=observed_users")
+        Call<List<Course>> getFirstPageCoursesWithSyllabus();
+
+        @GET("courses?include[]=term&include[]=total_scores&include[]=license&include[]=is_public&include[]=needs_grading_count&include[]=permissions&include[]=favorites&include[]=current_grading_period_scores&include[]=course_image&include[]=sections&state[]=completed&state[]=available&state[]=unpublished")
+        Call<List<Course>> getFirstPageCoursesTeacher();
+
         @GET
         Call<List<Course>> next(@Url String nextURL);
 
         @GET("courses")
         Call<List<Course>> getCoursesByEnrollmentType(@Query("enrollment_type") String type);
+
+        @GET("courses?state[]=completed&state[]=available&state[]=unpublished")
+        Call<List<Course>> getCoursesByEnrollmentTypeAllStates(@Query("enrollment_type") String type);
 
         // TODO: Set up pagination when API is fixed and remove per_page query parameterø
         @GET("courses/{courseId}/grading_periods?per_page=100")
@@ -195,6 +204,14 @@ public class CourseAPI {
         callback.addCall(adapter.build(CoursesInterface.class, params).getFirstPageCourses()).enqueue(callback);
     }
 
+    public static void getFirstPageCoursesWithSyllabus(@NonNull RestBuilder adapter, @NonNull StatusCallback<List<Course>> callback, @NonNull RestParams params) {
+        callback.addCall(adapter.build(CoursesInterface.class, params).getFirstPageCoursesWithSyllabus()).enqueue(callback);
+    }
+
+    public static void getFirstPageCoursesTeacher(@NonNull RestBuilder adapter, @NonNull StatusCallback<List<Course>> callback, @NonNull RestParams params) {
+        callback.addCall(adapter.build(CoursesInterface.class, params).getFirstPageCoursesTeacher()).enqueue(callback);
+    }
+
     public static void getNextPageCourses(boolean forceNetwork, String nextUrl, RestBuilder adapter, StatusCallback<List<Course>> callback) {
         RestParams params = new RestParams.Builder()
                 .withShouldIgnoreToken(false)
@@ -220,6 +237,10 @@ public class CourseAPI {
 
     public static void getCoursesByEnrollmentType(@NonNull RestBuilder adapter, @NonNull StatusCallback<List<Course>> callback, @NonNull RestParams params, String type) {
         callback.addCall(adapter.build(CoursesInterface.class, params).getCoursesByEnrollmentType(type)).enqueue(callback);
+    }
+
+    public static void getCoursesByEnrollmentTypeAllStates(@NonNull RestBuilder adapter, @NonNull StatusCallback<List<Course>> callback, @NonNull RestParams params, String type) {
+        callback.addCall(adapter.build(CoursesInterface.class, params).getCoursesByEnrollmentTypeAllStates(type)).enqueue(callback);
     }
 
     public static void getCourseWithGrade(long courseId, @NonNull RestBuilder adapter, @NonNull StatusCallback<Course> callback, @NonNull RestParams params) {

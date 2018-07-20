@@ -33,17 +33,17 @@ abstract class ExhaustiveCallback<MODEL, out ITEM>(
 
     abstract fun extractItems(response: MODEL) : List<ITEM>
 
-    fun moreCallsExist(response: Response<MODEL>, linkHeaders: LinkHeaders): Boolean = StatusCallback.moreCallsExist(linkHeaders)
+    fun moreCallsExist(linkHeaders: LinkHeaders): Boolean = StatusCallback.moreCallsExist(linkHeaders)
 
-    fun getNextUrl(response: Response<MODEL>, linkHeaders: LinkHeaders): String = linkHeaders.nextUrl
+    fun getNextUrl(linkHeaders: LinkHeaders): String = linkHeaders.nextUrl
 
     override fun onResponse(response: Response<MODEL>, linkHeaders: LinkHeaders, type: ApiType) {
         if (callback.isCanceled) { cancel(); return }
         response.body()?.let {
             val items = extractItems(it)
             extractedItems.addAll(items)
-            if (items.isNotEmpty() && moreCallsExist(response, linkHeaders)) {
-                getNextPage(this, getNextUrl(response, linkHeaders), type.isCache)
+            if (items.isNotEmpty() && moreCallsExist(linkHeaders)) {
+                getNextPage(this, getNextUrl(linkHeaders), type.isCache)
             } else {
                 finished = true
                 callback.onResponse(Response.success<List<ITEM>>(extractedItems, response.raw()), linkHeaders, type)

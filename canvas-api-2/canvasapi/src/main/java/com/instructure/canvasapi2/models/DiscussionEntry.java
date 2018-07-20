@@ -22,12 +22,17 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 import com.instructure.canvasapi2.utils.APIHelper;
+import com.instructure.canvasapi2.utils.ModelExtensionsKt;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
+import kotlin.ranges.IntRange;
 
 
 public class DiscussionEntry extends CanvasModel<DiscussionEntry> {
@@ -81,6 +86,16 @@ public class DiscussionEntry extends CanvasModel<DiscussionEntry> {
 
     public void init(DiscussionTopic topic, DiscussionEntry parentEntry) {
         parent = parentEntry;
+
+        // The server attaches a verifier param on the end of img src urls inside of a discussion, however
+        // this happens whenever the server decides to make it happen so we need to make sure that the image
+        // contains this param in it's url, or replace it with an authenticated url so we can download it for all to see
+        if (parent.message != null && parent.message.contains("<img") && !parent.message.contains("&verifier")) {
+            // Entry has an image tag - find all of them and replace any that don't have a verifier param in their src url
+            // Note: The following is assumed to be run inside a background thread due to a network call in ModelExtensionsKt.getImageReplacementList
+            List<Pair<String, IntRange>> replacementList = ModelExtensionsKt.getImageReplacementList(parent.message);
+            parent.message = ModelExtensionsKt.replaceImgTags(replacementList, parent.message);
+        }
 
         HashMap<Long, DiscussionParticipant> participantHashMap = topic.getParticipantsMap();
         DiscussionParticipant discussionParticipant = participantHashMap.get(getUserId());

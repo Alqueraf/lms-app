@@ -161,7 +161,7 @@ class DiscussionListPresenter(private val mCanvasContext: CanvasContext, private
     override fun compare(group: String?, item1: DiscussionTopicHeader, item2: DiscussionTopicHeader): Int {
         return when {
             PINNED == group -> item1.position.compareTo(item2.position)
-            mIsAnnouncements -> -1 // Keep API order for announcements
+            mIsAnnouncements -> item1.position.compareTo(item2.position) // Keep API order for announcements
             else -> item2.lastReplyAt?.compareTo(item1.lastReplyAt ?: Date(0)) ?: -1
         }
     }

@@ -45,7 +45,7 @@ import instructure.androidblueprint.SyncRecyclerAdapter;
 
 
 public abstract class BaseSyncActivity<
-        MODEL extends CanvasComparable,
+        MODEL extends CanvasComparable<?>,
         PRESENTER extends SyncPresenter<MODEL, VIEW>,
         VIEW extends SyncManager<MODEL>,
         HOLDER extends RecyclerView.ViewHolder,

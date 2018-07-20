@@ -148,6 +148,7 @@ public class MessageThreadPresenter extends SyncPresenter<Message, MessageThread
         return mParticipants.get(id);
     }
 
+    @Nullable
     public Conversation getConversation() {
         return mConversation;
     }

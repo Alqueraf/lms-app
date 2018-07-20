@@ -17,12 +17,8 @@
 @file:Suppress("unused")
 package com.instructure.candroid.events
 
-import com.instructure.canvasapi2.models.Conversation
-import com.instructure.canvasapi2.models.DiscussionTopicHeader
-import com.instructure.canvasapi2.models.Recipient
-import com.instructure.canvasapi2.models.User
+import com.instructure.canvasapi2.models.*
 import org.greenrobot.eventbus.EventBus
-import com.instructure.canvasapi2.models.Page
 
 /**
  * A bus event which only allows each subscriber access to the event payload once. Designed to be
@@ -142,6 +138,15 @@ class DiscussionTopicHeaderEvent(discussionTopicHeader: DiscussionTopicHeader, s
 
 /** A RationedBusEvent for updating pages. @see [RationedBusEvent] */
 class PageUpdatedEvent(page: Page, skipId: String? = null) : RationedBusEvent<Page>(page, skipId)
+
+/** A RationedBusEvent for updating the calendar list when events are created. @see [RationedBusEvent] */
+class CalendarEventCreated(scheduleItem: ScheduleItem, skipId: String? = null) : RationedBusEvent<ScheduleItem>(scheduleItem, skipId)
+
+/** A RationedBusEvent for updating the calendar list when events are deleted. @see [RationedBusEvent] */
+class CalendarEventDestroyed(scheduleItem: ScheduleItem, skipId: String? = null) : RationedBusEvent<ScheduleItem>(scheduleItem, skipId)
+
+/** A RationedBusEvent for updating modules. @see [RationedBusEvent] */
+class ModuleUpdatedEvent(moduleObject: ModuleObject, skipId: String? = null) : RationedBusEvent<ModuleObject>(moduleObject, skipId)
 
 
 object ShowGradesToggledEvent
