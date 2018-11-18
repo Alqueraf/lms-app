@@ -65,13 +65,13 @@ class FreeTextDialog : AppCompatDialogFragment() {
         ViewStyler.themeEditText(context, freeTextEditText, ThemePrefs.brandColor)
         freeTextEditText.inputType = EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
 
-        val dialog = AlertDialog.Builder(context)
-                .setTitle(context.getString(R.string.inputText))
+        val dialog = AlertDialog.Builder(context!!)
+                .setTitle(context!!.getString(R.string.inputText))
                 .setView(view)
-                .setPositiveButton(activity.getString(android.R.string.ok), { _, _ ->
+                .setPositiveButton(activity!!.getString(android.R.string.ok), { _, _ ->
                     mFreeTextCallback(false, isEditing, freeTextEditText.text.toString())
                 })
-                .setNegativeButton(activity.getString(R.string.cancel), { _, _ ->
+                .setNegativeButton(activity!!.getString(R.string.cancel), { _, _ ->
                     mFreeTextCallback(true, isEditing,"")
 
                 })
@@ -80,7 +80,7 @@ class FreeTextDialog : AppCompatDialogFragment() {
         //Adjust the dialog to the top so keyboard does not cover it up, issue happens on tablets in landscape
         val params = dialog.window.attributes
         params.gravity = Gravity.CENTER or Gravity.TOP
-        params.y = context.resources.getDimensionPixelSize(R.dimen.utils_landscapeTabletDialogAdjustment)
+        params.y = context!!.resources.getDimensionPixelSize(R.dimen.utils_landscapeTabletDialogAdjustment)
         dialog.window.attributes = params
         dialog.window.setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN or

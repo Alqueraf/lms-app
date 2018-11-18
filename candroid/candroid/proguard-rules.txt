@@ -42,6 +42,8 @@
 -keep public class * extends android.support.v4.app.Fragment
 -keep public class * extends android.support.v4.app.ListFragment
 -keep public class * extends android.os.AsyncTask
+-keep public class * extends android.content.ContextWrapper {public *;}
+
 
 -keep public class * extends android.view.View {
     public <init>(android.content.Context);

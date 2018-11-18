@@ -35,7 +35,7 @@ class AnnotationErrorDialog : AppCompatDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(context!!)
         builder.setTitle(getString(R.string.annotationError))
         builder.setMessage(getString(R.string.annotationDialogMessage))
         builder.setPositiveButton(android.R.string.ok) { dialog, _ ->

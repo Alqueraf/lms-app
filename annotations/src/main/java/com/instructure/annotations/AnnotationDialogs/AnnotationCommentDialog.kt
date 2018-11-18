@@ -60,26 +60,26 @@ class AnnotationCommentDialog : AppCompatDialogFragment() {
         val view = View.inflate(activity, R.layout.dialog_annotation_comment, null)
         val freeTextEditText = view.findViewById<AppCompatEditText>(R.id.freeTextInput)
         freeTextEditText.setText(mCurrentText)
-        ViewStyler.themeEditText(context, freeTextEditText, ThemePrefs.brandColor)
+        ViewStyler.themeEditText(context!!, freeTextEditText, ThemePrefs.brandColor)
         if(mCurrentText.isNotEmpty()) {
             freeTextEditText.selectAll()
         }
         freeTextEditText.inputType = EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
-        freeTextEditText.hint = context.getString(R.string.comment)
+        freeTextEditText.hint = context!!.getString(R.string.comment)
 
-        val dialog = AlertDialog.Builder(context)
+        val dialog = AlertDialog.Builder(context!!)
                 .setTitle(mTitle)
                 .setView(view)
                 .setPositiveButton(activity.getString(android.R.string.ok), { _, _ ->
                     mFreeTextCallback(false, freeTextEditText.text.toString())
                 })
-                .setNegativeButton(if(mCurrentText.isNotEmpty()) context.getString(R.string.cancel) else context.getString(R.string.skip) , { _, _ ->
+                .setNegativeButton(if(mCurrentText.isNotEmpty()) context!!.getString(R.string.cancel) else context!!.getString(R.string.skip) , { _, _ ->
                     mFreeTextCallback(true, null)
                 })
                 .create()
 
         //Adjust the dialog to the top so keyboard does not cover it up, issue happens on tablets in landscape
-        if (isTablet && context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (isTablet && context!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
             val params = dialog.window.attributes
             params.gravity = Gravity.CENTER or Gravity.TOP
             params.y = context.resources.getDimensionPixelSize(R.dimen.utils_landscapeTabletDialogAdjustment)
