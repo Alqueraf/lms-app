@@ -19,6 +19,6 @@ package com.instructure.dataseeding.util
 /**
  * Changes to this file will NOT BE KEPT unless editing the original file in private-data/dataseeding!
  */
-const val DATA_SEEDING_ADMIN_TOKEN = "a"
-const val DATA_SEEDING_CLIENT_ID = "a"
-const val DATA_SEEDING_CLIENT_SECRET = "a"
+const val DATA_SEEDING_ADMIN_TOKEN = "B63hqKhLXRIjJDPT8BnQOyxOwfXMqNgEOpF1Yp2v4zT78QivhFXmhoa2mAD8pjgC"
+const val DATA_SEEDING_CLIENT_ID = "10000000000001"
+const val DATA_SEEDING_CLIENT_SECRET = "EGfRuhBXz0KqW6GytuqtfBDgxGiWUCaQFX1zDDQRrv5eyWApKYWSLMwavo9WYpT7"

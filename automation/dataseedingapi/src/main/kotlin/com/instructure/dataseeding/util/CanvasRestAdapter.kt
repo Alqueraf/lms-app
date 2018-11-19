@@ -29,9 +29,9 @@ object CanvasRestAdapter {
     val canvasDomain = "campus.peninsula.co"//"mobileqa.test.instructure.com"
     val baseUrl = "https://$canvasDomain/api/v1/"
     val redirectUri = "urn:ietf:wg:oauth:2.0:oob"
-    val adminToken = "B63hqKhLXRIjJDPT8BnQOyxOwfXMqNgEOpF1Yp2v4zT78QivhFXmhoa2mAD8pjgC"//DATA_SEEDING_ADMIN_TOKEN
-    val clientId = "10000000000001"//DATA_SEEDING_CLIENT_ID
-    val clientSecret = "EGfRuhBXz0KqW6GytuqtfBDgxGiWUCaQFX1zDDQRrv5eyWApKYWSLMwavo9WYpT7"//DATA_SEEDING_CLIENT_SECRET
+    val adminToken = DATA_SEEDING_ADMIN_TOKEN
+    val clientId = DATA_SEEDING_CLIENT_ID
+    val clientSecret = DATA_SEEDING_CLIENT_SECRET
     private val TIMEOUT_IN_SECONDS = 60L
 
     private val adminOkHttpClient: OkHttpClient by lazy {
