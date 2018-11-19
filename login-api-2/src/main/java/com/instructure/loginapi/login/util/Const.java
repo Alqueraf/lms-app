@@ -16,6 +16,8 @@
  */
 package com.instructure.loginapi.login.util;
 
+import com.instructure.canvasapi2.CanvasRestAdapter;
+
 public class Const {
 
     public static final int NORMAL_FLOW = 0;
@@ -47,7 +49,7 @@ public class Const {
     public final static String KEY_OTHER_SIGNED_IN_USERS_PREF_NAME = "otherSignedInUsersCandroidSP";
     public final static String KEY_PREF_NAME_PREVIOUS_DOMAINS = "candroidSP_previous_domains";
 
-    public static final String URL_CANVAS_NETWORK = "learn.canvas.net";
+    public static final String URL_CANVAS_NETWORK = "campus.peninsula.co";//"learn.canvas.net";
 
     public static final int NO_LOCATION_INDICATOR_INT = -999;
     public static final double NO_LOCATION_INDICATOR_DOUBLE = -999.0;

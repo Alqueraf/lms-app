@@ -149,7 +149,7 @@ public abstract class BaseLoginLandingPageActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(APIHelper.hasNetworkConnection()) {
                     Intent intent = beginCanvasNetworkFlow(Const.URL_CANVAS_NETWORK);
-                    intent.putExtra(Const.CANVAS_LOGIN, mCanvasLogin);
+                    intent.putExtra(Const.CANVAS_LOGIN, 3);
                     startActivity(intent);
                 } else {
                     NoInternetConnectionDialog.show(getSupportFragmentManager());

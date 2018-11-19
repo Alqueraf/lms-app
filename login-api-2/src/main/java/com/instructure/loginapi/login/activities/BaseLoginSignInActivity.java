@@ -273,40 +273,51 @@ public abstract class BaseLoginSignInActivity extends AppCompatActivity implemen
     protected void beginSignIn(final AccountDomain accountDomain) {
         final String url = accountDomain.getDomain();
         if(mCanvasLogin == MOBILE_VERIFY_FLOW) { //Skip Mobile Verify
-            final View view = LayoutInflater.from(BaseLoginSignInActivity.this).inflate(R.layout.dialog_skip_mobile_verify, null);
-            final EditText protocolEditText = view.findViewById(R.id.mobileVerifyProtocol);
-            final EditText clientIdEditText = view.findViewById(R.id.mobileVerifyClientId);
-            final EditText clientSecretEditText = view.findViewById(R.id.mobileVerifyClientSecret);
+            final boolean useDialog = false;
 
-            final AlertDialog dialog = new AlertDialog.Builder(BaseLoginSignInActivity.this)
-                    .setTitle(R.string.mobileVerifyDialogTitle)
-                    .setView(view)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ApiPrefs.setProtocol(protocolEditText.getText().toString());
-                            ApiPrefs.setDomain(url);
-                            mClientId = clientIdEditText.getText().toString();
-                            mClientSecret = clientSecretEditText.getText().toString();
-                            buildAuthenticationUrl(protocolEditText.getText().toString(), accountDomain, mClientId, false);
-                            mWebView.loadUrl(mAuthenticationURL, getHeaders());
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            MobileVerifyAPI.mobileVerify(url, mMobileVerifyCallback);
-                        }
-                    })
-                    .create();
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialogInterface) {
-                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-                    dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
-                }
-            });
-            dialog.show();
+            if (useDialog) {
+                final View view = LayoutInflater.from(BaseLoginSignInActivity.this).inflate(R.layout.dialog_skip_mobile_verify, null);
+                final EditText protocolEditText = view.findViewById(R.id.mobileVerifyProtocol);
+                final EditText clientIdEditText = view.findViewById(R.id.mobileVerifyClientId);
+                final EditText clientSecretEditText = view.findViewById(R.id.mobileVerifyClientSecret);
+
+                final AlertDialog dialog = new AlertDialog.Builder(BaseLoginSignInActivity.this)
+                        .setTitle(R.string.mobileVerifyDialogTitle)
+                        .setView(view)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ApiPrefs.setProtocol(protocolEditText.getText().toString());
+                                ApiPrefs.setDomain(url);
+                                mClientId = clientIdEditText.getText().toString();
+                                mClientSecret = clientSecretEditText.getText().toString();
+                                buildAuthenticationUrl(protocolEditText.getText().toString(), accountDomain, mClientId, false);
+                                mWebView.loadUrl(mAuthenticationURL, getHeaders());
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                MobileVerifyAPI.mobileVerify(url, mMobileVerifyCallback);
+                            }
+                        })
+                        .create();
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+                    }
+                });
+                dialog.show();
+            } else {
+                ApiPrefs.setProtocol("https");
+                ApiPrefs.setDomain(url);
+                mClientId = "10000000000001";
+                mClientSecret = "EGfRuhBXz0KqW6GytuqtfBDgxGiWUCaQFX1zDDQRrv5eyWApKYWSLMwavo9WYpT7";
+                buildAuthenticationUrl("https", accountDomain, mClientId, false);
+                mWebView.loadUrl(mAuthenticationURL, getHeaders());
+            }
         } else {
             MobileVerifyAPI.mobileVerify(url, mMobileVerifyCallback);
         }
