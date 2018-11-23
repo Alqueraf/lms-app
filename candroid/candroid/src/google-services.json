@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "974172763547",
+    "firebase_url": "https://peninsulaco-c0190.firebaseio.com",
+    "project_id": "peninsulaco-c0190",
+    "storage_bucket": "peninsulaco-c0190.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:974172763547:android:b773719be4662429",
+        "android_client_info": {
+          "package_name": "com.instructure.candroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "974172763547-isui3jiegit8kff0kgim3s1gs1mtugd6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbuyRT9-vx9CWdAaxDt_SuBxCzYhrnvSg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
